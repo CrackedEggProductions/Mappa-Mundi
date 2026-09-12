@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_group.gd" id="2_group"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_relationship.gd" id="3_relation"]
+
+[sub_resource type="Resource" id="Group_1"]
+script = ExtResource("2_group")
+edge_type = 1
+directions = Array[int]([0, 1])
+
+[sub_resource type="Resource" id="Group_3"]
+script = ExtResource("2_group")
+edge_type = 3
+directions = Array[int]([2, 3])
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.woodland_road"
+display_name = "Woodland Road"
+tile_class = 0
+unlock_act = 1
+reward_class = 2
+canonical_edges = Array[int]([1, 1, 3, 3])
+feature_groups = Array[ExtResource("2_group")]([SubResource("Group_1"), SubResource("Group_3")])

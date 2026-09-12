@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ContentManifest" load_steps=25 format=3]
+
+[ext_resource type="Script" path="res://content/manifests/content_manifest.gd" id="1_manifest"]
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="2_type"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/bending_road.tres" id="tile_0"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/forest_belt.tres" id="tile_1"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/forest_bend.tres" id="tile_2"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/forest_edge.tres" id="tile_3"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/founding_homestead.tres" id="tile_4"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/hamlet_edge.tres" id="tile_5"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/open_fields.tres" id="tile_6"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/river_bend.tres" id="tile_7"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/river_end.tres" id="tile_8"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/river_run.tres" id="tile_9"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/riverside_hamlet.tres" id="tile_10"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/road_end.tres" id="tile_11"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/road_junction.tres" id="tile_12"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_corner.tres" id="tile_13"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_corner_gate.tres" id="tile_14"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_gate.tres" id="tile_15"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_road_bend.tres" id="tile_16"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_road_throughway.tres" id="tile_17"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_throughway.tres" id="tile_18"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/straight_road.tres" id="tile_19"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/woodland_river.tres" id="tile_20"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/woodland_road.tres" id="tile_21"]
+
+[resource]
+script = ExtResource("1_manifest")
+manifest_id = &"manifest.alpha_homestead_phase_2"
+implementation_phase = 2
+game_rules_version = "alpha-1"
+tiles = Array[ExtResource("2_type")]([ExtResource("tile_0"), ExtResource("tile_1"), ExtResource("tile_2"), ExtResource("tile_3"), ExtResource("tile_4"), ExtResource("tile_5"), ExtResource("tile_6"), ExtResource("tile_7"), ExtResource("tile_8"), ExtResource("tile_9"), ExtResource("tile_10"), ExtResource("tile_11"), ExtResource("tile_12"), ExtResource("tile_13"), ExtResource("tile_14"), ExtResource("tile_15"), ExtResource("tile_16"), ExtResource("tile_17"), ExtResource("tile_18"), ExtResource("tile_19"), ExtResource("tile_20"), ExtResource("tile_21")])

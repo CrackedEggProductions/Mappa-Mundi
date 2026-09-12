@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_group.gd" id="2_group"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_relationship.gd" id="3_relation"]
+
+[sub_resource type="Resource" id="Group_1"]
+script = ExtResource("2_group")
+edge_type = 1
+directions = Array[int]([3])
+
+[sub_resource type="Resource" id="Group_2"]
+script = ExtResource("2_group")
+edge_type = 2
+directions = Array[int]([2])
+
+[sub_resource type="Resource" id="Group_3"]
+script = ExtResource("2_group")
+edge_type = 3
+directions = Array[int]([1])
+
+[sub_resource type="Resource" id="Group_4"]
+script = ExtResource("2_group")
+edge_type = 4
+directions = Array[int]([0])
+
+[sub_resource type="Resource" id="Relationship"]
+script = ExtResource("3_relation")
+from_edge_type = 3
+to_edge_type = 4
+kind = 0
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.founding.homestead"
+display_name = "Homestead Founding Tile"
+tile_class = 0
+unlock_act = 1
+reward_class = 0
+canonical_edges = Array[int]([4, 3, 2, 1])
+feature_groups = Array[ExtResource("2_group")]([SubResource("Group_1"), SubResource("Group_2"), SubResource("Group_3"), SubResource("Group_4")])
+relationships = Array[ExtResource("3_relation")]([SubResource("Relationship")])

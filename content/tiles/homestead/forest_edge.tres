@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_group.gd" id="2_group"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_relationship.gd" id="3_relation"]
+
+[sub_resource type="Resource" id="Group_1"]
+script = ExtResource("2_group")
+edge_type = 1
+directions = Array[int]([0])
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.forest_edge"
+display_name = "Forest Edge"
+tile_class = 0
+unlock_act = 1
+reward_class = 1
+canonical_edges = Array[int]([1, 0, 0, 0])
+feature_groups = Array[ExtResource("2_group")]([SubResource("Group_1")])

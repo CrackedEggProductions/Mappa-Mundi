@@ -1,0 +1,120 @@
+[gd_resource type="Resource" script_class="RunConfig" load_steps=24 format=3]
+
+[ext_resource type="Script" path="res://content/manifests/run_config.gd" id="1_config"]
+[ext_resource type="Script" path="res://content/manifests/starting_bag_entry.gd" id="2_entry"]
+
+[sub_resource type="Resource" id="Bag_bending_road"]
+script = ExtResource("2_entry")
+definition_id = &"tile.bending_road"
+count = 4
+
+[sub_resource type="Resource" id="Bag_forest_belt"]
+script = ExtResource("2_entry")
+definition_id = &"tile.forest_belt"
+count = 2
+
+[sub_resource type="Resource" id="Bag_forest_bend"]
+script = ExtResource("2_entry")
+definition_id = &"tile.forest_bend"
+count = 3
+
+[sub_resource type="Resource" id="Bag_forest_edge"]
+script = ExtResource("2_entry")
+definition_id = &"tile.forest_edge"
+count = 3
+
+[sub_resource type="Resource" id="Bag_hamlet_edge"]
+script = ExtResource("2_entry")
+definition_id = &"tile.hamlet_edge"
+count = 3
+
+[sub_resource type="Resource" id="Bag_open_fields"]
+script = ExtResource("2_entry")
+definition_id = &"tile.open_fields"
+count = 4
+
+[sub_resource type="Resource" id="Bag_river_bend"]
+script = ExtResource("2_entry")
+definition_id = &"tile.river_bend"
+count = 3
+
+[sub_resource type="Resource" id="Bag_river_end"]
+script = ExtResource("2_entry")
+definition_id = &"tile.river_end"
+count = 2
+
+[sub_resource type="Resource" id="Bag_river_run"]
+script = ExtResource("2_entry")
+definition_id = &"tile.river_run"
+count = 3
+
+[sub_resource type="Resource" id="Bag_riverside_hamlet"]
+script = ExtResource("2_entry")
+definition_id = &"tile.riverside_hamlet"
+count = 2
+
+[sub_resource type="Resource" id="Bag_road_end"]
+script = ExtResource("2_entry")
+definition_id = &"tile.road_end"
+count = 3
+
+[sub_resource type="Resource" id="Bag_road_junction"]
+script = ExtResource("2_entry")
+definition_id = &"tile.road_junction"
+count = 2
+
+[sub_resource type="Resource" id="Bag_settlement_corner"]
+script = ExtResource("2_entry")
+definition_id = &"tile.settlement_corner"
+count = 3
+
+[sub_resource type="Resource" id="Bag_settlement_corner_gate"]
+script = ExtResource("2_entry")
+definition_id = &"tile.settlement_corner_gate"
+count = 2
+
+[sub_resource type="Resource" id="Bag_settlement_gate"]
+script = ExtResource("2_entry")
+definition_id = &"tile.settlement_gate"
+count = 2
+
+[sub_resource type="Resource" id="Bag_settlement_road_bend"]
+script = ExtResource("2_entry")
+definition_id = &"tile.settlement_road_bend"
+count = 2
+
+[sub_resource type="Resource" id="Bag_settlement_road_throughway"]
+script = ExtResource("2_entry")
+definition_id = &"tile.settlement_road_throughway"
+count = 2
+
+[sub_resource type="Resource" id="Bag_settlement_throughway"]
+script = ExtResource("2_entry")
+definition_id = &"tile.settlement_throughway"
+count = 2
+
+[sub_resource type="Resource" id="Bag_straight_road"]
+script = ExtResource("2_entry")
+definition_id = &"tile.straight_road"
+count = 4
+
+[sub_resource type="Resource" id="Bag_woodland_river"]
+script = ExtResource("2_entry")
+definition_id = &"tile.woodland_river"
+count = 2
+
+[sub_resource type="Resource" id="Bag_woodland_road"]
+script = ExtResource("2_entry")
+definition_id = &"tile.woodland_road"
+count = 2
+
+[resource]
+script = ExtResource("1_config")
+config_id = &"config.alpha_homestead_phase_2"
+act_placement_limits = Array[int]([18, 22, 26])
+track_thresholds = Array[int]([20, 40, 70, 100])
+starting_bag = Array[ExtResource("2_entry")]([SubResource("Bag_bending_road"), SubResource("Bag_forest_belt"), SubResource("Bag_forest_bend"), SubResource("Bag_forest_edge"), SubResource("Bag_hamlet_edge"), SubResource("Bag_open_fields"), SubResource("Bag_river_bend"), SubResource("Bag_river_end"), SubResource("Bag_river_run"), SubResource("Bag_riverside_hamlet"), SubResource("Bag_road_end"), SubResource("Bag_road_junction"), SubResource("Bag_settlement_corner"), SubResource("Bag_settlement_corner_gate"), SubResource("Bag_settlement_gate"), SubResource("Bag_settlement_road_bend"), SubResource("Bag_settlement_road_throughway"), SubResource("Bag_settlement_throughway"), SubResource("Bag_straight_road"), SubResource("Bag_woodland_river"), SubResource("Bag_woodland_road")])
+hand_capacity = 3
+reserve_capacity = 1
+initial_survey_charges = 1
+emergency_definitions = Array[StringName]([&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_end"])

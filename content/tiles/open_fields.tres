@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.open_fields"
+display_name = "Open Fields"
+tile_class = 0
+unlock_act = 1
+reward_class = 1
+canonical_edges = Array[int]([0, 0, 0, 0])

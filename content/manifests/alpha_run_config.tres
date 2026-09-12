@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RunConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/manifests/run_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+config_id = &"config.alpha_homestead"
+act_placement_limits = Array[int]([18, 22, 26])
+track_thresholds = Array[int]([20, 40, 70, 100])
