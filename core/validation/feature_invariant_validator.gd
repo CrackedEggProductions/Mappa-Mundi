@@ -120,6 +120,19 @@ static func _validate_lineage(state: RunState, lineage: FeatureLineageState, boa
 		report.add(&"wrong_contact_category", "Only River lineages own Forest-contact history.")
 	if lineage.feature_type == DomainTypes.FeatureType.RIVER and not lineage.completion_ids.is_empty() and not lineage.completed:
 		report.add(&"completed_river_reopened", "A historical completed River cannot become unfinished.")
+	var expected_phase: int = 1
+	for parent_id: int in lineage.parent_ids:
+		var parent: FeatureLineageState = state.features.lineage(parent_id)
+		if parent != null:
+			expected_phase = maxi(expected_phase, parent.growth_phase)
+	for event: FeatureHistoryRecord in state.features.history:
+		if event != null and event.lineage_id == lineage.lineage_id and event.kind == &"feature_reopened":
+			if expected_phase == 9223372036854775807:
+				report.add(&"overflowing_growth_history", "Growth phase cannot overflow.")
+			else:
+				expected_phase += 1
+	if lineage.growth_phase != expected_phase:
+		report.add(&"growth_history_mismatch", "Growth phase must reflect inherited phases and genuine reopening records.")
 
 
 static func _validate_current(state: RunState, report: InvariantReport) -> void:
@@ -164,6 +177,15 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 			report.add(&"invalid_history_record", "History kind, placement or source is invalid.")
 		if event.lineage_id != 0 and state.features.lineage(event.lineage_id) == null:
 			report.add(&"unresolved_history_lineage", "Historical lineage must resolve.")
+		if event.kind in [&"feature_created", &"feature_grew", &"feature_reopened", &"feature_merged", &"feature_completed"]:
+			var owner: FeatureLineageState = state.features.lineage(event.lineage_id)
+			if owner == null or owner.feature_type != event.feature_type:
+				report.add(&"invalid_feature_event", "Feature events require their typed lineage.")
+		if not _unique_positive(event.component_ids) or not _unique_positive(event.parent_ids):
+			report.add(&"duplicate_event_fact", "Event identity sets cannot contain duplicates.")
+		for parent_id: int in event.parent_ids:
+			if state.features.lineage(parent_id) == null:
+				report.add(&"invalid_event_ancestry", "Event ancestry must resolve.")
 		if event.parent_event_id != 0 and not events.has(event.parent_event_id):
 			report.add(&"invalid_event_parent", "FIFO child must follow a recorded parent.")
 		for component_id: int in event.component_ids:
@@ -172,6 +194,8 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		if event.kind == &"realm_track_changed":
 			if event.track not in [0, 1, 2, 3] or event.amount <= 0:
 				report.add(&"invalid_track_event", "Track events require a positive gain.")
+			if not events.has(event.parent_event_id) or events[event.parent_event_id].kind not in [&"feature_completed", &"enclosure_completed"]:
+				report.add(&"invalid_track_parent", "Track gain must follow a completion parent.")
 		elif event.track != -1 or event.amount != 0:
 			report.add(&"unexpected_track_data", "Only Track-change events carry gains.")
 		events[event.event_id] = event
@@ -234,10 +258,12 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 		eligible_lineages.append(lineage.lineage_id)
 		var expected: Dictionary = {"completion_ids": [], "scored_component_ids": [],
 			"scored_field_ids": [], "scored_river_ids": [], "scored_forest_ids": []}
+		var highest_class: int = 0
 		for record: FeatureCompletionRecord in state.features.completions:
 			if record.lineage_id not in eligible_lineages:
 				continue
 			expected["completion_ids"].append(record.record_id)
+			highest_class = maxi(highest_class, record.settlement_class)
 			for pair: Array in [["scored_component_ids", record.new_component_ids], ["scored_field_ids", record.new_field_ids],
 				["scored_river_ids", record.new_river_ids], ["scored_forest_ids", record.new_forest_ids]]:
 				for id: int in pair[1]:
@@ -252,6 +278,8 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 		for id: int in lineage.completion_ids:
 			if id not in record_ids:
 				report.add(&"unresolved_completion", "Every lineage completion must resolve.")
+		if lineage.highest_settlement_class != highest_class:
+			report.add(&"historical_class_mismatch", "Highest class must agree with retained Establishment records.")
 	for record: FeatureCompletionRecord in state.features.completions:
 		var child_gains: Array[int] = [0, 0, 0, 0]
 		for event: FeatureHistoryRecord in state.features.history:
@@ -274,10 +302,14 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 		var ancestors: Array[int] = LineageService.get_ancestry_closure(state, record.lineage_id)
 		ancestors.append(record.lineage_id)
 		var prior_completion: bool = false
+		var historical_class: int = 0
 		for prior: FeatureCompletionRecord in state.features.completions:
 			if prior.record_id >= record.record_id or prior.lineage_id not in ancestors:
 				continue
 			prior_completion = true
+			historical_class = maxi(historical_class, prior.settlement_class)
+			if prior.lineage_id == record.lineage_id and prior.growth_phase >= record.growth_phase:
+				report.add(&"completion_without_growth_phase", "Re-completion requires a genuinely new unfinished growth phase.")
 			for pair: Array in [[record.new_component_ids, prior.new_component_ids], [record.new_field_ids, prior.new_field_ids],
 				[record.new_river_ids, prior.new_river_ids], [record.new_forest_ids, prior.new_forest_ids]]:
 				for id: int in pair[0]:
@@ -285,6 +317,12 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 						report.add(&"duplicate_base_scoring", "An ancestral scoring contribution cannot pay twice.")
 		if record.first_completion == prior_completion:
 			report.add(&"invalid_first_completion", "First completion must agree with historical ancestry.")
+		if record.feature_type == DomainTypes.FeatureType.SETTLEMENT:
+			var qualified: int = 1 if record.total_size <= 2 else (2 if record.total_size <= 5 else 0)
+			if record.settlement_class != maxi(qualified, historical_class):
+				report.add(&"invalid_establishment_class", "Establishment class requires canonical qualification or prior history.")
+		elif record.settlement_class != 0:
+			report.add(&"unexpected_settlement_class", "Other feature completions cannot establish a Settlement class.")
 
 
 static func _validate_enclosures(state: RunState, ids: Array[int], report: InvariantReport) -> void:
@@ -316,7 +354,9 @@ static func _validate_enclosures(state: RunState, ids: Array[int], report: Invar
 				expected_ids.append(record.record_id)
 				if record.gains != [0, 0, 5 + natural, 0]:
 					report.add(&"invalid_enclosure_gain", "Monastery scores base five plus distinct natural neighbors.")
-		var expected_stages: Array[StringName] = [&"monastery"] if occupied == 8 else []
+		var expected_stages: Array[StringName] = []
+		if occupied == 8:
+			expected_stages.append(&"monastery")
 		if enclosure.completed_stages != expected_stages or enclosure.completion_ids != expected_ids \
 			or expected_ids.size() != expected_stages.size():
 			report.add(&"enclosure_history_mismatch", "Eight-neighbor completion may score its stage only once.")

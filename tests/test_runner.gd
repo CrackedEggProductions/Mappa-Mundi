@@ -15,7 +15,9 @@ const SUITE_PATHS: Array[String] = [
 	"res://tests/unit/expansion_serialization_tests.gd",
 	"res://tests/unit/feature_topology_tests.gd",
 	"res://tests/unit/feature_scoring_tests.gd",
+	"res://tests/unit/feature_serialization_tests.gd",
 	"res://tests/integration/expansion_gameplay_tests.gd",
+	"res://tests/integration/feature_scenario_tests.gd",
 ]
 
 var _passed: int = 0

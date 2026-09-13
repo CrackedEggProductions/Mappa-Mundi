@@ -24,6 +24,7 @@ static func capture(state: RunState, current: Array[CurrentFeature], source_id: 
 			"lineage_id": lineage.lineage_id, "feature_type": feature.feature_type,
 			"component_ids": feature.component_ids.duplicate(), "total_size": feature.component_ids.size(),
 			"first_completion": lineage.completion_ids.is_empty(), "growth_phase": lineage.growth_phase,
+			"highest_settlement_class": lineage.highest_settlement_class,
 			"new_component_ids": _difference(feature.component_ids, lineage.scored_component_ids),
 			"field_support_ids": field_ids, "river_support_ids": river_ids, "forest_contact_ids": forest_ids,
 			"new_field_ids": _difference(field_ids, lineage.scored_field_ids),
@@ -57,8 +58,9 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[FeatureCompletionRe
 		match record.feature_type:
 			DomainTypes.FeatureType.SETTLEMENT:
 				record.gains[DomainTypes.TrackType.POPULATION] = 2 * record.new_component_ids.size() + record.new_field_ids.size() + record.new_river_ids.size()
-				# Without Developments larger Settlements retain Village classification.
-				record.settlement_class = 1 if record.total_size <= 2 else 2
+				# Larger size alone does not qualify for Development-dependent Town/City.
+				var qualified: int = 1 if record.total_size <= 2 else (2 if record.total_size <= 5 else 0)
+				record.settlement_class = maxi(qualified, int(facts.get("highest_settlement_class", 0)))
 			DomainTypes.FeatureType.ROAD:
 				# Network +2 per Settlement belongs strictly to Phase 4.
 				record.gains[DomainTypes.TrackType.TRADE] = record.new_component_ids.size()

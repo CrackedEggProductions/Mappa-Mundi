@@ -46,7 +46,10 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 	var expected_revision: int = expansion.board.cells.size()
 	for cell: BoardCellState in expansion.board.cells.values():
 		if cell != null and cell.geometry_revision >= 0:
-			expected_revision += cell.geometry_revision
+			if expected_revision > 9223372036854775807 - cell.geometry_revision:
+				report.add(&"overflowing_geometry_history", "Geometry revision sum must remain representable.")
+			else:
+				expected_revision += cell.geometry_revision
 	if expansion.board.revision != expected_revision:
 		report.add(&"invalid_board_revision", "Board revision must reflect insertions and explicit geometry rewrites.")
 	if not expansion.board.cells.has(Vector2i.ZERO):

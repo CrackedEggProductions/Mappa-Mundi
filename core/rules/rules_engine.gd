@@ -47,6 +47,7 @@ static func validate(state: RunState, content: ContentRegistry,
 	# limitation, not a reason to leave a half-applied command behind.
 	var emergency_capacity: int = content.get_config().emergency_definitions.size() * 2
 	if state.expansion.state_revision == 9223372036854775807 \
+			or state.expansion.board.revision == 9223372036854775807 \
 			or state.rng.operation_count > 9223372036854775807 - 2 \
 			or state.next_runtime_id > RunIdAllocator.EXHAUSTED_CURSOR - emergency_capacity:
 		return _failure(&"invariant_failure", "Insufficient runtime counter capacity to resolve a command safely.")

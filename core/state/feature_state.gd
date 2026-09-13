@@ -15,21 +15,21 @@ var largest_completed_sizes: Array[int] = [0, 0, 0, 0]
 
 func component(id: int) -> FeatureComponentState:
 	for value: FeatureComponentState in components:
-		if value.component_id == id:
+		if value != null and value.component_id == id:
 			return value
 	return null
 
 
 func lineage(id: int) -> FeatureLineageState:
 	for value: FeatureLineageState in lineages:
-		if value.lineage_id == id:
+		if value != null and value.lineage_id == id:
 			return value
 	return null
 
 
 func component_at(at: Vector2i, type: DomainTypes.FeatureType) -> FeatureComponentState:
 	for value: FeatureComponentState in components:
-		if value.coordinate == at and value.feature_type == type:
+		if value != null and value.coordinate == at and value.feature_type == type:
 			return value
 	return null
 

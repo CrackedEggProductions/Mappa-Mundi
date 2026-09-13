@@ -15,7 +15,7 @@ func tests() -> Array[Callable]:
 		monastery_completed_stage_does_not_repeat, abbey_scoring_is_deferred,
 		same_tile_support_requires_explicit_relationship, support_requires_shared_reachable_socket,
 		woodland_river_has_explicit_same_tile_contact, pipeline_child_events_are_fifo,
-		pipeline_stages_preserve_canonical_order]
+		pipeline_stages_preserve_canonical_order, settlement_classes_require_canonical_qualification]
 
 
 func snapshot_owns_nested_input() -> bool:
@@ -199,6 +199,16 @@ func pipeline_child_events_are_fifo() -> bool:
 
 func pipeline_stages_preserve_canonical_order() -> bool:
 	expect_equal(CompletionPipeline.STAGES, [&"snapshot", &"base_feature_scoring", &"development_effects", &"specialist_effects", &"specialist_returns", &"relic_effects", &"relic_milestones", &"queue_crossed_track_thresholds", &"resolve_threshold_queue"], "Canonical future extension stages are explicit")
+	return true
+
+
+func settlement_classes_require_canonical_qualification() -> bool:
+	var facts: Dictionary = _facts(TYPE.SETTLEMENT, [11, 12, 13, 14, 15, 16])
+	expect_equal(_score(facts).settlement_class, 0, "First completion at six tiles has no Development-dependent class")
+	facts["highest_settlement_class"] = 1
+	expect_equal(_score(facts).settlement_class, 1, "Earlier qualified Hamlet class is retained")
+	facts["highest_settlement_class"] = 2
+	expect_equal(_score(facts).settlement_class, 2, "Earlier qualified Village class is retained")
 	return true
 
 
