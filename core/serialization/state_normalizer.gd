@@ -11,6 +11,8 @@ static func normalize(state: RunState) -> String:
 	var locations: Array = data["tile_locations"]
 	tiles.sort_custom(_runtime_id_before)
 	locations.sort_custom(_runtime_id_before)
+	if data.has("features"):
+		_normalize_features(data["features"])
 	if data.has("expansion"):
 		var expansion: Dictionary = data["expansion"]
 		expansion["removed_ids"].sort_custom(_decimal_id_before)
@@ -40,3 +42,20 @@ static func _decimal_id_before(left: String, right: String) -> bool:
 
 static func _record_before(left: Dictionary, right: Dictionary) -> bool:
 	return JSON.stringify(left, "", true) < JSON.stringify(right, "", true)
+
+
+static func _normalize_features(data: Dictionary) -> void:
+	# Histories/completions preserve FIFO order. Registries and identity sets do not.
+	for pair: Array in [["components", "component_id"], ["lineages", "lineage_id"], ["enclosures", "enclosure_id"]]:
+		var key: String = pair[1]
+		data[pair[0]].sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+			return String(a[key]).to_int() < String(b[key]).to_int())
+	for lineage: Dictionary in data["lineages"]:
+		for key: String in ["parent_ids", "member_ids", "scored_component_ids", "scored_field_ids", "scored_river_ids", "scored_forest_ids", "scored_settlement_ids", "completion_ids"]:
+			lineage[key].sort_custom(_decimal_id_before)
+	for record: Dictionary in data["completions"]:
+		for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids"]:
+			record[key].sort_custom(_decimal_id_before)
+	for event: Dictionary in data["history"]:
+		event["component_ids"].sort_custom(_decimal_id_before)
+		event["parent_ids"].sort_custom(_decimal_id_before)

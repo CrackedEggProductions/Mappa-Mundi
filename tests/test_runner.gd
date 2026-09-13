@@ -13,6 +13,8 @@ const SUITE_PATHS: Array[String] = [
 	"res://tests/unit/expansion_content_tests.gd",
 	"res://tests/unit/board_placement_tests.gd",
 	"res://tests/unit/expansion_serialization_tests.gd",
+	"res://tests/unit/feature_topology_tests.gd",
+	"res://tests/unit/feature_scoring_tests.gd",
 	"res://tests/integration/expansion_gameplay_tests.gd",
 ]
 

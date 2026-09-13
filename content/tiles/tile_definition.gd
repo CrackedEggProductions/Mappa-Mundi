@@ -11,6 +11,8 @@ extends Resource
 @export var canonical_edges: Array[DomainTypes.EdgeType] = []
 @export var feature_groups: Array[TileFeatureGroup] = []
 @export var relationships: Array[TileFeatureRelationship] = []
+## Explicit same-tile Settlement/Field meeting, independent of tracked feature groups.
+@export var field_supports_settlement: bool = false
 @export var placement_behavior_id: StringName = &""
 @export var effect_behavior_id: StringName = &""
 @export var development_family_id: StringName = &""
