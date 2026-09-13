@@ -1,5 +1,126 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 3 — complete
+
+Verified 2026-09-13 on `phase-3`. Phase 4 has not started. Phase-2 baseline
+`e0fea94` remains unchanged on `main` and `origin/main`.
+
+### Architecture and behavior
+
+- `FeatureComponentState` uses run-scoped IDs with type, coordinate and independent
+  origin Act/source metadata. Founding creates four distinct stubs; hybrids retain
+  separate components. Field never receives a component or lineage.
+- `TopologyService` reconstructs same-type connectivity deterministically from
+  effective sockets and local groups. `CurrentFeature` is derived and contains
+  members, coordinates, open exits and current lineage ID. Rebuilds allocate
+  nothing; reconciliation records the current board revision.
+- `LineageService` retains identity through growth/reopening and creates a new
+  descendant on merger. Sorted parents remain archived; ancestry and inherited
+  component/support scoring sets persist. No arbitrary splitting is implemented.
+- `CompletionSnapshot` recursively freezes a deep-owned primitive snapshot.
+  Every simultaneous base calculation reads it before any result applies.
+  `CompletionPipeline` drains child audit events FIFO after the batch and names
+  future Development/Specialist/Relic/milestone/threshold extension stages without
+  implementing their effects. Synchronous resolution has no pending player choice
+  or serializable mid-batch continuation at this phase.
+- `FeatureCompletionRecord` and `FeatureHistoryRecord` persist structured creation,
+  growth, reopening, merger, completion, snapshot and Track-change facts. Historical
+  largest completed feature sizes and qualified Settlement classes are retained.
+  Six tiles without a Development do not automatically qualify for Village/Town;
+  an earlier actually qualified class is retained.
+- `RealmTrackState` holds cumulative Population/Trade/Culture/Ecology. Settlement
+  scores +2 per new component and +1 per new Field/River support category. Forest
+  scores +1 per new component plus reevaluated +2 undeveloped preservation. River
+  scores floor(size/2) and new distinct Forest contacts; ordinary reopening is
+  prohibited. Road scores only +1 per new component.
+- **Road +2 per Settlement remains explicitly deferred to Phase 4.** No network
+  graph, transitive access traversal, Ferry Rights, Market or Port behavior exists.
+- `FeatureContactService` requires genuine shared-socket/internal contact. Explicit
+  Settlement/Field metadata supplements the existing hybrid relationships; merely
+  finding Field or River elsewhere on a neighboring tile does not qualify support.
+  Support identity is the stable board-base ID, separately scoped by lineage and
+  category; current contact and historical eligibility are distinct.
+- `EnclosureState` and `EnclosureService` provide the Monastery foundation separately
+  from connected features. All eight surrounding squares must be occupied; +5 Culture
+  plus one per natural square scores once. Development ID zero explicitly denotes
+  the deferred fixture context. Monastery is not playable or in the bag; Abbey
+  upgrade gameplay remains deferred.
+- `FeatureResolutionService` integrates after legal placement and before refill.
+  Conservative counter-capacity checks preserve invalid-command atomicity.
+
+### Persistence and invariants
+
+`FeatureSerializer` explicitly encodes components, origins, lineage parents and
+membership, scoring sets, completions, audit records, Tracks, enclosures and
+revisions. Full-width counters/IDs remain decimal strings. Normalization sorts
+unordered registries/sets while retaining FIFO histories and ordered physical zones.
+
+On load, `FeatureInvariantValidator` rebuilds topology purely and checks persisted
+membership/completion against the graph. It validates cross-kind IDs, origins,
+acyclic ancestry, inactive parents, scoring sets against ancestral completion facts,
+Track totals/children, genuine growth phases, support references and enclosures.
+Loading never reconciles, allocates, emits events, scores or consumes RNG. Repeated
+loads preserve exact fingerprints and continuation. Current explicit board fields
+are required; older board shapes are rejected, not silently migrated. Legacy
+foundation/Phase-2 fixture variants with null feature state remain supported.
+
+Controlled tests use `phase_three_factory.gd` for invariant-valid physical states
+and fixture-only geometry revisions. No Urban Expansion, Bridge, Rewilding or
+Development player command was added to produce the scenarios.
+
+### Acceptance evidence
+
+`./tests/run_tests.sh` exited **0**, Godot `4.7.2.stable.mono.official.ed1daf0bf`:
+
+```text
+PASS: editor import
+PASS: 88 GDScript files parsed without diagnostics
+RESULT: 274 passed, 0 failed
+```
+
+Full logs: `builds/verification/run-STB3jRHO/`. All 191 earlier tests pass.
+Phase 3 adds 83 tests: 25 topology/lineage, 20 scoring/snapshot/contact, 15 full-state
+scenarios and 23 serialization/corruption tests.
+
+The mandatory anti-farming cases pass: Settlement re-completion pays only new
+growth/support; Forest re-completion preserves old scoring and reevaluates its flat
+bonus; Road re-completion pays only new tiles; independently scored parents merge
+without resetting eligibility. Settlement merger also preserves parental support
+history. Current topology and persistent histories agree after every stable step.
+
+The standalone command documented in README ran
+`tests/replay/phase_three_demo.gd`, exit **0**, without diagnostics:
+
+```text
+DEMO Phase 3: 12 seeded legal placements; completed types=[1, 0, 2, 3]; Tracks=[10, 2, 0, 5]; save/load after 5; identical topology, lineage, history and scoring continuation.
+DEMO RESULT: seeded four-feature scoring, shared completion snapshot, anti-farming, Monastery and save/load continuation passed.
+```
+
+Demo log: `builds/phase3-demo.log`. Separate controlled scenarios complete Road and
+Settlement simultaneously, prove live peer mutation cannot change frozen scoring,
+and complete a Monastery for 13 Culture. Crossing all four Track thresholds causes
+no rewards or RNG consumption. Repeated load creates zero gains/events/IDs.
+
+### Git, review and remaining scope
+
+Tested checkpoints: `9875107` (topology/history/scoring foundation, 235 tests) and
+`cf15bfa` (full acceptance and persistence coverage, 274 tests), pushed normally to
+`origin/phase-3`. Final documentation is committed after those checkpoints. The
+branch is prepared for an unmerged PR against `main`.
+
+Review corrected incomplete delegated tests after a service usage limit, a typed
+enclosure-array initialization error, and overly broad Settlement classification.
+Fresh successful verification above supersedes intermediate failures. No known
+gameplay errors, GDScript diagnostics, third-party dependencies or unresolved
+specification ambiguities remain. All six source specifications are unchanged.
+
+All Phase-3 exit conditions are satisfied, including canonical anti-farming
+re-completion. Reserve impossibility remains deliberately conservative. Trade
+Networks, playable Developments/Upgrades/Transformations, Specialists, Relics,
+threshold rewards, Charters, Act transitions, UI and art remain deferred.
+Recommended next action: review the Phase-3 PR. Do not begin Phase 4 without a new
+explicit instruction; do not merge automatically.
+
 ## Phase-2 revalidation — 2026-09-13
 
 The continuation request described Phase 2 as not started, but inspection of the
