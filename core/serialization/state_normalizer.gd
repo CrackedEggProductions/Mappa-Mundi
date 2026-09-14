@@ -13,6 +13,8 @@ static func normalize(state: RunState) -> String:
 	locations.sort_custom(_runtime_id_before)
 	if data.has("features"):
 		_normalize_features(data["features"])
+	if data.has("trade"):
+		_normalize_trade(data["trade"])
 	if data.has("expansion"):
 		var expansion: Dictionary = data["expansion"]
 		expansion["removed_ids"].sort_custom(_decimal_id_before)
@@ -54,8 +56,18 @@ static func _normalize_features(data: Dictionary) -> void:
 		for key: String in ["parent_ids", "member_ids", "scored_component_ids", "scored_field_ids", "scored_river_ids", "scored_forest_ids", "scored_settlement_ids", "completion_ids"]:
 			lineage[key].sort_custom(_decimal_id_before)
 	for record: Dictionary in data["completions"]:
-		for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids"]:
+		for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids", "network_road_ids", "network_settlement_ids", "new_settlement_ids"]:
 			record[key].sort_custom(_decimal_id_before)
 	for event: Dictionary in data["history"]:
 		event["component_ids"].sort_custom(_decimal_id_before)
 		event["parent_ids"].sort_custom(_decimal_id_before)
+
+
+static func _normalize_trade(data: Dictionary) -> void:
+	data["lineages"].sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return String(a["lineage_id"]).to_int() < String(b["lineage_id"]).to_int())
+	data["authorized_links"].sort_custom(_record_before)
+	for key: String in ["lineages", "history"]:
+		for record: Dictionary in data[key]:
+			for set_key: String in ["parent_ids", "road_lineage_ids", "settlement_lineage_ids"]:
+				record[set_key].sort_custom(_decimal_id_before)

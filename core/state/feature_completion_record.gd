@@ -21,6 +21,11 @@ var forest_contact_ids: Array[int] = []
 var new_field_ids: Array[int] = []
 var new_river_ids: Array[int] = []
 var new_forest_ids: Array[int] = []
+## Historical full-network membership at this completion, separate from physical size.
+var trade_network_id: int = 0
+var network_road_ids: Array[int] = []
+var network_settlement_ids: Array[int] = []
+var new_settlement_ids: Array[int] = []
 var gains: Array[int] = [0, 0, 0, 0]
 ## 0 unclassified; 1 Hamlet; 2 Village; 3 Town; 4 City (Development gates deferred).
 var settlement_class: int = 0

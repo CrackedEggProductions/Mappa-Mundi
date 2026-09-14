@@ -110,8 +110,12 @@ static func _validate_lineage(state: RunState, lineage: FeatureLineageState, boa
 	for support_id: int in lineage.scored_field_ids + lineage.scored_river_ids + lineage.scored_forest_ids:
 		if support_id not in board_ids:
 			report.add(&"invalid_support_history", "Historical support requires a persistent board identity.")
-	if not lineage.scored_settlement_ids.is_empty():
-		report.add(&"phase_four_history", "Trade-Network scoring remains deferred.")
+	if not lineage.scored_settlement_ids.is_empty() and (state.trade == null or lineage.feature_type != DomainTypes.FeatureType.ROAD):
+		report.add(&"invalid_trade_payment_owner", "Only initialized Road Trade history may retain Settlement payments.")
+	for settlement_id: int in lineage.scored_settlement_ids:
+		var settlement: FeatureLineageState = state.features.lineage(settlement_id)
+		if settlement == null or settlement.feature_type != DomainTypes.FeatureType.SETTLEMENT:
+			report.add(&"invalid_settlement_payment", "Road payment history must resolve historical Settlements.")
 	if lineage.feature_type != DomainTypes.FeatureType.SETTLEMENT and (not lineage.scored_field_ids.is_empty() or not lineage.scored_river_ids.is_empty() or lineage.highest_settlement_class != 0):
 		report.add(&"wrong_support_category", "Only Settlement lineages own Field/River support history.")
 	if lineage.highest_settlement_class < 0 or lineage.highest_settlement_class > 2:
@@ -201,6 +205,8 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		events[event.event_id] = event
 	var record_ids: Array[int] = []
 	for record: FeatureCompletionRecord in state.features.completions:
+		if state.trade == null and record != null and (record.trade_network_id != 0 or not record.network_road_ids.is_empty() or not record.network_settlement_ids.is_empty() or not record.new_settlement_ids.is_empty()):
+			report.add(&"trade_history_without_state", "Network completion facts require persistent Trade state.")
 		if record == null:
 			report.add(&"null_completion", "Completion records cannot be null.")
 			return
@@ -247,7 +253,7 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 			totals[track] += record.gains[track]
 	_validate_scoring_history(state, record_ids, report)
 	if state.features.tracks == null or state.features.tracks.values != totals:
-		report.add(&"track_history_mismatch", "Cumulative Tracks must equal recorded Phase-3 gains.")
+		report.add(&"track_history_mismatch", "Cumulative Tracks must equal recorded base gains.")
 	if state.features.largest_completed_sizes != largest:
 		report.add(&"largest_record_mismatch", "Historical size records must agree with completions.")
 
@@ -257,7 +263,7 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 		var eligible_lineages: Array[int] = LineageService.get_ancestry_closure(state, lineage.lineage_id)
 		eligible_lineages.append(lineage.lineage_id)
 		var expected: Dictionary = {"completion_ids": [], "scored_component_ids": [],
-			"scored_field_ids": [], "scored_river_ids": [], "scored_forest_ids": []}
+			"scored_field_ids": [], "scored_river_ids": [], "scored_forest_ids": [], "scored_settlement_ids": []}
 		var highest_class: int = 0
 		for record: FeatureCompletionRecord in state.features.completions:
 			if record.lineage_id not in eligible_lineages:
@@ -265,7 +271,7 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 			expected["completion_ids"].append(record.record_id)
 			highest_class = maxi(highest_class, record.settlement_class)
 			for pair: Array in [["scored_component_ids", record.new_component_ids], ["scored_field_ids", record.new_field_ids],
-				["scored_river_ids", record.new_river_ids], ["scored_forest_ids", record.new_forest_ids]]:
+				["scored_river_ids", record.new_river_ids], ["scored_forest_ids", record.new_forest_ids], ["scored_settlement_ids", record.new_settlement_ids]]:
 				for id: int in pair[1]:
 					if not expected[pair[0]].has(id):
 						expected[pair[0]].append(id)
@@ -293,12 +299,12 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 			continue
 		var expected_gain: Array[int] = [0, 0, 0, 0]
 		match record.feature_type:
-			DomainTypes.FeatureType.ROAD: expected_gain[1] = record.new_component_ids.size()
+			DomainTypes.FeatureType.ROAD: expected_gain[1] = record.new_component_ids.size() + 2 * record.new_settlement_ids.size()
 			DomainTypes.FeatureType.SETTLEMENT: expected_gain[0] = 2 * record.new_component_ids.size() + record.new_field_ids.size() + record.new_river_ids.size()
 			DomainTypes.FeatureType.FOREST: expected_gain[3] = record.new_component_ids.size() + 2
 			DomainTypes.FeatureType.RIVER: expected_gain[3] = (floori(record.total_size / 2.0) if record.first_completion else 0) + record.new_forest_ids.size()
 		if record.gains != expected_gain:
-			report.add(&"base_scoring_mismatch", "Phase-3 base gains must match recorded new growth/support.")
+			report.add(&"base_scoring_mismatch", "Base gains must match recorded new growth/support and Trade payments.")
 		var ancestors: Array[int] = LineageService.get_ancestry_closure(state, record.lineage_id)
 		ancestors.append(record.lineage_id)
 		var prior_completion: bool = false
@@ -315,6 +321,12 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 				for id: int in pair[0]:
 					if id in pair[1]:
 						report.add(&"duplicate_base_scoring", "An ancestral scoring contribution cannot pay twice.")
+			for settlement_id: int in record.new_settlement_ids:
+				var settlement_ancestry: Array[int] = LineageService.get_ancestry_closure(state, settlement_id)
+				settlement_ancestry.append(settlement_id)
+				for paid_id: int in prior.new_settlement_ids:
+					if paid_id in settlement_ancestry:
+						report.add(&"duplicate_trade_payment", "A merged Settlement cannot repay an ancestral Road.")
 		if record.first_completion == prior_completion:
 			report.add(&"invalid_first_completion", "First completion must agree with historical ancestry.")
 		if record.feature_type == DomainTypes.FeatureType.SETTLEMENT:

@@ -6,6 +6,10 @@ extends RefCounted
 
 static func capture(state: RunState, current: Array[CurrentFeature], source_id: int = 0) -> CompletionSnapshot:
 	var features: Array[Dictionary] = []
+	# Rebuild once before any scoring: every simultaneous Road sees the same graph.
+	var networks: Array[CurrentTradeNetwork] = []
+	if state.trade != null:
+		networks = TradeNetworkService.rebuild(state)
 	var ordered: Array[CurrentFeature] = current.duplicate()
 	ordered.sort_custom(func(a: CurrentFeature, b: CurrentFeature) -> bool: return a.lineage_id < b.lineage_id)
 	for feature: CurrentFeature in ordered:
@@ -15,11 +19,21 @@ static func capture(state: RunState, current: Array[CurrentFeature], source_id: 
 		var field_ids: Array[int] = []
 		var river_ids: Array[int] = []
 		var forest_ids: Array[int] = []
+		var network_id: int = 0
+		var network_roads: Array[int] = []
+		var network_settlements: Array[int] = []
 		if feature.feature_type == DomainTypes.FeatureType.SETTLEMENT:
 			field_ids = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.FIELD)
 			river_ids = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.RIVER)
 		elif feature.feature_type == DomainTypes.FeatureType.RIVER:
 			forest_ids = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.FOREST)
+		elif feature.feature_type == DomainTypes.FeatureType.ROAD:
+			for network: CurrentTradeNetwork in networks:
+				if network.road_lineage_ids.has(lineage.lineage_id):
+					network_id = network.lineage_id
+					network_roads = network.road_lineage_ids.duplicate()
+					network_settlements = network.settlement_lineage_ids.duplicate()
+					break
 		features.append({
 			"lineage_id": lineage.lineage_id, "feature_type": feature.feature_type,
 			"component_ids": feature.component_ids.duplicate(), "total_size": feature.component_ids.size(),
@@ -30,12 +44,16 @@ static func capture(state: RunState, current: Array[CurrentFeature], source_id: 
 			"new_field_ids": _difference(field_ids, lineage.scored_field_ids),
 			"new_river_ids": _difference(river_ids, lineage.scored_river_ids),
 			"new_forest_ids": _difference(forest_ids, lineage.scored_forest_ids),
+			"trade_network_id": network_id, "network_road_ids": network_roads,
+			"network_settlement_ids": network_settlements,
+			"new_settlement_ids": _unpaid_settlements(state, lineage, network_settlements),
 			"undeveloped": FeatureContactService.forest_is_undeveloped(state, feature),
 		})
 	return CompletionSnapshot.new({
 		"act": state.expansion.current_act, "placement_index": state.expansion.normal_placements,
 		"source_id": source_id, "board_revision": state.expansion.board.revision,
 		"topology_revision": state.features.topology_revision,
+		"trade_revision": state.trade.trade_revision if state.trade != null else 0,
 		"tracks": state.features.tracks.values.duplicate(), "features": features,
 		"enclosures": EnclosureService.capture(state),
 	})
@@ -51,9 +69,14 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[FeatureCompletionRe
 		record.total_size = facts["total_size"]
 		record.first_completion = facts["first_completion"]
 		record.growth_phase = facts["growth_phase"]
+		record.trade_network_id = facts.get("trade_network_id", 0)
 		for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids"]:
 			var values: Array[int] = []
 			values.assign(facts[key])
+			record.set(key, values)
+		for key: String in ["network_road_ids", "network_settlement_ids", "new_settlement_ids"]:
+			var values: Array[int] = []
+			values.assign(facts.get(key, []))
 			record.set(key, values)
 		match record.feature_type:
 			DomainTypes.FeatureType.SETTLEMENT:
@@ -62,8 +85,7 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[FeatureCompletionRe
 				var qualified: int = 1 if record.total_size <= 2 else (2 if record.total_size <= 5 else 0)
 				record.settlement_class = maxi(qualified, int(facts.get("highest_settlement_class", 0)))
 			DomainTypes.FeatureType.ROAD:
-				# Network +2 per Settlement belongs strictly to Phase 4.
-				record.gains[DomainTypes.TrackType.TRADE] = record.new_component_ids.size()
+				record.gains[DomainTypes.TrackType.TRADE] = record.new_component_ids.size() + 2 * record.new_settlement_ids.size()
 			DomainTypes.FeatureType.FOREST:
 				record.gains[DomainTypes.TrackType.ECOLOGY] = record.new_component_ids.size() + (2 if facts["undeveloped"] else 0)
 			DomainTypes.FeatureType.RIVER:
@@ -136,6 +158,7 @@ static func _apply_lineage(state: RunState, record: FeatureCompletionRecord) -> 
 	_union(lineage.scored_field_ids, record.new_field_ids)
 	_union(lineage.scored_river_ids, record.new_river_ids)
 	_union(lineage.scored_forest_ids, record.new_forest_ids)
+	_union(lineage.scored_settlement_ids, record.new_settlement_ids)
 	lineage.highest_settlement_class = maxi(lineage.highest_settlement_class, record.settlement_class)
 	state.features.largest_completed_sizes[record.feature_type] = maxi(state.features.largest_completed_sizes[record.feature_type], record.total_size)
 
@@ -156,6 +179,22 @@ static func _event(state: RunState, kind: StringName, source_id: int) -> Feature
 	event.placement_index = state.expansion.normal_placements
 	event.source_id = source_id
 	return event
+
+
+static func _unpaid_settlements(state: RunState, road: FeatureLineageState, settlement_ids: Array[int]) -> Array[int]:
+	var result: Array[int] = []
+	for settlement_id: int in settlement_ids:
+		var historical_ids: Array[int] = LineageService.get_ancestry_closure(state, settlement_id)
+		historical_ids.append(settlement_id)
+		var paid: bool = false
+		for historical_id: int in historical_ids:
+			if road.scored_settlement_ids.has(historical_id):
+				paid = true
+				break
+		if not paid:
+			result.append(settlement_id)
+	result.sort()
+	return result
 
 
 static func _difference(current: Array[int], historical: Array[int]) -> Array[int]:
