@@ -1,7 +1,7 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 3 — feature topology, lineage, completion and base scoring**.
+GDScript**. Current implementation: **Phase 4 — Trade Networks**.
 Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
@@ -79,7 +79,8 @@ The domain owns gameplay state. Future views submit commands and display results
 Current board/derived topology and persistent lineage/history remain separate
 responsibilities. Sparse placement, bag/hand, Reserve and Survey are implemented.
 Connected feature topology, persistent scoring history and Phase-3 base scoring
-are implemented. Trade Networks and player-facing Save/Continue remain deferred.
+are implemented, including separate Trade Networks and full-network Road scoring.
+Player-facing Save/Continue remains deferred.
 
 ## Domain usage
 
@@ -181,7 +182,7 @@ implemented. Reserve-impossibility assessment conservatively returns
 `NOT_PROVABLY_IMPOSSIBLE`; later systems must expand proof before any automatic removal.
 
 See [implementation progress](IMPLEMENTATION_PROGRESS.md) for verification and
-remaining limits. Phase 4 requires a new instruction.
+remaining limits. Phase 5 requires a new instruction.
 
 ## Feature inspection and scoring
 
@@ -210,8 +211,9 @@ Settlement support uses explicit internal Field/River contact and reachable
 matching edge sockets; it never infers support from an unrelated feature elsewhere
 on an adjacent tile. Homestead resources explicitly mark same-tile Settlement/Field
 meeting. Historical support uses persistent board-base IDs separately per category
-and lineage. Road scoring is **tile Trade only**; the +2 per network Settlement
-bonus is deliberately absent until Phase 4.
+and lineage. Road scoring adds +1 per new Road component and +2 per eligible
+Settlement in the full current Trade Network. Explicit legacy fixtures with null
+Trade state continue to exercise the earlier tile-only scoring boundary.
 
 Feature saves include components, ancestry, scoring sets, completion facts,
 enclosures, structured audit records and Tracks. Loading reconstructs and validates
@@ -236,5 +238,52 @@ godot --headless --path . --script res://tests/replay/phase_three_demo.gd
 
 The full `./tests/run_tests.sh` remains the acceptance command and checks engine
 diagnostics as well as test assertions. Phase 3 has **274 tests** and **88 checked
-scripts**. Its seed-16 demonstration completes all four tracked feature types in
+scripts** at the Phase-3 checkpoint. Its seed-16 demonstration completes all four tracked feature types in
 twelve placements and resumes identically after loading at placement five.
+
+## Trade Network inspection
+
+Normal Homestead setup initializes `state.trade`. A physical Road Feature and an
+economic Trade Network retain separate identities. Only explicit Road–Settlement
+access joins the economic graph; adjacency and completion status do not grant
+access. Settlement hubs propagate connectivity through other unfinished Roads
+and Settlements immediately.
+
+`TradeNetworkService.rebuild(state)` returns deterministic `CurrentTradeNetwork`
+values with sorted Road/Settlement lineage IDs, access links and historical network
+IDs. Queries include `network_for_road`, `network_for_settlement`,
+`settlements_reachable_from_road`, `same_network`, `settlement_count`,
+`get_ancestry_closure` and `is_ancestor`.
+
+Normal placement reconstructs feature lineages, reconciles Trade history, then
+captures simultaneous completions before calculating any base score. Ordinary
+network growth retains identity; merger, split and reconnection preserve ancestry.
+Topology changes alone award nothing. Road payment history belongs to the Road
+lineage and survives all economic changes and physical lineage mergers. If any
+ancestor of a current Settlement already paid that Road, it cannot pay again.
+
+Network saves persist genealogy, audit records, reconciliation metadata and
+per-Road payments. Loading rebuilds connectivity purely and verifies the saved
+identities without reconciling, allocating, scoring, emitting events or using RNG.
+The current save shape requires explicit Trade snapshot fields on completion
+records; older shapes are rejected rather than silently migrated. The optional
+null-Trade fixture variant remains supported. There is no player migration flow.
+
+`TradeState.authorized_links` is an extension input for later economic rules.
+Phase 4 accepts only controlled fixture contributions there; ordinary access comes
+from board metadata. Ferry Rights, Bridge, Urban Expansion and Developments are
+not implemented. Future rule layers must maintain valid current lineage endpoints
+and reconcile after adding or removing their authorized links.
+
+Run the standalone Phase-4 demonstration after editor import:
+
+```sh
+XDG_DATA_HOME="$PWD/builds/test-userdata" \
+XDG_CONFIG_HOME="$PWD/builds/test-config" \
+XDG_CACHE_HOME="$PWD/builds/test-cache" \
+godot --headless --path . --script res://tests/replay/phase_four_demo.gd
+```
+
+It combines twelve seeded legal placements and save/load continuation with
+controlled transitive-network, re-completion, merger and split/reconnection
+scenarios. These fixture actions do not expose future gameplay commands.

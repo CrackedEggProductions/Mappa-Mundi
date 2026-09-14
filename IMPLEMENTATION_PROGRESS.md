@@ -1,5 +1,15 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 4 — in progress
+
+Started 2026-09-14 on `phase-4`, after Ro explicitly authorized merging PR #1.
+Accepted `main` merge `8b6b6ab` contains Phase-3 final `238b98e`. The full baseline
+passed: **274 tests, 0 failures; 88 scripts without diagnostics**, command
+`./tests/run_tests.sh`, exit 0, logs `builds/verification/run-GzeIObV5/`.
+The new branch is pushed to `origin/phase-4`. Implementation and acceptance tests
+are in progress; Phase 4 is not yet complete. Physical Road features remain
+separate from the economic Trade graph. Ferry Rights and Phase 5 remain deferred.
+
 ## Phase 3 — complete
 
 Verified 2026-09-13 on `phase-3`. Phase 4 has not started. Phase-2 baseline

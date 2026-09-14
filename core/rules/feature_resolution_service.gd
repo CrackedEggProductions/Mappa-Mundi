@@ -1,6 +1,6 @@
 class_name FeatureResolutionService
 extends RefCounted
-## Synchronous Phase-3 domain boundary, before hand refill. No player-facing rewrites.
+## Synchronous feature and economic topology boundary, before hand refill. No player-facing rewrites.
 
 
 static func initialize(state: RunState) -> void:
@@ -15,6 +15,8 @@ static func resolve(state: RunState, source_id: int = 0) -> void:
 	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
 	assert(LineageService.validate_rebuild(state, current).is_valid)
 	LineageService.reconcile(state, current, source_id)
+	if state.trade != null:
+		TradeNetworkService.reconcile(state, source_id)
 	FeatureScoringService.resolve(state, current, source_id)
 
 
@@ -22,8 +24,8 @@ static func has_resolution_capacity(state: RunState) -> bool:
 	# Bound all IDs/events and base gains for one placement, including enclosure peers.
 	# This is a representational guard, not a gameplay limit or optimization.
 	var squares: int = state.expansion.board.cells.size() + 1
-	var id_budget: int = squares * 64 + state.features.enclosures.size() * 8 + 16
-	var gain_budget: int = squares * 16 + state.features.enclosures.size() * 13
+	var id_budget: int = squares * 96 + state.features.enclosures.size() * 8 + 16
+	var gain_budget: int = squares * squares * 8 + squares * 16 + state.features.enclosures.size() * 13
 	if state.next_runtime_id > RunIdAllocator.EXHAUSTED_CURSOR - id_budget:
 		return false
 	for value: int in state.features.tracks.values:

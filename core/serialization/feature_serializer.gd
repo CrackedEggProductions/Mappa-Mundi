@@ -5,7 +5,7 @@ extends RefCounted
 const COMPONENT_KEYS: Array[String] = [ "component_id", "feature_type", "coordinate", "origin_act", "origin_source_type", "origin_source_runtime_id", "lineage_id" ]
 const LINEAGE_KEYS: Array[String] = [ "lineage_id", "feature_type", "parent_ids", "active", "completed", "growth_phase", "member_ids", "scored_component_ids", "scored_field_ids", "scored_river_ids", "scored_forest_ids", "scored_settlement_ids", "completion_ids", "highest_settlement_class" ]
 const HISTORY_KEYS: Array[String] = [ "event_id", "kind", "lineage_id", "feature_type", "act", "placement_index", "source_id", "parent_event_id", "component_ids", "parent_ids", "track", "amount" ]
-const COMPLETION_KEYS: Array[String] = [ "record_id", "snapshot_id", "lineage_id", "feature_type", "enclosure_id", "act", "placement_index", "source_id", "first_completion", "growth_phase", "total_size", "component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids", "gains", "settlement_class" ]
+const COMPLETION_KEYS: Array[String] = [ "record_id", "snapshot_id", "lineage_id", "feature_type", "enclosure_id", "act", "placement_index", "source_id", "first_completion", "growth_phase", "total_size", "component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids", "gains", "settlement_class", "trade_network_id", "network_road_ids", "network_settlement_ids", "new_settlement_ids" ]
 const ENCLOSURE_KEYS: Array[String] = [ "enclosure_id", "coordinate", "development_tile_copy_id", "family_id", "stage", "completed_stages", "assigned_steward_id", "completion_ids" ]
 
 
@@ -291,6 +291,10 @@ static func _encode_completion(value: FeatureCompletionRecord) -> Dictionary:
 		"new_forest_ids": ExpansionSerializer._encode_ids(value.new_forest_ids),
 		"gains": ExpansionSerializer._encode_ids(value.gains),
 		"settlement_class": value.settlement_class,
+		"trade_network_id": str(value.trade_network_id),
+		"network_road_ids": ExpansionSerializer._encode_ids(value.network_road_ids),
+		"network_settlement_ids": ExpansionSerializer._encode_ids(value.network_settlement_ids),
+		"new_settlement_ids": ExpansionSerializer._encode_ids(value.new_settlement_ids),
 	}
 
 
@@ -317,6 +321,10 @@ static func _decode_completion(data: Dictionary) -> FeatureCompletionRecord:
 	value.new_forest_ids = ExpansionSerializer._decode_ids(data["new_forest_ids"])
 	value.gains = ExpansionSerializer._decode_ids(data["gains"])
 	value.settlement_class = int(data["settlement_class"])
+	value.trade_network_id = String(data["trade_network_id"]).to_int()
+	value.network_road_ids = ExpansionSerializer._decode_ids(data["network_road_ids"])
+	value.network_settlement_ids = ExpansionSerializer._decode_ids(data["network_settlement_ids"])
+	value.new_settlement_ids = ExpansionSerializer._decode_ids(data["new_settlement_ids"])
 	return value
 
 
@@ -364,6 +372,11 @@ static func _valid_completion(value: Variant) -> bool:
 		return false
 	if not (_counts(data["gains"])):
 		return false
+	if not ExpansionSerializer._nonnegative_int64(data["trade_network_id"]):
+		return false
+	for key: String in ["network_road_ids", "network_settlement_ids", "new_settlement_ids"]:
+		if not ExpansionSerializer._valid_id_array(data[key], false):
+			return false
 	if not (RunSerializer._is_bounded_integer(data["settlement_class"], 0, 4)):
 		return false
 	return true

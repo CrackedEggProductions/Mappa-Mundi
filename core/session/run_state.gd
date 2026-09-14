@@ -18,6 +18,8 @@ var tile_locations: Array[TileLocationState] = []
 var expansion: ExpansionState = null
 ## Null for the preserved Phase-0/1/2 fixture/save variants.
 var features: FeatureState = null
+## Null for preserved pre-Trade fixtures; economic history is separate from features.
+var trade: TradeState = null
 
 ## Forwarding properties prevent stale duplicate continuation metadata.
 var original_seed: int:

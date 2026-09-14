@@ -65,6 +65,8 @@ static func deserialize(text: String, content: ContentRegistry) -> Deserializati
 		state.expansion = ExpansionSerializer.decode(data["expansion"])
 	if data.has("features"):
 		state.features = FeatureSerializer.decode(data["features"])
+	if data.has("trade"):
+		state.trade = TradeSerializer.decode(data["trade"])
 	# The invariant boundary reconstructs topology purely; never reconcile or score on load.
 	var report: InvariantReport = InvariantValidator.validate(state, content)
 	if not report.is_valid:
@@ -102,6 +104,8 @@ static func to_envelope(state: RunState) -> Dictionary:
 		envelope["run_state"]["expansion"] = ExpansionSerializer.encode(state.expansion)
 	if state.features != null:
 		envelope["run_state"]["features"] = FeatureSerializer.encode(state.features)
+	if state.trade != null:
+		envelope["run_state"]["trade"] = TradeSerializer.encode(state.trade)
 	return envelope
 
 
@@ -124,6 +128,8 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		run_keys.append("expansion")
 	if envelope["run_state"] is Dictionary and envelope["run_state"].has("features"):
 		run_keys.append("features")
+	if envelope["run_state"] is Dictionary and envelope["run_state"].has("trade"):
+		run_keys.append("trade")
 	if not _has_exact_keys(envelope["run_state"], run_keys):
 		return _invalid("run_state has missing or unsupported fields.")
 	var data: Dictionary = envelope["run_state"]
@@ -148,6 +154,12 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		var feature_shape: ValidationResult = FeatureSerializer.validate_shape(data["features"])
 		if not feature_shape.is_valid:
 			return feature_shape
+	if data.has("trade"):
+		if not data.has("features"):
+			return _invalid("Trade state requires feature identity.")
+		var trade_shape: ValidationResult = TradeSerializer.validate_shape(data["trade"])
+		if not trade_shape.is_valid:
+			return trade_shape
 	if not data["tile_copies"] is Array or not data["tile_locations"] is Array:
 		return _invalid("Physical tile registries must be arrays.")
 	for entry: Variant in data["tile_copies"]:
