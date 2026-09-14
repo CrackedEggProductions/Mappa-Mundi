@@ -11,7 +11,7 @@ func tests() -> Array[Callable]:
 		transitive_hubs_keep_roads_distinct, deterministic_queries,
 		growth_retains_identity, merger_retains_parents_without_score,
 		split_and_reconnect_preserve_genealogy, rebuild_does_not_allocate_or_consume_rng,
-		dissolved_network_reconnects_with_history]
+		dissolved_network_reconnects_with_history, reconciliation_order_is_deterministic]
 
 
 func _definition_access(id: StringName) -> bool:
@@ -146,4 +146,30 @@ func dissolved_network_reconnects_with_history() -> bool:
 	cell.relationships.append(TileFeatureRelationship.new())
 	TradeNetworkService.reconcile(state)
 	expect_true(TradeNetworkService.is_ancestor(state, ancestor, TradeNetworkService.rebuild(state)[0].lineage_id), "Restoring access retains dissolved history")
+	return true
+
+
+func reconciliation_order_is_deterministic() -> bool:
+	var registry: ContentRegistry = Fixture.content()
+	var state: RunState = Fixture.pair(registry)
+	var saved: SerializationResult = RunSerializer.serialize(state, registry)
+	var loaded: DeserializationResult = RunSerializer.deserialize(saved.json_text, registry)
+	expect_true(loaded.validation.is_valid, "Independent reconciliation starts from an exact copy")
+	var mirror: RunState = loaded.state
+	if mirror == null: return true
+	mirror.features.components.reverse()
+	mirror.features.lineages.reverse()
+	mirror.trade.lineages.reverse()
+	Fixture.connect_pair(state)
+	Fixture.connect_pair(mirror)
+	expect_equal(StateNormalizer.fingerprint(mirror), StateNormalizer.fingerprint(state), "Parent ordering cannot alter new IDs or merge audit records")
+	var lineage: TradeNetworkLineageState = state.trade.lineage(TradeNetworkService.rebuild(state)[0].lineage_id)
+	var ordered: Array[int] = lineage.parent_ids.duplicate()
+	ordered.sort()
+	expect_equal(lineage.parent_ids, ordered, "Persistent parent order is canonical")
+	var revision: int = state.trade.trade_revision
+	Fixture.disconnect_pair(state)
+	expect_equal(state.trade.trade_revision, revision + 1, "Relevant access change advances Trade revision exactly once")
+	TradeNetworkService.reconcile(state)
+	expect_equal(state.trade.trade_revision, revision + 1, "Unchanged reconciliation does not advance revision")
 	return true

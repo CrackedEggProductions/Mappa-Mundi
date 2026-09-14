@@ -287,3 +287,7 @@ godot --headless --path . --script res://tests/replay/phase_four_demo.gd
 It combines twelve seeded legal placements and save/load continuation with
 controlled transitive-network, re-completion, merger and split/reconnection
 scenarios. These fixture actions do not expose future gameplay commands.
+
+Phase-4 acceptance: **329 tests passed, 0 failed; 102 scripts parsed without
+diagnostics**, including all 274 prior tests. See implementation progress for
+exact logs, genealogy and anti-farming evidence.
