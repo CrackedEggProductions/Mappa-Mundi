@@ -1,7 +1,7 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 2 — board and basic tile placement**.
+GDScript**. Current implementation: **Phase 3 — feature topology, lineage, completion and base scoring**.
 Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
@@ -78,7 +78,8 @@ process to run with those capabilities. No network service is a game dependency.
 The domain owns gameplay state. Future views submit commands and display results.
 Current board/derived topology and persistent lineage/history remain separate
 responsibilities. Sparse placement, bag/hand, Reserve and Survey are implemented.
-Connected feature topology, scoring and player-facing Save/Continue remain deferred.
+Connected feature topology, persistent scoring history and Phase-3 base scoring
+are implemented. Trade Networks and player-facing Save/Continue remain deferred.
 
 ## Domain usage
 
@@ -106,7 +107,8 @@ removed IDs and internal feature metadata normalize independently of insertion o
 typed issues; `assert_valid(...)` reports internal corruption loudly. Phase-1
 fixtures use archived physical copies with one ID-based `REMOVED_FROM_RUN`
 location each in `SETUP`, with null `expansion`. Initialized Homestead runs carry
-typed `ExpansionState` and validate every zone, board cell and placement boundary.
+typed `ExpansionState` and `FeatureState`; validation covers physical zones,
+reconstructed topology, lineage ancestry, completion history and cumulative Tracks.
 
 RNG helpers provide bounded integer/index selection, a copied Fisher–Yates shuffle
 of IDs and selection from unique, lexically ordered definition IDs. All require
@@ -179,4 +181,60 @@ implemented. Reserve-impossibility assessment conservatively returns
 `NOT_PROVABLY_IMPOSSIBLE`; later systems must expand proof before any automatic removal.
 
 See [implementation progress](IMPLEMENTATION_PROGRESS.md) for verification and
-remaining limits. Phase 3 requires a new instruction.
+remaining limits. Phase 4 requires a new instruction.
+
+## Feature inspection and scoring
+
+`HomesteadRunFactory.create(seed, content)` initializes the four Founding feature
+components and lineages after constructing the deterministic physical inventory.
+Each subsequent normal placement resolves features before hand refill.
+
+`TopologyService.rebuild(state)` is a pure full reconstruction returning typed
+`CurrentFeature` values: feature type, component IDs, occupied coordinates, open
+exit count and persisted lineage ID. It consumes no RNG or runtime IDs. Views can
+inspect this result and `state.features` without becoming gameplay authority.
+
+Persistent components retain independent origin metadata. New geometry creates
+lineages; ordinary growth and reopening retain identity; merging creates a
+descendant with sorted parent IDs and the union of ancestral scoring sets.
+`LineageService.is_ancestor(state, ancestor_id, lineage_id)` and
+`get_ancestry_closure(state, lineage_id)` expose that history.
+
+`FeatureScoringService.capture(...)` produces a deeply owned, read-only shared
+`CompletionSnapshot`. `calculate(snapshot)` reads only those frozen facts. All
+base gains are calculated before any completion updates Tracks or scoring sets;
+structured child audit events drain FIFO after the batch. Later effect categories
+are explicit extension stages and currently produce no effects or rewards.
+
+Settlement support uses explicit internal Field/River contact and reachable
+matching edge sockets; it never infers support from an unrelated feature elsewhere
+on an adjacent tile. Homestead resources explicitly mark same-tile Settlement/Field
+meeting. Historical support uses persistent board-base IDs separately per category
+and lineage. Road scoring is **tile Trade only**; the +2 per network Settlement
+bonus is deliberately absent until Phase 4.
+
+Feature saves include components, ancestry, scoring sets, completion facts,
+enclosures, structured audit records and Tracks. Loading reconstructs and validates
+topology without reconciling lineages, scoring, RNG draws or allocations. Optional
+feature state preserves the earlier fixture variant; current board records now
+require explicit Field-support and geometry-revision fields. Older shapes are
+rejected rather than silently migrated. There is no disk-save migration service.
+
+The fixture-only geometry rewrite helper lives under `tests/fixtures/`; it preserves
+physical identity, exact occupied-edge matching and all stable-state invariants.
+There is no playable Transformation or Monastery command. A deferred enclosure
+uses Development ID zero and supports testing its eight-neighbor completion.
+
+After editor import, run the standalone headless demonstration from this root:
+
+```sh
+XDG_DATA_HOME="$PWD/builds/test-userdata" \
+XDG_CONFIG_HOME="$PWD/builds/test-config" \
+XDG_CACHE_HOME="$PWD/builds/test-cache" \
+godot --headless --path . --script res://tests/replay/phase_three_demo.gd
+```
+
+The full `./tests/run_tests.sh` remains the acceptance command and checks engine
+diagnostics as well as test assertions. Phase 3 has **274 tests** and **88 checked
+scripts**. Its seed-16 demonstration completes all four tracked feature types in
+twelve placements and resumes identically after loading at placement five.

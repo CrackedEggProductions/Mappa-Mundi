@@ -10,6 +10,7 @@ const BOARD_KEYS: Array[String] = ["revision", "cells"]
 const CELL_KEYS: Array[String] = [
 	"coordinate", "base_tile_copy_id", "definition_id", "rotation", "act_placed",
 	"normal_placement_index", "effective_edges", "feature_groups", "relationships",
+	"field_supports_settlement", "geometry_revision",
 ]
 const GROUP_KEYS: Array[String] = ["edge_type", "directions"]
 const RELATION_KEYS: Array[String] = ["from_edge_type", "to_edge_type", "kind"]
@@ -33,6 +34,8 @@ static func encode(state: ExpansionState) -> Dictionary:
 			"act_placed": cell.act_placed, "normal_placement_index": cell.normal_placement_index,
 			"effective_edges": cell.effective_edges.duplicate(),
 			"feature_groups": groups, "relationships": relationships,
+			"field_supports_settlement": cell.field_supports_settlement,
+			"geometry_revision": str(cell.geometry_revision),
 		})
 	return {
 		"board": {"revision": str(state.board.revision), "cells": cells},
@@ -56,6 +59,8 @@ static func decode(data: Dictionary) -> ExpansionState:
 		cell.rotation = int(entry["rotation"])
 		cell.act_placed = int(entry["act_placed"])
 		cell.normal_placement_index = int(entry["normal_placement_index"])
+		cell.field_supports_settlement = entry["field_supports_settlement"]
+		cell.geometry_revision = String(entry["geometry_revision"]).to_int()
 		for edge: Variant in entry["effective_edges"]:
 			cell.effective_edges.append(int(edge) as DomainTypes.EdgeType)
 		for encoded_group: Dictionary in entry["feature_groups"]:
@@ -119,6 +124,8 @@ static func _validate_cell(value: Variant) -> ValidationResult:
 	if not RunSerializer._has_exact_keys(value, CELL_KEYS):
 		return _invalid("Malformed board cell record.")
 	var cell: Dictionary = value
+	if not cell["field_supports_settlement"] is bool or not _nonnegative_int64(cell["geometry_revision"]):
+		return _invalid("Invalid explicit Field support or geometry revision.")
 	if not cell["coordinate"] is Array or cell["coordinate"].size() != 2:
 		return _invalid("Coordinates must be explicit two-element arrays.")
 	for axis: Variant in cell["coordinate"]:

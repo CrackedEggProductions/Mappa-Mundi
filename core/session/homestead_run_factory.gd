@@ -29,6 +29,7 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 		state.expansion.hand.append(PhysicalTileRules.draw(state, config))
 	state.phase = GamePhase.Type.TURN_INPUT
 	StalemateRules.cycle_if_dead(state, content)
+	FeatureResolutionService.initialize(state)
 	InvariantValidator.assert_valid(state, content)
 	return state
 

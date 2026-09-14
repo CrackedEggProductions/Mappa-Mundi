@@ -11,6 +11,9 @@ var normal_placement_index: int = 0
 var effective_edges: Array[DomainTypes.EdgeType] = []
 var feature_groups: Array[TileFeatureGroup] = []
 var relationships: Array[TileFeatureRelationship] = []
+var field_supports_settlement: bool = false
+## Current geometry rewrite generation. No player-facing rewrite exists in Phase 3.
+var geometry_revision: int = 0
 
 
 static func from_definition(
@@ -26,6 +29,7 @@ static func from_definition(
 	cell.normal_placement_index = placement_index
 	cell.effective_edges = TileRotation.edges(definition.canonical_edges, quarter_turns)
 	cell.feature_groups = TileRotation.groups(definition.feature_groups, quarter_turns)
+	cell.field_supports_settlement = definition.field_supports_settlement
 	for relationship: TileFeatureRelationship in definition.relationships:
 		cell.relationships.append(relationship.duplicate(true) as TileFeatureRelationship)
 	return cell

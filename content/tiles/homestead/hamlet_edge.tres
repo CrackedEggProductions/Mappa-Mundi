@@ -18,3 +18,4 @@ unlock_act = 1
 reward_class = 1
 canonical_edges = Array[int]([4, 0, 0, 0])
 feature_groups = Array[ExtResource("2_group")]([SubResource("Group_4")])
+field_supports_settlement = true

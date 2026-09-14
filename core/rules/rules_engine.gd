@@ -47,10 +47,13 @@ static func validate(state: RunState, content: ContentRegistry,
 	# limitation, not a reason to leave a half-applied command behind.
 	var emergency_capacity: int = content.get_config().emergency_definitions.size() * 2
 	if state.expansion.state_revision == 9223372036854775807 \
+			or state.expansion.board.revision == 9223372036854775807 \
 			or state.rng.operation_count > 9223372036854775807 - 2 \
 			or state.next_runtime_id > RunIdAllocator.EXHAUSTED_CURSOR - emergency_capacity:
 		return _failure(&"invariant_failure", "Insufficient runtime counter capacity to resolve a command safely.")
 	if command is PlaceTileCommand:
+		if state.features != null and not FeatureResolutionService.has_resolution_capacity(state):
+			return _failure(&"invariant_failure", "Insufficient counters to resolve feature history safely.")
 		return _validate_place(state, content, command as PlaceTileCommand)
 	if command is ReserveTileCommand:
 		var reserve_command: ReserveTileCommand = command as ReserveTileCommand
@@ -133,7 +136,10 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 		command.rotation, expansion.current_act, expansion.normal_placements
 	))
 	PhysicalTileRules.set_location(state, tile.tile_copy_id, TileLocationState.Kind.BOARD_BASE)
-	# Future completion/reward resolution belongs here, before the pending draw.
+	if state.features != null:
+		TopologyService.add_cell_components(state, expansion.board.get_cell(command.coordinate))
+		FeatureResolutionService.resolve(state, tile.tile_copy_id)
+	# Later reward stages join the shared completion pipeline before this draw.
 	var config: RunConfig = content.get_config()
 	if expansion.normal_placements == config.act_placement_limits[expansion.current_act - 1]:
 		state.phase = GamePhase.Type.RESOLVING_ACT_TRANSITION

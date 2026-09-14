@@ -82,6 +82,11 @@ static func validate_tile(tile: TileDefinition) -> ValidationResult:
 		return _invalid("Phase-2 Expansion content cannot declare unimplemented behavior or overlays.", tile_id)
 	if tile.canonical_edges != canonical_edges_for(tile_id):
 		return _invalid("Tile edges differ from the documented canonical orientation.", tile_id)
+	var field_support: bool = tile_id in [&"tile.hamlet_edge", &"tile.settlement_corner",
+		&"tile.settlement_throughway", &"tile.settlement_gate", &"tile.settlement_corner_gate",
+		&"tile.riverside_hamlet"]
+	if tile.field_supports_settlement != field_support:
+		return _invalid("Settlement/Field meeting must match the explicit alpha support geometry.", tile_id)
 	var groups_result: ValidationResult = _validate_groups(tile)
 	if not groups_result.is_valid:
 		return groups_result

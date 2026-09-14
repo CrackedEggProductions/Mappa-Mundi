@@ -63,6 +63,9 @@ static func deserialize(text: String, content: ContentRegistry) -> Deserializati
 		))
 	if data.has("expansion"):
 		state.expansion = ExpansionSerializer.decode(data["expansion"])
+	if data.has("features"):
+		state.features = FeatureSerializer.decode(data["features"])
+	# The invariant boundary reconstructs topology purely; never reconcile or score on load.
 	var report: InvariantReport = InvariantValidator.validate(state, content)
 	if not report.is_valid:
 		return _rejected(&"invalid_saved_state", "Saved state violates domain invariants.", {
@@ -97,6 +100,8 @@ static func to_envelope(state: RunState) -> Dictionary:
 	}
 	if state.expansion != null:
 		envelope["run_state"]["expansion"] = ExpansionSerializer.encode(state.expansion)
+	if state.features != null:
+		envelope["run_state"]["features"] = FeatureSerializer.encode(state.features)
 	return envelope
 
 
@@ -117,6 +122,8 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 	var run_keys: Array[String] = RUN_KEYS.duplicate()
 	if envelope["run_state"] is Dictionary and envelope["run_state"].has("expansion"):
 		run_keys.append("expansion")
+	if envelope["run_state"] is Dictionary and envelope["run_state"].has("features"):
+		run_keys.append("features")
 	if not _has_exact_keys(envelope["run_state"], run_keys):
 		return _invalid("run_state has missing or unsupported fields.")
 	var data: Dictionary = envelope["run_state"]
@@ -135,6 +142,12 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 			return expansion_shape
 	elif not _is_bounded_integer(data["phase"], GamePhase.Type.SETUP, GamePhase.Type.SETUP):
 		return _invalid("A gameplay phase requires initialized expansion state.")
+	if data.has("features"):
+		if not data.has("expansion"):
+			return _invalid("Feature state requires a board.")
+		var feature_shape: ValidationResult = FeatureSerializer.validate_shape(data["features"])
+		if not feature_shape.is_valid:
+			return feature_shape
 	if not data["tile_copies"] is Array or not data["tile_locations"] is Array:
 		return _invalid("Physical tile registries must be arrays.")
 	for entry: Variant in data["tile_copies"]:

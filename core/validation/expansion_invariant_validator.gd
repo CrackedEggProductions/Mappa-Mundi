@@ -43,8 +43,15 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 				report.add(&"illegal_founding_copy", "Founding exists only as the single origin base copy.", tile.tile_copy_id)
 	if expansion.board.cells.size() != expansion.normal_placements + 1:
 		report.add(&"placement_count_mismatch", "Board must contain founding plus the normal placements committed so far.")
-	if expansion.board.revision != expansion.board.cells.size():
-		report.add(&"invalid_board_revision", "Phase-2 board revision advances once per base insertion.")
+	var expected_revision: int = expansion.board.cells.size()
+	for cell: BoardCellState in expansion.board.cells.values():
+		if cell != null and cell.geometry_revision >= 0:
+			if expected_revision > 9223372036854775807 - cell.geometry_revision:
+				report.add(&"overflowing_geometry_history", "Geometry revision sum must remain representable.")
+			else:
+				expected_revision += cell.geometry_revision
+	if expansion.board.revision != expected_revision:
+		report.add(&"invalid_board_revision", "Board revision must reflect insertions and explicit geometry rewrites.")
 	if not expansion.board.cells.has(Vector2i.ZERO):
 		report.add(&"missing_founding_tile", "Founding Tile must remain at the origin.")
 	else:
@@ -130,12 +137,20 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	for edge: DomainTypes.EdgeType in cell.effective_edges:
 		if edge not in DomainTypes.EdgeType.values():
 			report.add(&"invalid_effective_edge", "Unknown effective edge type.", tile_id)
-	if cell.effective_edges != TileRotation.edges(definition.canonical_edges, cell.rotation):
+	if cell.geometry_revision < 0 or (state.features == null and cell.geometry_revision != 0):
+		report.add(&"invalid_geometry_revision", "Rewritten geometry requires initialized feature history.", tile_id)
+	if cell.definition_id == FOUNDING_ID and cell.geometry_revision != 0:
+		report.add(&"rewritten_founding", "Founding geometry remains fixed.", tile_id)
+	if cell.geometry_revision == 0 and cell.effective_edges != TileRotation.edges(definition.canonical_edges, cell.rotation):
 		report.add(&"unexpected_effective_geometry", "Phase-2 effective edges must equal rotated base geometry.", tile_id)
-	if _groups_signature(cell.feature_groups) != _groups_signature(TileRotation.groups(definition.feature_groups, cell.rotation)):
+	if cell.geometry_revision == 0 and cell.field_supports_settlement != definition.field_supports_settlement:
+		report.add(&"invalid_field_support", "Unmodified Field support must match its definition.", tile_id)
+	if cell.geometry_revision == 0 and _groups_signature(cell.feature_groups) != _groups_signature(TileRotation.groups(definition.feature_groups, cell.rotation)):
 		report.add(&"invalid_internal_groups", "Current internal features differ from rotated static groups.", tile_id)
-	if _relationships_signature(cell.relationships) != _relationships_signature(definition.relationships):
+	if cell.geometry_revision == 0 and _relationships_signature(cell.relationships) != _relationships_signature(definition.relationships):
 		report.add(&"invalid_internal_relationships", "Current internal relationships differ from the static base.", tile_id)
+	if cell.geometry_revision > 0:
+		_validate_current_geometry(cell, report)
 	var earlier_neighbor: bool = cell.normal_placement_index == 0
 	for direction: int in range(4):
 		var neighbor_coordinate: Vector2i = coordinate + OFFSETS[direction]
@@ -149,6 +164,36 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 			report.add(&"occupied_edge_mismatch", "Occupied orthogonal edges must match exactly.", tile_id)
 	if not earlier_neighbor:
 		report.add(&"disconnected_placement", "Every normal base must adjoin a previously placed base.", tile_id)
+
+
+static func _validate_current_geometry(cell: BoardCellState, report: InvariantReport) -> void:
+	var covered: Array[int] = []
+	var types: Array[int] = []
+	for group: TileFeatureGroup in cell.feature_groups:
+		if group == null or group.edge_type not in [1, 2, 3, 4] or group.edge_type in types or group.directions.is_empty():
+			report.add(&"invalid_current_group", "Current groups require unique tracked feature types.")
+			continue
+		types.append(group.edge_type)
+		for direction: int in group.directions:
+			if direction not in [0, 1, 2, 3] or direction in covered:
+				report.add(&"invalid_current_socket", "Current sockets must be valid and unique.")
+				continue
+			covered.append(direction)
+			if cell.effective_edges[direction] != group.edge_type:
+				report.add(&"current_socket_mismatch", "Effective edge must match its internal group.")
+	for direction: int in range(4):
+		if cell.effective_edges[direction] != DomainTypes.EdgeType.FIELD and direction not in covered:
+			report.add(&"missing_current_socket", "Every tracked edge requires internal membership.")
+	if cell.field_supports_settlement and (4 not in types or 0 not in cell.effective_edges):
+		report.add(&"invalid_current_support", "Field/Settlement contact requires both geographies.")
+	for relation: TileFeatureRelationship in cell.relationships:
+		if relation == null or relation.from_edge_type not in types or relation.to_edge_type not in types:
+			report.add(&"invalid_current_relationship", "Cross-feature relationships require present endpoints.")
+		elif not ([relation.from_edge_type, relation.to_edge_type, relation.kind] in [
+			[3, 4, TileFeatureRelationship.Kind.ROAD_SETTLEMENT_ACCESS],
+			[4, 2, TileFeatureRelationship.Kind.SETTLEMENT_RIVER_TOUCH],
+			[1, 2, TileFeatureRelationship.Kind.FOREST_RIVER_TOUCH]]):
+			report.add(&"invalid_current_relationship", "Unknown cross-feature relationship.")
 
 
 static func _groups_signature(groups: Array[TileFeatureGroup]) -> String:

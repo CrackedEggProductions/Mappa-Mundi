@@ -30,3 +30,4 @@ reward_class = 2
 canonical_edges = Array[int]([4, 4, 3, 0])
 feature_groups = Array[ExtResource("2_group")]([SubResource("Group_3"), SubResource("Group_4")])
 relationships = Array[ExtResource("3_relation")]([SubResource("Relationship")])
+field_supports_settlement = true

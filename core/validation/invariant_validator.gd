@@ -31,6 +31,8 @@ static func validate(state: RunState, content: ContentRegistry) -> InvariantRepo
 	_validate_locations(state, ids, report)
 	if state.expansion != null:
 		ExpansionInvariantValidator.validate(state, content, report)
+	if state.features != null and report.is_valid:
+		FeatureInvariantValidator.validate(state, content, report)
 	return report
 
 
