@@ -52,6 +52,8 @@ static func validate(state: RunState, content: ContentRegistry,
 			or state.next_runtime_id > RunIdAllocator.EXHAUSTED_CURSOR - emergency_capacity:
 		return _failure(&"invariant_failure", "Insufficient runtime counter capacity to resolve a command safely.")
 	if command is PlaceTileCommand:
+		if state.trade != null and state.trade.trade_revision == 9223372036854775807:
+			return _failure(&"invariant_failure", "Insufficient Trade revision capacity to resolve placement safely.")
 		if state.features != null and not FeatureResolutionService.has_resolution_capacity(state):
 			return _failure(&"invariant_failure", "Insufficient counters to resolve feature history safely.")
 		return _validate_place(state, content, command as PlaceTileCommand)

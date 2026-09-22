@@ -1,9 +1,120 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 4 — complete
+
+Verified 2026-09-14 on `phase-4`. Ro explicitly authorized merging PR #1;
+accepted `main` merge `8b6b6ab` contains Phase-3 final `238b98e`. Before branching,
+`./tests/run_tests.sh` passed 274 tests with 88 scripts without diagnostics
+(`builds/verification/run-GzeIObV5/`). Phase 5 has not started.
+
+### Architecture and scoring
+
+- `core/trade/trade_network_service.gd` rebuilds the economic graph deterministically
+  from explicit board access and authorized rule-layer contributions. Current
+  networks expose sorted Road and Settlement lineage members, access links,
+  distinct reach and persistent network identity. Simple adjacency never grants
+  access. Settlement hubs connect separate physical Roads transitively, including
+  unfinished Roads and Settlements. Isolated members do not form networks.
+- `TradeState`, `TradeNetworkLineageState` and `TradeHistoryRecord` persist economic
+  genealogy separately from physical feature lineage and per-Road payments.
+  Current membership is derived; last reconciled member sets identify historical
+  continuity and are validated against reconstruction. Ordinary growth retains
+  identity; mergers create descendants with sorted parents; splits create ancestry-
+  aware descendants; reconnection recombines ancestry. Completely dissolved networks
+  also retain history when access returns. Parent records remain archived.
+- `trade_revision` advances when the canonical access graph changes. Unchanged
+  reconciliation is inert. Graph traversal, tie-breaking and ID allocation order
+  are independent of registry insertion order and consume no gameplay RNG.
+- Normal placement resolves physical lineages, reconciles Trade identity, then
+  captures one immutable completion snapshot before any base score applies.
+  Each completing Road sees its entire current network. Road base Trade is
+  +1 per new component plus +2 per eligible distinct Settlement. Two independent
+  Roads can each score the same Settlement; simultaneous membership is frozen.
+- Per-Road `scored_settlement_ids` survive network growth, leaving/rejoining,
+  split/reconnection and physical Road mergers. If any ancestor of a merged
+  Settlement paid that Road, the descendant cannot repay. Network changes alone
+  never award Trade. Genuine later re-completion may pay newly reachable Settlements.
+- Public queries cover network by Road/Settlement, reachable Settlements, members,
+  same-network checks, current counts and ancestry. Presentation remains non-authoritative.
+
+### Persistence, invariants and scope
+
+`TradeSerializer` persists genealogy, audit records, authorized inputs and revision;
+`FeatureSerializer` adds immutable network membership/payment facts to completion
+records. Normalization sorts unordered registries and historical sets while
+preserving ordered history. `TradeInvariantValidator` checks current graph identity,
+member types, historical parents, split/reconnection origins, ID collisions,
+completion snapshots and per-Road eligibility against ancestral payments.
+
+Loading reconstructs current connectivity purely and verifies persisted identity;
+it never calls reconciliation or gameplay resolution. Repeated loads preserve
+fingerprints, current graphs, all scoring/history, future IDs and RNG exactly.
+The current completion-record schema requires explicit Trade fields. Older shapes
+are rejected rather than silently migrated. Explicit null-Trade legacy fixture
+states remain supported; new Homestead runs initialize Trade normally.
+
+Authorized economic links are a narrow extension input. Only controlled fixture
+contributions are accepted in Phase 4. No Ferry Rights, River commerce, Bridge,
+Urban Expansion, Development, Specialist, Relic, threshold reward, Charter, Act
+transition, UI or art gameplay was added. Future rule layers must maintain current
+lineage endpoints when adding/removing their links. Reserve proof stays conservative.
+
+### Acceptance evidence
+
+Final `./tests/run_tests.sh` exited **0**, Godot `4.7.2.stable.mono.official.ed1daf0bf`:
+
+```text
+PASS: editor import
+PASS: 102 GDScript files parsed without diagnostics
+RESULT: 329 passed, 0 failed
+```
+
+Logs: `builds/verification/run-vL5sv1zR/`. All 274 earlier tests remain passing.
+Phase 4 adds 55 tests: 15 graph/genealogy, 16 scoring/snapshot, 14 persistence/
+corruption, and 10 invariant-valid integration scenarios.
+
+Acceptance covers every canonical access source; adjacency exclusion; transitive
+Settlement hubs; unfinished participation; growth, merger, split, reconnection
+and dissolution ancestry; full-network +2/+4/+6 connection scoring; distinct
+payments; no retroactive gain; paid/unpaid merged-Settlement ancestry; inherited
+Road payment histories; simultaneous immutable Road snapshots; deterministic
+allocation/order/revisions; malformed saves; and repeated non-triggering loads.
+
+The standalone README command for `tests/replay/phase_four_demo.gd` exited **0**
+without diagnostics (`builds/phase4-demo.log`):
+
+```text
+DEMO Phase 4: 12 seeded legal placements; Tracks=[10, 4, 0, 5]; connection payments=1; save/load after 5; identical economic graph, genealogy, history, IDs and RNG continuation.
+DEMO RESULT: transitive full-network scoring, unfinished hubs, no retroactive gain, leave/rejoin and merger anti-farming, split/reconnection genealogy and non-triggering save/load passed.
+```
+
+The seeded sequence uses normal Expansion commands. Controlled board scenarios
+separately demonstrate larger transitive networks and later re-completion, plus
+simultaneous Road transitions and synthetic economic link removal/reconnection.
+Those fixtures do not introduce future player actions. Invariant checks pass at
+every stable scenario boundary. All Phase-4 exit conditions are satisfied.
+
+### Git and review
+
+Implementation checkpoint `ee2d6b2` was committed after 328 passing tests and
+102 clean script parses and pushed normally to `origin/phase-4`. Final review added
+the allocation-order/revision regression, bringing the total to 329. The final
+verification/documentation commit follows this checkpoint and is pushed before
+opening the Phase-4 PR against `main`. No Phase-4 merge is authorized or performed.
+
+The delegated service reached its usage limit; the remaining code and tests were
+completed and reviewed directly. One test passed an untyped array to a typed
+GDScript helper; that call was corrected and the full suite rerun successfully.
+No known gameplay defects, diagnostic warnings, third-party dependencies or
+unresolved specification ambiguities remain. All six source specifications are
+unchanged. Recommended next action: review the Phase-4 PR; do not start Phase 5
+without a new explicit instruction.
+
 ## Phase 3 — complete
 
-Verified 2026-09-13 on `phase-3`. Phase 4 has not started. Phase-2 baseline
-`e0fea94` remains unchanged on `main` and `origin/main`.
+Verified 2026-09-13 on `phase-3`. Phase 4 has not started. At that historical checkpoint, Phase-2 baseline
+`e0fea94` remained on `main` and `origin/main`; the Phase-4 section above records
+the subsequent authorized merge.
 
 ### Architecture and behavior
 

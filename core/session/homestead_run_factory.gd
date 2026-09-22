@@ -1,6 +1,6 @@
 class_name HomesteadRunFactory
 extends RefCounted
-## Deterministic Phase-2 setup only. Charter selection is explicitly deferred.
+## Deterministic Homestead setup. Charter selection is explicitly deferred.
 
 
 static func create(seed_value: int, content: ContentRegistry) -> RunState:
@@ -30,6 +30,7 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 	state.phase = GamePhase.Type.TURN_INPUT
 	StalemateRules.cycle_if_dead(state, content)
 	FeatureResolutionService.initialize(state)
+	TradeNetworkService.initialize(state)
 	InvariantValidator.assert_valid(state, content)
 	return state
 
