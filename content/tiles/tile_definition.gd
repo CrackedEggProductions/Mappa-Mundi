@@ -16,5 +16,12 @@ extends Resource
 @export var placement_behavior_id: StringName = &""
 @export var effect_behavior_id: StringName = &""
 @export var development_family_id: StringName = &""
+## Settlement/Forest lineage, Field coordinate, or persistent enclosure host.
+@export var development_host_kind: StringName = &""
+@export var development_stage: StringName = &""
 @export var upgrade_from_definition_id: StringName = &""
+## Passive future reward metadata; content loading never creates physical copies.
+@export var normal_reward_copy_count: int = 0
+## Logical overlay reference; neither art nor scene nodes determine mechanics.
+@export var presentation_id: StringName = &""
 @export var tags: Array[StringName] = []

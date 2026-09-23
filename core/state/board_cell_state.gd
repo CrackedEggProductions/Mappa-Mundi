@@ -14,6 +14,8 @@ var relationships: Array[TileFeatureRelationship] = []
 var field_supports_settlement: bool = false
 ## Current geometry rewrite generation. No player-facing rewrite exists in Phase 3.
 var geometry_revision: int = 0
+## List-shaped for future explicit slot rules; normal play permits one overlay.
+var developments: Array[DevelopmentState] = []
 
 
 static func from_definition(

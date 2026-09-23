@@ -8,10 +8,11 @@ static func capture(state: RunState) -> Array[Dictionary]:
 	var enclosures: Array[EnclosureState] = state.features.enclosures.duplicate()
 	enclosures.sort_custom(func(a: EnclosureState, b: EnclosureState) -> bool: return a.enclosure_id < b.enclosure_id)
 	for enclosure: EnclosureState in enclosures:
-		if enclosure.stage != &"monastery" or enclosure.completed_stages.has(enclosure.stage):
+		if enclosure.stage not in [&"monastery", &"abbey"] or enclosure.completed_stages.has(enclosure.stage):
 			continue
 		var occupied: int = 0
 		var natural: int = 0
+		var settlements: int = 0
 		for x: int in range(-1, 2):
 			for y: int in range(-1, 2):
 				if x == 0 and y == 0:
@@ -20,10 +21,12 @@ static func capture(state: RunState) -> Array[Dictionary]:
 				if cell == null:
 					continue
 				occupied += 1
+				if cell.effective_edges.has(DomainTypes.EdgeType.SETTLEMENT):
+					settlements += 1
 				if has_natural_geography(cell):
 					natural += 1
 		if occupied == 8:
-			result.append({"enclosure_id": enclosure.enclosure_id, "stage": String(enclosure.stage), "natural_count": natural, "source_id": enclosure.development_tile_copy_id})
+			result.append({"enclosure_id": enclosure.enclosure_id, "stage": String(enclosure.stage), "natural_count": natural, "settlement_count": settlements, "source_id": enclosure.development_tile_copy_id})
 	return result
 
 

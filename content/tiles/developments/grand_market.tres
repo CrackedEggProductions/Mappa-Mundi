@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.development.grand_market"
+display_name = "Grand Market"
+tile_class = 2
+unlock_act = 3
+reward_class = 4
+development_family_id = &"family.market"
+development_host_kind = &"settlement"
+development_stage = &"grand_market"
+upgrade_from_definition_id = &"tile.development.market"
+normal_reward_copy_count = 1
+presentation_id = &"overlay.grand_market"

@@ -4,7 +4,8 @@ extends RefCounted
 
 const KINDS: Array[StringName] = [&"feature_created", &"feature_grew", &"feature_reopened",
 	&"feature_merged", &"completion_snapshot", &"feature_completed", &"enclosure_completed",
-	&"realm_track_changed"]
+	&"realm_track_changed", &"development_placed", &"development_upgraded",
+	&"development_replaced", &"development_immediate_effect", &"development_completion_trigger"]
 
 
 static func validate(state: RunState, _content: ContentRegistry, report: InvariantReport) -> void:
@@ -118,8 +119,8 @@ static func _validate_lineage(state: RunState, lineage: FeatureLineageState, boa
 			report.add(&"invalid_settlement_payment", "Road payment history must resolve historical Settlements.")
 	if lineage.feature_type != DomainTypes.FeatureType.SETTLEMENT and (not lineage.scored_field_ids.is_empty() or not lineage.scored_river_ids.is_empty() or lineage.highest_settlement_class != 0):
 		report.add(&"wrong_support_category", "Only Settlement lineages own Field/River support history.")
-	if lineage.highest_settlement_class < 0 or lineage.highest_settlement_class > 2:
-		report.add(&"unsupported_settlement_class", "Development-dependent classes are not available.")
+	if lineage.highest_settlement_class < 0 or lineage.highest_settlement_class > 4:
+		report.add(&"unsupported_settlement_class", "Historical Settlement class must be canonical.")
 	if lineage.feature_type != DomainTypes.FeatureType.RIVER and not lineage.scored_forest_ids.is_empty():
 		report.add(&"wrong_contact_category", "Only River lineages own Forest-contact history.")
 	if lineage.feature_type == DomainTypes.FeatureType.RIVER and not lineage.completion_ids.is_empty() and not lineage.completed:
@@ -188,7 +189,7 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		if not _unique_positive(event.component_ids) or not _unique_positive(event.parent_ids):
 			report.add(&"duplicate_event_fact", "Event identity sets cannot contain duplicates.")
 		for parent_id: int in event.parent_ids:
-			if state.features.lineage(parent_id) == null:
+			if (PhysicalTileRules.find_copy(state, parent_id) == null if event.kind in [&"development_upgraded", &"development_replaced"] else state.features.lineage(parent_id) == null):
 				report.add(&"invalid_event_ancestry", "Event ancestry must resolve.")
 		if event.parent_event_id != 0 and not events.has(event.parent_event_id):
 			report.add(&"invalid_event_parent", "FIFO child must follow a recorded parent.")
@@ -198,8 +199,13 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		if event.kind == &"realm_track_changed":
 			if event.track not in [0, 1, 2, 3] or event.amount <= 0:
 				report.add(&"invalid_track_event", "Track events require a positive gain.")
-			if not events.has(event.parent_event_id) or events[event.parent_event_id].kind not in [&"feature_completed", &"enclosure_completed"]:
+			if not events.has(event.parent_event_id) or events[event.parent_event_id].kind not in [&"feature_completed", &"enclosure_completed", &"development_immediate_effect", &"development_completion_trigger"]:
 				report.add(&"invalid_track_parent", "Track gain must follow a completion parent.")
+			elif event.track in [0, 1, 2, 3] and event.amount > 0 and events[event.parent_event_id].kind in [&"development_immediate_effect", &"development_completion_trigger"]:
+				if totals[event.track] > 9223372036854775807 - event.amount:
+					report.add(&"invalid_cumulative_gain", "Development gains must remain representable.")
+				else:
+					totals[event.track] += event.amount
 		elif event.track != -1 or event.amount != 0:
 			report.add(&"unexpected_track_data", "Only Track-change events carry gains.")
 		events[event.event_id] = event
@@ -251,9 +257,10 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 				report.add(&"invalid_cumulative_gain", "Completion gains must be nonnegative and representable.")
 				continue
 			totals[track] += record.gains[track]
-	_validate_scoring_history(state, record_ids, report)
+	if report.is_valid:
+		_validate_scoring_history(state, record_ids, report)
 	if state.features.tracks == null or state.features.tracks.values != totals:
-		report.add(&"track_history_mismatch", "Cumulative Tracks must equal recorded base gains.")
+		report.add(&"track_history_mismatch", "Cumulative Tracks must equal base records plus Development effect children.")
 	if state.features.largest_completed_sizes != largest:
 		report.add(&"largest_record_mismatch", "Historical size records must agree with completions.")
 
@@ -284,7 +291,9 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 		for id: int in lineage.completion_ids:
 			if id not in record_ids:
 				report.add(&"unresolved_completion", "Every lineage completion must resolve.")
-		if lineage.highest_settlement_class != highest_class:
+		if lineage.active and lineage.feature_type == DomainTypes.FeatureType.SETTLEMENT:
+			highest_class = maxi(highest_class, DevelopmentService.current_class(state, lineage.lineage_id))
+		if lineage.highest_settlement_class < highest_class:
 			report.add(&"historical_class_mismatch", "Highest class must agree with retained Establishment records.")
 	for record: FeatureCompletionRecord in state.features.completions:
 		var child_gains: Array[int] = [0, 0, 0, 0]
@@ -301,7 +310,7 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 		match record.feature_type:
 			DomainTypes.FeatureType.ROAD: expected_gain[1] = record.new_component_ids.size() + 2 * record.new_settlement_ids.size()
 			DomainTypes.FeatureType.SETTLEMENT: expected_gain[0] = 2 * record.new_component_ids.size() + record.new_field_ids.size() + record.new_river_ids.size()
-			DomainTypes.FeatureType.FOREST: expected_gain[3] = record.new_component_ids.size() + 2
+			DomainTypes.FeatureType.FOREST: expected_gain[3] = record.new_component_ids.size() + (2 if record.forest_undeveloped else 0)
 			DomainTypes.FeatureType.RIVER: expected_gain[3] = (floori(record.total_size / 2.0) if record.first_completion else 0) + record.new_forest_ids.size()
 		if record.gains != expected_gain:
 			report.add(&"base_scoring_mismatch", "Base gains must match recorded new growth/support and Trade payments.")
@@ -331,7 +340,13 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 			report.add(&"invalid_first_completion", "First completion must agree with historical ancestry.")
 		if record.feature_type == DomainTypes.FeatureType.SETTLEMENT:
 			var qualified: int = 1 if record.total_size <= 2 else (2 if record.total_size <= 5 else 0)
-			if record.settlement_class != maxi(qualified, historical_class):
+			if record.total_size >= 6 and record.total_size <= 8 and not record.development_families.is_empty():
+				qualified = 3
+			elif record.total_size >= 9 and record.development_families.size() >= 2:
+				qualified = 4
+			if record.highest_class_before_completion < historical_class or record.highest_class_before_completion > state.features.lineage(record.lineage_id).highest_settlement_class:
+				report.add(&"invalid_prior_class", "Frozen prior class must retain ancestral qualifications.")
+			if record.settlement_class != maxi(qualified, record.highest_class_before_completion):
 				report.add(&"invalid_establishment_class", "Establishment class requires canonical qualification or prior history.")
 		elif record.settlement_class != 0:
 			report.add(&"unexpected_settlement_class", "Other feature completions cannot establish a Settlement class.")
@@ -345,30 +360,42 @@ static func _validate_enclosures(state: RunState, ids: Array[int], report: Invar
 			return
 		_check_id(state, enclosure.enclosure_id, ids, report)
 		if not state.expansion.board.cells.has(enclosure.coordinate) or enclosure.coordinate in hosts \
-			or enclosure.family_id != &"monastery" or enclosure.stage != &"monastery" \
-			or enclosure.development_tile_copy_id != 0 or enclosure.assigned_steward_id != 0:
-			report.add(&"invalid_enclosure", "Phase 3 supports one deferred Monastery fixture per occupied host.")
+			or enclosure.family_id != &"monastery" or enclosure.stage not in [&"monastery", &"abbey"] \
+			or enclosure.assigned_steward_id != 0:
+			report.add(&"invalid_enclosure", "Enclosure requires one occupied host and a supported stage.")
 		hosts.append(enclosure.coordinate)
+		if enclosure.development_tile_copy_id != 0:
+			var overlay: DevelopmentState = DevelopmentService.find(state, enclosure.development_tile_copy_id)
+			if overlay == null or overlay.enclosure_id != enclosure.enclosure_id or overlay.stage != enclosure.stage:
+				report.add(&"enclosure_overlay_mismatch", "Enclosure current physical copy and stage must agree.")
+		elif enclosure.stage != &"monastery":
+			report.add(&"invalid_fixture_enclosure", "Only legacy Monastery fixtures may lack a physical overlay.")
 		var occupied: int = 0
-		var natural: int = 0
 		for x: int in range(-1, 2):
 			for y: int in range(-1, 2):
-				if x == 0 and y == 0:
-					continue
-				var cell: BoardCellState = state.expansion.board.get_cell(enclosure.coordinate + Vector2i(x, y))
-				if cell != null:
+				if (x != 0 or y != 0) and state.expansion.board.cells.has(enclosure.coordinate + Vector2i(x, y)):
 					occupied += 1
-					if EnclosureService.has_natural_geography(cell):
-						natural += 1
 		var expected_ids: Array[int] = []
-		for record: FeatureCompletionRecord in state.features.completions:
-			if record.enclosure_id == enclosure.enclosure_id:
-				expected_ids.append(record.record_id)
-				if record.gains != [0, 0, 5 + natural, 0]:
-					report.add(&"invalid_enclosure_gain", "Monastery scores base five plus distinct natural neighbors.")
 		var expected_stages: Array[StringName] = []
-		if occupied == 8:
-			expected_stages.append(&"monastery")
-		if enclosure.completed_stages != expected_stages or enclosure.completion_ids != expected_ids \
-			or expected_ids.size() != expected_stages.size():
-			report.add(&"enclosure_history_mismatch", "Eight-neighbor completion may score its stage only once.")
+		for record: FeatureCompletionRecord in state.features.completions:
+			if record.enclosure_id != enclosure.enclosure_id:
+				continue
+			expected_ids.append(record.record_id)
+			if record.enclosure_stage not in [&"monastery", &"abbey"] or record.enclosure_stage in expected_stages:
+				report.add(&"invalid_enclosure_stage_history", "Each canonical enclosure stage completes at most once.")
+			expected_stages.append(record.enclosure_stage)
+			var culture: int = (8 if record.enclosure_stage == &"abbey" else 5) + record.natural_neighbor_count
+			if record.enclosure_stage == &"abbey":
+				culture += record.settlement_neighbor_count
+			if record.gains != [0, 0, culture, 0]:
+				report.add(&"invalid_enclosure_gain", "Enclosure score must match frozen stage and neighbor facts.")
+		var actual_stages: Array[StringName] = enclosure.completed_stages.duplicate()
+		var actual_ids: Array[int] = enclosure.completion_ids.duplicate()
+		actual_stages.sort()
+		actual_ids.sort()
+		expected_stages.sort()
+		expected_ids.sort()
+		if actual_stages != expected_stages or actual_ids != expected_ids \
+			or (occupied == 8) != enclosure.completed_stages.has(enclosure.stage) \
+			or (enclosure.stage == &"monastery" and enclosure.completed_stages.has(&"abbey")):
+			report.add(&"enclosure_history_mismatch", "Current enclosure stage and retained completion facts must agree.")

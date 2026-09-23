@@ -21,6 +21,7 @@ static func normalize(state: RunState) -> String:
 		# Board encoding already sorts sparse coordinates. Internal group/relationship
 		# order has no rules meaning, unlike bag order and active-hand slots.
 		for cell: Dictionary in expansion["board"]["cells"]:
+			cell["developments"].sort_custom(_runtime_id_before)
 			for group: Dictionary in cell["feature_groups"]:
 				group["directions"].sort()
 			cell["feature_groups"].sort_custom(_record_before)
@@ -55,7 +56,11 @@ static func _normalize_features(data: Dictionary) -> void:
 	for lineage: Dictionary in data["lineages"]:
 		for key: String in ["parent_ids", "member_ids", "scored_component_ids", "scored_field_ids", "scored_river_ids", "scored_forest_ids", "scored_settlement_ids", "completion_ids"]:
 			lineage[key].sort_custom(_decimal_id_before)
+	for enclosure: Dictionary in data["enclosures"]:
+		enclosure["completed_stages"].sort()
+		enclosure["completion_ids"].sort_custom(_decimal_id_before)
 	for record: Dictionary in data["completions"]:
+		record["development_families"].sort()
 		for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids", "network_road_ids", "network_settlement_ids", "new_settlement_ids"]:
 			record[key].sort_custom(_decimal_id_before)
 	for event: Dictionary in data["history"]:

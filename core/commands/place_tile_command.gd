@@ -10,6 +10,10 @@ var placement_mode: DomainTypes.PlacementMode = DomainTypes.PlacementMode.EXPANS
 var expected_board_revision: int = -1
 var expected_state_revision: int = -1
 var expected_signature: String = ""
+var host_lineage_id: int = 0
+var river_lineage_id: int = 0
+var target_development_copy_id: int = 0
+var enclosure_id: int = 0
 
 
 func _init(copy_id: int = 0, source: TileLocationState.Kind = TileLocationState.Kind.ACTIVE_HAND,

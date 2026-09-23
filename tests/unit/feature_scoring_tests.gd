@@ -12,7 +12,7 @@ func tests() -> Array[Callable]:
 		river_length_rounds_down, river_contact_is_distinct_historical_eligibility,
 		river_length_does_not_repay_historical_completion, simultaneous_calculation_is_state_independent,
 		monastery_requires_eight_neighbors, monastery_counts_natural_squares_once,
-		monastery_completed_stage_does_not_repeat, abbey_scoring_is_deferred,
+		monastery_completed_stage_does_not_repeat, abbey_scores_its_new_stage,
 		same_tile_support_requires_explicit_relationship, support_requires_shared_reachable_socket,
 		woodland_river_has_explicit_same_tile_contact, pipeline_child_events_are_fifo,
 		pipeline_stages_preserve_canonical_order, settlement_classes_require_canonical_qualification]
@@ -137,10 +137,16 @@ func monastery_completed_stage_does_not_repeat() -> bool:
 	return true
 
 
-func abbey_scoring_is_deferred() -> bool:
+func abbey_scores_its_new_stage() -> bool:
 	var state: RunState = _enclosure_state(8)
 	state.features.enclosures[0].stage = &"abbey"
-	expect_true(EnclosureService.capture(state).is_empty(), "No unimplemented Abbey gameplay")
+	state.features.enclosures[0].completed_stages.append(&"monastery")
+	var captured: Array[Dictionary] = EnclosureService.capture(state)
+	expect_equal(captured.size(), 1, "Abbey is a new stage despite completed Monastery history")
+	var data: Dictionary = _data([])
+	data["enclosures"] = captured
+	var scored: Array[FeatureCompletionRecord] = FeatureScoringService.calculate(CompletionSnapshot.new(data))
+	expect_equal(scored[0].gains, [0, 0, 16, 0], "Abbey awards eight base plus eight natural neighbors")
 	return true
 
 
