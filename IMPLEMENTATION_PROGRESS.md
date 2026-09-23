@@ -122,6 +122,13 @@ per-script diagnostics gate checks syntax and warnings. `git diff --check` is cl
 `tests/replay/phase_five_demo.gd` uses seed 16 and controlled content acquisition.
 It demonstrates physical hand/query/host placement, immediate effects, full-network
 Market, Grand Market replacement, save/load and identical future draw/continuation.
+Standalone final demo exited 0 without diagnostics (`builds/phase5-demo-final.log`):
+
+```text
+DEMO seed=16; normal placements=8; Tracks=[13, 20, 0, 0]; completed-host Housing, full-network Market, physical Grand Market replacement; identical save/load continuation and future draw.
+DEMO RESULT: immediate isolation, shared Development batches, Port River intents, Monastery/Abbey stages, host mergers, Forest preservation, physical zones, inert loading and deterministic continuation passed.
+```
+
 Controlled scenarios cover Port, enclosure progression, genuine re-completion,
 host mergers, shared snapshots and non-triggering reconstruction. Demo logs are
 under ignored `builds/`; no final art, dependencies or caches are committed.
@@ -136,8 +143,11 @@ remain unchanged. No known gameplay defect or unresolved specification ambiguity
 remains. Phase-5 exit condition is satisfied. No Transformation, Specialist, Relic,
 Charter, reward, Act-transition or full presentation gameplay was added.
 
-Implementation and final evidence are committed on `phase-5` and pushed normally;
-its PR targets `main` and is left open for review. Phase-4 branch is retained.
+Implementation checkpoint `226092560cf35817ee3fd7f41ece98759138295d` was committed
+after the full 447-test/117-script gate and pushed normally to `origin/phase-5`.
+[PR #3 — Phase 5 — Developments and Upgrades](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/3)
+targets `main` and remains open for review. The final documentation checkpoint
+records this PR and evidence without changing gameplay. Phase-4 branch is retained.
 Recommended next action: review the Phase-5 PR. Do not begin Phase 6 without a new
 explicit instruction. Exact checkpoint/PR identity is recorded in Jane continuity.
 

@@ -342,3 +342,7 @@ It combines a seed-16 inventory, legal Development queries, completed-host effec
 physical Upgrade replacement and identical save/load continuation with controlled
 Port, enclosure, merger and shared-batch scenarios. The full acceptance command
 remains `./tests/run_tests.sh`, including script diagnostics and all earlier tests.
+
+Phase-5 acceptance: **447 tests passed, 0 failed; 117 scripts parsed without
+diagnostics**. [PR #3](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/3)
+is ready for review; Phase 6 has not started.
