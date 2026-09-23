@@ -52,19 +52,15 @@ static func underlying_bridge_target(cell: BoardCellState) -> bool:
 	return cell != null and cell.definition_id == &"tile.river_run"
 
 
-static func unresolved_rule(state: RunState, definition: TileDefinition, at: Vector2i) -> StringName:
+static func target_failure(state: RunState, definition: TileDefinition, at: Vector2i) -> StringName:
 	var cell: BoardCellState = state.expansion.board.get_cell(at)
 	if cell == null:
 		return &""
 	if definition.transformation_kind == &"bridge" and underlying_bridge_target(cell):
 		var axis: int = (cell.rotation + 1) % 2
-		if cell.effective_edges[axis] == DomainTypes.EdgeType.FOREST \
-			or cell.effective_edges[axis + 2] == DomainTypes.EdgeType.FOREST:
-			return &"unresolved_bridge_rewilding_rewrite"
-	if definition.transformation_kind == &"rewilding":
-		for development: DevelopmentState in cell.developments:
-			if development.stage == &"abbey":
-				return &"unresolved_abbey_field_dependency"
+		if cell.effective_edges[axis] != DomainTypes.EdgeType.FIELD \
+			or cell.effective_edges[axis + 2] != DomainTypes.EdgeType.FIELD:
+			return &"bridge_effective_edge_not_rewriteable"
 	return &""
 
 
@@ -81,15 +77,14 @@ static func _occupied(state: RunState, definition: TileDefinition, copy_id: int,
 		if not cell.has_field_geography:
 			return null
 		for development: DevelopmentState in cell.developments:
-			if development.stage in [&"mill", &"monastery", &"abbey"]:
-				# Abbey remains unavailable pending an explicit continued-Field ruling.
+			if development.requires_field_geography():
 				return null
 	var plan: TransformationState = _plan(state, definition, copy_id,
 		&"bridge" if bridge else &"rewilding", rotation, cell.base_tile_copy_id)
 	var change: TransformationChange = _change(state, cell)
 	plan.changes.append(change)
 	for direction: int in [rotation, rotation + 2]:
-		# Bridge-on-Rewilded-Run eligibility is known; Forest->Road authorization is unresolved.
+		# Underlying River shape never authorizes a Forest-to-Road overwrite.
 		if cell.effective_edges[direction] != DomainTypes.EdgeType.FIELD:
 			return null
 		change.after_edges[direction] = DomainTypes.EdgeType.ROAD if bridge else DomainTypes.EdgeType.FOREST

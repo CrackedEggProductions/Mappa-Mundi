@@ -9,7 +9,7 @@ func tests() -> Array[Callable]:
 	var cases: Array[Callable] = [forest_closed_merger, developed_forest_merger,
 		urban_shared_completion_snapshot, rewild_shared_enclosure_snapshot,
 		urban_open_merger, urban_trade_hub_merger, compatible_rewilding_stack,
-		bridge_rewilding_ambiguity, abbey_rewilding_ambiguity, bridge_duplicate_rejected,
+		bridge_rewilding_edges_rejected, abbey_rewilding_allowed, bridge_duplicate_rejected,
 		bridge_end_rejected, effective_edges_drive_later_placement,
 		new_occupancy_completes_enclosure, occupied_transform_does_not_fill_enclosure,
 		stale_development_dependency, transformed_field_cannot_supply_boundary,
@@ -156,7 +156,7 @@ func compatible_rewilding_stack() -> bool:
 	return true
 
 
-func bridge_rewilding_ambiguity() -> bool:
+func bridge_rewilding_edges_rejected() -> bool:
 	var registry: ContentRegistry = F.content()
 	var state: RunState = F.river(registry)
 	F.play(state, registry, F.REWILD, Vector2i.DOWN, &"rewilding", 1)
@@ -164,22 +164,25 @@ func bridge_rewilding_ambiguity() -> bool:
 	var id: int = F.Previous.acquire_hand(state, F.BRIDGE)
 	var intent: PlaceTileCommand = PlaceTileCommand.new(id, TileLocationState.Kind.ACTIVE_HAND, Vector2i.DOWN, 1)
 	intent.placement_mode = DomainTypes.PlacementMode.TRANSFORMATION
-	expect_equal(RulesEngine.validate(state, registry, intent).error_code, &"unresolved_bridge_rewilding_rewrite", "Exact Forest-to-Road permission is explicitly unresolved")
+	expect_equal(RulesEngine.validate(state, registry, intent).error_code, &"bridge_effective_edge_not_rewriteable", "Underlying shape does not authorize Forest-to-Road rewrite")
 	_rejected(state, registry, intent)
 	return true
 
 
-func abbey_rewilding_ambiguity() -> bool:
+func abbey_rewilding_allowed() -> bool:
 	var registry: ContentRegistry = F.content()
 	var state: RunState = F.create(registry)
 	var target: Vector2i = F.Previous.fields(state, registry)
 	F.Previous.play(state, registry, &"tile.development.monastery", target)
 	F.Previous.play(state, registry, &"tile.development.abbey", target)
-	var id: int = F.Previous.acquire_hand(state, F.REWILD)
-	var intent: PlaceTileCommand = PlaceTileCommand.new(id, TileLocationState.Kind.ACTIVE_HAND, target, 1)
-	intent.placement_mode = DomainTypes.PlacementMode.TRANSFORMATION
-	expect_equal(RulesEngine.validate(state, registry, intent).error_code, &"unresolved_abbey_field_dependency", "Abbey dependency is an explicit source-rule gap")
-	_rejected(state, registry, intent)
+	var overlay: DevelopmentState = F.Previous.development(state, target)
+	var enclosure_id: int = overlay.enclosure_id
+	var culture: int = state.features.tracks.values[2]
+	F.play(state, registry, F.REWILD, target, &"rewilding", 1)
+	expect_equal(F.Previous.development(state, target), overlay, "Abbey remains installed after Field conversion")
+	expect_equal(overlay.enclosure_id, enclosure_id, "Persistent enclosure host is unchanged")
+	expect_equal(state.features.tracks.values[2], culture, "Rewilding does not trigger Abbey scoring")
+	_valid(state, registry)
 	return true
 
 

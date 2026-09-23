@@ -1,6 +1,6 @@
 # Mappa Mundi — Implementation progress
 
-## Phase 6 — implemented and verified; two explicit rule gaps
+## Phase 6 — complete
 
 Verified 2026-09-24 on `phase-6`. PR #3 was merged normally, retaining the
 `phase-5` branch and final commit `8746e07b5f6346fd1739cf0493930cbd34ccd83c`.
@@ -116,68 +116,78 @@ topology, Trade genealogy, IDs, future draws and RNG. Older board records missin
 new required fields are rejected, consistent with the existing strict schema;
 no migration or gameplay replay is performed.
 
+### Resolved canonical rulings — 2026-09-24
+
+Ro accepted Phase 6 and supplied authoritative rulings for the two previously
+gated interactions. The Complete Alpha Rules were amended narrowly with
+`RULE-BRIDGE-002a` and `RULE-REWILD-007a`; unrelated rules and older prototype
+specifications were not changed.
+
+- **Bridge on a Rewilded River Run:** underlying straight-River classification
+  remains valid, but it is not sufficient for placement. Both perpendicular
+  current edges must permit Field-to-Road rewriting. Either Forest bank makes
+  Bridge illegal; stale/forged attempts return structured rejection and preserve
+  the entire state. The canonical reason is
+  `bridge_effective_edge_not_rewriteable`. No Forest removal, dual edge sockets,
+  splitting or generic overwrite permission was introduced.
+- **Abbey and Rewilding:** continued legality follows the current Development
+  stage, not its historical prerequisite. `DevelopmentState.requires_field_geography`
+  now supplies one shared dependency check for queries, projected geometry and
+  persistence invariants. Mill and ordinary Monastery still require Field.
+  Abbey requires its persistent enclosure and therefore permits otherwise-legal
+  Rewilding. Its physical copy, enclosure ID/coordinate, family and prior stage
+  history remain intact. No Abbey stage or score is created merely by Rewilding.
+  Incomplete Abbeys still complete through ordinary surrounding-eight occupancy;
+  completed stages remain recorded and never replay.
+
+The former ambiguity tests were converted into canonical behavior tests. Nine
+additional ruling tests cover normal Run/Bend/End targeting, stale and forged
+Bridge rejection, continued rejection after load, Mill/Monastery blockers,
+physical Upgrade preservation, Abbey completion after Rewilding, completed-stage
+history, occupied-edge conflicts, repeated inert loads and identical continuation.
+A surrounded Abbey still cannot bypass conflicting occupied edges: its exemption
+removes only the continued Field dependency, not ordinary Rewilding geometry.
+
 ### Verification and demonstration
 
-Final implementation gate `./tests/run_tests.sh` exited 0:
+Final ruling-patch gate `./tests/run_tests.sh` exited 0:
 
 ```text
-PASS: 132 GDScript files parsed without diagnostics
-RESULT: 560 passed, 0 failed
+PASS: 133 GDScript files parsed without diagnostics
+RESULT: 569 passed, 0 failed
 ```
 
-Evidence: `builds/verification/run-d4djaTjW/`. All prior 447 tests remain passing;
-113 new tests cover content, topology/current geography, persistence, live
-scenarios and acceptance. Three older pure test constructors now explicitly set
-Field geography; no prior assertions were weakened. The initial new refill test
-incorrectly expected the back of the bag; it was corrected to the established
-front draw after inspecting `PhysicalTileRules.draw`. A duplicate local invariant
-declaration caught by diagnostics was removed and the full gate rerun.
+Evidence: `builds/verification/run-ra0apZLS/`. All previous 560 cases remain covered,
+including the two converted ambiguity tests, plus nine new ruling cases. All
+prior 447 pre-Transformation tests still pass. Phase 6 now has 122 added cases.
+The old implementation checkpoint passed 560/132 at
+`builds/verification/run-d4djaTjW/`; the ruling patch supersedes that final report.
 
-The headless `tests/replay/phase_six_demo.gd` runs 31 deterministic command-driven
-Transformation scenarios, with additional combinations in
-`tests/integration/transformation_acceptance_tests.gd`. Run it using the README
-command. Evidence is retained in `builds/phase6-demo-final.log`. All canonical
-unambiguous behaviors have passing executable scenarios; the two source gaps
-below deliberately remain unavailable instead of gaining invented rules.
-
-### Genuine specification ambiguities
-
-1. **Bridge on a Rewilded straight River Run.** RULE-BRIDGE-001 explicitly retains
-   underlying target eligibility; RULE-BRIDGE-002 describes Field-to-Road bank
-   rewrites, while RULE-TRANS-002 preserves earlier compatible modifications.
-   Rewilding changes those banks to Forest. The text does not explicitly grant
-   this exact Forest-to-Road exception or define the retained Forest footprint.
-   Underlying eligibility is represented and tested, but exact placement returns
-   `unresolved_bridge_rewilding_rewrite`. A ruling is needed to enable this stack.
-2. **Abbey under occupied Rewilding.** RULE-REWILD-007 names Mill and Monastery as
-   Field-dependent blockers without explicitly resolving Abbey's continued Field
-   dependency. The engine returns `unresolved_abbey_field_dependency`, preserving
-   the Abbey and the complete state. This is a documented unresolved interaction,
-   not a new general Abbey prohibition.
-
-The active session requested rulings on these two points; no answer was received
-as of this verification. Compatible Rewilding expansion/occupied stacking is
-implemented and tested, including separate physical histories and no duplicate
-Forest scoring contribution. No generic last-write-wins rule exists.
+The headless `tests/replay/phase_six_demo.gd` now runs 40 deterministic scenarios:
+the original 31 plus all nine canonical ruling scenarios. Evidence:
+`builds/phase6-rulings-demo.log`. Repeated saves/loads of Rewilded River rejection
+states and incomplete/completed Abbey + Rewilding states preserve fingerprints,
+physical zones, topology, enclosure histories, Track values, future ID cursors,
+RNG state and operation count. Reconstruction produces zero effects, completions,
+scoring, events, allocations or RNG consumption. Identical future placements
+complete the original and restored Abbey identically.
 
 ### Review boundary
 
-Implementation checkpoint: `5a4a6e28a2aa8326d712914bef9ef80af71f00f6`, pushed to
-`origin/phase-6`. [PR #4 — Phase 6 — Transformations and Growth Rewrites](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/4)
-is open against `main`, ready for review and unmerged. GitHub reports a clean merge
-state. The Phase-5 branch remains intact. The 31-scenario demonstration exited 0
-without script/engine diagnostics; all intentional code, tests and documentation
-are committed. No generated caches or backups were staged.
+The original Phase-6 implementation checkpoint was
+`5a4a6e28a2aa8326d712914bef9ef80af71f00f6`; its review handoff was `116945e`.
+The ruling patch remains on `phase-6` and is published through
+[PR #4 — Phase 6 — Transformations and Growth Rewrites](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/4),
+which remains open against `main` and unmerged. Main remains the merged Phase-5
+baseline. The final ruling commit is recorded in Git and the Jane continuity note.
 
-Implementation and the executable Phase-6 checklist pass. The two interactions
-above require rules decisions before their exact gameplay can be enabled; Phase 6
-must not be represented as having resolved every source ambiguity. Main remains
-at the merged Phase-5 baseline. Phase 7 has not started. No Specialists, Relics,
-rewards, thresholds, Charters, automatic seeding, Act transitions or final UI were
-implemented. The authoritative specifications were not modified.
+Every Phase-6 exit condition is now unconditionally satisfied. No unresolved
+Phase-6 specification ambiguity remains. Phase 7 has not started. No Specialists,
+Relics, rewards, thresholds, Charters, automatic seeding, Act transitions or final
+UI were implemented. No generated caches or backups are staged.
 
-Recommended next action: review the Phase-6 changes and resolve the two named rule
-gaps. Do not merge Phase 6 or begin Phase 7 without Ro's next explicit instruction.
+Recommended next action: final review of PR #4. Do not merge it or begin Phase 7
+without Ro's next explicit instruction.
 
 ---
 

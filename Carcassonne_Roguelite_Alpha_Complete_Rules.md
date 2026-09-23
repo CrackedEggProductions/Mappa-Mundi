@@ -1435,7 +1435,7 @@ Bridge is an Act III Major/Rare Transformation.
 
 It may only be played onto an existing tile whose underlying River geometry is a **straight River Run**.
 
-A Rewilded River Run remains a valid Bridge target if its underlying River is still straight.
+A Rewilded River Run still satisfies Bridge's underlying target prerequisite if its River remains straight; current effective-edge legality must also be satisfied.
 
 ### RULE-BRIDGE-002 — Core transformation
 Bridge preserves the continuous straight River and adds a Road crossing **perpendicular** to that River. The target River Run's two Field-facing edges on that perpendicular axis become Road edges as part of the Bridge Transformation.
@@ -1443,6 +1443,9 @@ Bridge preserves the continuous straight River and adds a Road crossing **perpen
 The Bridge Transformation itself does not occupy the normal Development slot.
 
 Any existing Development on the target River Run is preserved.
+
+### RULE-BRIDGE-002a — Current effective-edge legality
+A Rewilded straight River Run still satisfies the underlying straight-River prerequisite. This does not grant Forest → Road rewrite permission. Bridge requires both perpendicular effective edges to be legally rewriteable under its explicit Field → Road rule. If Rewilding has converted either required edge to Forest, no legal Bridge placement exists on that square in the current alpha. The Forest and its Transformation history remain intact; underlying target eligibility never bypasses effective-edge legality.
 
 ### RULE-BRIDGE-003 — River state
 Bridge does not by itself:
@@ -1575,6 +1578,11 @@ Rewilding cannot target a tile containing a Development whose continued legality
 - Monastery.
 
 Settlement Developments such as Housing or Market are not automatically destroyed merely because Field geography on their tile is Rewilded; their Settlement host is preserved.
+
+### RULE-REWILD-007a — Abbey's continuing enclosure host
+The restriction evaluates current continued legality, not historical placement prerequisites. Mill and Monastery remain Field-dependent and block Rewilding. Abbey, once upgraded, is enclosure-dependent rather than Field-dependent. Otherwise-legal Rewilding may therefore transform an Abbey square without removing or invalidating the Abbey.
+
+Preserve the physical Abbey copy, enclosure ID and coordinate, Monastery-family identity, and prior stage completion history. Rewilding does not create another Abbey stage or retrigger its scoring. A completed Abbey stays completed; an incomplete Abbey continues to use the surrounding-eight occupancy condition. All ordinary Rewilding edge and geography restrictions still apply.
 
 ### RULE-REWILD-008 — Already-Forested hybrid
 Rewilding may target a tile that already contains some Forest if it also contains eligible Field geography.

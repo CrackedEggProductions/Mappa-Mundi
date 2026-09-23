@@ -110,7 +110,7 @@ static func validate(state: RunState, content: ContentRegistry, plan: Transforma
 	for change: TransformationChange in plan.changes:
 		var cell: BoardCellState = preview.expansion.board.get_cell(change.coordinate)
 		for development: DevelopmentState in cell.developments:
-			if development.host_kind in [&"field", &"enclosure"] and not cell.has_field_geography:
+			if development.requires_field_geography() and not cell.has_field_geography:
 				return false
 		for direction: int in range(4):
 			var neighbor: BoardCellState = preview.expansion.board.get_cell(

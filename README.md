@@ -377,10 +377,10 @@ XDG_CACHE_HOME="$PWD/builds/test-cache" \
 godot --headless --path . --script res://tests/replay/phase_six_demo.gd
 ```
 
-Two exact interactions await source-rule rulings: Bridge replacing Rewilding's
-Forest banks with Road, and occupied Rewilding under an Abbey. Commands return
-explicit `unresolved_bridge_rewilding_rewrite` or
-`unresolved_abbey_field_dependency` failures without mutation. The underlying
-Rewilded River Run remains recognized as a Bridge target; no general overwrite
-permission or Abbey restriction has been invented. See implementation progress
-for the rule references, acceptance results and review status.
+Phase-6 canonical rulings distinguish target shape from current rewrite legality.
+A Rewilded straight River Run retains Bridge's underlying shape prerequisite, but
+Forest banks cannot become Road: the command rejects them with
+`bridge_effective_edge_not_rewriteable`. Abbey depends on its persistent enclosure,
+not continued Field geography, so otherwise-legal Rewilding preserves its copy,
+host and stage history. Mill and ordinary Monastery remain Field-dependent.
+See implementation progress for the resolved rule references and verification.

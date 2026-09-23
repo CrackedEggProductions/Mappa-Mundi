@@ -12,3 +12,8 @@ var act_placed: int = 1
 var placement_index: int = 0
 var stage: StringName = &""
 var replaced_copy_id: int = 0
+
+
+func requires_field_geography() -> bool:
+	# Continued legality follows the current stage, not an Upgrade's prerequisite.
+	return host_kind == &"field" or stage == &"monastery"

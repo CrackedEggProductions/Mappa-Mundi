@@ -108,9 +108,9 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 	var tile: TileCopyState = PhysicalTileRules.find_copy(state, command.tile_copy_id)
 	var definition: TileDefinition = content.get_tile(tile.definition_id)
 	if command.placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
-		var unresolved: StringName = TransformationPlacementQuery.unresolved_rule(state, definition, command.coordinate)
-		if unresolved != &"":
-			return _failure(unresolved, "This exact Transformation interaction requires a canonical rule clarification.")
+		var target_failure: StringName = TransformationPlacementQuery.target_failure(state, definition, command.coordinate)
+		if target_failure != &"":
+			return _failure(target_failure, "Bridge requires current Field edges on both sides of its Road axis.")
 		for option: PlacementOption in TransformationPlacementQuery.query(state, content, command.tile_copy_id):
 			if not TransformationPlacementQuery.matches(option, command):
 				continue
