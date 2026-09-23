@@ -162,6 +162,13 @@ Forest scoring contribution. No generic last-write-wins rule exists.
 
 ### Review boundary
 
+Implementation checkpoint: `5a4a6e28a2aa8326d712914bef9ef80af71f00f6`, pushed to
+`origin/phase-6`. [PR #4 — Phase 6 — Transformations and Growth Rewrites](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/4)
+is open against `main`, ready for review and unmerged. GitHub reports a clean merge
+state. The Phase-5 branch remains intact. The 31-scenario demonstration exited 0
+without script/engine diagnostics; all intentional code, tests and documentation
+are committed. No generated caches or backups were staged.
+
 Implementation and the executable Phase-6 checklist pass. The two interactions
 above require rules decisions before their exact gameplay can be enabled; Phase 6
 must not be represented as having resolved every source ambiguity. Main remains
