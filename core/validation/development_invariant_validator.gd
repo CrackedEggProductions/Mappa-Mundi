@@ -76,7 +76,7 @@ static func _validate_overlay(state: RunState, content: ContentRegistry, cell: B
 		if component == null or component.lineage_id != development.host_lineage_id or development.enclosure_id != 0:
 			report.add(&"invalid_development_host", "Overlay must follow the current lineage of its specific host geography.")
 	elif development.host_kind in [&"field", &"enclosure"]:
-		if not cell.effective_edges.has(DomainTypes.EdgeType.FIELD) or development.host_lineage_id != 0:
+		if not cell.has_field_geography or development.host_lineage_id != 0:
 			report.add(&"invalid_field_development", "Field/enclosure Development requires current Field geography and no feature host.")
 		if development.host_kind == &"enclosure":
 			var found: bool = false

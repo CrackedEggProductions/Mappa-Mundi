@@ -31,7 +31,9 @@ static func capture(state: RunState) -> Array[Dictionary]:
 
 
 static func has_natural_geography(cell: BoardCellState) -> bool:
-	for edge: int in cell.effective_edges:
-		if edge in [DomainTypes.EdgeType.FIELD, DomainTypes.EdgeType.FOREST, DomainTypes.EdgeType.RIVER]:
+	if cell.has_field_geography:
+		return true
+	for group: TileFeatureGroup in cell.feature_groups:
+		if group.edge_type in [DomainTypes.EdgeType.FOREST, DomainTypes.EdgeType.RIVER]:
 			return true
 	return false

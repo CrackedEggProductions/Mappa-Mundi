@@ -20,6 +20,11 @@ extends Resource
 @export var development_host_kind: StringName = &""
 @export var development_stage: StringName = &""
 @export var upgrade_from_definition_id: StringName = &""
+## Transformations use a separate layer; these describe supported intent categories.
+@export var transformation_kind: StringName = &""
+@export var transformation_placement_modes: Array[StringName] = []
+## An occupied-target prerequisite, independent of current Development occupancy.
+@export var transformation_prerequisite_id: StringName = &""
 ## Passive future reward metadata; content loading never creates physical copies.
 @export var normal_reward_copy_count: int = 0
 ## Logical overlay reference; neither art nor scene nodes determine mechanics.

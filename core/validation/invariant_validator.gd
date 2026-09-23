@@ -34,6 +34,8 @@ static func validate(state: RunState, content: ContentRegistry) -> InvariantRepo
 	if state.features != null and report.is_valid:
 		FeatureInvariantValidator.validate(state, content, report)
 	if state.features != null and report.is_valid:
+		TransformationInvariantValidator.validate(state, content, report)
+	if state.features != null and report.is_valid:
 		DevelopmentInvariantValidator.validate(state, content, report)
 	if state.trade != null and report.is_valid:
 		TradeInvariantValidator.validate(state, report)

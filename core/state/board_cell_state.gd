@@ -12,10 +12,13 @@ var effective_edges: Array[DomainTypes.EdgeType] = []
 var feature_groups: Array[TileFeatureGroup] = []
 var relationships: Array[TileFeatureRelationship] = []
 var field_supports_settlement: bool = false
-## Current geometry rewrite generation. No player-facing rewrite exists in Phase 3.
+## Persistent revision of current geometry, independent of original base age.
 var geometry_revision: int = 0
 ## List-shaped for future explicit slot rules; normal play permits one overlay.
 var developments: Array[DevelopmentState] = []
+## Field interior survives Bridge; Rewilding explicitly consumes it.
+var has_field_geography: bool = false
+var transformations: Array[TransformationState] = []
 
 
 static func from_definition(
@@ -32,6 +35,7 @@ static func from_definition(
 	cell.effective_edges = TileRotation.edges(definition.canonical_edges, quarter_turns)
 	cell.feature_groups = TileRotation.groups(definition.feature_groups, quarter_turns)
 	cell.field_supports_settlement = definition.field_supports_settlement
+	cell.has_field_geography = cell.effective_edges.has(DomainTypes.EdgeType.FIELD)
 	for relationship: TileFeatureRelationship in definition.relationships:
 		cell.relationships.append(relationship.duplicate(true) as TileFeatureRelationship)
 	return cell

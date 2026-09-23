@@ -22,6 +22,7 @@ static func add(state: RunState, at: Vector2i, edges: Array[DomainTypes.EdgeType
 
 static func set_geometry(cell: BoardCellState, edges: Array[DomainTypes.EdgeType]) -> void:
 	cell.effective_edges = edges.duplicate()
+	cell.has_field_geography = edges.has(DomainTypes.EdgeType.FIELD)
 	cell.feature_groups.clear()
 	for edge: int in range(1, 5):
 		var group: TileFeatureGroup = TileFeatureGroup.new()

@@ -245,6 +245,7 @@ func _cell(at: Vector2i, id: int) -> BoardCellState:
 	cell.coordinate = at
 	cell.base_tile_copy_id = id
 	cell.effective_edges = [EDGE.FIELD, EDGE.FOREST, EDGE.RIVER, EDGE.FIELD]
+	cell.has_field_geography = true
 	return cell
 
 

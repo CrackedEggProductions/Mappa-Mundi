@@ -278,6 +278,7 @@ func _overlay(state: RunState, stage: String, copy_id: int, host_id: int, at: Ve
 	cell.coordinate = at
 	cell.base_tile_copy_id = copy_id + 1000
 	cell.effective_edges = [EDGE.FIELD, EDGE.FIELD, EDGE.FIELD, EDGE.FIELD]
+	cell.has_field_geography = true
 	var development: DevelopmentState = DevelopmentState.new()
 	development.stage = StringName(stage)
 	development.family_id = StringName("family." + stage)
@@ -314,6 +315,7 @@ func _enclosure() -> RunState:
 			var cell: BoardCellState = BoardCellState.new()
 			cell.coordinate = Vector2i(x, y)
 			cell.effective_edges = [EDGE.FIELD, EDGE.FIELD, EDGE.FIELD, EDGE.FIELD]
+			cell.has_field_geography = true
 			state.expansion.board.add_cell(cell)
 	var enclosure: EnclosureState = EnclosureState.new()
 	enclosure.enclosure_id = state.id_allocator.allocate()

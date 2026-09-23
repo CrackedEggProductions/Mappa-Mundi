@@ -13,6 +13,8 @@ static func query_for_copy(state: RunState, content: ContentRegistry,
 	var definition: TileDefinition = content.get_tile(copy.definition_id)
 	if definition == null:
 		return []
+	if definition.tile_class == DomainTypes.TileClass.TRANSFORMATION:
+		return TransformationPlacementQuery.query(state, content, copy_id)
 	if definition.tile_class == DomainTypes.TileClass.EXPANSION:
 		return query(state.expansion.board, definition, copy_id, state.expansion.state_revision)
 	return DevelopmentPlacementQuery.query(state, content, copy_id)

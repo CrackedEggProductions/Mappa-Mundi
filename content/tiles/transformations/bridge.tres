@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.transformation.bridge"
+display_name = "Bridge"
+tile_class = 3
+unlock_act = 3
+reward_class = 4
+transformation_kind = &"bridge"
+transformation_placement_modes = Array[StringName]([&"occupied_square"])
+transformation_prerequisite_id = &"underlying_straight_river_run"
+normal_reward_copy_count = 1
+presentation_id = &"transformation.bridge"

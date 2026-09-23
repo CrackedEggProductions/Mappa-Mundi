@@ -14,6 +14,9 @@ var host_lineage_id: int = 0
 var river_lineage_id: int = 0
 var target_development_copy_id: int = 0
 var enclosure_id: int = 0
+var transformation_mode: StringName = &""
+var target_base_copy_id: int = 0
+var transformation_signature: String = ""
 
 
 func _init(copy_id: int = 0, source: TileLocationState.Kind = TileLocationState.Kind.ACTIVE_HAND,

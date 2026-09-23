@@ -1,6 +1,6 @@
 class_name FeatureResolutionService
 extends RefCounted
-## Synchronous feature and economic topology boundary, before hand refill. No player-facing rewrites.
+## Synchronous feature and economic topology boundary, before hand refill, including fully committed Transformations.
 
 
 static func initialize(state: RunState) -> void:
