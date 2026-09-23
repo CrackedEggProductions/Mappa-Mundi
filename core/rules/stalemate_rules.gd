@@ -4,11 +4,7 @@ extends RefCounted
 
 
 static func has_play(state: RunState, content: ContentRegistry, copy_id: int) -> bool:
-	var tile: TileCopyState = PhysicalTileRules.find_copy(state, copy_id)
-	return not PlacementQueryService.query(
-		state.expansion.board, content.get_tile(tile.definition_id), copy_id,
-		state.expansion.state_revision
-	).is_empty()
+	return not PlacementQueryService.query_for_copy(state, content, copy_id).is_empty()
 
 
 static func is_dead_hand(state: RunState, content: ContentRegistry) -> bool:

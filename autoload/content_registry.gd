@@ -7,6 +7,7 @@ const ALPHA_MANIFEST_PATH: String = "res://content/manifests/alpha_content_manif
 const ALPHA_CONFIG_PATH: String = "res://content/manifests/alpha_run_config.tres"
 const HOMESTEAD_MANIFEST_PATH: String = "res://content/manifests/homestead_content_manifest.tres"
 const HOMESTEAD_CONFIG_PATH: String = "res://content/manifests/homestead_run_config.tres"
+const PHASE_FIVE_MANIFEST_PATH: String = "res://content/manifests/phase_5_content_manifest.tres"
 
 var _manifest: ContentManifest
 var _config: RunConfig
@@ -14,6 +15,10 @@ var _config: RunConfig
 
 func load_homestead() -> ValidationResult:
 	return load_content(HOMESTEAD_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
+
+
+func load_phase_five() -> ValidationResult:
+	return load_content(PHASE_FIVE_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
 
 
 func load_content(

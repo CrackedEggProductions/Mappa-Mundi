@@ -86,8 +86,9 @@ static func _failure(code: StringName, message: String) -> ValidationResult:
 
 static func _validate_place(state: RunState, content: ContentRegistry,
 		command: PlaceTileCommand) -> ValidationResult:
-	if command.placement_mode != DomainTypes.PlacementMode.EXPANSION:
-		return _failure(&"unsupported_mode", "Only base Expansion placement is available.")
+	if command.placement_mode not in [DomainTypes.PlacementMode.EXPANSION,
+			DomainTypes.PlacementMode.DEVELOPMENT, DomainTypes.PlacementMode.UPGRADE]:
+		return _failure(&"unsupported_mode", "This placement mode is not available.")
 	if command.source_zone == TileLocationState.Kind.ACTIVE_HAND:
 		var hand_check: ValidationResult = _validate_hand(state, command.tile_copy_id)
 		if not hand_check.is_valid:
@@ -105,6 +106,17 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 		return _failure(&"stale_preview", "The run changed after this preview.")
 	var tile: TileCopyState = PhysicalTileRules.find_copy(state, command.tile_copy_id)
 	var definition: TileDefinition = content.get_tile(tile.definition_id)
+	if command.placement_mode != DomainTypes.PlacementMode.EXPANSION:
+		for option: PlacementOption in DevelopmentPlacementQuery.query(state, content, command.tile_copy_id):
+			if not DevelopmentPlacementQuery.matches(option, command):
+				continue
+			if not command.expected_signature.is_empty() and command.expected_signature != option.signature:
+				return _failure(&"stale_signature", "The preview signature does not match this intent.")
+			return ValidationResult.success()
+		return _failure(&"invalid_development_intent", "No legal Development placement matches the complete intent.")
+	if command.host_lineage_id != 0 or command.river_lineage_id != 0 \
+			or command.target_development_copy_id != 0 or command.enclosure_id != 0:
+		return _failure(&"invalid_expansion_intent", "Expansion placement cannot carry overlay targets.")
 	var geometry: ValidationResult = PlacementQueryService.validate(
 		state.expansion.board, definition, command.coordinate, command.rotation
 	)
@@ -133,14 +145,17 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 	else:
 		expansion.reserve_id = 0
 	expansion.normal_placements += 1
-	expansion.board.add_cell(BoardCellState.from_definition(
-		content.get_tile(tile.definition_id), tile.tile_copy_id, command.coordinate,
-		command.rotation, expansion.current_act, expansion.normal_placements
-	))
-	PhysicalTileRules.set_location(state, tile.tile_copy_id, TileLocationState.Kind.BOARD_BASE)
-	if state.features != null:
-		TopologyService.add_cell_components(state, expansion.board.get_cell(command.coordinate))
-		FeatureResolutionService.resolve(state, tile.tile_copy_id)
+	if command.placement_mode == DomainTypes.PlacementMode.EXPANSION:
+		expansion.board.add_cell(BoardCellState.from_definition(
+			content.get_tile(tile.definition_id), tile.tile_copy_id, command.coordinate,
+			command.rotation, expansion.current_act, expansion.normal_placements
+		))
+		PhysicalTileRules.set_location(state, tile.tile_copy_id, TileLocationState.Kind.BOARD_BASE)
+		if state.features != null:
+			TopologyService.add_cell_components(state, expansion.board.get_cell(command.coordinate))
+			FeatureResolutionService.resolve(state, tile.tile_copy_id)
+	else:
+		DevelopmentPlacementService.place(state, content, command)
 	# Later reward stages join the shared completion pipeline before this draw.
 	var config: RunConfig = content.get_config()
 	if expansion.normal_placements == config.act_placement_limits[expansion.current_act - 1]:

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.development.abbey"
+display_name = "Abbey"
+tile_class = 2
+unlock_act = 2
+reward_class = 3
+development_family_id = &"family.monastery"
+development_host_kind = &"enclosure"
+development_stage = &"abbey"
+upgrade_from_definition_id = &"tile.development.monastery"
+normal_reward_copy_count = 2
+presentation_id = &"overlay.abbey"

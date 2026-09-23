@@ -3,6 +3,21 @@ extends RefCounted
 ## Pure Expansion queries: deterministic frontier, then ascending quarter-turns.
 
 
+static func query_for_copy(state: RunState, content: ContentRegistry,
+		copy_id: int) -> Array[PlacementOption]:
+	if state.expansion == null:
+		return []
+	var copy: TileCopyState = PhysicalTileRules.find_copy(state, copy_id)
+	if copy == null:
+		return []
+	var definition: TileDefinition = content.get_tile(copy.definition_id)
+	if definition == null:
+		return []
+	if definition.tile_class == DomainTypes.TileClass.EXPANSION:
+		return query(state.expansion.board, definition, copy_id, state.expansion.state_revision)
+	return DevelopmentPlacementQuery.query(state, content, copy_id)
+
+
 static func query(
 	board: BoardState, definition: TileDefinition, tile_copy_id: int,
 	state_revision: int = 0

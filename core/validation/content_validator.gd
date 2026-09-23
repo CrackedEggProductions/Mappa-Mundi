@@ -1,12 +1,23 @@
 class_name ContentValidator
 extends RefCounted
-## Static boundary for the minimal foundation fixture and Phase-2 Homestead.
-## Later content families remain excluded until their implementation phase.
+## Static boundary for foundation, Homestead and Phase-5 Development content.
 
 const PHASE_ZERO_TILE_IDS: Array[StringName] = [&"tile.open_fields", &"tile.straight_road"]
 ## Basic Expansion geometry needs no special handler. Content cannot register behavior.
 const REGISTERED_PLACEMENT_BEHAVIOR_IDS: Array[StringName] = []
 const REGISTERED_EFFECT_BEHAVIOR_IDS: Array[StringName] = []
+## Canonical validation contract: family suffix, host, unlock Act, prerequisite suffix.
+const DEVELOPMENT_ROSTER: Dictionary = {
+	&"housing": [&"housing", &"settlement", 1, &""],
+	&"mill": [&"mill", &"field", 1, &""],
+	&"monastery": [&"monastery", &"enclosure", 1, &""],
+	&"foresters_lodge": [&"foresters_lodge", &"forest", 1, &""],
+	&"market": [&"market", &"settlement", 2, &""],
+	&"port": [&"port", &"settlement", 2, &""],
+	&"town_square": [&"town_square", &"settlement", 2, &""],
+	&"abbey": [&"monastery", &"enclosure", 2, &"monastery"],
+	&"grand_market": [&"market", &"settlement", 3, &"market"],
+}
 
 
 static func validate(manifest: ContentManifest, config: RunConfig) -> ValidationResult:
@@ -14,8 +25,8 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 		return _invalid(&"missing_resource", "The content manifest and configuration are required.")
 	if String(manifest.manifest_id).strip_edges().is_empty():
 		return _invalid(&"missing_manifest_id", "The content manifest needs a stable ID.")
-	if manifest.implementation_phase not in [0, 2]:
-		return _invalid(&"unsupported_phase", "This build validates the foundation and Homestead profiles.")
+	if manifest.implementation_phase not in [0, 2, 5]:
+		return _invalid(&"unsupported_phase", "This build validates foundation, Homestead and Development profiles.")
 	if manifest.game_rules_version != BuildVersions.GAME_RULES_VERSION:
 		return _invalid(&"rules_version_mismatch", "Content rules version does not match this build.")
 	if not manifest.relics.is_empty() or not manifest.specialists.is_empty() \
@@ -27,6 +38,7 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 	if manifest.tiles.is_empty():
 		return _invalid(&"empty_tiles", "The minimal manifest must contain sample tiles.")
 	var seen_ids: Array[StringName] = []
+	var expansion_ids: Array[StringName] = []
 	for tile: TileDefinition in manifest.tiles:
 		if tile == null:
 			return _invalid(&"null_definition", "The manifest contains a missing tile definition.")
@@ -34,14 +46,54 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 			return _invalid(&"duplicate_definition_id", "Definition IDs must be unique.", tile.definition_id)
 		seen_ids.append(tile.definition_id)
 		var tile_result: ValidationResult
-		if manifest.implementation_phase == 2:
+		if manifest.implementation_phase == 5 and tile.tile_class != DomainTypes.TileClass.EXPANSION:
+			tile_result = validate_development(tile)
+		elif manifest.implementation_phase in [2, 5]:
 			tile_result = HomesteadContentValidator.validate_tile(tile)
+			expansion_ids.append(tile.definition_id)
 		else:
 			tile_result = _validate_tile(tile)
 		if not tile_result.is_valid:
 			return tile_result
 	if manifest.implementation_phase == 2:
 		return HomesteadContentValidator.validate_roster_and_config(seen_ids, config)
+	if manifest.implementation_phase == 5:
+		for stage: StringName in DEVELOPMENT_ROSTER:
+			if StringName("tile.development." + String(stage)) not in seen_ids:
+				return _invalid(&"missing_development", "Phase 5 requires all nine Development designs.")
+		return HomesteadContentValidator.validate_roster_and_config(expansion_ids, config)
+	return ValidationResult.success()
+
+
+static func validate_development(tile: TileDefinition) -> ValidationResult:
+	if tile == null:
+		return _invalid(&"null_definition", "Development definition is required.")
+	var stage: StringName = tile.development_stage
+	if stage not in DEVELOPMENT_ROSTER or tile.definition_id != StringName("tile.development." + String(stage)):
+		return _invalid(&"unsupported_definition", "Development ID/stage is outside the Phase-5 roster.", tile.definition_id)
+	var expected: Array = DEVELOPMENT_ROSTER[stage]
+	var prerequisite: StringName = expected[3]
+	var expected_class: DomainTypes.TileClass = DomainTypes.TileClass.DEVELOPMENT \
+		if prerequisite.is_empty() else DomainTypes.TileClass.UPGRADE
+	var expected_reward: DomainTypes.RewardClass = DomainTypes.RewardClass.MAJOR_RARE \
+		if stage == &"grand_market" else DomainTypes.RewardClass.ORDINARY_DEVELOPMENT
+	var expected_prerequisite: StringName = &"" if prerequisite.is_empty() \
+		else StringName("tile.development." + String(prerequisite))
+	if tile.display_name.strip_edges().is_empty() or tile.tile_class != expected_class \
+			or tile.development_family_id != StringName("family." + String(expected[0])) \
+			or tile.development_host_kind != expected[1] or tile.unlock_act != expected[2] \
+			or tile.upgrade_from_definition_id != expected_prerequisite \
+			or tile.reward_class != expected_reward \
+			or tile.normal_reward_copy_count != (1 if stage == &"grand_market" else 2):
+		return _invalid(&"invalid_development_metadata", "Development metadata differs from the canonical alpha roster.", tile.definition_id)
+	if tile.presentation_id != StringName("overlay." + String(stage)):
+		return _invalid(&"invalid_presentation_reference", "Development needs its logical overlay presentation reference.", tile.definition_id)
+	if not tile.canonical_edges.is_empty() or not tile.feature_groups.is_empty() \
+			or not tile.relationships.is_empty() or tile.field_supports_settlement:
+		return _invalid(&"invalid_development_geometry", "Developments are edge-neutral overlays.", tile.definition_id)
+	if not tile.placement_behavior_id.is_empty() or not tile.effect_behavior_id.is_empty() \
+			or not tile.tags.is_empty():
+		return _invalid(&"unregistered_behavior", "Development content cannot register additional rules.", tile.definition_id)
 	return ValidationResult.success()
 
 

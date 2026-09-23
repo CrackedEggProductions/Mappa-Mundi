@@ -1,6 +1,147 @@
 # Mappa Mundi — Implementation progress
 
-## Phase 4 — complete
+## Phase 5 — complete
+
+Verified 2026-09-23 on `phase-5`. Ro authorized Phase-4 PR #2 to merge normally.
+Main merge `a57a83e` retains final Phase-4 commit
+`da30d0100ba6d07d3feb139d351832968b4d3c8e`; the ancestry check exited 0.
+The merged baseline passed 329 tests and 102 clean script parses in
+`builds/verification/run-oaMrTxlk/`. The new branch was published before implementation.
+Phase 6 has not started.
+
+### Runtime and placement
+
+`DevelopmentState` is a physical overlay in `BoardCellState.developments`, an array
+whose normal current capacity is one. It stores copy identity, family/stage,
+specific host kind and lineage, Port River, enclosure, placement Act/index and
+replaced-copy identity. Definition and coordinate resolve through the physical
+copy and owning board cell, avoiding duplicate registries. Geography stays intact;
+no rendering node or artwork determines rules. Presentation IDs live in content.
+
+`DevelopmentService` supplies host/family/current-class queries and descendant
+remapping after Phase-3 lineage reconciliation. Housing, Market stages, Town Square
+and Port follow Settlement descendants; Lodge follows Forest descendants. Port's
+River association is reconciled independently. Mill stays tile-based and evaluates
+current contacts. Enclosures retain their own IDs rather than feature lineages.
+Families exclude unrelated Field, Forest and enclosure systems on shared squares.
+Current classification and highest historical classification are distinct; frozen
+completion records preserve families and qualifications earned while unfinished.
+
+`PlacementQueryService.query_for_copy` dispatches by physical tile class.
+Occupied squares and targets are enumerated deterministically. Complete typed
+intents carry host/River/enclosure/replacement IDs, revisions and signatures.
+Distinct Port Rivers are separate choices, upgrades require an exact physical
+prerequisite, and meaningless rotations are rejected. Full validation precedes
+mutation; rejected/stale/forged intents preserve fingerprints, scores, zones,
+history, allocation cursors and RNG. Existing fixture enclosures cannot receive
+a duplicate physical enclosure.
+
+RulesEngine retains one physical hand/Reserve/bag system. A Development or Upgrade
+uses one normal placement; hand slots stay empty through effects and refill after
+resolution, while Reserve empties without a hand draw. Survey removes either
+class. Dead-hand and bag-wide stalemate checks call the class-aware query. Emergency
+fallback remains the original three Expansion designs. Board revision remains
+geometry-only; state revision also invalidates overlay previews.
+
+### Effects and physical upgrades
+
+| Design | Implemented behavior |
+| --- | --- |
+| Housing | Each copy gives +2 Population at Settlement completion or its own immediate completed-host placement. |
+| Mill | Each touching completed Settlement gives +2 Population and current River contact adds +1 Trade; contacts are dynamic. |
+| Forester's Lodge | Each copy gives +1 Ecology and preserves the Forest's undeveloped status. |
+| Market | +1 Trade per distinct other Settlement in the full current Phase-4 network. |
+| Port | Specific River association; +2 Trade plus each other Port on that connected River. |
+| Town Square | +2 Culture per distinct Settlement-hosted family, including itself. |
+| Monastery | Live surrounding-eight enclosure; +5 Culture plus one natural bonus per surrounding square. |
+| Abbey | Physical Monastery replacement, same enclosure; new stage gives +8 Culture plus natural and Settlement bonuses. |
+| Grand Market | Physical Market replacement; +2 Trade per other Settlement in the full current network. |
+
+The nine canonical resources preserve unlock Acts, family, host, prerequisite,
+reward class/quantity and presentation hooks. Abbey remains Monastery family;
+Grand Market remains Market family and Major/Rare (one future reward copy).
+`ContentRegistry.load_phase_five()` exposes 31 designs, while historical profiles
+remain available. The starting bag remains exactly 55 Expansion copies. No reward
+generation, automatic seeding or Act transitions were introduced; fixtures use
+controlled acquisition and Act contexts.
+
+Only the newly installed copy resolves its immediate effect, based on current
+completion rather than historical Establishment. A Mill may resolve once for each
+currently complete touching Settlement. These events do not create feature
+completions or modify base anti-farming history. Genuine later re-completion
+triggers surviving Developments again. Network changes and new peer Ports do not
+passively retrigger old copies. Orthogonal Development contact follows RULE-TILE-008;
+same-tile contact requires explicit topology, and diagonals never count for Mill/Port.
+
+The completion snapshot freezes host families, Trade membership, Port peers and
+Mill contacts before any gains. Base scoring applies first, then the complete
+Development batch; FIFO child history drains afterward. Specialist, Relic and
+threshold stages remain deferred hooks. Tests include seven simultaneous physical
+Developments across six stages, duplicate Housing, both Market stages,
+Port and Mill, plus a simultaneous Settlement/Monastery completion.
+
+Upgrades remove their prerequisite copy permanently into removed-from-run state,
+install the new physical copy in the same slot, and retain reciprocal structured
+replacement audits. Abbey preserves enclosure identity and old completed-stage
+history; an incomplete replaced Monastery never scores its abandoned stage.
+Each enclosure stage scores at most once. Ordinary Developments cancel future
+Forest preservation except Lodge; previously earned bonuses remain untouched.
+
+### Persistence and acceptance evidence
+
+DevelopmentSerializer adds strict overlay records to the existing save boundary.
+Feature records freeze Development families, prior highest classification, Forest
+undeveloped status, enclosure stage and natural/Settlement neighbor counts.
+Structured placement, upgrade, replacement, immediate-effect and completion-trigger
+records remain audit data; RunState is authoritative. Normalization sorts overlay
+and family sets, retaining ordered history. Validation checks physical zones,
+placement accounting, slots, hosts, valid Port contact, stage/family identity,
+replacement audits, enclosure history, frozen gains and cumulative Tracks.
+
+Loading only decodes and validates. Repeated completed-host/enclosure loads preserve
+fingerprints, Track totals, history counts, future IDs, RNG state and operation
+counts: zero new effects, completions, events, allocations or RNG consumption.
+Earlier board shapes missing these required fields are rejected, not migrated.
+The existing null-feature/null-Trade fixture variants remain supported.
+
+Final `./tests/run_tests.sh` exited **0** on Godot 4.7.2:
+
+```text
+PASS: editor import
+PASS: 117 GDScript files parsed without diagnostics
+RESULT: 447 passed, 0 failed
+```
+
+Evidence: `builds/verification/run-qjNHF3bb/`. The 329 prior cases remain passing;
+the former Abbey-deferred assertion now verifies its authorized stage behavior.
+There are 118 new tests across content (26), effects (18), placement (18),
+persistence/corruption (17), gameplay scenarios (24) and acceptance regressions (15).
+No lint/typecheck tool is separately configured; the established Godot import and
+per-script diagnostics gate checks syntax and warnings. `git diff --check` is clean.
+
+`tests/replay/phase_five_demo.gd` uses seed 16 and controlled content acquisition.
+It demonstrates physical hand/query/host placement, immediate effects, full-network
+Market, Grand Market replacement, save/load and identical future draw/continuation.
+Controlled scenarios cover Port, enclosure progression, genuine re-completion,
+host mergers, shared snapshots and non-triggering reconstruction. Demo logs are
+under ignored `builds/`; no final art, dependencies or caches are committed.
+
+### Review and scope
+
+Review found and fixed orthogonal Mill/Port contact, retained unfinished Settlement
+classification, duplicate fixture enclosure placement and deterministic family
+ordering. Interrupted native-agent work was recovered from disk and integrated
+by Codex; service usage limits did not discard work. All source specifications
+remain unchanged. No known gameplay defect or unresolved specification ambiguity
+remains. Phase-5 exit condition is satisfied. No Transformation, Specialist, Relic,
+Charter, reward, Act-transition or full presentation gameplay was added.
+
+Implementation and final evidence are committed on `phase-5` and pushed normally;
+its PR targets `main` and is left open for review. Phase-4 branch is retained.
+Recommended next action: review the Phase-5 PR. Do not begin Phase 6 without a new
+explicit instruction. Exact checkpoint/PR identity is recorded in Jane continuity.
+
+## Phase 4 — complete (historical checkpoint)
 
 Verified 2026-09-14 on `phase-4`. Ro explicitly authorized merging PR #1;
 accepted `main` merge `8b6b6ab` contains Phase-3 final `238b98e`. Before branching,

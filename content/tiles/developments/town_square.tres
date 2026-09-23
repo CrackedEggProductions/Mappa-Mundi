@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.development.town_square"
+display_name = "Town Square"
+tile_class = 1
+unlock_act = 2
+reward_class = 3
+development_family_id = &"family.town_square"
+development_host_kind = &"settlement"
+development_stage = &"town_square"
+normal_reward_copy_count = 2
+presentation_id = &"overlay.town_square"

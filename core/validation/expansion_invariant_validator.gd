@@ -20,6 +20,7 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 		_validate_zone(state, [expansion.reserve_id], TileLocationState.Kind.RESERVE, represented, report)
 	_validate_zone(state, expansion.removed_ids, TileLocationState.Kind.REMOVED_FROM_RUN, represented, report)
 	var board_ids: Array[int] = []
+	var development_ids: Array[int] = []
 	var placement_indices: Array[int] = []
 	for coordinate: Vector2i in expansion.board.sorted_coordinates():
 		var cell: BoardCellState = expansion.board.cells[coordinate]
@@ -27,22 +28,36 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 			report.add(&"missing_board_cell", "Occupied coordinate has a null cell.")
 			continue
 		board_ids.append(cell.base_tile_copy_id)
+		for development: DevelopmentState in cell.developments:
+			if development == null:
+				report.add(&"null_development", "Development slots cannot contain null.")
+			else:
+				development_ids.append(development.tile_copy_id)
 		_validate_cell(state, content, coordinate, cell, report)
 		if cell.normal_placement_index in placement_indices:
 			report.add(&"duplicate_placement_index", "Each placed base has a unique normal placement index.", cell.base_tile_copy_id)
 		placement_indices.append(cell.normal_placement_index)
 	_validate_zone(state, board_ids, TileLocationState.Kind.BOARD_BASE, represented, report)
+	_validate_zone(state, development_ids, TileLocationState.Kind.BOARD_DEVELOPMENT, represented, report)
 	for tile: TileCopyState in state.tile_copies:
 		if tile != null and tile.tile_copy_id not in represented:
 			report.add(&"unrepresented_tile", "Physical location has no matching zone/container entry.", tile.tile_copy_id)
-		if tile != null and tile.acquired_act != expansion.current_act:
-			report.add(&"future_acquisition", "Phase-2 physical copies must have been acquired in Act I.", tile.tile_copy_id)
+		if tile != null and tile.acquired_act > expansion.current_act:
+			report.add(&"future_acquisition", "Physical copies cannot be acquired in a future Act.", tile.tile_copy_id)
 		if tile != null and tile.definition_id == FOUNDING_ID:
 			var origin: BoardCellState = expansion.board.cells.get(Vector2i.ZERO)
 			if origin == null or origin.base_tile_copy_id != tile.tile_copy_id:
 				report.add(&"illegal_founding_copy", "Founding exists only as the single origin base copy.", tile.tile_copy_id)
-	if expansion.board.cells.size() != expansion.normal_placements + 1:
-		report.add(&"placement_count_mismatch", "Board must contain founding plus the normal placements committed so far.")
+	var overlay_placements: int = 0
+	if state.features != null:
+		for event: FeatureHistoryRecord in state.features.history:
+			if event != null and event.kind in [&"development_placed", &"development_upgraded"]:
+				overlay_placements += 1
+				if event.placement_index in placement_indices:
+					report.add(&"duplicate_placement_index", "Each normal placement has a unique index.")
+				placement_indices.append(event.placement_index)
+	if expansion.board.cells.size() + overlay_placements != expansion.normal_placements + 1:
+		report.add(&"placement_count_mismatch", "Founding, base placements and overlay play history must match the placement counter.")
 	var expected_revision: int = expansion.board.cells.size()
 	for cell: BoardCellState in expansion.board.cells.values():
 		if cell != null and cell.geometry_revision >= 0:
@@ -63,12 +78,12 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 
 static func _validate_turn(state: RunState, config: RunConfig, report: InvariantReport) -> void:
 	var expansion: ExpansionState = state.expansion
-	if expansion.current_act != 1 or config.act_placement_limits.is_empty():
-		report.add(&"unsupported_act", "Phase 2 supports the first Act only.")
+	if expansion.current_act < 1 or expansion.current_act > 3 or config.act_placement_limits.size() < expansion.current_act:
+		report.add(&"unsupported_act", "Current Act requires a canonical placement limit.")
 		return
-	var limit: int = config.act_placement_limits[0]
+	var limit: int = config.act_placement_limits[expansion.current_act - 1]
 	if expansion.normal_placements < 0 or expansion.normal_placements > limit:
-		report.add(&"invalid_placement_count", "Normal placement counter lies outside Act I.")
+		report.add(&"invalid_placement_count", "Normal placement counter lies outside the controlled current Act.")
 	if expansion.survey_charges < 0 or expansion.survey_charges > config.initial_survey_charges:
 		report.add(&"invalid_survey_charges", "Survey charges lie outside Phase-2 grant bounds.")
 	if expansion.state_revision < 0 or expansion.reserve_id < 0:
@@ -117,7 +132,7 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	var tile_id: int = cell.base_tile_copy_id
 	if cell.coordinate != coordinate:
 		report.add(&"coordinate_mismatch", "Sparse key and stored cell coordinate disagree.", tile_id)
-	if cell.act_placed != 1 or cell.rotation < 0 or cell.rotation > 3 \
+	if cell.act_placed < 1 or cell.act_placed > state.expansion.current_act or cell.rotation < 0 or cell.rotation > 3 \
 		or cell.normal_placement_index < 0 or cell.normal_placement_index > state.expansion.normal_placements:
 		report.add(&"invalid_cell_metadata", "Cell rotation, Act or placement index is invalid.", tile_id)
 	if cell.definition_id == FOUNDING_ID and coordinate != Vector2i.ZERO:

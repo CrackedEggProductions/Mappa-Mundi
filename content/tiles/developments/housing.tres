@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.development.housing"
+display_name = "Housing"
+tile_class = 1
+unlock_act = 1
+reward_class = 3
+development_family_id = &"family.housing"
+development_host_kind = &"settlement"
+development_stage = &"housing"
+normal_reward_copy_count = 2
+presentation_id = &"overlay.housing"

@@ -42,6 +42,7 @@ static func rewrite(state: RunState, registry: ContentRegistry, coordinate: Vect
 	cell.effective_edges = edges.duplicate()
 	cell.geometry_revision = before.geometry_revision + 1
 	cell.relationships = before.relationships.duplicate()
+	cell.developments = before.developments.duplicate()
 	cell.field_supports_settlement = before.field_supports_settlement
 	cell.feature_groups.clear()
 	for edge: int in range(1, 5):

@@ -10,7 +10,7 @@ const BOARD_KEYS: Array[String] = ["revision", "cells"]
 const CELL_KEYS: Array[String] = [
 	"coordinate", "base_tile_copy_id", "definition_id", "rotation", "act_placed",
 	"normal_placement_index", "effective_edges", "feature_groups", "relationships",
-	"field_supports_settlement", "geometry_revision",
+	"field_supports_settlement", "geometry_revision", "developments",
 ]
 const GROUP_KEYS: Array[String] = ["edge_type", "directions"]
 const RELATION_KEYS: Array[String] = ["from_edge_type", "to_edge_type", "kind"]
@@ -36,6 +36,7 @@ static func encode(state: ExpansionState) -> Dictionary:
 			"feature_groups": groups, "relationships": relationships,
 			"field_supports_settlement": cell.field_supports_settlement,
 			"geometry_revision": str(cell.geometry_revision),
+			"developments": DevelopmentSerializer.encode(cell.developments),
 		})
 	return {
 		"board": {"revision": str(state.board.revision), "cells": cells},
@@ -61,6 +62,7 @@ static func decode(data: Dictionary) -> ExpansionState:
 		cell.normal_placement_index = int(entry["normal_placement_index"])
 		cell.field_supports_settlement = entry["field_supports_settlement"]
 		cell.geometry_revision = String(entry["geometry_revision"]).to_int()
+		cell.developments = DevelopmentSerializer.decode(entry["developments"])
 		for edge: Variant in entry["effective_edges"]:
 			cell.effective_edges.append(int(edge) as DomainTypes.EdgeType)
 		for encoded_group: Dictionary in entry["feature_groups"]:
@@ -97,7 +99,7 @@ static func validate_shape(value: Variant) -> ValidationResult:
 		or not _nonnegative_int64(data["reserve_id"]) \
 		or not _nonnegative_int64(data["state_revision"]):
 		return _invalid("Expansion zones and revisions require canonical decimal IDs/counters.")
-	if not RunSerializer._is_bounded_integer(data["current_act"], 1, 1) \
+	if not RunSerializer._is_bounded_integer(data["current_act"], 1, 3) \
 		or not RunSerializer._is_bounded_integer(data["normal_placements"], 0, 2147483647) \
 		or not RunSerializer._is_bounded_integer(data["survey_charges"], 0, 2147483647) \
 		or not RunSerializer._is_bounded_integer(data["pending_refill_index"], -1, 2147483647):
@@ -124,6 +126,8 @@ static func _validate_cell(value: Variant) -> ValidationResult:
 	if not RunSerializer._has_exact_keys(value, CELL_KEYS):
 		return _invalid("Malformed board cell record.")
 	var cell: Dictionary = value
+	if not DevelopmentSerializer.valid_shape(cell["developments"]):
+		return _invalid("Malformed Development overlay array.")
 	if not cell["field_supports_settlement"] is bool or not _nonnegative_int64(cell["geometry_revision"]):
 		return _invalid("Invalid explicit Field support or geometry revision.")
 	if not cell["coordinate"] is Array or cell["coordinate"].size() != 2:
@@ -135,7 +139,7 @@ static func _validate_cell(value: Variant) -> ValidationResult:
 		or String(cell["base_tile_copy_id"]).to_int() == 0 \
 		or not cell["definition_id"] is String \
 		or not RunSerializer._is_bounded_integer(cell["rotation"], 0, 3) \
-		or not RunSerializer._is_bounded_integer(cell["act_placed"], 1, 1) \
+		or not RunSerializer._is_bounded_integer(cell["act_placed"], 1, 3) \
 		or not RunSerializer._is_bounded_integer(cell["normal_placement_index"], 0, 2147483647):
 		return _invalid("Invalid board identity, placement metadata or rotation.")
 	if not cell["effective_edges"] is Array or cell["effective_edges"].size() != 4:

@@ -1,7 +1,7 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 4 — Trade Networks**.
+GDScript**. Current implementation: **Phase 5 — Developments and Upgrades**.
 Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
@@ -182,7 +182,7 @@ implemented. Reserve-impossibility assessment conservatively returns
 `NOT_PROVABLY_IMPOSSIBLE`; later systems must expand proof before any automatic removal.
 
 See [implementation progress](IMPLEMENTATION_PROGRESS.md) for verification and
-remaining limits. Phase 5 requires a new instruction.
+remaining limits. Phase 6 requires a new instruction.
 
 ## Feature inspection and scoring
 
@@ -204,8 +204,9 @@ descendant with sorted parent IDs and the union of ancestral scoring sets.
 `FeatureScoringService.capture(...)` produces a deeply owned, read-only shared
 `CompletionSnapshot`. `calculate(snapshot)` reads only those frozen facts. All
 base gains are calculated before any completion updates Tracks or scoring sets;
-structured child audit events drain FIFO after the batch. Later effect categories
-are explicit extension stages and currently produce no effects or rewards.
+Development effects use that same snapshot after base scoring; structured child
+audit events drain FIFO after both batches. Specialist, Relic and threshold stages
+remain extension hooks without gameplay effects or rewards.
 
 Settlement support uses explicit internal Field/River contact and reachable
 matching edge sockets; it never infers support from an unrelated feature elsewhere
@@ -224,8 +225,9 @@ rejected rather than silently migrated. There is no disk-save migration service.
 
 The fixture-only geometry rewrite helper lives under `tests/fixtures/`; it preserves
 physical identity, exact occupied-edge matching and all stable-state invariants.
-There is no playable Transformation or Monastery command. A deferred enclosure
-uses Development ID zero and supports testing its eight-neighbor completion.
+Monastery and Abbey are playable physical overlays with persistent enclosures.
+Legacy enclosure fixtures with Development ID zero remain supported. No playable
+Transformation command exists.
 
 After editor import, run the standalone headless demonstration from this root:
 
@@ -271,8 +273,8 @@ null-Trade fixture variant remains supported. There is no player migration flow.
 
 `TradeState.authorized_links` is an extension input for later economic rules.
 Phase 4 accepts only controlled fixture contributions there; ordinary access comes
-from board metadata. Ferry Rights, Bridge, Urban Expansion and Developments are
-not implemented. Future rule layers must maintain valid current lineage endpoints
+from board metadata. Developments consume these networks without altering their
+topology. Ferry Rights, Bridge and Urban Expansion remain unimplemented. Future rule layers must maintain valid current lineage endpoints
 and reconcile after adding or removing their authorized links.
 
 Run the standalone Phase-4 demonstration after editor import:
@@ -291,3 +293,52 @@ scenarios. These fixture actions do not expose future gameplay commands.
 Phase-4 acceptance: **329 tests passed, 0 failed; 102 scripts parsed without
 diagnostics**, including all 274 prior tests. See implementation progress for
 exact logs, genealogy and anti-farming evidence.
+
+## Developments and Upgrades
+
+Load `ContentRegistry.load_phase_five()` to expose the 22 existing Expansion
+designs and nine Development/Upgrade designs. `load_homestead()` preserves the
+historical 22-design profile. Both use the exact same 55-Expansion starting bag.
+Development acquisition is currently controlled by scenario helpers; rewards,
+automatic seeding and Act transitions remain deferred.
+
+`PlacementQueryService.query_for_copy(state, content, copy_id)` dispatches by the
+physical copy's class. Pass the selected option's mode, coordinate, rotation,
+host lineage, River lineage, target Development copy, enclosure ID, revisions
+and signature into `PlaceTileCommand`. Rotation is zero for overlays. Distinct
+Port Rivers and Upgrade targets are distinct intents; commands revalidate all
+fields before moving a copy or consuming a placement.
+
+Each `BoardCellState.developments` array currently permits one physical overlay.
+The overlay retains its family, stage, host, placement history and replacement
+identity. `DevelopmentService.families` includes only Settlement-hosted families;
+`current_class` reports current qualification separately from historical highest
+class. Base geography stays authoritative and visible to future presentation.
+
+Housing, Mill, Market, Port, Forester's Lodge and Town Square resolve only on a
+genuine relevant completion or their own placement into a currently complete
+host. `DevelopmentEffects` captures shared primitive facts before scoring,
+calculates each effect from the immutable snapshot, and applies the batch after
+base gains. New placements never retrigger existing peers. Monastery/Abbey track
+separate enclosure stages; Abbey/Grand Market permanently remove their physical
+prerequisites while preserving history and family identity.
+
+Saves require explicit overlay arrays and frozen Development/enclosure completion
+facts. Earlier board save shapes are rejected rather than migrated. Loading only
+decodes and validates: it never reconciles hosts, resolves effects, draws tiles,
+emits events, allocates IDs or consumes RNG. Current null-feature/Trade fixture
+variants remain supported.
+
+Run the Phase-5 demonstration after editor import:
+
+```sh
+XDG_DATA_HOME="$PWD/builds/test-userdata" \
+XDG_CONFIG_HOME="$PWD/builds/test-config" \
+XDG_CACHE_HOME="$PWD/builds/test-cache" \
+godot --headless --path . --script res://tests/replay/phase_five_demo.gd
+```
+
+It combines a seed-16 inventory, legal Development queries, completed-host effects,
+physical Upgrade replacement and identical save/load continuation with controlled
+Port, enclosure, merger and shared-batch scenarios. The full acceptance command
+remains `./tests/run_tests.sh`, including script diagnostics and all earlier tests.

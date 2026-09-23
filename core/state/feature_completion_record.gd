@@ -27,5 +27,12 @@ var network_road_ids: Array[int] = []
 var network_settlement_ids: Array[int] = []
 var new_settlement_ids: Array[int] = []
 var gains: Array[int] = [0, 0, 0, 0]
-## 0 unclassified; 1 Hamlet; 2 Village; 3 Town; 4 City (Development gates deferred).
+var development_families: Array[StringName] = []
+var forest_undeveloped: bool = true
+var enclosure_stage: StringName = &""
+var natural_neighbor_count: int = 0
+var settlement_neighbor_count: int = 0
+## 0 unclassified; 1 Hamlet; 2 Village; 3 Town; 4 City.
 var settlement_class: int = 0
+## Qualification retained before this completion, including unfinished growth.
+var highest_class_before_completion: int = 0

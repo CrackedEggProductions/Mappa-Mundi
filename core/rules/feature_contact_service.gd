@@ -26,8 +26,11 @@ static func support_ids(state: RunState, feature: CurrentFeature, support_edge: 
 	return result
 
 
-static func forest_is_undeveloped(_state: RunState, _feature: CurrentFeature) -> bool:
-	## Phase 5 will inspect actual Development occupancy here.
+static func forest_is_undeveloped(state: RunState, feature: CurrentFeature) -> bool:
+	for coordinate: Vector2i in feature.coordinates:
+		for development: DevelopmentState in state.expansion.board.get_cell(coordinate).developments:
+			if development.stage != &"foresters_lodge":
+				return false
 	return true
 
 
