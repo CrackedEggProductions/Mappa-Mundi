@@ -1,0 +1,84 @@
+{
+  "resampling": "none",
+  "labels": "Outside asset pixels",
+  "items": [
+    {
+      "label": "STYLE REF07: old Forest Bend",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+      "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        88
+      ]
+    },
+    {
+      "label": "STYLE REF06: Forest Edge",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_06_forest_edge.png",
+      "sha256": "07989e3683e371d98e1dccbba9dfd3dd8d0955da54ab79d0ec691bb6c50f2743",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        88
+      ]
+    },
+    {
+      "label": "STYLE REF04: Open Fields",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+      "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        88
+      ]
+    },
+    {
+      "label": "CANDIDATE Forest Bend v01",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_v01.png",
+      "sha256": "f3a651ef1a90b4d2005307d5eb027e2b4f74e99e9e070b6e556918e0d7dfaccc",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        1454
+      ]
+    },
+    {
+      "label": "CANDIDATE Forest Bend v02",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_v02.png",
+      "sha256": "54bbfcbaa18773c194dca19dc5d1fb062eddc6650a822afb31803f8e5131b828",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        1454
+      ]
+    },
+    {
+      "label": "CANDIDATE Forest Bend v03",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_v03.png",
+      "sha256": "91deafca6b48dd7d828affb613aaa72f36650343a28d222af003d18c63db172d",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        1454
+      ]
+    }
+  ]
+}

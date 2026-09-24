@@ -1,0 +1,51 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "assessments": {
+    "forest_edge": [
+      [
+        "Strong parchment/ink match; compressed and smeared crowns at both upper corners, stretched Field marks.",
+        "NEEDS VISUAL REVISION"
+      ],
+      [
+        "Better crown proportions and restrained wash; upper-corner compression remains.",
+        "NEEDS HUMAN REVIEW"
+      ]
+    ],
+    "forest_belt": [
+      [
+        "Connected woodland, but widened crowns and sheared edge trees are conspicuous.",
+        "NEEDS VISUAL REVISION"
+      ],
+      [
+        "Coherent woodland scale and muted tint; four-corner compression/shear remains.",
+        "NEEDS HUMAN REVIEW"
+      ]
+    ],
+    "settlement_throughway": [
+      [
+        "City vocabulary matches; widened houses and warped towers/walls are conspicuous.",
+        "NEEDS VISUAL REVISION"
+      ],
+      [
+        "Better central building scale; walls and buildings still bow/shear near all four corners. Neither variant is production-ready.",
+        "NEEDS VISUAL REVISION"
+      ]
+    ],
+    "road_junction": [
+      [
+        "Sepia/ochre and open parchment match; localized collars avoid rectangular pasted strips. Older-reference seams still mismatch.",
+        "NEEDS HUMAN REVIEW"
+      ],
+      [
+        "Most natural routing and restrained treatment; strongest review choice. Legacy socket/tone differences remain.",
+        "NEEDS HUMAN REVIEW"
+      ]
+    ]
+  },
+  "recommendations": {
+    "forest_edge": "v02 for review",
+    "forest_belt": "v02 for review",
+    "settlement_throughway": "v02 as revision starting point only; neither production-ready",
+    "road_junction": "v02 for review"
+  }
+}

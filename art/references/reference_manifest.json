@@ -1,0 +1,191 @@
+{
+  "purpose": "Unmodified local style references; hashes preserve provenance, not final-art approval.",
+  "references": [
+    {
+      "reference_id": "REF-01",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 10, 2026, 12_54_57 AM.png",
+      "copies": [
+        "art/references/approved_style/ref_01_road_end.png"
+      ],
+      "sha256": "9be0cd9569ad3c2f3cca0adeca9a2230baf239c03b0487cafa168f2514fa9467",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-02",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 14, 2026, 05_48_37 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_02_woodland_road_study.png"
+      ],
+      "sha256": "a780793ea8680ee22e9e7945780c8f19136f8085053fd936fc2a6d669464189a",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-03",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 16, 2026, 08_35_27 AM.png",
+      "copies": [
+        "art/references/approved_style/ref_03_hamlet_edge.png",
+        "art/references/approved_mechanical/ref_03_hamlet_edge.png"
+      ],
+      "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-04",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_39_03 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_04_open_fields.png",
+        "art/references/approved_mechanical/ref_04_open_fields.png"
+      ],
+      "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-05",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_41_05 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_05_straight_road.png",
+        "art/references/approved_mechanical/ref_05_straight_road.png"
+      ],
+      "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-06",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_43_54 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_06_forest_edge.png"
+      ],
+      "sha256": "07989e3683e371d98e1dccbba9dfd3dd8d0955da54ab79d0ec691bb6c50f2743",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-07",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_46_41 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_07_forest_bend.png"
+      ],
+      "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-08",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_48_57 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_08_four_way_road_study.png"
+      ],
+      "sha256": "e5f0c964b5903a19d058b0d321ba2e5f0136fbcbd4e75fb91382ce4d44f2a5e5",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-09",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_51_22 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_09_bending_road.png",
+        "art/references/approved_mechanical/ref_09_bending_road.png"
+      ],
+      "sha256": "223a91fd4e161b0a981decc632ba7c925fa3e27a4b446444e297fce12cb65492",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-10",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_54_05 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_10_river_run.png"
+      ],
+      "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-11",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_56_30 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_11_road_junction.png"
+      ],
+      "sha256": "3848d7df211cbda0a9e8af2ebcc195cb93f637278ea2ebc8bc53138cb07196a3",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-12",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 03_57_39 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_12_bridge_study.png"
+      ],
+      "sha256": "7ea3ac8f3f352b8687b53efe707f4543f761cf4425fba2f07d85c362b87a11ba",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-13",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 07_17_38 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_13_river_bend.png",
+        "art/references/approved_mechanical/ref_13_river_bend.png"
+      ],
+      "sha256": "60d06a079920b687d46d8f8a6280d1744dd3eb3546c4f86756f0e158b1e84b19",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-14",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 07_31_38 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_14_forest_belt_study.png"
+      ],
+      "sha256": "2aa5276f3d83ffd2f7864d57f61d80e44e8569619d77914db6f97e863ec5ec6e",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "reference_id": "REF-15",
+      "source": "assets/Example Tiles/ChatGPT Image Sep 9, 2026, 07_34_37 PM.png",
+      "copies": [
+        "art/references/approved_style/ref_15_river_end.png",
+        "art/references/approved_mechanical/ref_15_river_end.png"
+      ],
+      "sha256": "ee2da32006f77f60af7d95e8c361714803622a65d5dff2d1a6d04bf8fe96ab99",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    }
+  ]
+}

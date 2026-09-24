@@ -1,0 +1,2034 @@
+{
+  "method": "Calibrated luminance occupancy proxy; no semantic segmentation",
+  "size_px": [
+    1254,
+    1254
+  ],
+  "edge_bins": 32,
+  "edge_sample_depth_px": 15,
+  "thresholds": {
+    "minimum_calibration_contrast": 8,
+    "suspicious_deviation": 0.35
+  },
+  "calibration": {
+    "feature_box": [
+      777,
+      150,
+      1104,
+      477
+    ],
+    "field_box": [
+      150,
+      777,
+      477,
+      1104
+    ],
+    "feature_mean": 129.572,
+    "field_mean": 190.416,
+    "feature_texture_stddev": 49.738,
+    "field_texture_stddev": 18.63,
+    "signed_luminance_contrast": 60.844,
+    "reliable_proxy": true
+  },
+  "verdict": "suspicious",
+  "semantic_mechanical_pass": false,
+  "reason": "Proxy anomalies require visual review",
+  "suspicious_count": 3,
+  "suspicious_samples": [
+    "North_21",
+    "North_30",
+    "East_31"
+  ],
+  "samples": [
+    {
+      "name": "North_00",
+      "box_xyxy": [
+        0,
+        0,
+        39,
+        15
+      ],
+      "expected_feature_fraction": 0.8205,
+      "proxy_feature_fraction": 0.8071,
+      "mean_luminance": 141.306,
+      "luminance_stddev": 49.31,
+      "absolute_deviation": 0.0134,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_01",
+      "box_xyxy": [
+        39,
+        0,
+        78,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 113.082,
+      "luminance_stddev": 48.588,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_02",
+      "box_xyxy": [
+        78,
+        0,
+        118,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.6796,
+      "mean_luminance": 149.067,
+      "luminance_stddev": 38.836,
+      "absolute_deviation": 0.3204,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_03",
+      "box_xyxy": [
+        118,
+        0,
+        157,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 115.063,
+      "luminance_stddev": 45.965,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_04",
+      "box_xyxy": [
+        157,
+        0,
+        196,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.9756,
+      "mean_luminance": 131.058,
+      "luminance_stddev": 48.963,
+      "absolute_deviation": 0.0244,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_05",
+      "box_xyxy": [
+        196,
+        0,
+        235,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 115.121,
+      "luminance_stddev": 55.58,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_06",
+      "box_xyxy": [
+        235,
+        0,
+        274,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 121.022,
+      "luminance_stddev": 52.475,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_07",
+      "box_xyxy": [
+        274,
+        0,
+        314,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 111.425,
+      "luminance_stddev": 48.857,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_08",
+      "box_xyxy": [
+        314,
+        0,
+        353,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 124.875,
+      "luminance_stddev": 45.762,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_09",
+      "box_xyxy": [
+        353,
+        0,
+        392,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 109.815,
+      "luminance_stddev": 45.055,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_10",
+      "box_xyxy": [
+        392,
+        0,
+        431,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 119.031,
+      "luminance_stddev": 49.014,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_11",
+      "box_xyxy": [
+        431,
+        0,
+        470,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 129.521,
+      "luminance_stddev": 37.897,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_12",
+      "box_xyxy": [
+        470,
+        0,
+        509,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.8662,
+      "mean_luminance": 137.711,
+      "luminance_stddev": 41.816,
+      "absolute_deviation": 0.1338,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_13",
+      "box_xyxy": [
+        509,
+        0,
+        549,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 107.985,
+      "luminance_stddev": 49.589,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_14",
+      "box_xyxy": [
+        549,
+        0,
+        588,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 105.475,
+      "luminance_stddev": 50.884,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_15",
+      "box_xyxy": [
+        588,
+        0,
+        627,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 122.525,
+      "luminance_stddev": 37.047,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_16",
+      "box_xyxy": [
+        627,
+        0,
+        666,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.9148,
+      "mean_luminance": 134.754,
+      "luminance_stddev": 27.183,
+      "absolute_deviation": 0.0852,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_17",
+      "box_xyxy": [
+        666,
+        0,
+        705,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 111.836,
+      "luminance_stddev": 42.666,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_18",
+      "box_xyxy": [
+        705,
+        0,
+        745,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 116.83,
+      "luminance_stddev": 47.808,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_19",
+      "box_xyxy": [
+        745,
+        0,
+        784,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 104.595,
+      "luminance_stddev": 47.572,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_20",
+      "box_xyxy": [
+        784,
+        0,
+        823,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 114.214,
+      "luminance_stddev": 44.536,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_21",
+      "box_xyxy": [
+        823,
+        0,
+        862,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.6488,
+      "mean_luminance": 150.944,
+      "luminance_stddev": 23.154,
+      "absolute_deviation": 0.3512,
+      "result": "suspicious"
+    },
+    {
+      "name": "North_22",
+      "box_xyxy": [
+        862,
+        0,
+        901,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 104.576,
+      "luminance_stddev": 47.883,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_23",
+      "box_xyxy": [
+        901,
+        0,
+        940,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.7235,
+      "mean_luminance": 146.397,
+      "luminance_stddev": 30.461,
+      "absolute_deviation": 0.2765,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_24",
+      "box_xyxy": [
+        940,
+        0,
+        980,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.8731,
+      "mean_luminance": 137.293,
+      "luminance_stddev": 34.313,
+      "absolute_deviation": 0.1269,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_25",
+      "box_xyxy": [
+        980,
+        0,
+        1019,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 122.439,
+      "luminance_stddev": 39.644,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_26",
+      "box_xyxy": [
+        1019,
+        0,
+        1058,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.8088,
+      "mean_luminance": 141.205,
+      "luminance_stddev": 39.899,
+      "absolute_deviation": 0.1912,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_27",
+      "box_xyxy": [
+        1058,
+        0,
+        1097,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.7793,
+      "mean_luminance": 143.002,
+      "luminance_stddev": 21.263,
+      "absolute_deviation": 0.2207,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_28",
+      "box_xyxy": [
+        1097,
+        0,
+        1136,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 124.583,
+      "luminance_stddev": 42.576,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_29",
+      "box_xyxy": [
+        1136,
+        0,
+        1176,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 129.337,
+      "luminance_stddev": 47.88,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "North_30",
+      "box_xyxy": [
+        1176,
+        0,
+        1215,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.6273,
+      "mean_luminance": 152.246,
+      "luminance_stddev": 17.585,
+      "absolute_deviation": 0.3727,
+      "result": "suspicious"
+    },
+    {
+      "name": "North_31",
+      "box_xyxy": [
+        1215,
+        0,
+        1254,
+        15
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 0.9699,
+      "mean_luminance": 131.402,
+      "luminance_stddev": 23.46,
+      "absolute_deviation": 0.0301,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_00",
+      "box_xyxy": [
+        1239,
+        0,
+        1254,
+        39
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 117.077,
+      "luminance_stddev": 29.599,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_01",
+      "box_xyxy": [
+        1239,
+        39,
+        1254,
+        78
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 98.937,
+      "luminance_stddev": 42.453,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_02",
+      "box_xyxy": [
+        1239,
+        78,
+        1254,
+        118
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 123.663,
+      "luminance_stddev": 39.793,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_03",
+      "box_xyxy": [
+        1239,
+        118,
+        1254,
+        157
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 110.88,
+      "luminance_stddev": 45.175,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_04",
+      "box_xyxy": [
+        1239,
+        157,
+        1254,
+        196
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 115.995,
+      "luminance_stddev": 32.66,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_05",
+      "box_xyxy": [
+        1239,
+        196,
+        1254,
+        235
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 88.93,
+      "luminance_stddev": 42.911,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_06",
+      "box_xyxy": [
+        1239,
+        235,
+        1254,
+        274
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 91.347,
+      "luminance_stddev": 48.899,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_07",
+      "box_xyxy": [
+        1239,
+        274,
+        1254,
+        314
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 112.17,
+      "luminance_stddev": 43.629,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_08",
+      "box_xyxy": [
+        1239,
+        314,
+        1254,
+        353
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 108.528,
+      "luminance_stddev": 40.114,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_09",
+      "box_xyxy": [
+        1239,
+        353,
+        1254,
+        392
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 101.513,
+      "luminance_stddev": 41.844,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_10",
+      "box_xyxy": [
+        1239,
+        392,
+        1254,
+        431
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 100.615,
+      "luminance_stddev": 43.627,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_11",
+      "box_xyxy": [
+        1239,
+        431,
+        1254,
+        470
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 113.956,
+      "luminance_stddev": 31.775,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_12",
+      "box_xyxy": [
+        1239,
+        470,
+        1254,
+        509
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 99.516,
+      "luminance_stddev": 43.486,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_13",
+      "box_xyxy": [
+        1239,
+        509,
+        1254,
+        549
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 119.963,
+      "luminance_stddev": 39.718,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_14",
+      "box_xyxy": [
+        1239,
+        549,
+        1254,
+        588
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 126.313,
+      "luminance_stddev": 39.483,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_15",
+      "box_xyxy": [
+        1239,
+        588,
+        1254,
+        627
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 124.003,
+      "luminance_stddev": 37.167,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_16",
+      "box_xyxy": [
+        1239,
+        627,
+        1254,
+        666
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 83.721,
+      "luminance_stddev": 44.544,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_17",
+      "box_xyxy": [
+        1239,
+        666,
+        1254,
+        705
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 96.677,
+      "luminance_stddev": 49.419,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_18",
+      "box_xyxy": [
+        1239,
+        705,
+        1254,
+        745
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 111.812,
+      "luminance_stddev": 40.95,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_19",
+      "box_xyxy": [
+        1239,
+        745,
+        1254,
+        784
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 108.639,
+      "luminance_stddev": 45.245,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_20",
+      "box_xyxy": [
+        1239,
+        784,
+        1254,
+        823
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 111.091,
+      "luminance_stddev": 40.762,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_21",
+      "box_xyxy": [
+        1239,
+        823,
+        1254,
+        862
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 103.429,
+      "luminance_stddev": 41.818,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_22",
+      "box_xyxy": [
+        1239,
+        862,
+        1254,
+        901
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 106.415,
+      "luminance_stddev": 42.97,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_23",
+      "box_xyxy": [
+        1239,
+        901,
+        1254,
+        940
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 120.103,
+      "luminance_stddev": 33.474,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_24",
+      "box_xyxy": [
+        1239,
+        940,
+        1254,
+        980
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 109.817,
+      "luminance_stddev": 37.13,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_25",
+      "box_xyxy": [
+        1239,
+        980,
+        1254,
+        1019
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 108.344,
+      "luminance_stddev": 38.972,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_26",
+      "box_xyxy": [
+        1239,
+        1019,
+        1254,
+        1058
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 111.641,
+      "luminance_stddev": 41.971,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_27",
+      "box_xyxy": [
+        1239,
+        1058,
+        1254,
+        1097
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 79.274,
+      "luminance_stddev": 39.691,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_28",
+      "box_xyxy": [
+        1239,
+        1097,
+        1254,
+        1136
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 120.726,
+      "luminance_stddev": 37.411,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_29",
+      "box_xyxy": [
+        1239,
+        1136,
+        1254,
+        1176
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 106.97,
+      "luminance_stddev": 46.358,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_30",
+      "box_xyxy": [
+        1239,
+        1176,
+        1254,
+        1215
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 118.391,
+      "luminance_stddev": 52.695,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "East_31",
+      "box_xyxy": [
+        1239,
+        1215,
+        1254,
+        1254
+      ],
+      "expected_feature_fraction": 0.8205,
+      "proxy_feature_fraction": 0.4124,
+      "mean_luminance": 165.326,
+      "luminance_stddev": 33.645,
+      "absolute_deviation": 0.4082,
+      "result": "suspicious"
+    },
+    {
+      "name": "South_00",
+      "box_xyxy": [
+        0,
+        1239,
+        39,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.1686,
+      "mean_luminance": 180.159,
+      "luminance_stddev": 13.27,
+      "absolute_deviation": 0.1686,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_01",
+      "box_xyxy": [
+        39,
+        1239,
+        78,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.1647,
+      "mean_luminance": 180.395,
+      "luminance_stddev": 11.697,
+      "absolute_deviation": 0.1647,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_02",
+      "box_xyxy": [
+        78,
+        1239,
+        118,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0873,
+      "mean_luminance": 185.103,
+      "luminance_stddev": 10.23,
+      "absolute_deviation": 0.0873,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_03",
+      "box_xyxy": [
+        118,
+        1239,
+        157,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.1017,
+      "mean_luminance": 184.227,
+      "luminance_stddev": 12.826,
+      "absolute_deviation": 0.1017,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_04",
+      "box_xyxy": [
+        157,
+        1239,
+        196,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0808,
+      "mean_luminance": 185.499,
+      "luminance_stddev": 12.326,
+      "absolute_deviation": 0.0808,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_05",
+      "box_xyxy": [
+        196,
+        1239,
+        235,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0471,
+      "mean_luminance": 187.552,
+      "luminance_stddev": 11.047,
+      "absolute_deviation": 0.0471,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_06",
+      "box_xyxy": [
+        235,
+        1239,
+        274,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0663,
+      "mean_luminance": 186.383,
+      "luminance_stddev": 10.316,
+      "absolute_deviation": 0.0663,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_07",
+      "box_xyxy": [
+        274,
+        1239,
+        314,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0482,
+      "mean_luminance": 187.482,
+      "luminance_stddev": 8.064,
+      "absolute_deviation": 0.0482,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_08",
+      "box_xyxy": [
+        314,
+        1239,
+        353,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0703,
+      "mean_luminance": 186.14,
+      "luminance_stddev": 7.034,
+      "absolute_deviation": 0.0703,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_09",
+      "box_xyxy": [
+        353,
+        1239,
+        392,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0485,
+      "mean_luminance": 187.467,
+      "luminance_stddev": 9.188,
+      "absolute_deviation": 0.0485,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_10",
+      "box_xyxy": [
+        392,
+        1239,
+        431,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0742,
+      "mean_luminance": 185.904,
+      "luminance_stddev": 12.262,
+      "absolute_deviation": 0.0742,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_11",
+      "box_xyxy": [
+        431,
+        1239,
+        470,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0692,
+      "mean_luminance": 186.207,
+      "luminance_stddev": 11.294,
+      "absolute_deviation": 0.0692,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_12",
+      "box_xyxy": [
+        470,
+        1239,
+        509,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0742,
+      "mean_luminance": 185.901,
+      "luminance_stddev": 10.245,
+      "absolute_deviation": 0.0742,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_13",
+      "box_xyxy": [
+        509,
+        1239,
+        549,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0675,
+      "mean_luminance": 186.308,
+      "luminance_stddev": 9.73,
+      "absolute_deviation": 0.0675,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_14",
+      "box_xyxy": [
+        549,
+        1239,
+        588,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.061,
+      "mean_luminance": 186.703,
+      "luminance_stddev": 8.926,
+      "absolute_deviation": 0.061,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_15",
+      "box_xyxy": [
+        588,
+        1239,
+        627,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0489,
+      "mean_luminance": 187.443,
+      "luminance_stddev": 7.915,
+      "absolute_deviation": 0.0489,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_16",
+      "box_xyxy": [
+        627,
+        1239,
+        666,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0633,
+      "mean_luminance": 186.566,
+      "luminance_stddev": 8.52,
+      "absolute_deviation": 0.0633,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_17",
+      "box_xyxy": [
+        666,
+        1239,
+        705,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0391,
+      "mean_luminance": 188.034,
+      "luminance_stddev": 7.751,
+      "absolute_deviation": 0.0391,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_18",
+      "box_xyxy": [
+        705,
+        1239,
+        745,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0504,
+      "mean_luminance": 187.347,
+      "luminance_stddev": 8.663,
+      "absolute_deviation": 0.0504,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_19",
+      "box_xyxy": [
+        745,
+        1239,
+        784,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0493,
+      "mean_luminance": 187.414,
+      "luminance_stddev": 12.163,
+      "absolute_deviation": 0.0493,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_20",
+      "box_xyxy": [
+        784,
+        1239,
+        823,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0742,
+      "mean_luminance": 185.904,
+      "luminance_stddev": 11.593,
+      "absolute_deviation": 0.0742,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_21",
+      "box_xyxy": [
+        823,
+        1239,
+        862,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0501,
+      "mean_luminance": 187.368,
+      "luminance_stddev": 9.131,
+      "absolute_deviation": 0.0501,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_22",
+      "box_xyxy": [
+        862,
+        1239,
+        901,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0783,
+      "mean_luminance": 185.651,
+      "luminance_stddev": 7.661,
+      "absolute_deviation": 0.0783,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_23",
+      "box_xyxy": [
+        901,
+        1239,
+        940,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0988,
+      "mean_luminance": 184.407,
+      "luminance_stddev": 6.956,
+      "absolute_deviation": 0.0988,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_24",
+      "box_xyxy": [
+        940,
+        1239,
+        980,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0962,
+      "mean_luminance": 184.56,
+      "luminance_stddev": 8.419,
+      "absolute_deviation": 0.0962,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_25",
+      "box_xyxy": [
+        980,
+        1239,
+        1019,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0562,
+      "mean_luminance": 186.998,
+      "luminance_stddev": 8.072,
+      "absolute_deviation": 0.0562,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_26",
+      "box_xyxy": [
+        1019,
+        1239,
+        1058,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0638,
+      "mean_luminance": 186.533,
+      "luminance_stddev": 9.992,
+      "absolute_deviation": 0.0638,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_27",
+      "box_xyxy": [
+        1058,
+        1239,
+        1097,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0954,
+      "mean_luminance": 184.614,
+      "luminance_stddev": 10.547,
+      "absolute_deviation": 0.0954,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_28",
+      "box_xyxy": [
+        1097,
+        1239,
+        1136,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.1159,
+      "mean_luminance": 183.364,
+      "luminance_stddev": 10.508,
+      "absolute_deviation": 0.1159,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_29",
+      "box_xyxy": [
+        1136,
+        1239,
+        1176,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.066,
+      "mean_luminance": 186.402,
+      "luminance_stddev": 10.045,
+      "absolute_deviation": 0.066,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_30",
+      "box_xyxy": [
+        1176,
+        1239,
+        1215,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0651,
+      "mean_luminance": 186.456,
+      "luminance_stddev": 10.571,
+      "absolute_deviation": 0.0651,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "South_31",
+      "box_xyxy": [
+        1215,
+        1239,
+        1254,
+        1254
+      ],
+      "expected_feature_fraction": 0.2051,
+      "proxy_feature_fraction": 0.2329,
+      "mean_luminance": 176.248,
+      "luminance_stddev": 19.419,
+      "absolute_deviation": 0.0277,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_00",
+      "box_xyxy": [
+        0,
+        0,
+        15,
+        39
+      ],
+      "expected_feature_fraction": 0.2051,
+      "proxy_feature_fraction": 0.2196,
+      "mean_luminance": 177.055,
+      "luminance_stddev": 28.744,
+      "absolute_deviation": 0.0145,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_01",
+      "box_xyxy": [
+        0,
+        39,
+        15,
+        78
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0,
+      "mean_luminance": 191.957,
+      "luminance_stddev": 7.216,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_02",
+      "box_xyxy": [
+        0,
+        78,
+        15,
+        118
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0443,
+      "mean_luminance": 187.72,
+      "luminance_stddev": 7.327,
+      "absolute_deviation": 0.0443,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_03",
+      "box_xyxy": [
+        0,
+        118,
+        15,
+        157
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0101,
+      "mean_luminance": 189.803,
+      "luminance_stddev": 6.57,
+      "absolute_deviation": 0.0101,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_04",
+      "box_xyxy": [
+        0,
+        157,
+        15,
+        196
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0292,
+      "mean_luminance": 188.641,
+      "luminance_stddev": 8.312,
+      "absolute_deviation": 0.0292,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_05",
+      "box_xyxy": [
+        0,
+        196,
+        15,
+        235
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0481,
+      "mean_luminance": 187.487,
+      "luminance_stddev": 9.304,
+      "absolute_deviation": 0.0481,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_06",
+      "box_xyxy": [
+        0,
+        235,
+        15,
+        274
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0199,
+      "mean_luminance": 189.207,
+      "luminance_stddev": 7.404,
+      "absolute_deviation": 0.0199,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_07",
+      "box_xyxy": [
+        0,
+        274,
+        15,
+        314
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.014,
+      "mean_luminance": 189.565,
+      "luminance_stddev": 6.047,
+      "absolute_deviation": 0.014,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_08",
+      "box_xyxy": [
+        0,
+        314,
+        15,
+        353
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0474,
+      "mean_luminance": 187.533,
+      "luminance_stddev": 6.759,
+      "absolute_deviation": 0.0474,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_09",
+      "box_xyxy": [
+        0,
+        353,
+        15,
+        392
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.1083,
+      "mean_luminance": 183.827,
+      "luminance_stddev": 10.166,
+      "absolute_deviation": 0.1083,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_10",
+      "box_xyxy": [
+        0,
+        392,
+        15,
+        431
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0459,
+      "mean_luminance": 187.624,
+      "luminance_stddev": 8.225,
+      "absolute_deviation": 0.0459,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_11",
+      "box_xyxy": [
+        0,
+        431,
+        15,
+        470
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0041,
+      "mean_luminance": 190.169,
+      "luminance_stddev": 9.577,
+      "absolute_deviation": 0.0041,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_12",
+      "box_xyxy": [
+        0,
+        470,
+        15,
+        509
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0136,
+      "mean_luminance": 189.586,
+      "luminance_stddev": 9.092,
+      "absolute_deviation": 0.0136,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_13",
+      "box_xyxy": [
+        0,
+        509,
+        15,
+        549
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0,
+      "mean_luminance": 191.03,
+      "luminance_stddev": 8.446,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_14",
+      "box_xyxy": [
+        0,
+        549,
+        15,
+        588
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0425,
+      "mean_luminance": 187.832,
+      "luminance_stddev": 9.814,
+      "absolute_deviation": 0.0425,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_15",
+      "box_xyxy": [
+        0,
+        588,
+        15,
+        627
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0457,
+      "mean_luminance": 187.638,
+      "luminance_stddev": 8.411,
+      "absolute_deviation": 0.0457,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_16",
+      "box_xyxy": [
+        0,
+        627,
+        15,
+        666
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0345,
+      "mean_luminance": 188.315,
+      "luminance_stddev": 9.776,
+      "absolute_deviation": 0.0345,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_17",
+      "box_xyxy": [
+        0,
+        666,
+        15,
+        705
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0263,
+      "mean_luminance": 188.817,
+      "luminance_stddev": 8.595,
+      "absolute_deviation": 0.0263,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_18",
+      "box_xyxy": [
+        0,
+        705,
+        15,
+        745
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0344,
+      "mean_luminance": 188.32,
+      "luminance_stddev": 8.003,
+      "absolute_deviation": 0.0344,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_19",
+      "box_xyxy": [
+        0,
+        745,
+        15,
+        784
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.059,
+      "mean_luminance": 186.824,
+      "luminance_stddev": 7.089,
+      "absolute_deviation": 0.059,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_20",
+      "box_xyxy": [
+        0,
+        784,
+        15,
+        823
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0784,
+      "mean_luminance": 185.646,
+      "luminance_stddev": 9.629,
+      "absolute_deviation": 0.0784,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_21",
+      "box_xyxy": [
+        0,
+        823,
+        15,
+        862
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0411,
+      "mean_luminance": 187.913,
+      "luminance_stddev": 8.164,
+      "absolute_deviation": 0.0411,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_22",
+      "box_xyxy": [
+        0,
+        862,
+        15,
+        901
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0,
+      "mean_luminance": 192.062,
+      "luminance_stddev": 6.79,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_23",
+      "box_xyxy": [
+        0,
+        901,
+        15,
+        940
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0,
+      "mean_luminance": 191.058,
+      "luminance_stddev": 8.205,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_24",
+      "box_xyxy": [
+        0,
+        940,
+        15,
+        980
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0024,
+      "mean_luminance": 190.268,
+      "luminance_stddev": 5.812,
+      "absolute_deviation": 0.0024,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_25",
+      "box_xyxy": [
+        0,
+        980,
+        15,
+        1019
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0707,
+      "mean_luminance": 186.115,
+      "luminance_stddev": 7.87,
+      "absolute_deviation": 0.0707,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_26",
+      "box_xyxy": [
+        0,
+        1019,
+        15,
+        1058
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0395,
+      "mean_luminance": 188.01,
+      "luminance_stddev": 7.68,
+      "absolute_deviation": 0.0395,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_27",
+      "box_xyxy": [
+        0,
+        1058,
+        15,
+        1097
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0368,
+      "mean_luminance": 188.179,
+      "luminance_stddev": 8.78,
+      "absolute_deviation": 0.0368,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_28",
+      "box_xyxy": [
+        0,
+        1097,
+        15,
+        1136
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0,
+      "mean_luminance": 192.568,
+      "luminance_stddev": 7.568,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_29",
+      "box_xyxy": [
+        0,
+        1136,
+        15,
+        1176
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0113,
+      "mean_luminance": 189.73,
+      "luminance_stddev": 7.812,
+      "absolute_deviation": 0.0113,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_30",
+      "box_xyxy": [
+        0,
+        1176,
+        15,
+        1215
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0021,
+      "mean_luminance": 190.291,
+      "luminance_stddev": 7.958,
+      "absolute_deviation": 0.0021,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "West_31",
+      "box_xyxy": [
+        0,
+        1215,
+        15,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.11,
+      "mean_luminance": 183.721,
+      "luminance_stddev": 11.277,
+      "absolute_deviation": 0.11,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "NE_shared_feature_corner",
+      "box_xyxy": [
+        1204,
+        0,
+        1254,
+        50
+      ],
+      "expected_feature_fraction": 1.0,
+      "proxy_feature_fraction": 1,
+      "mean_luminance": 125.924,
+      "luminance_stddev": 29.448,
+      "absolute_deviation": 0.0,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "SW_Field_corner",
+      "box_xyxy": [
+        0,
+        1204,
+        50,
+        1254
+      ],
+      "expected_feature_fraction": 0.0,
+      "proxy_feature_fraction": 0.0374,
+      "mean_luminance": 188.14,
+      "luminance_stddev": 10.645,
+      "absolute_deviation": 0.0374,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "NW_transition_corner",
+      "box_xyxy": [
+        0,
+        0,
+        50,
+        50
+      ],
+      "expected_feature_fraction": 0.51,
+      "proxy_feature_fraction": 0.6074,
+      "mean_luminance": 153.46,
+      "luminance_stddev": 50.519,
+      "absolute_deviation": 0.0974,
+      "result": "no_proxy_anomaly"
+    },
+    {
+      "name": "SE_transition_corner",
+      "box_xyxy": [
+        1204,
+        1204,
+        1254,
+        1254
+      ],
+      "expected_feature_fraction": 0.51,
+      "proxy_feature_fraction": 0.1962,
+      "mean_luminance": 178.476,
+      "luminance_stddev": 29.158,
+      "absolute_deviation": 0.3138,
+      "result": "no_proxy_anomaly"
+    }
+  ],
+  "limitations": [
+    "Ink, texture, border aging and wash variations can cause false alarms.",
+    "Fine fringes smaller than the sample area may be missed.",
+    "Cannot identify roads, buildings, trees, false sockets or feature count semantically.",
+    "Corner patches and endpoint bins do not certify exact transition coordinates."
+  ],
+  "candidate": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_wave2_v01.png",
+  "candidate_sha256": "e84b43dbef3f44c14b4c9d9ecece28be50af637a9a403a4ac855a117a709349f",
+  "mask": "/home/rochelle/Jane/MappaMundi/art/templates/control_masks/forest_bend_ne_mask.png",
+  "mask_sha256": "9b6b5f2058a0eaca1d03dac0ac545de524991024f63495488c99f357326efb46"
+}

@@ -1,0 +1,162 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "settlement_throughway",
+  "family": "full_edge_opposite",
+  "seed": 41,
+  "source": "art/reviews/geometry_wave/sources/settlement_throughway_source_v01.png",
+  "source_sha256": "47eefa61343a213b9f7c794d0cf0aa8f6f924ebd72dbdd4518a54074b0b4dad1",
+  "candidate": "art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+  "candidate_sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+  "calibration": {
+    "left": [
+      [
+        0,
+        160
+      ],
+      [
+        100,
+        250
+      ],
+      [
+        200,
+        340
+      ],
+      [
+        300,
+        390
+      ],
+      [
+        400,
+        440
+      ],
+      [
+        500,
+        452
+      ],
+      [
+        600,
+        462
+      ],
+      [
+        700,
+        463
+      ],
+      [
+        800,
+        440
+      ],
+      [
+        900,
+        417
+      ],
+      [
+        1000,
+        356
+      ],
+      [
+        1100,
+        283
+      ],
+      [
+        1200,
+        204
+      ],
+      [
+        1253,
+        148
+      ]
+    ],
+    "right": [
+      [
+        0,
+        1100
+      ],
+      [
+        100,
+        1000
+      ],
+      [
+        200,
+        900
+      ],
+      [
+        300,
+        868
+      ],
+      [
+        400,
+        858
+      ],
+      [
+        500,
+        816
+      ],
+      [
+        600,
+        804
+      ],
+      [
+        700,
+        816
+      ],
+      [
+        800,
+        828
+      ],
+      [
+        900,
+        863
+      ],
+      [
+        1000,
+        950
+      ],
+      [
+        1100,
+        988
+      ],
+      [
+        1200,
+        1037
+      ],
+      [
+        1253,
+        1100
+      ]
+    ],
+    "annotation": "Manual visual source frontier; approximate interior terrain semantics, exact calibrated source ports"
+  },
+  "calibration_file": "art/reviews/geometry_wave/calibrations/settlement_throughway_v01.json",
+  "mask": "art/reviews/geometry_wave/masks/settlement_throughway_geo_v01.png",
+  "source_mask": "art/reviews/geometry_wave/masks/settlement_throughway_geo_v01_source.png",
+  "provenance": "art/reviews/geometry_wave/masks/settlement_throughway_geo_v01_provenance.png",
+  "coordinates_sha256": "3a574dca304580723fe6e8c06fa5bcfa06c6b9ee125c81b71bcc1a2e2373a97c",
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "square": true,
+      "mode_l": true,
+      "binary": true,
+      "edge_N": true,
+      "edge_E": true,
+      "edge_S": true,
+      "edge_W": true,
+      "one_connected_feature": true,
+      "rotation_0_roundtrip": true,
+      "rotation_0_edges": true,
+      "rotation_90_roundtrip": true,
+      "rotation_90_edges": true,
+      "rotation_180_roundtrip": true,
+      "rotation_180_edges": true,
+      "rotation_270_roundtrip": true,
+      "rotation_270_edges": true
+    },
+    "feature_components": 1
+  },
+  "size": [
+    1254,
+    1254
+  ],
+  "mechanical_scope": "Mask and source-provenance proof; human checks source-trace semantics and visible artifacts",
+  "method": "source-aware interval transport"
+}

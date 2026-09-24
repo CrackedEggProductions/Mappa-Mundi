@@ -1,0 +1,84 @@
+{
+  "resampling": "none",
+  "labels": "Outside asset pixels",
+  "items": [
+    {
+      "label": "Approved reference: ref_07_forest_bend",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+      "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        88
+      ]
+    },
+    {
+      "label": "Approved reference: ref_04_open_fields",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+      "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        88
+      ]
+    },
+    {
+      "label": "Wave 1 v01: primary STYLE target",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_v01.png",
+      "sha256": "f3a651ef1a90b4d2005307d5eb027e2b4f74e99e9e070b6e556918e0d7dfaccc",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        88
+      ]
+    },
+    {
+      "label": "Hard geometry guide (NOT art)",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/geometry_guides/forest_bend_guide.png",
+      "sha256": "55d1bfd1451eecaf2a459c3038f7a7b83dff3805c78cb126ae6165e5d81ec737",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        1454
+      ]
+    },
+    {
+      "label": "Wave 2 v01: CANDIDATE",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_wave2_v01.png",
+      "sha256": "e84b43dbef3f44c14b4c9d9ecece28be50af637a9a403a4ac855a117a709349f",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        1454
+      ]
+    },
+    {
+      "label": "Wave 2 v02: CANDIDATE",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_wave2_v02.png",
+      "sha256": "fd04f8374366e40945b6d61708e09d82e6385ce2d8f7b37b38b82147223d4a95",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        1454
+      ]
+    }
+  ]
+}

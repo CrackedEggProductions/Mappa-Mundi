@@ -1,0 +1,45 @@
+{
+  "resampling": "none",
+  "labels": "Outside asset pixels",
+  "items": [
+    {
+      "label": "NE ownership diagram",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+      "sha256": "eafa4ccf9822dfaa9362a0d6766861d18dd542c0b7435c013d6f9514da567d7d",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        88
+      ]
+    },
+    {
+      "label": "Road North socket",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/road_north.png",
+      "sha256": "f67eba950d58f55988a8db1c4e52409facf790afc826360ed310e1c42b261950",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        88
+      ]
+    },
+    {
+      "label": "River North socket",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/river_north.png",
+      "sha256": "d44855134f5e48f789cb8394efe180caad965d49eecd9ea5c1fac82668778c63",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        88
+      ]
+    }
+  ]
+}

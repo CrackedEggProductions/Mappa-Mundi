@@ -1,0 +1,139 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "road_junction",
+  "family": "road_three_way",
+  "seed": 41,
+  "source": "art/reviews/geometry_wave/sources/road_junction_source_v01.png",
+  "source_sha256": "c10e9b896e31c70b5d9c429a674ee9b1f6afcc84ecc297d774fc553f25547918",
+  "candidate": "art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v01.png",
+  "candidate_sha256": "9ce79180f8db95ddc2a6d8e08a540338b0d39383732baad88efab6fb6a088f4a",
+  "calibration": {
+    "ports": {
+      "N": [
+        546,
+        675
+      ],
+      "E": [
+        520,
+        650
+      ],
+      "S": [
+        554,
+        688
+      ]
+    },
+    "collar": 240,
+    "polygon": [
+      [
+        546,
+        0
+      ],
+      [
+        675,
+        0
+      ],
+      [
+        680,
+        440
+      ],
+      [
+        690,
+        480
+      ],
+      [
+        713,
+        514
+      ],
+      [
+        790,
+        532
+      ],
+      [
+        1000,
+        538
+      ],
+      [
+        1253,
+        520
+      ],
+      [
+        1253,
+        650
+      ],
+      [
+        1000,
+        659
+      ],
+      [
+        790,
+        646
+      ],
+      [
+        715,
+        650
+      ],
+      [
+        697,
+        675
+      ],
+      [
+        691,
+        720
+      ],
+      [
+        688,
+        1253
+      ],
+      [
+        554,
+        1253
+      ],
+      [
+        564,
+        800
+      ],
+      [
+        548,
+        560
+      ],
+      [
+        550,
+        270
+      ]
+    ],
+    "annotation": "Manual visual source frontier; approximate interior terrain semantics, exact calibrated source ports"
+  },
+  "calibration_file": "art/reviews/geometry_wave/calibrations/road_junction_v01.json",
+  "mask": "art/reviews/geometry_wave/masks/road_junction_geo_v01.png",
+  "source_mask": "art/reviews/geometry_wave/masks/road_junction_geo_v01_source.png",
+  "provenance": "art/reviews/geometry_wave/masks/road_junction_geo_v01_provenance.png",
+  "coordinates_sha256": "e4614d4f167ad3f83f6b7ea00be8ca959c0a0ea3a90dfe6d0ed3603ce45f365b",
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "square": true,
+      "mode_l": true,
+      "binary": true,
+      "edge_N": true,
+      "edge_E": true,
+      "edge_S": true,
+      "edge_W": true,
+      "one_connected_feature": true,
+      "rotation_0_roundtrip": true,
+      "rotation_0_edges": true,
+      "rotation_90_roundtrip": true,
+      "rotation_90_edges": true,
+      "rotation_180_roundtrip": true,
+      "rotation_180_edges": true,
+      "rotation_270_roundtrip": true,
+      "rotation_270_edges": true
+    },
+    "feature_components": 1
+  },
+  "size": [
+    1254,
+    1254
+  ],
+  "mechanical_scope": "Mask and source-provenance proof; human checks source-trace semantics and visible artifacts",
+  "method": "smooth socket collars"
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "path": "art/references/production_anchors/forest_bend_anchor.png",
+    "source": "art/generated/candidates/hybrid_corrected/forest_bend/forest_bend_hybrid_v02.png",
+    "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human instruction in geometry-family wave"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_corner_anchor.png",
+    "source": "art/generated/candidates/hybrid_corrected/settlement_corner/settlement_corner_hybrid_v02.png",
+    "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human instruction in geometry-family wave"
+  }
+]

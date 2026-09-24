@@ -1,0 +1,31 @@
+{
+  "candidate": "art/generated/candidates/settlement_corner/settlement_corner_wave2_v02.png",
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "style": {
+    "result": "Compatible \u2014 provisional visual assessment",
+    "notes": "Compatible dense sepia buildings and muted terracotta; slightly smaller lower-East gap makes this the best Settlement wave-2 attempt.",
+    "watercolor": "Within restrained range; mostly parchment and ink"
+  },
+  "mechanics": {
+    "result": "FAIL",
+    "checks": {
+      "full_intended_edge_span": "FAIL: lower East does not remain feature through SE",
+      "shared_NE_corner": "PASS visually: continuously occupied",
+      "NW_transition_endpoint": "FAIL: inset/imprecise rather than exact",
+      "SE_transition_endpoint": "FAIL: Field fringe",
+      "opposite_Field_edges": "Otherwise visually Field; NW endpoint is not certified free of local leakage",
+      "single_connected_component": "PASS visually",
+      "false_sockets_or_Road_River_exits": "None apparent",
+      "seam_compatibility": "FAIL: endpoint steps remain; visible aged border seams",
+      "road_river_socket_dimensions": "N/A"
+    },
+    "notes": "Boundary still stops on East above SE, leaving Field on the required feature edge; NW transition remains imprecise."
+  },
+  "automated_diagnostic": {
+    "result": "suspicious",
+    "suspicious_samples": 13,
+    "json": "settlement_corner/settlement_corner_wave2_v02_geometry.json",
+    "limitations": "Luminance proxy only; dark ink/borders can cause false alarms and tiny fringes can be missed. Count is not a quality ranking."
+  },
+  "independent_visual_review": "Agrees that all four retain style but fail exact endpoints."
+}

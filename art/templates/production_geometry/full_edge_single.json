@@ -1,0 +1,80 @@
+{
+  "family": "full_edge_single",
+  "resolution": [
+    1254,
+    1254
+  ],
+  "seed": 41,
+  "coordinate_convention": "inclusive pixel centers 0..size-1",
+  "center_inclusive": [
+    626.5,
+    626.5
+  ],
+  "center_continuous": [
+    627.0,
+    627.0
+  ],
+  "corner_tie_rule": "full-edge feature owns shared transition pixels",
+  "corners": {
+    "NW": [
+      0,
+      0
+    ],
+    "NE": [
+      1253,
+      0
+    ],
+    "SE": [
+      1253,
+      1253
+    ],
+    "SW": [
+      0,
+      1253
+    ]
+  },
+  "edge_feature_pixel_counts": {
+    "N": 1254,
+    "E": 1,
+    "S": 0,
+    "W": 1
+  },
+  "road_socket_width": 126,
+  "road_socket_inclusive": [
+    564,
+    689
+  ],
+  "river_socket_width": 250,
+  "river_socket_inclusive": [
+    502,
+    751
+  ],
+  "width_rounding": "nearest even integer; exact half rounds up",
+  "rotation": "clockwise exact 90-degree transpose: (x,y) -> (size-1-y,x)",
+  "mask_values": {
+    "feature": 255,
+    "field": 0
+  },
+  "validation": {
+    "valid": true,
+    "checks": {
+      "square": true,
+      "mode_l": true,
+      "binary": true,
+      "edge_N": true,
+      "edge_E": true,
+      "edge_S": true,
+      "edge_W": true,
+      "one_connected_feature": true,
+      "rotation_0_roundtrip": true,
+      "rotation_0_edges": true,
+      "rotation_90_roundtrip": true,
+      "rotation_90_edges": true,
+      "rotation_180_roundtrip": true,
+      "rotation_180_edges": true,
+      "rotation_270_roundtrip": true,
+      "rotation_270_edges": true
+    },
+    "feature_components": 1
+  }
+}

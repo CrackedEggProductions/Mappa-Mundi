@@ -1,0 +1,26 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "source": "art/generated/candidates/settlement_corner/settlement_corner_wave2_v02.png",
+  "source_sha256": "583b0f976c9838f4b8b561672a465a1a717b5c1eb466b310bfc54d56b69b6932",
+  "candidate": "art/generated/candidates/hybrid_corrected/settlement_corner/settlement_corner_hybrid_v02.png",
+  "candidate_sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+  "size": [
+    1254,
+    1254
+  ],
+  "seed": 73,
+  "transition_width": 60,
+  "method": "continuous region-aware column transport",
+  "field_mode": "relaxed",
+  "boundary": "art/templates/hybrid_boundaries/settlement_corner_hybrid_v02.json",
+  "masks": {
+    "feature": "art/templates/hybrid_masks/settlement_corner_hybrid_v02_feature.png",
+    "field": "art/templates/hybrid_masks/settlement_corner_hybrid_v02_field.png",
+    "transition": "art/templates/hybrid_masks/settlement_corner_hybrid_v02_transition.png"
+  },
+  "provenance": "art/templates/hybrid_masks/settlement_corner_hybrid_v02_provenance.png",
+  "source_coordinate_sha256": "96c291a2388176a07bc9bc86babe3d4990e4c4f78e48898432954a90e6fabae5",
+  "source_trace_is": "manual wall-foot/undergrowth calibration; not semantic certification",
+  "palette_changes": "none; same-column linear interpolation only",
+  "source_owner_equals_output_mask": true
+}

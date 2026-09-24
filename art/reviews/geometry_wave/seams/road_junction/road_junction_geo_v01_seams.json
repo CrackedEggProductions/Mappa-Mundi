@@ -1,0 +1,275 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "topology": "declared feature kinds only; inspect actual artwork",
+  "legacy_socket_note": "Legacy Road references are unchanged and NOT certified to the 126px socket.",
+  "empty_cells": "transparent outside-board space, not Field tiles",
+  "sheets": [
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/road_junction/road_junction_geo_v01_straight_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "7368cfd1e8a3cb55f8bc21909ecedbed91937e2d25ecc45172236717b640970a",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v01.png",
+          "sha256": "9ce79180f8db95ddc2a6d8e08a540338b0d39383732baad88efab6fb6a088f4a",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/road_junction/road_junction_geo_v01_bend_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "8dbea2ccc2424be5acc31f457aa0593b8623eabf465fe61cdac22fdceeb2888a",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v01.png",
+          "sha256": "9ce79180f8db95ddc2a6d8e08a540338b0d39383732baad88efab6fb6a088f4a",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_09_bending_road.png",
+          "sha256": "223a91fd4e161b0a981decc632ba7c925fa3e27a4b446444e297fce12cb65492",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/road_junction/road_junction_geo_v01_end_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "02b5a7b64f0a76614fbe995821bb9f50438038624dec74c98bea06b1be0066d7",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v01.png",
+          "sha256": "9ce79180f8db95ddc2a6d8e08a540338b0d39383732baad88efab6fb6a088f4a",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_01_road_end.png",
+          "sha256": "9be0cd9569ad3c2f3cca0adeca9a2230baf239c03b0487cafa168f2514fa9467",
+          "rotation_clockwise": 90
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/road_junction/road_junction_geo_v01_field_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "71ae20a9456c3cba88d9905e3189dbf5cc982867a75677d375d24f632a024e6f",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v01.png",
+          "sha256": "9ce79180f8db95ddc2a6d8e08a540338b0d39383732baad88efab6fb6a088f4a",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/road_junction/road_junction_geo_v01_three_branch_3x3.png",
+      "size": [
+        3762,
+        3762
+      ],
+      "sha256": "26e7975792aa341e8c25b353ff50e8170fbbe6a76ec8a190113302d7b40e0d4e",
+      "placements": [
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v01.png",
+          "sha256": "9ce79180f8db95ddc2a6d8e08a540338b0d39383732baad88efab6fb6a088f4a",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_09_bending_road.png",
+          "sha256": "223a91fd4e161b0a981decc632ba7c925fa3e27a4b446444e297fce12cb65492",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_01_road_end.png",
+          "sha256": "9be0cd9569ad3c2f3cca0adeca9a2230baf239c03b0487cafa168f2514fa9467",
+          "rotation_clockwise": 180
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Road"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Field"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            1,
+            2
+          ],
+          "feature": "Road"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            2,
+            1
+          ],
+          "feature": "Road"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    }
+  ]
+}

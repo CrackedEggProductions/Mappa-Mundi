@@ -1,0 +1,143 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "labels": "outside tile art",
+  "resampling": "LANCZOS thumbnails in this comparison only; native seams are unchanged",
+  "items": [
+    {
+      "label": "Production anchor / Road reference",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/production_anchors/forest_bend_anchor.png",
+      "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        18,
+        70
+      ]
+    },
+    {
+      "label": "Canonical family template",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/production_geometry/full_edge_opposite.png",
+      "sha256": "f052e8d69b8b77419169dd6b1c4b6b87e2356792dde8238cddd043a38065a4f7",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        438,
+        70
+      ]
+    },
+    {
+      "label": "v01 actual ownership mask",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/masks/forest_belt_geo_v01.png",
+      "sha256": "f052e8d69b8b77419169dd6b1c4b6b87e2356792dde8238cddd043a38065a4f7",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        858,
+        70
+      ]
+    },
+    {
+      "label": "v02 actual ownership mask",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/masks/forest_belt_geo_v02.png",
+      "sha256": "7f5023e367852d09477a9369164b3c35288a219cc068338de75b3d10c2eee9b7",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        18,
+        542
+      ]
+    },
+    {
+      "label": "Candidate v01 \u2014 awaiting review",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+      "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        438,
+        542
+      ]
+    },
+    {
+      "label": "Candidate v02 \u2014 awaiting review",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v02.png",
+      "sha256": "95be949114ee2cb32250c2e5058db4f5c0838a0008905f00253e2319420c02f6",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        858,
+        542
+      ]
+    },
+    {
+      "label": "Native seam preview 1",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_belt/forest_belt_geo_v01_feature_strip.png",
+      "sha256": "6020145364ab0c15528f4f5a8587a109b1bdf5a1cab90fe827f2de6475dab5bd",
+      "native_size": [
+        1254,
+        3762
+      ],
+      "review_size": [
+        128,
+        384
+      ],
+      "review_position": [
+        146,
+        1014
+      ]
+    },
+    {
+      "label": "Native seam preview 2",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_belt/forest_belt_geo_v01_mixed_2x2.png",
+      "sha256": "672f425403ad6e0e7e14bd59751dfcebe96522a6d82d3c6e1c39c7b777b21f13",
+      "native_size": [
+        2508,
+        2508
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        438,
+        1014
+      ]
+    }
+  ]
+}

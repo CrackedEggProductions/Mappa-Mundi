@@ -1,0 +1,163 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "forest_belt",
+  "family": "full_edge_opposite",
+  "seed": 73,
+  "source": "art/reviews/geometry_wave/sources/forest_belt_source_v02.png",
+  "source_sha256": "bc53662e6260a668300e3dfcfe76a8c37470a29878ef00df2596d9ad9da3ec3b",
+  "candidate": "art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v02.png",
+  "candidate_sha256": "95be949114ee2cb32250c2e5058db4f5c0838a0008905f00253e2319420c02f6",
+  "calibration": {
+    "inset_fraction": 0.28,
+    "left": [
+      [
+        0,
+        15
+      ],
+      [
+        100,
+        130
+      ],
+      [
+        200,
+        223
+      ],
+      [
+        300,
+        286
+      ],
+      [
+        400,
+        328
+      ],
+      [
+        500,
+        351
+      ],
+      [
+        600,
+        345
+      ],
+      [
+        700,
+        349
+      ],
+      [
+        800,
+        328
+      ],
+      [
+        900,
+        275
+      ],
+      [
+        1000,
+        210
+      ],
+      [
+        1100,
+        137
+      ],
+      [
+        1200,
+        40
+      ],
+      [
+        1253,
+        12
+      ]
+    ],
+    "right": [
+      [
+        0,
+        1240
+      ],
+      [
+        100,
+        1150
+      ],
+      [
+        200,
+        1045
+      ],
+      [
+        300,
+        988
+      ],
+      [
+        400,
+        944
+      ],
+      [
+        500,
+        918
+      ],
+      [
+        600,
+        891
+      ],
+      [
+        700,
+        917
+      ],
+      [
+        800,
+        925
+      ],
+      [
+        900,
+        964
+      ],
+      [
+        1000,
+        1030
+      ],
+      [
+        1100,
+        1110
+      ],
+      [
+        1200,
+        1200
+      ],
+      [
+        1253,
+        1241
+      ]
+    ],
+    "annotation": "Manual visual source frontier; approximate interior terrain semantics, exact calibrated source ports"
+  },
+  "calibration_file": "art/reviews/geometry_wave/calibrations/forest_belt_v02.json",
+  "mask": "art/reviews/geometry_wave/masks/forest_belt_geo_v02.png",
+  "source_mask": "art/reviews/geometry_wave/masks/forest_belt_geo_v02_source.png",
+  "provenance": "art/reviews/geometry_wave/masks/forest_belt_geo_v02_provenance.png",
+  "coordinates_sha256": "5563252fe4708deec6963f968ab6849c4d5ddf40253426c94afcf5474072f54c",
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "square": true,
+      "mode_l": true,
+      "binary": true,
+      "edge_N": true,
+      "edge_E": true,
+      "edge_S": true,
+      "edge_W": true,
+      "one_connected_feature": true,
+      "rotation_0_roundtrip": true,
+      "rotation_0_edges": true,
+      "rotation_90_roundtrip": true,
+      "rotation_90_edges": true,
+      "rotation_180_roundtrip": true,
+      "rotation_180_edges": true,
+      "rotation_270_roundtrip": true,
+      "rotation_270_edges": true
+    },
+    "feature_components": 1
+  },
+  "size": [
+    1254,
+    1254
+  ],
+  "mechanical_scope": "Mask and source-provenance proof; human checks source-trace semantics and visible artifacts",
+  "method": "source-aware interval transport"
+}

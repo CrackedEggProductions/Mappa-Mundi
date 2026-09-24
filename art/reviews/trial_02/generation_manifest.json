@@ -1,0 +1,151 @@
+{
+  "tool": "built-in image_gen",
+  "generation_calls": 4,
+  "direct_references": true,
+  "control_limitation": "Guides were attached as images, not enforced through a dedicated pixel-mask parameter; tool exposes no such parameter.",
+  "model_version": "not exposed",
+  "seed": "not exposed",
+  "master_size_px": [
+    1254,
+    1254
+  ],
+  "outputs_unmodified": true,
+  "entries": [
+    {
+      "request": "art/reviews/trial_02/requests/forest_bend_wave2_v01.json",
+      "request_sha256": "b6c494d918f8153f15d3482007c7ca150be9e89b2fb88126a1062f9e5d7f1126",
+      "source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-3fbfa74b-e71d-4aa4-af1e-c5714184dca1.png",
+      "candidate": "art/generated/candidates/forest_bend/forest_bend_wave2_v01.png",
+      "sha256": "e84b43dbef3f44c14b4c9d9ecece28be50af637a9a403a4ac855a117a709349f",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+      "references": [
+        {
+          "path": "art/templates/geometry_guides/forest_bend_guide.png",
+          "sha256": "55d1bfd1451eecaf2a459c3038f7a7b83dff3805c78cb126ae6165e5d81ec737"
+        },
+        {
+          "path": "art/templates/geometry_guides/forest_bend_underlay.png",
+          "sha256": "4c8de6915820aca14db4b9031076116a7f988bbb8a3fb900db65704e23d1389b"
+        },
+        {
+          "path": "art/generated/candidates/forest_bend/forest_bend_v01.png",
+          "sha256": "f3a651ef1a90b4d2005307d5eb027e2b4f74e99e9e070b6e556918e0d7dfaccc"
+        },
+        {
+          "path": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        },
+        {
+          "path": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        }
+      ]
+    },
+    {
+      "request": "art/reviews/trial_02/requests/forest_bend_wave2_v02.json",
+      "request_sha256": "849040c2bb4908eb35fd2271c821b465b7797e2d321034ec0d61d024d7c53c05",
+      "source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-d04ce62f-a500-4267-8f17-ddf07250d8f5.png",
+      "candidate": "art/generated/candidates/forest_bend/forest_bend_wave2_v02.png",
+      "sha256": "fd04f8374366e40945b6d61708e09d82e6385ce2d8f7b37b38b82147223d4a95",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+      "references": [
+        {
+          "path": "art/templates/geometry_guides/forest_bend_guide.png",
+          "sha256": "55d1bfd1451eecaf2a459c3038f7a7b83dff3805c78cb126ae6165e5d81ec737"
+        },
+        {
+          "path": "art/templates/geometry_guides/forest_bend_underlay.png",
+          "sha256": "4c8de6915820aca14db4b9031076116a7f988bbb8a3fb900db65704e23d1389b"
+        },
+        {
+          "path": "art/generated/candidates/forest_bend/forest_bend_v01.png",
+          "sha256": "f3a651ef1a90b4d2005307d5eb027e2b4f74e99e9e070b6e556918e0d7dfaccc"
+        },
+        {
+          "path": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        },
+        {
+          "path": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        }
+      ]
+    },
+    {
+      "request": "art/reviews/trial_02/requests/settlement_corner_wave2_v01.json",
+      "request_sha256": "62fa4d6921057d523b4b9ec350e4209b49358084df81d344e291cba54c9cb9f0",
+      "source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-0382b337-3a4d-4e16-88c6-39a17e3f031b.png",
+      "candidate": "art/generated/candidates/settlement_corner/settlement_corner_wave2_v01.png",
+      "sha256": "ba9414e07edb93abfe6bba3f0e9cca004ccb49184365c168e2004f63c4dc591f",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+      "references": [
+        {
+          "path": "art/templates/geometry_guides/settlement_corner_guide.png",
+          "sha256": "11ea4e61bb130cefe99bdb38de74f696868cc025e36712d1c8839c990c2389bb"
+        },
+        {
+          "path": "art/templates/geometry_guides/settlement_corner_underlay.png",
+          "sha256": "b664970e7eb65c6a693e649e4563a4dcb572da883be7fd195bac1c8fbe3fdb97"
+        },
+        {
+          "path": "art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+          "sha256": "9703e011524194ccb01730326c79cfda95043687aea28afe979f46ee6f618174"
+        },
+        {
+          "path": "art/references/approved_style/ref_03_hamlet_edge.png",
+          "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea"
+        },
+        {
+          "path": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        }
+      ]
+    },
+    {
+      "request": "art/reviews/trial_02/requests/settlement_corner_wave2_v02.json",
+      "request_sha256": "07cea620ef46e58d1c0a91d54721dde4afa464bb886c7a215bbab288e892ad20",
+      "source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-c8a02cc1-2175-415b-b6ab-d55e0072465f.png",
+      "candidate": "art/generated/candidates/settlement_corner/settlement_corner_wave2_v02.png",
+      "sha256": "583b0f976c9838f4b8b561672a465a1a717b5c1eb466b310bfc54d56b69b6932",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+      "references": [
+        {
+          "path": "art/templates/geometry_guides/settlement_corner_guide.png",
+          "sha256": "11ea4e61bb130cefe99bdb38de74f696868cc025e36712d1c8839c990c2389bb"
+        },
+        {
+          "path": "art/templates/geometry_guides/settlement_corner_underlay.png",
+          "sha256": "b664970e7eb65c6a693e649e4563a4dcb572da883be7fd195bac1c8fbe3fdb97"
+        },
+        {
+          "path": "art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+          "sha256": "9703e011524194ccb01730326c79cfda95043687aea28afe979f46ee6f618174"
+        },
+        {
+          "path": "art/references/approved_style/ref_03_hamlet_edge.png",
+          "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea"
+        },
+        {
+          "path": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        }
+      ]
+    }
+  ]
+}

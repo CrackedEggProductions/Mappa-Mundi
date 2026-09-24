@@ -1,0 +1,104 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "forest_edge",
+  "family": "full_edge_single",
+  "seed": 41,
+  "source": "art/reviews/geometry_wave/sources/forest_edge_source_v01.png",
+  "source_sha256": "ba776e27c3b451fae527493d73733517d89e2e82249776dd324eb5ffbcb8602f",
+  "candidate": "art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+  "candidate_sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+  "calibration": {
+    "frontier": [
+      [
+        0,
+        200
+      ],
+      [
+        100,
+        275
+      ],
+      [
+        200,
+        350
+      ],
+      [
+        300,
+        400
+      ],
+      [
+        400,
+        460
+      ],
+      [
+        500,
+        530
+      ],
+      [
+        600,
+        547
+      ],
+      [
+        700,
+        531
+      ],
+      [
+        800,
+        490
+      ],
+      [
+        900,
+        441
+      ],
+      [
+        1000,
+        382
+      ],
+      [
+        1100,
+        329
+      ],
+      [
+        1200,
+        257
+      ],
+      [
+        1253,
+        192
+      ]
+    ],
+    "annotation": "Manual visual source frontier; approximate interior terrain semantics, exact calibrated source ports"
+  },
+  "calibration_file": "art/reviews/geometry_wave/calibrations/forest_edge_v01.json",
+  "mask": "art/reviews/geometry_wave/masks/forest_edge_geo_v01.png",
+  "source_mask": "art/reviews/geometry_wave/masks/forest_edge_geo_v01_source.png",
+  "provenance": "art/reviews/geometry_wave/masks/forest_edge_geo_v01_provenance.png",
+  "coordinates_sha256": "15d092442c74b91fdce64f62a80e15bf6710d25f92eff43930e37a1fac96612e",
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "square": true,
+      "mode_l": true,
+      "binary": true,
+      "edge_N": true,
+      "edge_E": true,
+      "edge_S": true,
+      "edge_W": true,
+      "one_connected_feature": true,
+      "rotation_0_roundtrip": true,
+      "rotation_0_edges": true,
+      "rotation_90_roundtrip": true,
+      "rotation_90_edges": true,
+      "rotation_180_roundtrip": true,
+      "rotation_180_edges": true,
+      "rotation_270_roundtrip": true,
+      "rotation_270_edges": true
+    },
+    "feature_components": 1
+  },
+  "size": [
+    1254,
+    1254
+  ],
+  "mechanical_scope": "Mask and source-provenance proof; human checks source-trace semantics and visible artifacts",
+  "method": "source-aware interval transport"
+}

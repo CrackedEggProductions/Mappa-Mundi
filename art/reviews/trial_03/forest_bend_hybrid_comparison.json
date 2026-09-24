@@ -1,0 +1,50 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "review_only": "420px previews; native candidates and seams are unchanged",
+  "items": [
+    {
+      "label": "Preferred wave-2 source",
+      "source": "art/generated/candidates/forest_bend/forest_bend_wave2_v01.png"
+    },
+    {
+      "label": "v01 hard feature mask",
+      "source": "art/templates/hybrid_masks/forest_bend_hybrid_v01_feature.png"
+    },
+    {
+      "label": "v01 organic boundary",
+      "source": "art/templates/hybrid_boundaries/forest_bend_hybrid_v01.png"
+    },
+    {
+      "label": "v01 hybrid CANDIDATE",
+      "source": "art/generated/candidates/hybrid_corrected/forest_bend/forest_bend_hybrid_v01.png"
+    },
+    {
+      "label": "v01 feature seams",
+      "source": "art/reviews/trial_03/seams/forest_bend/forest_bend_hybrid_v01_central_area_2x2.png"
+    },
+    {
+      "label": "v01 field seams",
+      "source": "art/reviews/trial_03/seams/forest_bend/forest_bend_hybrid_v01_central_field_2x2.png"
+    },
+    {
+      "label": "v02 hard feature mask",
+      "source": "art/templates/hybrid_masks/forest_bend_hybrid_v02_feature.png"
+    },
+    {
+      "label": "v02 organic boundary",
+      "source": "art/templates/hybrid_boundaries/forest_bend_hybrid_v02.png"
+    },
+    {
+      "label": "v02 hybrid CANDIDATE",
+      "source": "art/generated/candidates/hybrid_corrected/forest_bend/forest_bend_hybrid_v02.png"
+    },
+    {
+      "label": "v02 feature seams",
+      "source": "art/reviews/trial_03/seams/forest_bend/forest_bend_hybrid_v02_central_area_2x2.png"
+    },
+    {
+      "label": "v02 field seams",
+      "source": "art/reviews/trial_03/seams/forest_bend/forest_bend_hybrid_v02_central_field_2x2.png"
+    }
+  ]
+}

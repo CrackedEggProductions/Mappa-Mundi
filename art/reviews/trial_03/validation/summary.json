@@ -1,0 +1,302 @@
+{
+  "forest_bend_hybrid_v01_composition": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "source_file_hash": true,
+      "candidate_file_hash": true,
+      "native_dimensions": true,
+      "path_endpoints_monotonicity_and_no_other_edge_contacts": true,
+      "seeded_path_matches": true,
+      "seed_metadata_agrees": true,
+      "feature_mask_dimensions_mode_binary": true,
+      "feature_mask_matches_path": true,
+      "field_mask_dimensions_mode_binary": true,
+      "field_mask_matches_path": true,
+      "transition_mask_dimensions_mode_binary": true,
+      "transition_mask_matches_path": true,
+      "mask_complements": true,
+      "exact_edges_with_feature_corner_ties": true,
+      "provenance_equals_feature": true,
+      "candidate_pixels_reproduced": true,
+      "source_coordinate_hash_reproduced": true,
+      "actual_sampling_owner_reproduced": true,
+      "actual_composition_masks_reproduced": true,
+      "validation_leaves_source_unchanged": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "forest_bend_hybrid_v02_composition": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "source_file_hash": true,
+      "candidate_file_hash": true,
+      "native_dimensions": true,
+      "path_endpoints_monotonicity_and_no_other_edge_contacts": true,
+      "seeded_path_matches": true,
+      "seed_metadata_agrees": true,
+      "feature_mask_dimensions_mode_binary": true,
+      "feature_mask_matches_path": true,
+      "field_mask_dimensions_mode_binary": true,
+      "field_mask_matches_path": true,
+      "transition_mask_dimensions_mode_binary": true,
+      "transition_mask_matches_path": true,
+      "mask_complements": true,
+      "exact_edges_with_feature_corner_ties": true,
+      "provenance_equals_feature": true,
+      "candidate_pixels_reproduced": true,
+      "source_coordinate_hash_reproduced": true,
+      "actual_sampling_owner_reproduced": true,
+      "actual_composition_masks_reproduced": true,
+      "validation_leaves_source_unchanged": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v01_composition": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "source_file_hash": true,
+      "candidate_file_hash": true,
+      "native_dimensions": true,
+      "path_endpoints_monotonicity_and_no_other_edge_contacts": true,
+      "seeded_path_matches": true,
+      "seed_metadata_agrees": true,
+      "feature_mask_dimensions_mode_binary": true,
+      "feature_mask_matches_path": true,
+      "field_mask_dimensions_mode_binary": true,
+      "field_mask_matches_path": true,
+      "transition_mask_dimensions_mode_binary": true,
+      "transition_mask_matches_path": true,
+      "mask_complements": true,
+      "exact_edges_with_feature_corner_ties": true,
+      "provenance_equals_feature": true,
+      "candidate_pixels_reproduced": true,
+      "source_coordinate_hash_reproduced": true,
+      "actual_sampling_owner_reproduced": true,
+      "actual_composition_masks_reproduced": true,
+      "validation_leaves_source_unchanged": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v02_composition": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "source_file_hash": true,
+      "candidate_file_hash": true,
+      "native_dimensions": true,
+      "path_endpoints_monotonicity_and_no_other_edge_contacts": true,
+      "seeded_path_matches": true,
+      "seed_metadata_agrees": true,
+      "feature_mask_dimensions_mode_binary": true,
+      "feature_mask_matches_path": true,
+      "field_mask_dimensions_mode_binary": true,
+      "field_mask_matches_path": true,
+      "transition_mask_dimensions_mode_binary": true,
+      "transition_mask_matches_path": true,
+      "mask_complements": true,
+      "exact_edges_with_feature_corner_ties": true,
+      "provenance_equals_feature": true,
+      "candidate_pixels_reproduced": true,
+      "source_coordinate_hash_reproduced": true,
+      "actual_sampling_owner_reproduced": true,
+      "actual_composition_masks_reproduced": true,
+      "validation_leaves_source_unchanged": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "forest_bend_hybrid_v01_central_area_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "forest_bend_hybrid_v01_central_field_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "forest_bend_hybrid_v01_alternating_3x3.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_0_2_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true,
+      "tile_1_2_every_pixel_preserved": true,
+      "tile_2_0_every_pixel_preserved": true,
+      "tile_2_1_every_pixel_preserved": true,
+      "tile_2_2_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "forest_bend_hybrid_v02_central_area_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "forest_bend_hybrid_v02_central_field_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "forest_bend_hybrid_v02_alternating_3x3.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_0_2_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true,
+      "tile_1_2_every_pixel_preserved": true,
+      "tile_2_0_every_pixel_preserved": true,
+      "tile_2_1_every_pixel_preserved": true,
+      "tile_2_2_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v01_central_area_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v01_central_field_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v01_alternating_3x3.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_0_2_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true,
+      "tile_1_2_every_pixel_preserved": true,
+      "tile_2_0_every_pixel_preserved": true,
+      "tile_2_1_every_pixel_preserved": true,
+      "tile_2_2_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v02_central_area_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v02_central_field_2x2.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  },
+  "settlement_corner_hybrid_v02_alternating_3x3.png": {
+    "valid": true,
+    "status": "PASS",
+    "checks": {
+      "matching_topology": true,
+      "native_sheet_dimensions": true,
+      "tile_0_0_every_pixel_preserved": true,
+      "tile_0_1_every_pixel_preserved": true,
+      "tile_0_2_every_pixel_preserved": true,
+      "tile_1_0_every_pixel_preserved": true,
+      "tile_1_1_every_pixel_preserved": true,
+      "tile_1_2_every_pixel_preserved": true,
+      "tile_2_0_every_pixel_preserved": true,
+      "tile_2_1_every_pixel_preserved": true,
+      "tile_2_2_every_pixel_preserved": true
+    },
+    "errors": [],
+    "scope": "Deterministic geometry and pixel provenance; not semantic art approval"
+  }
+}

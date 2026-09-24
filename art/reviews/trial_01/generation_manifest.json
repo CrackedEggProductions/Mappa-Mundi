@@ -1,0 +1,217 @@
+{
+  "tool": "built-in image_gen with direct local reference images",
+  "model_version": "not exposed",
+  "seed": "not exposed",
+  "generation_calls": 6,
+  "master_size_px": [
+    1254,
+    1254
+  ],
+  "resolution_note": "First request asked for 1024; tool returned native 1254. Preserved without resampling and adopted native size. Initial guide archived.",
+  "candidates": [
+    {
+      "id": "forest_bend_v01",
+      "request": "art/reviews/trial_01/requests/forest_bend_v01.json",
+      "request_sha256": "cc5ec2d5e95a08502b4642bf154535a49f61bfe537c35e98fa30190f26f5ab3c",
+      "candidate": "art/generated/candidates/forest_bend/forest_bend_v01.png",
+      "sha256": "f3a651ef1a90b4d2005307d5eb027e2b4f74e99e9e070b6e556918e0d7dfaccc",
+      "tool_source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-a9adb940-ffb1-4bde-b949-48cce32ae6c5.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "references": [
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+          "preserved_file": "art/templates/edge_masks/ne_ownership_guide.png",
+          "sha256": "eafa4ccf9822dfaa9362a0d6766861d18dd542c0b7435c013d6f9514da567d7d"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+          "preserved_file": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_06_forest_edge.png",
+          "preserved_file": "art/references/approved_style/ref_06_forest_edge.png",
+          "sha256": "07989e3683e371d98e1dccbba9dfd3dd8d0955da54ab79d0ec691bb6c50f2743"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "preserved_file": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        }
+      ]
+    },
+    {
+      "id": "forest_bend_v02",
+      "request": "art/reviews/trial_01/requests/forest_bend_v02.json",
+      "request_sha256": "e539ce259ac8eef62dd5e57b1b43ead08b4edf17b5db40ec11b549db4283585f",
+      "candidate": "art/generated/candidates/forest_bend/forest_bend_v02.png",
+      "sha256": "54bbfcbaa18773c194dca19dc5d1fb062eddc6650a822afb31803f8e5131b828",
+      "tool_source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-8bf44590-f40a-463e-8785-788e1360f14c.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "references": [
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+          "preserved_file": "art/templates/edge_masks/ne_ownership_guide.png",
+          "sha256": "eafa4ccf9822dfaa9362a0d6766861d18dd542c0b7435c013d6f9514da567d7d"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+          "preserved_file": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_06_forest_edge.png",
+          "preserved_file": "art/references/approved_style/ref_06_forest_edge.png",
+          "sha256": "07989e3683e371d98e1dccbba9dfd3dd8d0955da54ab79d0ec691bb6c50f2743"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "preserved_file": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        }
+      ]
+    },
+    {
+      "id": "forest_bend_v03",
+      "request": "art/reviews/trial_01/requests/forest_bend_v03.json",
+      "request_sha256": "f1cd9a6abfab2fb3823c130c0d96453a3d938254952bfd6d2facf19693f01be5",
+      "candidate": "art/generated/candidates/forest_bend/forest_bend_v03.png",
+      "sha256": "91deafca6b48dd7d828affb613aaa72f36650343a28d222af003d18c63db172d",
+      "tool_source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-c44327da-4c65-4408-88b1-f2349c089eee.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "references": [
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+          "preserved_file": "art/templates/edge_masks/ne_ownership_guide.png",
+          "sha256": "eafa4ccf9822dfaa9362a0d6766861d18dd542c0b7435c013d6f9514da567d7d"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+          "preserved_file": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_06_forest_edge.png",
+          "preserved_file": "art/references/approved_style/ref_06_forest_edge.png",
+          "sha256": "07989e3683e371d98e1dccbba9dfd3dd8d0955da54ab79d0ec691bb6c50f2743"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "preserved_file": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        }
+      ]
+    },
+    {
+      "id": "settlement_corner_v01",
+      "request": "art/reviews/trial_01/requests/settlement_corner_v01.json",
+      "request_sha256": "affd5b0097cbac4929e565144211ef1ef91d8b52ee63ba7e8d42acf95912216f",
+      "candidate": "art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+      "sha256": "9703e011524194ccb01730326c79cfda95043687aea28afe979f46ee6f618174",
+      "tool_source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-0a0c5848-7471-4208-a658-bbcb2ae395e0.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "references": [
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+          "preserved_file": "art/templates/archived_1024/edge_masks/ne_ownership_guide.png",
+          "sha256": "46582ae176d1b960c8e6cce18e12ea8ae3c0eb3a31b28323652bdb719a7fca2b"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_03_hamlet_edge.png",
+          "preserved_file": "art/references/approved_style/ref_03_hamlet_edge.png",
+          "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "preserved_file": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+          "preserved_file": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        }
+      ]
+    },
+    {
+      "id": "settlement_corner_v02",
+      "request": "art/reviews/trial_01/requests/settlement_corner_v02.json",
+      "request_sha256": "0cc6b1c386d00dc7f3b4caaf998953df87a2d6f1cd69d6a7e45175d01b88b41c",
+      "candidate": "art/generated/candidates/settlement_corner/settlement_corner_v02.png",
+      "sha256": "c1976d52dde4bd35b2b3852e3cfd2f1dc3fc2f5fda3a0bdf87d55e77a609821a",
+      "tool_source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-b8932e3a-5e94-4d80-bf32-f3ea60d98ead.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "references": [
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+          "preserved_file": "art/templates/edge_masks/ne_ownership_guide.png",
+          "sha256": "eafa4ccf9822dfaa9362a0d6766861d18dd542c0b7435c013d6f9514da567d7d"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_03_hamlet_edge.png",
+          "preserved_file": "art/references/approved_style/ref_03_hamlet_edge.png",
+          "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "preserved_file": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+          "preserved_file": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        }
+      ]
+    },
+    {
+      "id": "settlement_corner_v03",
+      "request": "art/reviews/trial_01/requests/settlement_corner_v03.json",
+      "request_sha256": "f9d3247aef2cf8e14da7f6d07e850af1431c01965d8aec2e6464c481937d0815",
+      "candidate": "art/generated/candidates/settlement_corner/settlement_corner_v03.png",
+      "sha256": "9eb1f3d3552de62c355b2cbfe260fcafe6133b3984fa811492dd59e9c2b607fd",
+      "tool_source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-0882b915-0281-4477-bd94-b48fd73e90d0.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "references": [
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+          "preserved_file": "art/templates/edge_masks/ne_ownership_guide.png",
+          "sha256": "eafa4ccf9822dfaa9362a0d6766861d18dd542c0b7435c013d6f9514da567d7d"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_03_hamlet_edge.png",
+          "preserved_file": "art/references/approved_style/ref_03_hamlet_edge.png",
+          "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+          "preserved_file": "art/references/approved_style/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0"
+        },
+        {
+          "submitted_path": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+          "preserved_file": "art/references/approved_style/ref_07_forest_bend.png",
+          "sha256": "3c63b6c8e0f29a555c760fe79a2e3a7dd1f4e3f709e332315a4c6caab3de8fb9"
+        }
+      ]
+    }
+  ]
+}

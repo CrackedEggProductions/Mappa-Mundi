@@ -1,0 +1,248 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "topology": "declared feature kinds only; inspect actual artwork",
+  "legacy_socket_note": "Legacy Road references are unchanged and NOT certified to the 126px socket.",
+  "empty_cells": "transparent outside-board space, not Field tiles",
+  "sheets": [
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_belt/forest_belt_geo_v01_feature_strip.png",
+      "size": [
+        1254,
+        3762
+      ],
+      "sha256": "6020145364ab0c15528f4f5a8587a109b1bdf5a1cab90fe827f2de6475dab5bd",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            2,
+            0
+          ],
+          "feature": "Forest"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_belt/forest_belt_geo_v01_field_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "e0c6b4475bf03a45964b566b9f65b1aeab56dce949c7410a7edc090b9c2e0b69",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_belt/forest_belt_geo_v01_mixed_2x2.png",
+      "size": [
+        2508,
+        2508
+      ],
+      "sha256": "672f425403ad6e0e7e14bd59751dfcebe96522a6d82d3c6e1c39c7b777b21f13",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Field"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_belt/forest_belt_geo_v01_rotated_feature_strip.png",
+      "size": [
+        3762,
+        1254
+      ],
+      "sha256": "99c4017d0167c0d128c7486304340d95457bbf205c3756497ec3143bdf1ca9be",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v01.png",
+          "sha256": "f45f41a54b737fd9b307c80095805935c450c840c5cb6bf8ae0a4ddcafb2fb04",
+          "rotation_clockwise": 90
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            0,
+            2
+          ],
+          "feature": "Forest"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    }
+  ]
+}

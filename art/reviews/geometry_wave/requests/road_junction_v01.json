@@ -1,0 +1,8 @@
+{
+  "referenced_image_paths": [
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_mechanical/ref_05_straight_road.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_11_road_junction.png",
+    "/home/rochelle/Jane/MappaMundi/art/templates/production_geometry/road_three_way.png"
+  ],
+  "prompt": "One 1254x1254 Mappa Mundi ROAD JUNCTION source illustration, variant01. Match first two attached local road references for antique parchment, fine dark sepia ink and very subtle tan/ochre road wash, faint desaturated green Field, sparse grass flowers pebbles. Third reference white-on-black mask is broad geometry, NOT illustration style. Draw ONE continuous three-way dirt Road connecting NORTH EAST SOUTH, no Road WEST. Top/bottom road endpoints centered x627, right road endpoint centered y627, all width126 pixels approx10percent. Broad shape follows mask, natural central T junction softened corners. The source junction reference has DIFFERENT orientation: do not copy its E/W/S exits. Use requested N/E/S. No other paths, no fourthbranch, no river reeds water buildings woodland text or border. Two fine sepia margins bound each road, interior sparse natural ruts and ochre watercolor; not a rectangular pasted strip. Thin restrained ink matching original sources. It is an old hand-tinted map, not scenic painting. Local deterministic tools will correct exact geometry; supply cohesive organic artwork and parchment. Candidate source only."
+}
