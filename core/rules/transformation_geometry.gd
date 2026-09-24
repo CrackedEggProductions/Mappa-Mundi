@@ -25,6 +25,7 @@ static func copy_cell(source: BoardCellState) -> BoardCellState:
 	cell.has_field_geography = source.has_field_geography
 	cell.developments = source.developments.duplicate()
 	cell.transformations = source.transformations.duplicate()
+	cell.hard_boundaries = source.hard_boundaries.duplicate()
 	for group: TileFeatureGroup in source.feature_groups:
 		cell.feature_groups.append(group.duplicate(true) as TileFeatureGroup)
 	for relation: TileFeatureRelationship in source.relationships:
@@ -105,17 +106,35 @@ static func projected(state: RunState, content: ContentRegistry, plan: Transform
 	return preview
 
 
-static func validate(state: RunState, content: ContentRegistry, plan: TransformationState) -> bool:
+static func validate(state: RunState, content: ContentRegistry, plan: TransformationState,
+		boundary_direction: int = -1, boundary_coordinate: Vector2i = Vector2i.ZERO) -> bool:
 	var preview: RunState = projected(state, content, plan)
+	if boundary_direction != -1:
+		if plan.mode not in [&"urban_expansion", &"rewilding_expansion"] or not RelicRules.use_available(state, RelicGeometry.BOUNDARY):
+			return false
+		var target: BoardCellState = preview.expansion.board.get_cell(boundary_coordinate)
+		var neighbor_at: Vector2i = boundary_coordinate + BoardState.ORTHOGONAL_OFFSETS[boundary_direction]
+		var neighbor: BoardCellState = preview.expansion.board.get_cell(neighbor_at)
+		if target == null or neighbor == null or not RelicGeometry.field_forest(
+			target.effective_edges[boundary_direction], neighbor.effective_edges[(boundary_direction + 2) % 4]):
+			return false
+		preview.expansion.board.cells[neighbor_at] = copy_cell(neighbor)
+		RelicGeometry.record_boundary(preview.expansion.board, boundary_coordinate, boundary_direction)
 	for change: TransformationChange in plan.changes:
 		var cell: BoardCellState = preview.expansion.board.get_cell(change.coordinate)
+		var original: BoardCellState = state.expansion.board.get_cell(change.coordinate)
+		if original != null:
+			for direction: int in original.hard_boundaries:
+				if original.effective_edges[direction] != cell.effective_edges[direction]:
+					return false # No current Transformation authorizes erasing a hard seam.
 		for development: DevelopmentState in cell.developments:
 			if development.requires_field_geography() and not cell.has_field_geography:
 				return false
 		for direction: int in range(4):
 			var neighbor: BoardCellState = preview.expansion.board.get_cell(
 				cell.coordinate + BoardState.ORTHOGONAL_OFFSETS[direction])
-			if neighbor != null and cell.effective_edges[direction] != neighbor.effective_edges[(direction + 2) % 4]:
+			if neighbor != null and cell.effective_edges[direction] != neighbor.effective_edges[(direction + 2) % 4] \
+				and not RelicGeometry.is_hard_boundary(preview.expansion.board, cell.coordinate, direction):
 				return false
 	# Universal assigned-feature merge legality is checked on private projected state.
 	if not SpecialistPlacementService.merge_is_legal(state, preview):

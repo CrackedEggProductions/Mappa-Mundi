@@ -8,27 +8,35 @@ static func execute(state: RunState, content: ContentRegistry,
 	var validation: ValidationResult = validate(state, content, command)
 	if not validation.is_valid:
 		return validation
-	var config: RunConfig = content.get_config()
-	if _specialist_command(command):
+	if command is ResolveRelayCommand:
+		StewardRelayRules.execute_command(state, command as ResolveRelayCommand)
+		_resume_phase_eight(state, content)
+	elif RewardCommands.handles(command):
+		RewardCommands.execute_command(state, content, command)
+		_resume_phase_eight(state, content)
+	elif RelicHandRules.handles(command):
+		RelicHandRules.execute_command(state, content, command)
+		if state.resolution != null and state.resolution.stage == &"reward_queue":
+			_resume_phase_eight(state, content)
+	elif _specialist_command(command):
 		var resumes_placement: bool = command is ResolveSpecialistAssignmentCommand
 		SpecialistCommands.execute_command(state, content, command)
 		if resumes_placement:
 			_resume_placement(state, content)
+		elif state.rewards != null:
+			RewardRules.claim_deferred_training(state)
+			if state.resolution == null and not state.rewards.queue.is_empty():
+				state.resolution = ResolutionState.new()
+				state.resolution.stage = &"reward_queue"
+				state.resolution.context["mode"] = "reward"
+			if state.resolution != null and state.pending_choice == null:
+				_resume_phase_eight(state, content)
 	elif command is PlaceTileCommand:
 		_place(state, content, command as PlaceTileCommand)
 	elif command is ReserveTileCommand:
-		var reserve_command: ReserveTileCommand = command as ReserveTileCommand
-		var index: int = state.expansion.hand.find(reserve_command.tile_copy_id)
-		state.expansion.reserve_id = reserve_command.tile_copy_id
-		PhysicalTileRules.set_location(state, reserve_command.tile_copy_id, TileLocationState.Kind.RESERVE)
-		state.expansion.hand[index] = PhysicalTileRules.draw(state, config)
+		RelicHandRules.reserve(state, content, command as ReserveTileCommand)
 	elif command is SurveyTileCommand:
-		var survey_command: SurveyTileCommand = command as SurveyTileCommand
-		var index: int = state.expansion.hand.find(survey_command.tile_copy_id)
-		state.expansion.survey_charges -= 1
-		state.expansion.removed_ids.append(survey_command.tile_copy_id)
-		PhysicalTileRules.set_location(state, survey_command.tile_copy_id, TileLocationState.Kind.REMOVED_FROM_RUN)
-		state.expansion.hand[index] = PhysicalTileRules.draw(state, config)
+		RelicHandRules.survey(state, content, (command as SurveyTileCommand).tile_copy_id)
 	# Free cycling is a domain resolution step, including an explicit still-dead retry.
 	if state.phase == GamePhase.Type.TURN_INPUT \
 			and (not _specialist_command(command) or command is ResolveSpecialistAssignmentCommand):
@@ -45,6 +53,17 @@ static func validate(state: RunState, content: ContentRegistry,
 	if not invariants.is_valid:
 		return ValidationResult.failure(&"invariant_failure", "Invalid authoritative state.",
 			{"invariants": invariants.describe()})
+	if state.expansion != null and state.expansion.state_revision == 9223372036854775807:
+		return _failure(&"invariant_failure", "No state revision remains for this command.")
+	if state.relics != null and (state.next_runtime_id > RunIdAllocator.EXHAUSTED_CURSOR - 128 \
+			or state.rng.operation_count > RunRNG.MAX_OPERATION_COUNT - 64):
+		return _failure(&"invariant_failure", "Insufficient counters to resume Phase-8 consequences atomically.")
+	if command is ResolveRelayCommand:
+		return StewardRelayRules.validate_command(state, command as ResolveRelayCommand)
+	if RewardCommands.handles(command):
+		return RewardCommands.validate_command(state, content, command)
+	if RelicHandRules.handles(command):
+		return RelicHandRules.validate_command(state, content, command)
 	if _specialist_command(command):
 		return SpecialistCommands.validate_command(state, content, command)
 	if state.expansion == null or state.phase != GamePhase.Type.TURN_INPUT:
@@ -66,12 +85,11 @@ static func validate(state: RunState, content: ContentRegistry,
 			return _failure(&"invariant_failure", "Insufficient counters to resolve feature history safely.")
 		return _validate_place(state, content, command as PlaceTileCommand)
 	if command is ReserveTileCommand:
-		var reserve_command: ReserveTileCommand = command as ReserveTileCommand
-		if state.expansion.reserve_id != 0:
-			return _failure(&"reserve_occupied", "Reserve is already occupied.")
-		return _validate_hand(state, reserve_command.tile_copy_id)
+		return RelicHandRules.validate_reserve(state, command as ReserveTileCommand)
 	if command is SurveyTileCommand:
 		var survey_command: SurveyTileCommand = command as SurveyTileCommand
+		if state.relics != null and state.relics.normal_surveys_used == 9223372036854775807:
+			return _failure(&"invariant_failure", "No normal-Survey history counter remains.")
 		if state.expansion.survey_charges <= 0:
 			return _failure(&"no_survey_charge", "No Survey charge remains.")
 		return _validate_hand(state, survey_command.tile_copy_id)
@@ -103,7 +121,7 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 		if not hand_check.is_valid:
 			return hand_check
 	elif command.source_zone == TileLocationState.Kind.RESERVE:
-		if command.tile_copy_id <= 0 or state.expansion.reserve_id != command.tile_copy_id:
+		if command.tile_copy_id <= 0 or not RelicHandRules.reserve_ids(state).has(command.tile_copy_id):
 			return _failure(&"not_in_reserve", "The selected physical tile is not in Reserve.")
 	else:
 		return _failure(&"invalid_source", "Placement must use active hand or Reserve.")
@@ -130,6 +148,8 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 		or not command.transformation_signature.is_empty():
 		return _failure(&"unexpected_transformation_intent", "This placement class cannot carry Transformation targets.")
 	if command.placement_mode != DomainTypes.PlacementMode.EXPANSION:
+		if command.boundary_direction != -1:
+			return _failure(&"invalid_boundary_mode", "Boundary Stones only permits a new-square Expansion.")
 		for option: PlacementOption in DevelopmentPlacementQuery.query(state, content, command.tile_copy_id):
 			if not DevelopmentPlacementQuery.matches(option, command):
 				continue
@@ -140,9 +160,7 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 	if command.host_lineage_id != 0 or command.river_lineage_id != 0 \
 			or command.target_development_copy_id != 0 or command.enclosure_id != 0:
 		return _failure(&"invalid_expansion_intent", "Expansion placement cannot carry overlay targets.")
-	var geometry: ValidationResult = PlacementQueryService.validate(
-		state.expansion.board, definition, command.coordinate, command.rotation
-	)
+	var geometry: ValidationResult = RelicGeometry.validate_expansion(state, definition, command)
 	if not geometry.is_valid:
 		return geometry
 	if not SpecialistPlacementService.expansion_is_legal(state, definition,
@@ -150,10 +168,9 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 		return _failure(&"specialist_merge_conflict", "Two assigned features cannot merge.")
 	if not command.expected_signature.is_empty():
 		var signature_matches: bool = false
-		for option: PlacementOption in PlacementQueryService.query(
-				state.expansion.board, definition, command.tile_copy_id, state.expansion.state_revision):
+		for option: PlacementOption in PlacementQueryService.query_for_copy(state, content, command.tile_copy_id):
 			if option.coordinate == command.coordinate and option.rotation == command.rotation \
-					and option.signature == command.expected_signature:
+					and option.boundary_direction == command.boundary_direction and option.signature == command.expected_signature:
 				signature_matches = true
 				break
 		if not signature_matches:
@@ -178,7 +195,7 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 		expansion.pending_refill_index = expansion.hand.find(command.tile_copy_id)
 		expansion.hand[expansion.pending_refill_index] = 0
 	else:
-		expansion.reserve_id = 0
+		RelicHandRules.remove_reserved(state, command.tile_copy_id)
 	expansion.normal_placements += 1
 	if command.placement_mode == DomainTypes.PlacementMode.EXPANSION:
 		expansion.board.add_cell(BoardCellState.from_definition(
@@ -186,6 +203,7 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 			command.rotation, expansion.current_act, expansion.normal_placements
 		))
 		PhysicalTileRules.set_location(state, tile.tile_copy_id, TileLocationState.Kind.BOARD_BASE)
+		RelicGeometry.apply_boundary(state, command)
 		if state.features != null:
 			TopologyService.add_cell_components(state, expansion.board.get_cell(command.coordinate))
 			FeatureResolutionService.resolve(state, tile.tile_copy_id, not pauses)
@@ -214,8 +232,53 @@ static func _resume_placement(state: RunState, content: ContentRegistry) -> void
 	if resolution.immediate_development_copy_id != 0:
 		DevelopmentEffects.immediate(state, resolution.immediate_development_copy_id,
 			resolution.immediate_parent_event_id, false)
+	if state.relics != null:
+		resolution.context["base_applied"] = true
+		var relay_queue: Array[Dictionary] = []
+		var snapshot_relics: Dictionary = resolution.completion_snapshot.get("relics", {})
+		for relic: Dictionary in snapshot_relics.get("equipped", []):
+			if StringName(relic["definition_id"]) == &"relic.stewards_relay":
+				relay_queue.assign(resolution.context.get("returned_pieces", []))
+				break
+		relay_queue.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["piece_id"] < b["piece_id"])
+		resolution.context["relay_queue"] = relay_queue
+		resolution.stage = &"specialist_relay"
+		_resume_phase_eight(state, content)
+		return
 	state.resolution = null
 	_finish_placement(state, content)
+
+
+static func _resume_phase_eight(state: RunState, content: ContentRegistry) -> void:
+	if state.pending_choice != null or state.resolution == null:
+		return
+	var resolution: ResolutionState = state.resolution
+	state.phase = GamePhase.Type.RESOLVING_PLACEMENT
+	if resolution.stage == &"specialist_relay":
+		if StewardRelayRules.begin_next(state):
+			return
+		resolution.stage = &"relic_effects"
+	if resolution.stage == &"relic_effects":
+		var snapshot: CompletionSnapshot = CompletionSnapshot.new(resolution.completion_snapshot)
+		var pipeline: CompletionPipeline = CompletionPipeline.new()
+		RelicRules.apply(state, RelicRules.calculate(snapshot),
+			int(resolution.context.get("snapshot_event_id", 0)), pipeline)
+		pipeline.drain_children(state)
+		resolution.context["relics_applied"] = true
+		RewardRules.queue_completion(state, snapshot)
+		resolution.context["rewards_queued"] = true
+		resolution.stage = &"reward_queue"
+	if resolution.stage == &"reward_queue":
+		RewardRules.advance(state, content)
+		if state.pending_choice != null:
+			return
+		assert(state.rewards.queue.is_empty(), "A reward continuation must finish or expose a choice")
+		var placement: bool = resolution.context.get("mode", "placement") == "placement"
+		state.resolution = null
+		if placement:
+			_finish_placement(state, content)
+		else:
+			state.phase = GamePhase.Type.TURN_INPUT
 
 
 static func _finish_placement(state: RunState, content: ContentRegistry) -> void:

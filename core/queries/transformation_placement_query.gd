@@ -17,6 +17,9 @@ static func query(state: RunState, content: ContentRegistry, copy_id: int) -> Ar
 		for coordinate: Vector2i in state.expansion.board.frontier():
 			for rotation: int in range(4 if kind == &"urban_expansion" else 2):
 				_append(state, content, result, _expansion(state, definition, copy_id, coordinate, rotation))
+				if RelicRules.use_available(state, RelicGeometry.BOUNDARY):
+					for boundary: int in range(4):
+						_append(state, content, result, _expansion(state, definition, copy_id, coordinate, rotation, boundary), boundary)
 	if kind in [&"bridge", &"rewilding"]:
 		for coordinate: Vector2i in state.expansion.board.sorted_coordinates():
 			for rotation: int in range(2):
@@ -27,6 +30,7 @@ static func query(state: RunState, content: ContentRegistry, copy_id: int) -> Ar
 static func matches(option: PlacementOption, command: PlaceTileCommand) -> bool:
 	return (option.tile_copy_id == command.tile_copy_id and option.coordinate == command.coordinate
 		and option.rotation == command.rotation and option.placement_mode == command.placement_mode
+		and option.boundary_direction == command.boundary_direction
 		and option.transformation_mode == command.transformation_mode
 		and option.target_base_copy_id == command.target_base_copy_id
 		and option.transformation_signature == command.transformation_signature
@@ -109,14 +113,14 @@ static func _occupied(state: RunState, definition: TileDefinition, copy_id: int,
 
 
 static func _append(state: RunState, content: ContentRegistry, result: Array[PlacementOption],
-		plan: TransformationState) -> void:
+		plan: TransformationState, boundary_direction: int = -1) -> void:
 	if plan == null:
 		return
 	# The first change is always the target before canonical coordinate sorting.
 	var coordinate: Vector2i = plan.changes[0].coordinate
 	plan.changes.sort_custom(func(left: TransformationChange, right: TransformationChange) -> bool:
 		return BoardState.coordinate_before(left.coordinate, right.coordinate))
-	if not TransformationGeometry.validate(state, content, plan):
+	if not TransformationGeometry.validate(state, content, plan, boundary_direction, coordinate):
 		return
 	var option: PlacementOption = PlacementOption.new()
 	option.placement_mode = DomainTypes.PlacementMode.TRANSFORMATION
@@ -129,6 +133,7 @@ static func _append(state: RunState, content: ContentRegistry, result: Array[Pla
 	option.target_base_copy_id = plan.target_base_copy_id
 	option.transformation_signature = TransformationGeometry.signature(plan)
 	option.transformation_plan = plan
+	option.boundary_direction = boundary_direction
 	option.signature = option.canonical_signature()
 	result.append(option)
 
@@ -149,7 +154,7 @@ static func _change(state: RunState, cell: BoardCellState) -> TransformationChan
 
 
 static func _expansion(state: RunState, definition: TileDefinition, copy_id: int,
-		coordinate: Vector2i, rotation: int) -> TransformationState:
+		coordinate: Vector2i, rotation: int, boundary_direction: int = -1) -> TransformationState:
 	var urban: bool = definition.transformation_kind == &"urban_expansion"
 	var plan: TransformationState = _plan(state, definition, copy_id,
 		&"urban_expansion" if urban else &"rewilding_expansion", rotation, copy_id)
@@ -159,12 +164,18 @@ static func _expansion(state: RunState, definition: TileDefinition, copy_id: int
 	change.field_after = true
 	plan.changes.append(change)
 	var rewrite_count: int = 0
+	var boundary_used: bool = false
 	for direction: int in range(4):
 		var neighbor: BoardCellState = state.expansion.board.get_cell(coordinate + BoardState.ORTHOGONAL_OFFSETS[direction])
 		if neighbor == null:
 			continue
 		var facing: int = (direction + 2) % 4
 		if change.after_edges[direction] == neighbor.effective_edges[facing]:
+			continue
+		if direction == boundary_direction:
+			if not RelicGeometry.field_forest(change.after_edges[direction], neighbor.effective_edges[facing]):
+				return null
+			boundary_used = true
 			continue
 		var edge: DomainTypes.EdgeType = DomainTypes.EdgeType.SETTLEMENT if urban else DomainTypes.EdgeType.FOREST
 		if change.after_edges[direction] != edge or neighbor.effective_edges[facing] != DomainTypes.EdgeType.FIELD \
@@ -179,4 +190,6 @@ static func _expansion(state: RunState, definition: TileDefinition, copy_id: int
 		var rewrite: TransformationChange = _change(state, neighbor)
 		rewrite.after_edges[facing] = edge
 		plan.changes.append(rewrite)
+	if boundary_direction != -1 and not boundary_used:
+		return null
 	return plan

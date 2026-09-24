@@ -32,7 +32,7 @@ static func query(state: RunState, content: ContentRegistry, copy_id: int) -> Ar
 				option.target_development_copy_id = target.tile_copy_id
 				_append(result, option)
 			continue
-		if not cell.developments.is_empty():
+		if not RelicGeometry.can_add_development(state, cell, definition):
 			continue
 		if definition.development_host_kind == &"enclosure" and _has_enclosure(state, coordinate):
 			continue
@@ -65,7 +65,8 @@ static func matches(option: PlacementOption, command: PlaceTileCommand) -> bool:
 		and option.host_lineage_id == command.host_lineage_id
 		and option.river_lineage_id == command.river_lineage_id
 		and option.enclosure_id == command.enclosure_id
-		and option.target_development_copy_id == command.target_development_copy_id)
+		and option.target_development_copy_id == command.target_development_copy_id
+		and command.boundary_direction == -1)
 
 
 static func _option(state: RunState, copy_id: int, coordinate: Vector2i,

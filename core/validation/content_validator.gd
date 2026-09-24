@@ -28,17 +28,21 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 		return _invalid(&"missing_resource", "The content manifest and configuration are required.")
 	if String(manifest.manifest_id).strip_edges().is_empty():
 		return _invalid(&"missing_manifest_id", "The content manifest needs a stable ID.")
-	if manifest.implementation_phase not in [0, 2, 5, 6, 7]:
-		return _invalid(&"unsupported_phase", "This build validates content profiles through Phase 7.")
+	if manifest.implementation_phase not in [0, 2, 5, 6, 7, 8]:
+		return _invalid(&"unsupported_phase", "This build validates content profiles through Phase 8.")
 	if manifest.game_rules_version != BuildVersions.GAME_RULES_VERSION:
 		return _invalid(&"rules_version_mismatch", "Content rules version does not match this build.")
-	if not manifest.relics.is_empty() or not manifest.charters.is_empty() \
+	if (manifest.implementation_phase < 8 and not manifest.relics.is_empty()) or not manifest.charters.is_empty() \
 			or (manifest.implementation_phase < 7 and not manifest.specialists.is_empty()):
 		return _invalid(&"unsupported_roster", "Content profile contains a deferred roster.")
-	if manifest.implementation_phase == 7:
+	if manifest.implementation_phase >= 7:
 		var specialists_result: ValidationResult = SpecialistContentValidator.validate(manifest.specialists)
 		if not specialists_result.is_valid:
 			return specialists_result
+	if manifest.implementation_phase >= 8:
+		var relic_result: ValidationResult = RelicContentValidator.validate(manifest.relics)
+		if not relic_result.is_valid:
+			return relic_result
 	var config_result: ValidationResult = _validate_config(config)
 	if not config_result.is_valid:
 		return config_result
@@ -59,9 +63,9 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 			return _invalid(&"unexpected_transformation_metadata", "Only Transformation designs declare Transformation metadata.", tile.definition_id)
 		if manifest.implementation_phase >= 6 and tile.tile_class == DomainTypes.TileClass.TRANSFORMATION:
 			tile_result = TransformationContentValidator.validate_tile(tile)
-		elif manifest.implementation_phase in [5, 6, 7] and tile.tile_class != DomainTypes.TileClass.EXPANSION:
+		elif manifest.implementation_phase in [5, 6, 7, 8] and tile.tile_class != DomainTypes.TileClass.EXPANSION:
 			tile_result = validate_development(tile)
-		elif manifest.implementation_phase in [2, 5, 6, 7]:
+		elif manifest.implementation_phase in [2, 5, 6, 7, 8]:
 			tile_result = HomesteadContentValidator.validate_tile(tile)
 			expansion_ids.append(tile.definition_id)
 		else:
@@ -70,7 +74,7 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 			return tile_result
 	if manifest.implementation_phase == 2:
 		return HomesteadContentValidator.validate_roster_and_config(seen_ids, config)
-	if manifest.implementation_phase in [5, 6, 7]:
+	if manifest.implementation_phase in [5, 6, 7, 8]:
 		for stage: StringName in DEVELOPMENT_ROSTER:
 			if StringName("tile.development." + String(stage)) not in seen_ids:
 				return _invalid(&"missing_development", "Phase 5 requires all nine Development designs.")

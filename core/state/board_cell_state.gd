@@ -18,6 +18,8 @@ var geometry_revision: int = 0
 var developments: Array[DevelopmentState] = []
 ## Field interior survives Bridge; Rewilding explicitly consumes it.
 var has_field_geography: bool = false
+## Persistent reciprocal hard Field/Forest seams, independent of equipped Relics.
+var hard_boundaries: Array[int] = []
 var transformations: Array[TransformationState] = []
 
 

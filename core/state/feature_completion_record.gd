@@ -26,6 +26,8 @@ var trade_network_id: int = 0
 var network_road_ids: Array[int] = []
 var network_settlement_ids: Array[int] = []
 var new_settlement_ids: Array[int] = []
+## Frozen Legacy Relic modifier; zero keeps otherwise-new elements unpaid.
+var base_multiplier: int = 1
 var gains: Array[int] = [0, 0, 0, 0]
 var development_families: Array[StringName] = []
 var forest_undeveloped: bool = true

@@ -31,7 +31,8 @@ static func validate(state: RunState, content: ContentRegistry) -> InvariantRepo
 	_validate_locations(state, ids, report)
 	if state.expansion != null:
 		ExpansionInvariantValidator.validate(state, content, report)
-	if state.resolution != null and not SpecialistSerializer.valid_snapshot_collections(state.resolution.completion_snapshot):
+	if state.resolution != null and not (state.relics != null and state.resolution.completion_snapshot.is_empty()) \
+			and not SpecialistSerializer.valid_snapshot_collections(state.resolution.completion_snapshot):
 		report.add(&"invalid_completion_continuation", "Pending completion collections must have safe typed shapes.")
 	if state.features != null and report.is_valid:
 		FeatureInvariantValidator.validate(state, content, report)
@@ -43,6 +44,8 @@ static func validate(state: RunState, content: ContentRegistry) -> InvariantRepo
 		TradeInvariantValidator.validate(state, report)
 	if report.is_valid:
 		SpecialistInvariantValidator.validate(state, content, report)
+	if report.is_valid:
+		PhaseEightInvariantValidator.validate(state, content, report)
 	return report
 
 

@@ -14,6 +14,8 @@ var host_lineage_id: int = 0
 var river_lineage_id: int = 0
 var target_development_copy_id: int = 0
 var enclosure_id: int = 0
+## -1 uses ordinary exact matching; 0..3 explicitly invokes Boundary Stones.
+var boundary_direction: int = -1
 var transformation_mode: StringName = &""
 var target_base_copy_id: int = 0
 var transformation_signature: String = ""

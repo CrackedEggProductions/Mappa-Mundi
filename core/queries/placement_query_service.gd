@@ -20,6 +20,9 @@ static func query_for_copy(state: RunState, content: ContentRegistry,
 		for option: PlacementOption in query(state.expansion.board, definition, copy_id, state.expansion.state_revision):
 			if SpecialistPlacementService.expansion_is_legal(state, definition, copy_id, option.coordinate, option.rotation):
 				legal.append(option)
+		legal.append_array(_boundary_options(state, definition, copy_id))
+		legal.sort_custom(func(a: PlacementOption, b: PlacementOption) -> bool:
+			return a.rotation < b.rotation if a.coordinate == b.coordinate else BoardState.coordinate_before(a.coordinate, b.coordinate))
 		return legal
 	return DevelopmentPlacementQuery.query(state, content, copy_id)
 
@@ -82,3 +85,30 @@ static func validate(
 	if not has_neighbor:
 		return ValidationResult.failure(&"not_orthogonally_adjacent", "Place beside an occupied square.")
 	return ValidationResult.success()
+
+
+static func _boundary_options(state: RunState, definition: TileDefinition, copy_id: int) -> Array[PlacementOption]:
+	var result: Array[PlacementOption] = []
+	if not RelicRules.use_available(state, RelicGeometry.BOUNDARY) or definition.definition_id == &"tile.founding.homestead":
+		return result
+	for at: Vector2i in state.expansion.board.frontier():
+		var seen: Array[String] = []
+		for rotation: int in range(4):
+			var edges: Array[DomainTypes.EdgeType] = TileRotation.edges(definition.canonical_edges, rotation)
+			var direction: int = RelicGeometry.boundary_mismatch(state.expansion.board, edges, at)
+			if direction == -1 or not SpecialistPlacementService.expansion_is_legal(state, definition, copy_id, at, rotation):
+				continue
+			var geometry: String = TileRotation.geometry_signature(definition, rotation)
+			if geometry in seen:
+				continue
+			seen.append(geometry)
+			var option: PlacementOption = PlacementOption.new()
+			option.coordinate = at
+			option.rotation = rotation
+			option.tile_copy_id = copy_id
+			option.board_revision = state.expansion.board.revision
+			option.state_revision = state.expansion.state_revision
+			option.boundary_direction = direction
+			option.signature = option.canonical_signature()
+			result.append(option)
+	return result

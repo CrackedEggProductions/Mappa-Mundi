@@ -33,6 +33,9 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 	TradeNetworkService.initialize(state)
 	if content.get_specialist_ids().size() == 8:
 		SpecialistRules.initialize(state)
+	if content.get_relic_ids().size() == 10:
+		state.relics = RelicState.new()
+		state.rewards = RewardState.new()
 	InvariantValidator.assert_valid(state, content)
 	return state
 

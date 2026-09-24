@@ -7,7 +7,7 @@ const PIECE_KEYS: Array[String] = ["piece_id", "role_definition_id", "status",
 	"growth_baseline_component_ids", "qualifying_component_ids", "training_history"]
 const CHOICE_KEYS: Array[String] = ["choice_id", "kind", "options", "context"]
 const RESOLUTION_KEYS: Array[String] = ["source_id", "stage", "affected_targets",
-	"completion_snapshot", "immediate_development_copy_id", "immediate_parent_event_id"]
+	"completion_snapshot", "immediate_development_copy_id", "immediate_parent_event_id", "context"]
 
 
 static func encode(state: SpecialistState) -> Dictionary:
@@ -106,7 +106,8 @@ static func validate_shape(value: Variant, kind: StringName) -> ValidationResult
 		if not RunSerializer._has_exact_keys(data, RESOLUTION_KEYS) \
 				or not data["stage"] is StringName or not _dictionaries(data["affected_targets"]) \
 				or not data["completion_snapshot"] is Dictionary \
-				or not valid_snapshot_collections(data["completion_snapshot"]):
+				or not data["context"] is Dictionary \
+				or (not data["completion_snapshot"].is_empty() and not valid_snapshot_collections(data["completion_snapshot"])):
 			return _invalid("Malformed Specialist continuation.")
 		for key: String in ["source_id", "immediate_development_copy_id", "immediate_parent_event_id"]:
 			if not data[key] is int:
@@ -144,9 +145,63 @@ static func valid_snapshot_collections(snapshot: Dictionary) -> bool:
 		if not _dictionaries(snapshot.get(key)):
 			return false
 	for facts: Dictionary in snapshot["features"]:
-		if not facts.get("lineage_id") is int:
+		for key: String in ["lineage_id", "feature_type", "total_size", "growth_phase", "highest_settlement_class", "trade_network_id"]:
+			if not facts.get(key) is int:
+				return false
+		for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids",
+				"forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids",
+				"network_road_ids", "network_settlement_ids", "new_settlement_ids"]:
+			if not _integers(facts.get(key)):
+				return false
+		if not facts.get("first_completion") is bool or not facts.get("undeveloped") is bool \
+				or not _text_array(facts.get("development_families")) or facts["feature_type"] not in [0, 1, 2, 3]:
 			return false
 	for facts: Dictionary in snapshot["enclosures"]:
-		if not facts.get("enclosure_id") is int or not facts.get("stage") is String:
+		if not facts.get("enclosure_id") is int or not facts.get("stage") is String \
+				or not facts.get("source_id") is int or not facts.get("natural_count") is int \
+				or not facts.get("settlement_count") is int:
+			return false
+	for facts: Dictionary in snapshot["specialists"]:
+		for key: String in ["piece_id", "target_type", "target_id", "growth_count", "size", "network_settlement_count", "field_count", "forest_count"]:
+			if not facts.get(key) is int:
+				return false
+		if not facts.get("role_definition_id") is String or not facts.get("undeveloped") is bool \
+				or not _text_array(facts.get("families")) or not _integers(facts.get("touching_settlements")) \
+				or not _integers(facts.get("port_settlements")) or facts["target_type"] not in [0, 1, 2, 3, 4]:
+			return false
+	if snapshot.has("relics") and not _valid_relic_snapshot(snapshot["relics"]):
+		return false
+	return true
+
+
+static func _text_array(value: Variant) -> bool:
+	if not value is Array:
+		return false
+	for entry: Variant in value:
+		if not entry is String and not entry is StringName:
+			return false
+	return true
+
+
+static func _valid_relic_snapshot(value: Variant) -> bool:
+	if not value is Dictionary:
+		return false
+	if value.is_empty():
+		return true # Preserved pre-Relic profiles.
+	if not RunSerializer._has_exact_keys(value, ["equipped", "largest_settlement_size", "prior_longest_road", "feature_facts"]) \
+			or not _dictionaries(value["equipped"]) or not value["largest_settlement_size"] is int \
+			or not value["prior_longest_road"] is int or not value["feature_facts"] is Dictionary:
+		return false
+	for relic: Dictionary in value["equipped"]:
+		if not RunSerializer._has_exact_keys(relic, ["runtime_id", "definition_id", "acquisition_order"]) \
+				or not relic["runtime_id"] is int or not relic["definition_id"] is String \
+				or not relic["acquisition_order"] is int:
+			return false
+	for key: Variant in value["feature_facts"]:
+		var facts: Variant = value["feature_facts"][key]
+		if not key is String or not RunSerializer._is_decimal_int64(key) \
+				or not RunSerializer._has_exact_keys(facts, ["natural_contact", "act_one_road_count"]) \
+				or not facts["natural_contact"] is bool or not facts["act_one_road_count"] is int \
+				or facts["act_one_road_count"] < 0:
 			return false
 	return true

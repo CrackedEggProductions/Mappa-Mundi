@@ -58,6 +58,8 @@ static func _walk(
 			known_lineages.append(component.lineage_id)
 		var cell: BoardCellState = state.expansion.board.get_cell(component.coordinate)
 		for direction: int in _directions(cell, current.feature_type):
+			if direction in cell.hard_boundaries:
+				continue # A recorded hard seam closes, but never connects, this exit.
 			var neighbor_coordinate: Vector2i = component.coordinate + BoardState.ORTHOGONAL_OFFSETS[direction]
 			var neighbor: BoardCellState = state.expansion.board.get_cell(neighbor_coordinate)
 			if neighbor == null:

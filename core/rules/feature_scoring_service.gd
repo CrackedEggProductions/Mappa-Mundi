@@ -60,6 +60,7 @@ static func capture(state: RunState, current: Array[CurrentFeature], source_id: 
 		"trade_revision": state.trade.trade_revision if state.trade != null else 0,
 		"tracks": state.features.tracks.values.duplicate(), "features": features,
 		"enclosures": enclosure_facts,
+		"relics": RelicRules.capture(state, current),
 		"specialists": SpecialistRules.capture(state, current, trigger_ids, enclosure_facts),
 		"developments": DevelopmentEffects.capture(state, current, trigger_ids),
 	})
@@ -105,6 +106,9 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[FeatureCompletionRe
 				# Completed Rivers cannot reopen; inherited completion prevents length farming.
 				var length_gain: int = floori(record.total_size / 2.0) if record.first_completion else 0
 				record.gains[DomainTypes.TrackType.ECOLOGY] = length_gain + record.new_forest_ids.size()
+		record.base_multiplier = RelicRules.base_multiplier(snapshot, facts)
+		for track: int in range(4):
+			record.gains[track] *= record.base_multiplier
 		records.append(record)
 	for enclosure: Dictionary in data["enclosures"]:
 		var record: FeatureCompletionRecord = _record(data)
@@ -175,19 +179,29 @@ static func apply_snapshot(state: RunState, snapshot: CompletionSnapshot, parent
 	DevelopmentEffects.apply(state, effects, snapshot_event.event_id, pipeline)
 	SpecialistRules.apply(state, specialist_effects, snapshot_event.event_id, pipeline)
 	SpecialistRules.return_pieces(state, specialist_effects, snapshot_event.event_id, pipeline)
-	# Relic and reward hooks remain no-ops after Specialist returns.
+	# Child bookkeeping drains after the whole numeric/return batch. Relay choices
+	# then precede Relic effects, all calculated from this original snapshot.
 	pipeline.drain_children(state)
+	if state.relics != null:
+		if state.resolution != null:
+			state.resolution.context["snapshot_event_id"] = snapshot_event.event_id
+			state.resolution.context["returned_pieces"] = specialist_effects.duplicate(true)
+		else:
+			var relic_pipeline: CompletionPipeline = CompletionPipeline.new()
+			RelicRules.apply(state, RelicRules.calculate(snapshot), snapshot_event.event_id, relic_pipeline)
+			relic_pipeline.drain_children(state)
 
 
 static func _apply_lineage(state: RunState, record: FeatureCompletionRecord) -> void:
 	var lineage: FeatureLineageState = state.features.lineage(record.lineage_id)
 	lineage.completed = true
 	lineage.completion_ids.append(record.record_id)
-	_union(lineage.scored_component_ids, record.new_component_ids)
-	_union(lineage.scored_field_ids, record.new_field_ids)
-	_union(lineage.scored_river_ids, record.new_river_ids)
-	_union(lineage.scored_forest_ids, record.new_forest_ids)
-	_union(lineage.scored_settlement_ids, record.new_settlement_ids)
+	if record.base_multiplier != 0:
+		_union(lineage.scored_component_ids, record.new_component_ids)
+		_union(lineage.scored_field_ids, record.new_field_ids)
+		_union(lineage.scored_river_ids, record.new_river_ids)
+		_union(lineage.scored_forest_ids, record.new_forest_ids)
+		_union(lineage.scored_settlement_ids, record.new_settlement_ids)
 	lineage.highest_settlement_class = maxi(lineage.highest_settlement_class, record.settlement_class)
 	state.features.largest_completed_sizes[record.feature_type] = maxi(state.features.largest_completed_sizes[record.feature_type], record.total_size)
 

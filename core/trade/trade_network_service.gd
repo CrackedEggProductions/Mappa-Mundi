@@ -40,6 +40,7 @@ static func access_links(state: RunState) -> Array[TradeLinkState]:
 			link.source_id = contribution.source_id
 			link.source_kind = contribution.source_kind
 			links.append(link)
+	links.append_array(_ferry_links(state))
 	links.sort_custom(func(a: TradeLinkState, b: TradeLinkState) -> bool: return a.signature() < b.signature())
 	return links
 
@@ -282,3 +283,28 @@ static func _record(state: RunState, kind: StringName, lineage: TradeNetworkLine
 	event.road_lineage_ids = lineage.road_lineage_ids.duplicate()
 	event.settlement_lineage_ids = lineage.settlement_lineage_ids.duplicate()
 	state.trade.history.append(event)
+
+
+static func _ferry_links(state: RunState) -> Array[TradeLinkState]:
+	var links: Array[TradeLinkState] = []
+	if not RelicRules.active(state, RelicRules.FERRY):
+		return links
+	var source: RelicInstanceState = RelicRules.find(state, RelicRules.FERRY)
+	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
+	var seen: Array[String] = []
+	for river: CurrentFeature in current:
+		if river.feature_type != DomainTypes.FeatureType.RIVER:
+			continue
+		var settlements: Array[int] = SpecialistRules.touching_settlements(state, river, current)
+		# A star connects the same River's Settlement hubs transitively. A graph
+		# still qualifies only if it contains a native Road/Settlement access link.
+		for index: int in range(1, settlements.size()):
+			var link: TradeLinkState = TradeLinkState.new()
+			link.from_lineage_id = settlements[0]
+			link.to_lineage_id = settlements[index]
+			link.source_id = source.runtime_id
+			link.source_kind = &"ferry_rights"
+			if link.signature() not in seen:
+				seen.append(link.signature())
+				links.append(link)
+	return links
