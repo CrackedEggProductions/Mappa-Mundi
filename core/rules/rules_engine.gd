@@ -1,6 +1,6 @@
 class_name RulesEngine
 extends RefCounted
-## Synchronous authoritative Phase-2 resolution. No presentation callbacks.
+## Authoritative command boundary; optional assignment pauses before consequences.
 
 
 static func execute(state: RunState, content: ContentRegistry,
@@ -9,7 +9,12 @@ static func execute(state: RunState, content: ContentRegistry,
 	if not validation.is_valid:
 		return validation
 	var config: RunConfig = content.get_config()
-	if command is PlaceTileCommand:
+	if _specialist_command(command):
+		var resumes_placement: bool = command is ResolveSpecialistAssignmentCommand
+		SpecialistCommands.execute_command(state, content, command)
+		if resumes_placement:
+			_resume_placement(state, content)
+	elif command is PlaceTileCommand:
 		_place(state, content, command as PlaceTileCommand)
 	elif command is ReserveTileCommand:
 		var reserve_command: ReserveTileCommand = command as ReserveTileCommand
@@ -25,7 +30,8 @@ static func execute(state: RunState, content: ContentRegistry,
 		PhysicalTileRules.set_location(state, survey_command.tile_copy_id, TileLocationState.Kind.REMOVED_FROM_RUN)
 		state.expansion.hand[index] = PhysicalTileRules.draw(state, config)
 	# Free cycling is a domain resolution step, including an explicit still-dead retry.
-	if state.phase == GamePhase.Type.TURN_INPUT:
+	if state.phase == GamePhase.Type.TURN_INPUT \
+			and (not _specialist_command(command) or command is ResolveSpecialistAssignmentCommand):
 		StalemateRules.cycle_if_dead(state, content)
 	state.expansion.state_revision += 1
 	if OS.is_debug_build():
@@ -39,6 +45,8 @@ static func validate(state: RunState, content: ContentRegistry,
 	if not invariants.is_valid:
 		return ValidationResult.failure(&"invariant_failure", "Invalid authoritative state.",
 			{"invariants": invariants.describe()})
+	if _specialist_command(command):
+		return SpecialistCommands.validate_command(state, content, command)
 	if state.expansion == null or state.phase != GamePhase.Type.TURN_INPUT:
 		return _failure(&"wrong_phase", "Normal turn input is not available.")
 	# Reserve capacity for the entire synchronous resolution before touching state.
@@ -137,6 +145,9 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 	)
 	if not geometry.is_valid:
 		return geometry
+	if not SpecialistPlacementService.expansion_is_legal(state, definition,
+			command.tile_copy_id, command.coordinate, command.rotation):
+		return _failure(&"specialist_merge_conflict", "Two assigned features cannot merge.")
 	if not command.expected_signature.is_empty():
 		var signature_matches: bool = false
 		for option: PlacementOption in PlacementQueryService.query(
@@ -156,6 +167,11 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 		transformation = TransformationPlacementService.plan_for_command(state, content, command)
 		assert(transformation != null, "Complete geometry intent is available before any placement mutation")
 	state.phase = GamePhase.Type.RESOLVING_PLACEMENT
+	var pauses: bool = state.specialists != null
+	if pauses:
+		state.resolution = ResolutionState.new()
+		state.resolution.source_id = command.tile_copy_id
+		state.resolution.stage = &"committed_placement"
 	var expansion: ExpansionState = state.expansion
 	var tile: TileCopyState = PhysicalTileRules.find_copy(state, command.tile_copy_id)
 	if command.source_zone == TileLocationState.Kind.ACTIVE_HAND:
@@ -172,15 +188,47 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 		PhysicalTileRules.set_location(state, tile.tile_copy_id, TileLocationState.Kind.BOARD_BASE)
 		if state.features != null:
 			TopologyService.add_cell_components(state, expansion.board.get_cell(command.coordinate))
-			FeatureResolutionService.resolve(state, tile.tile_copy_id)
+			FeatureResolutionService.resolve(state, tile.tile_copy_id, not pauses)
 	elif command.placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
-		TransformationPlacementService.place(state, content, command, transformation)
+		TransformationPlacementService.place(state, content, command, transformation, not pauses)
 	else:
-		DevelopmentPlacementService.place(state, content, command)
+		DevelopmentPlacementService.place(state, content, command, not pauses)
+	if pauses:
+		state.resolution.affected_targets = SpecialistPlacementService.affected_targets(state, command, transformation)
+		state.resolution.completion_snapshot = FeatureScoringService.capture(
+			state, TopologyService.rebuild(state), command.tile_copy_id).data()
+		state.resolution.stage = &"specialist_assignment"
+		if SpecialistRules.begin_assignment(state, state.resolution.affected_targets):
+			return
+		_resume_placement(state, content)
+		return
+	_finish_placement(state, content)
+
+
+static func _resume_placement(state: RunState, content: ContentRegistry) -> void:
+	assert(state.resolution != null)
+	state.phase = GamePhase.Type.RESOLVING_PLACEMENT
+	state.resolution.stage = &"completion_batch"
+	var resolution: ResolutionState = state.resolution
+	FeatureScoringService.apply_snapshot(state, CompletionSnapshot.new(resolution.completion_snapshot))
+	if resolution.immediate_development_copy_id != 0:
+		DevelopmentEffects.immediate(state, resolution.immediate_development_copy_id,
+			resolution.immediate_parent_event_id, false)
+	state.resolution = null
+	_finish_placement(state, content)
+
+
+static func _finish_placement(state: RunState, content: ContentRegistry) -> void:
 	# Later reward stages join the shared completion pipeline before this draw.
+	var expansion: ExpansionState = state.expansion
 	var config: RunConfig = content.get_config()
 	if expansion.normal_placements == config.act_placement_limits[expansion.current_act - 1]:
 		state.phase = GamePhase.Type.RESOLVING_ACT_TRANSITION
 		return # Later Acts phase owns seeding before this pending refill.
 	PhysicalTileRules.refill_pending(state, config)
 	state.phase = GamePhase.Type.TURN_INPUT
+
+
+static func _specialist_command(command: PlayerCommand) -> bool:
+	return command is ResolveSpecialistAssignmentCommand or command is RequestSpecialistTrainingCommand \
+		or command is ResolveSpecialistTrainingCommand or command is RecruitStewardCommand

@@ -52,13 +52,15 @@ static func capture(state: RunState, current: Array[CurrentFeature], source_id: 
 			"new_settlement_ids": _unpaid_settlements(state, lineage, network_settlements),
 			"undeveloped": FeatureContactService.forest_is_undeveloped(state, feature),
 		})
+	var enclosure_facts: Array[Dictionary] = EnclosureService.capture(state)
 	return CompletionSnapshot.new({
 		"act": state.expansion.current_act, "placement_index": state.expansion.normal_placements,
 		"source_id": source_id, "board_revision": state.expansion.board.revision,
 		"topology_revision": state.features.topology_revision,
 		"trade_revision": state.trade.trade_revision if state.trade != null else 0,
 		"tracks": state.features.tracks.values.duplicate(), "features": features,
-		"enclosures": EnclosureService.capture(state),
+		"enclosures": enclosure_facts,
+		"specialists": SpecialistRules.capture(state, current, trigger_ids, enclosure_facts),
 		"developments": DevelopmentEffects.capture(state, current, trigger_ids),
 	})
 
@@ -128,6 +130,7 @@ static func resolve(state: RunState, current: Array[CurrentFeature], source_id: 
 static func apply_snapshot(state: RunState, snapshot: CompletionSnapshot, parent_event_id: int = 0) -> void:
 	var records: Array[FeatureCompletionRecord] = calculate(snapshot)
 	var effects: Array[Dictionary] = DevelopmentEffects.calculate(snapshot)
+	var specialist_effects: Array[Dictionary] = SpecialistRules.calculate(snapshot)
 	if records.is_empty():
 		return
 	var source_id: int = snapshot.data()["source_id"]
@@ -170,7 +173,9 @@ static func apply_snapshot(state: RunState, snapshot: CompletionSnapshot, parent
 			changed.amount = amount
 			pipeline.enqueue_child(changed)
 	DevelopmentEffects.apply(state, effects, snapshot_event.event_id, pipeline)
-	# Specialist/Relic/threshold stages remain deferred, after the Development batch.
+	SpecialistRules.apply(state, specialist_effects, snapshot_event.event_id, pipeline)
+	SpecialistRules.return_pieces(state, specialist_effects, snapshot_event.event_id, pipeline)
+	# Relic and reward hooks remain no-ops after Specialist returns.
 	pipeline.drain_children(state)
 
 

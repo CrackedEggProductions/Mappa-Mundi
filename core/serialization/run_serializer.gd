@@ -67,6 +67,12 @@ static func deserialize(text: String, content: ContentRegistry) -> Deserializati
 		state.features = FeatureSerializer.decode(data["features"])
 	if data.has("trade"):
 		state.trade = TradeSerializer.decode(data["trade"])
+	if data.has("specialists"):
+		state.specialists = SpecialistSerializer.decode(data["specialists"])
+	if data.has("pending_choice"):
+		state.pending_choice = SpecialistSerializer.decode_choice(data["pending_choice"])
+	if data.has("resolution"):
+		state.resolution = SpecialistSerializer.decode_resolution(data["resolution"])
 	# The invariant boundary reconstructs topology purely; never reconcile or score on load.
 	var report: InvariantReport = InvariantValidator.validate(state, content)
 	if not report.is_valid:
@@ -106,6 +112,12 @@ static func to_envelope(state: RunState) -> Dictionary:
 		envelope["run_state"]["features"] = FeatureSerializer.encode(state.features)
 	if state.trade != null:
 		envelope["run_state"]["trade"] = TradeSerializer.encode(state.trade)
+	if state.specialists != null:
+		envelope["run_state"]["specialists"] = SpecialistSerializer.encode(state.specialists)
+	if state.pending_choice != null:
+		envelope["run_state"]["pending_choice"] = SpecialistSerializer.encode_choice(state.pending_choice)
+	if state.resolution != null:
+		envelope["run_state"]["resolution"] = SpecialistSerializer.encode_resolution(state.resolution)
 	return envelope
 
 
@@ -130,6 +142,9 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		run_keys.append("features")
 	if envelope["run_state"] is Dictionary and envelope["run_state"].has("trade"):
 		run_keys.append("trade")
+	for key: String in ["specialists", "pending_choice", "resolution"]:
+		if envelope["run_state"] is Dictionary and envelope["run_state"].has(key):
+			run_keys.append(key)
 	if not _has_exact_keys(envelope["run_state"], run_keys):
 		return _invalid("run_state has missing or unsupported fields.")
 	var data: Dictionary = envelope["run_state"]
@@ -140,9 +155,9 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		or String(data["rng_operation_count"]).to_int() < 0:
 		return _invalid("ID cursor must be positive and RNG operation count nonnegative.")
 	if data.has("expansion"):
-		if not _is_bounded_integer(data["phase"], GamePhase.Type.TURN_INPUT, GamePhase.Type.RESOLVING_ACT_TRANSITION) \
+		if not _is_bounded_integer(data["phase"], GamePhase.Type.TURN_INPUT, GamePhase.Type.PENDING_CHOICE) \
 			or int(data["phase"]) == GamePhase.Type.RESOLVING_PLACEMENT:
-			return _invalid("Expansion saves require a stable turn or deferred Act boundary.")
+			return _invalid("Expansion saves require a stable turn, choice or deferred Act boundary.")
 		var expansion_shape: ValidationResult = ExpansionSerializer.validate_shape(data["expansion"])
 		if not expansion_shape.is_valid:
 			return expansion_shape
@@ -160,6 +175,13 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		var trade_shape: ValidationResult = TradeSerializer.validate_shape(data["trade"])
 		if not trade_shape.is_valid:
 			return trade_shape
+	for key: String in ["specialists", "pending_choice", "resolution"]:
+		if data.has(key):
+			if not data.has("features") or (key != "specialists" and not data.has("specialists")):
+				return _invalid("Specialist continuation requires a roster and feature state.")
+			var specialist_shape: ValidationResult = SpecialistSerializer.validate_shape(data[key], StringName(key))
+			if not specialist_shape.is_valid:
+				return specialist_shape
 	if not data["tile_copies"] is Array or not data["tile_locations"] is Array:
 		return _invalid("Physical tile registries must be arrays.")
 	for entry: Variant in data["tile_copies"]:

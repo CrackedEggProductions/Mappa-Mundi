@@ -102,6 +102,17 @@ static func _validate_turn(state: RunState, config: RunConfig, report: Invariant
 		report.add(&"rewound_state_revision", "State revision cannot precede the number of committed placements.")
 	if expansion.hand.size() != config.hand_capacity:
 		report.add(&"invalid_hand_capacity", "Stable expansion state requires all normal hand slots.")
+	if state.phase == GamePhase.Type.PENDING_CHOICE and state.specialists != null:
+		if state.resolution != null:
+			if expansion.pending_refill_index == -1:
+				if 0 in expansion.hand:
+					report.add(&"untracked_refill", "Reserve placement must retain the full active hand.")
+			elif expansion.pending_refill_index < 0 or expansion.pending_refill_index >= expansion.hand.size() \
+				or expansion.hand[expansion.pending_refill_index] != 0 or expansion.hand.count(0) != 1:
+				report.add(&"invalid_pending_refill", "Committed placement must retain its single empty slot.")
+		elif expansion.pending_refill_index != -1 or 0 in expansion.hand:
+			report.add(&"invalid_training_boundary", "Training cannot conceal an incomplete placement.")
+		return # Specialist invariants validate the exact typed choice/continuation.
 	if expansion.normal_placements == limit:
 		if state.phase != GamePhase.Type.RESOLVING_ACT_TRANSITION:
 			report.add(&"invalid_act_boundary", "Final placement must wait at the deferred Act transition.")

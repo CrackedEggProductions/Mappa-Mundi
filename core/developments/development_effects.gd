@@ -92,7 +92,7 @@ static func apply(state: RunState, effects: Array[Dictionary], parent_event_id: 
 			pipeline.enqueue_child(changed)
 
 
-static func immediate(state: RunState, new_copy_id: int, parent_event_id: int) -> void:
+static func immediate(state: RunState, new_copy_id: int, parent_event_id: int, include_enclosures: bool = true) -> void:
 	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
 	var complete_ids: Array[int] = []
 	for feature: CurrentFeature in current:
@@ -102,6 +102,8 @@ static func immediate(state: RunState, new_copy_id: int, parent_event_id: int) -
 	var pipeline: CompletionPipeline = CompletionPipeline.new()
 	apply(state, calculate(CompletionSnapshot.new({"developments": facts})), parent_event_id, pipeline, true)
 	pipeline.drain_children(state)
+	if not include_enclosures:
+		return
 	var enclosures: Array[Dictionary] = []
 	for enclosure: Dictionary in EnclosureService.capture(state):
 		if enclosure["source_id"] == new_copy_id:

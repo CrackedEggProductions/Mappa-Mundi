@@ -9,6 +9,7 @@ const HOMESTEAD_MANIFEST_PATH: String = "res://content/manifests/homestead_conte
 const HOMESTEAD_CONFIG_PATH: String = "res://content/manifests/homestead_run_config.tres"
 const PHASE_FIVE_MANIFEST_PATH: String = "res://content/manifests/phase_5_content_manifest.tres"
 const PHASE_SIX_MANIFEST_PATH: String = "res://content/manifests/phase_6_content_manifest.tres"
+const PHASE_SEVEN_MANIFEST_PATH: String = "res://content/manifests/phase_7_content_manifest.tres"
 
 var _manifest: ContentManifest
 var _config: RunConfig
@@ -24,6 +25,27 @@ func load_phase_five() -> ValidationResult:
 
 func load_phase_six() -> ValidationResult:
 	return load_content(PHASE_SIX_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
+
+
+func load_phase_seven() -> ValidationResult:
+	return load_content(PHASE_SEVEN_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
+
+
+func get_specialist_ids() -> Array[StringName]:
+	var ids: Array[StringName] = []
+	if _manifest != null:
+		for definition: SpecialistDefinition in _manifest.specialists:
+			ids.append(definition.definition_id)
+	ids.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	return ids
+
+
+func get_specialist(definition_id: StringName) -> SpecialistDefinition:
+	if _manifest != null:
+		for definition: SpecialistDefinition in _manifest.specialists:
+			if definition.definition_id == definition_id:
+				return definition.duplicate(true) as SpecialistDefinition
+	return null
 
 
 func load_content(

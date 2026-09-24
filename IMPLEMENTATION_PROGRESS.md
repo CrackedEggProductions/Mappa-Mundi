@@ -1,5 +1,171 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 7 — complete
+
+### Art closeout and gameplay baseline
+
+The human-approved Wave-02 v04 Settlement Gate, Riverside Hamlet and Settlement
+Road Throughway images were copied to their corresponding `*_anchor.png` files
+on `alpha-art`. Status: **APPROVED PRODUCTION ANCHOR — ALPHA ACCEPTED — POLISH
+DEFERRED**. Exact topology, readable features and the established parchment/ink/
+watercolor style are required; minor patching, socket curvature and repeated
+motifs are deferred polish. No image generation, Founding Tile or Road End work
+occurred. Commit `ea5858a5f57716b57d4cb01c4a967c7856463bc8` was pushed to
+`origin/alpha-art`; that branch was not merged.
+
+Gameplay resumed from clean merged Phase-6 `main`,
+`3ffc899689c3b9f497725a552696df8cd68348a6`. Phase-6 final `db2527c` is an
+ancestor. Before creating/pushing `phase-7`, the baseline passed **569 tests,
+0 failures and 133 clean script parses** (`builds/verification/run-SCRxvCSx`).
+All gameplay implementation below belongs only to `phase-7`.
+
+### Runtime and authoritative commands
+
+`SpecialistPieceState` retains a stable physical ID, generic marker or permanent
+role ID, AVAILABLE/ASSIGNED status, target type/lineage or enclosure ID, original
+assignment Act/index, observed component IDs, qualifying new-growth IDs and
+training history. `SpecialistState` owns the roster, structured audit details and
+typed deferred reward handoffs. The Phase-7 manifest contains exactly Merchant,
+Cartographer, Architect, Homesteader, Naturalist, Forester, Riverkeeper and
+Harbormaster. Deferred roles, Relics and Charters fail content validation.
+
+The current bootstrap uses `ContentRegistry.load_phase_seven()`. A standard run
+starts two available generic Stewards. `RecruitStewardCommand` adds a third and
+rejects a fourth without mutation. Earlier manifests remain explicitly historical
+fixture profiles, preserving every prior regression without retrofitting their
+scripted input sequences with new player choices.
+
+Commands are the mutation boundary: `ResolveSpecialistAssignmentCommand`,
+`RequestSpecialistTrainingCommand`, `ResolveSpecialistTrainingCommand` and
+`RecruitStewardCommand` execute through `RulesEngine`. No UI or scene is required.
+Reward requests are integration APIs; entitlement, thresholds and reward offers
+remain future work. No general reward engine was added.
+
+### Local assignment and suspended placement
+
+A physical placement commits geometry, counter changes, component/lineage
+reconciliation, host remapping and Trade topology before generating one local
+assignment opportunity. `SpecialistPlacementService` derives affected features
+from the actual base, Development or exact Transformation changes. Housing,
+Market, Town Square, Port and Lodge use their specific host; Mill offers touching
+unfinished Settlements; Monastery-family stages use their persistent enclosure.
+Bridge-created Settlement access and Rewilding's removed same-tile Field support
+also make their directly altered Settlement eligible.
+
+Closed features are excluded before scoring. The player assigns one offered
+available piece/target pair or declines. `PendingChoice` persists exact options;
+`ResolutionState` persists the committed source, local targets, frozen completion
+snapshot and any deferred immediate Development effect. No hand refill, scoring
+or unrelated input happens while that choice is pending. Reserve and final-Act
+refill behavior remain unchanged. The final normal placement can save while
+pending, then resume into the existing deferred Act-transition boundary.
+
+Private projected topology rejects every merger of two occupied unfinished
+features before physical mutation, even if the proposed result would close.
+This implements Implementation §25.2 for ordinary placement, Urban Expansion,
+Bridge and Rewilding. Legal mergers remap the one assignment to its descendant
+without changing the piece, original assignment timing or earned growth credit.
+
+### Completion effects and growth attribution
+
+One immutable batch snapshot supplies base scoring, Developments and Specialist
+calculations. Effects apply in that order, then all completing pieces return;
+later Relic/reward/threshold stages remain no-op boundaries. Returned pieces
+cannot use the placement's already-resolved assignment opportunity. Indirect
+and simultaneous completions use the same lifecycle. Generic bonuses are +2
+Trade/Road, Population/Settlement, Ecology/Forest or River, Culture/enclosure.
+They never enter base anti-farming sets.
+
+| Role | Implemented completion calculation and representative checks |
+| --- | --- |
+| Merchant | `max(0, distinct current network Settlements - 1) * 2` Trade; authoritative Trade service, one/two/three nodes, unchanged snapshot after live changes. |
+| Cartographer | +1 Trade per qualifying newly created Road component; Bridge target/neighbor growth, old and foreign-built absorbed components excluded, payout and persistence. |
+| Architect | +2 Culture per current distinct Development family; duplicate families once, Grand Market remains Market family. |
+| Homesteader | +1 Population per distinct current Field support tile; full current relationships, including already base-paid support. |
+| Naturalist | +1 Ecology per Forest tile only while undeveloped under current rules; Lodge permitted, other ordinary Development blocks. |
+| Forester | +1 Ecology per qualifying new Forest component; Rewilding-created growth counts, pre-existing absorbed Forest does not. |
+| Riverkeeper | +1 Ecology per distinct current touching Forest tile, independently stacking with base contact gains. |
+| Harbormaster | Requires current canonical Settlement contact; +2 Trade per touching distinct Settlement plus +1 for each containing Port. |
+
+Growth attribution stores global component identities observed since commitment
+and a separate qualifying set. Each topology change credits only newly created
+components now in the assigned feature, then observes every component globally.
+Thus a Road/Forest built elsewhere after assignment and merged later still does
+not count. This replaces neither feature genealogy nor base scoring history.
+
+### Training, persistence and interpretations
+
+Training converts an existing generic piece permanently, with duplicate roles
+allowed across distinct features. Available pieces draw three distinct roles
+uniformly without replacement from the lexically sorted eight-role pool. Assigned
+pieces filter first by current feature/Harbormaster eligibility; a pool of at most
+three is offered in full. Only randomized training offers use new gameplay RNG.
+Recruitment and training selection do not trigger unrelated dead-hand redraws.
+The exact offer and original commitment are saved; load never rerolls or recalls.
+If all pieces are trained or no generic can legally train, one typed normal Tile
+Reward handoff is recorded, not discarded or implemented as a full reward.
+
+The growth interpretation and confirmed Abbey ruling are explicit:
+
+- **Growth training in place:** Cartographer/Forester credit starts at conversion,
+  excluding pre-training growth as this assignment explicitly requires. Original
+  assignment Act/index remains intact; training history records the conversion.
+- **Abbey — explicit human ruling:** generic assignment targets the persistent
+  Monastery-family enclosure, including its unfinished Abbey stage. The user
+  confirmed this behavior after Phase-7 review. An Upgrade or other directly
+  affecting action may offer a new generic assignment under normal locality and
+  unfinished-target rules. It adds no trained Abbey role. Existing
+  commitment survives Upgrade, completed stages cannot receive last-second
+  assignment, and a genuine Abbey completion returns its generic Steward.
+
+No source specification was rewritten. No Phase-7-blocking ambiguity remains
+under the documented growth interpretation and confirmed Abbey ruling.
+
+Optional schema-1 Specialist records preserve signed 64-bit IDs, roles, histories,
+growth sets, choice options/context, frozen snapshots and continuation stages.
+Repeated load is inert: zero placement replay, scoring, effects, assignments,
+returns, training, events, ID allocation or RNG consumption. Identical choices
+produce identical fingerprints and future IDs/RNG after load.
+
+Invariants cover cap/identity, active targets, one piece per connected feature,
+canonical roles, permanent training history, growth references, exact local
+options, most-recent physical source, frozen snapshot integrity and deferred
+Development effects. Malformed snapshot collections, historical completed
+assignments, duplicate reward handoffs and forged locality are rejected before
+commands mutate or loaders publish state. Resume also rechecks ID, Track and RNG
+capacity rather than assuming the pre-save reservation remains sufficient.
+
+### Verification and scope
+
+Verified 2026-09-24, Godot 4.7.2 stable. Runtime/test commit:
+`72a7bcdd105cbfed9d2b6027e0d3ece376176ab6`.
+
+| Check | Evidence |
+| --- | --- |
+| `./tests/run_tests.sh` | Exit 0; **717 passed, 0 failed**; **155 GDScript files parsed without diagnostics**. |
+| Prior regressions | All **569** previous tests retained and passing; no old assertion weakened. |
+| Specialist coverage | **148 new tests**: 40 state/content, 49 rules/training, 42 live scenarios, 17 continuation/boundary scenarios. |
+| Specialist demo | **42 scenarios passed**; readable roster, pools, choices, growth, gains and returns. |
+| Transformation demo | **40 scenarios passed**, retaining Bridge bank and Abbey/Rewilding rulings. |
+| Headless bootstrap | Exit 0; Phase-7 content validated, 34 tile definitions. |
+| Diff/branch scope | `git diff --check` clean; no art or canonical source-specification changes on `phase-7`. |
+
+Acceptance logs: `builds/verification/run-hRKCKUe6/`; summary
+`builds/phase7-acceptance.log`. Demonstration logs:
+`builds/phase7-specialist-demo-verified.log` and
+`builds/phase7-transform-demo-verified.log`. These generated logs are ignored.
+
+The prior art branch's 15 orphan Godot `.png.import` sidecars were preserved
+byte-for-byte under `/home/rochelle/Jane/Artifacts/MappaMundi/phase7-art-import-sidecars-20260924/`;
+source images and approved anchors remain unchanged on `alpha-art`.
+All Phase-7 exit conditions are satisfied under the documented growth interpretation and confirmed Abbey ruling above.
+The next action is human gameplay/code review; Phase 8 requires a new instruction.
+
+No Phase 8, Relic gameplay, Steward's Relay, Ferry Rights, Charters, Grand Charters,
+full rewards, Act transitions, deferred Specialists, presentation polish or tile
+art was added on `phase-7`. Art stays on its unmerged branch. Gameplay remains
+headless with a minimal bootstrap; player-facing Specialist UI is deferred.
+
 ## Phase 6 — complete
 
 Verified 2026-09-24 on `phase-6`. PR #3 was merged normally, retaining the

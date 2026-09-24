@@ -31,6 +31,8 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 	StalemateRules.cycle_if_dead(state, content)
 	FeatureResolutionService.initialize(state)
 	TradeNetworkService.initialize(state)
+	if content.get_specialist_ids().size() == 8:
+		SpecialistRules.initialize(state)
 	InvariantValidator.assert_valid(state, content)
 	return state
 

@@ -15,6 +15,8 @@ static func normalize(state: RunState) -> String:
 		_normalize_features(data["features"])
 	if data.has("trade"):
 		_normalize_trade(data["trade"])
+	# SpecialistSerializer sorts roster IDs and growth identity sets on fresh values.
+	# Exact choice option order, immutable snapshot data and history stay authoritative.
 	if data.has("expansion"):
 		var expansion: Dictionary = data["expansion"]
 		expansion["removed_ids"].sort_custom(_decimal_id_before)

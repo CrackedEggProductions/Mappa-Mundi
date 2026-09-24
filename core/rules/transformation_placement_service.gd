@@ -12,7 +12,7 @@ static func plan_for_command(state: RunState, content: ContentRegistry,
 
 
 static func place(state: RunState, content: ContentRegistry, command: PlaceTileCommand,
-		plan: TransformationState) -> void:
+		plan: TransformationState, score: bool = true) -> void:
 	assert(plan != null, "Transformation intent must be validated before physical mutation")
 	assert(plan.placement_index == state.expansion.normal_placements)
 	var created_ids: Array[int] = []
@@ -52,4 +52,4 @@ static func place(state: RunState, content: ContentRegistry, command: PlaceTileC
 	event.component_ids = created_ids
 	event.parent_ids = target_lineages
 	state.features.history.append(event)
-	FeatureResolutionService.resolve(state, plan.tile_copy_id)
+	FeatureResolutionService.resolve(state, plan.tile_copy_id, score)

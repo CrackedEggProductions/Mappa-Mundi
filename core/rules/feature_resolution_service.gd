@@ -11,14 +11,16 @@ static func initialize(state: RunState) -> void:
 	resolve(state)
 
 
-static func resolve(state: RunState, source_id: int = 0) -> void:
+static func resolve(state: RunState, source_id: int = 0, score: bool = true) -> void:
 	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
 	assert(LineageService.validate_rebuild(state, current).is_valid)
 	LineageService.reconcile(state, current, source_id)
 	DevelopmentService.remap_hosts(state, current)
+	SpecialistRules.remap_and_growth(state, current)
 	if state.trade != null:
 		TradeNetworkService.reconcile(state, source_id)
-	FeatureScoringService.resolve(state, current, source_id)
+	if score:
+		FeatureScoringService.resolve(state, current, source_id)
 
 
 static func has_resolution_capacity(state: RunState) -> bool:

@@ -3,7 +3,7 @@ extends RefCounted
 ## Internal mutation after complete RulesEngine validation and source-slot removal.
 
 
-static func place(state: RunState, content: ContentRegistry, command: PlaceTileCommand) -> void:
+static func place(state: RunState, content: ContentRegistry, command: PlaceTileCommand, immediate: bool = true) -> void:
 	var copy: TileCopyState = PhysicalTileRules.find_copy(state, command.tile_copy_id)
 	var definition: TileDefinition = content.get_tile(copy.definition_id)
 	var cell: BoardCellState = state.expansion.board.get_cell(command.coordinate)
@@ -45,7 +45,11 @@ static func place(state: RunState, content: ContentRegistry, command: PlaceTileC
 		state.features.history.append(replaced)
 	# Overlays do not rebuild geometry or create completion transitions for hosts.
 	DevelopmentService.remap_hosts(state, TopologyService.rebuild(state))
-	DevelopmentEffects.immediate(state, copy.tile_copy_id, event.event_id)
+	if immediate:
+		DevelopmentEffects.immediate(state, copy.tile_copy_id, event.event_id)
+	elif state.resolution != null:
+		state.resolution.immediate_development_copy_id = copy.tile_copy_id
+		state.resolution.immediate_parent_event_id = event.event_id
 
 
 static func _install_enclosure(state: RunState, development: DevelopmentState, coordinate: Vector2i) -> void:

@@ -1,7 +1,7 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 6 — Transformations and Growth Rewrites**.
+GDScript**. Current implementation: **Phase 7 — Stewards and Specialists**.
 Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
@@ -130,15 +130,17 @@ the registry. ID queries use explicit lexical string ordering. Consumers receive
 independent Resource copies so they cannot mutate the registered definitions.
 
 The validator rejects malformed samples, duplicates, invalid geometry/enums/Acts,
-unregistered behaviors, and content outside the Phase-0 pool. Relic, Specialist
-and Charter Resource classes are skeletons with empty manifest rosters. No
-gameplay behavior is registered yet; blank behavior IDs mean passive data only.
+unregistered behaviors, and content outside the Phase-0 pool. The historical
+Phase-0 profile keeps empty Relic, Specialist and Charter rosters.
+The current Phase-7 profile registers exactly eight passive Specialist definitions;
+central domain services own their behavior. Relics and Charters remain deferred.
 
 The separate `homestead_content_manifest.tres` and `homestead_run_config.tres`
 provide all 21 Act-I Expansion designs, the Founding Tile, exact 55-copy starting
 composition, hand/Reserve capacities and emergency set. Load this profile with
 `ContentRegistry.load_homestead()`. The original minimal profile remains available
-for bootstrap and Phase-0 regressions. Both profiles reject unsupported content.
+for Phase-0 regressions; the bootstrap now loads Phase 7. Both profiles reject
+unsupported content.
 Canonical base orientations and explicit internal relationships are documented in
 [the content notes](content/tiles/homestead/README.md).
 
@@ -146,13 +148,11 @@ Canonical base orientations and explicit internal relationships are documented i
 
 ```gdscript
 var content: ContentRegistry = ContentRegistry.new()
-assert(content.load_homestead().is_valid)
+assert(content.load_phase_seven().is_valid)
 var state: RunState = HomesteadRunFactory.create(12345, content)
 var copy_id: int = state.expansion.hand[0]
-var tile: TileCopyState = PhysicalTileRules.find_copy(state, copy_id)
-var options: Array[PlacementOption] = PlacementQueryService.query(
-    state.expansion.board, content.get_tile(tile.definition_id), copy_id,
-    state.expansion.state_revision
+var options: Array[PlacementOption] = PlacementQueryService.query_for_copy(
+    state, content, copy_id
 )
 if not options.is_empty():
     var option: PlacementOption = options[0]
@@ -182,7 +182,7 @@ implemented. Reserve-impossibility assessment conservatively returns
 `NOT_PROVABLY_IMPOSSIBLE`; later systems must expand proof before any automatic removal.
 
 See [implementation progress](IMPLEMENTATION_PROGRESS.md) for verification and
-remaining limits. Phase 7 requires a new instruction.
+remaining limits. Phase 8 requires a new instruction.
 
 ## Feature inspection and scoring
 
@@ -205,8 +205,9 @@ descendant with sorted parent IDs and the union of ancestral scoring sets.
 `CompletionSnapshot`. `calculate(snapshot)` reads only those frozen facts. All
 base gains are calculated before any completion updates Tracks or scoring sets;
 Development effects use that same snapshot after base scoring; structured child
-audit events drain FIFO after both batches. Specialist, Relic and threshold stages
-remain extension hooks without gameplay effects or rewards.
+audit events drain FIFO after the scoring batches. Specialist effects use the same
+snapshot after Developments, then completing pieces return. Relic and threshold
+stages remain deferred hooks without gameplay effects or rewards.
 
 Settlement support uses explicit internal Field/River contact and reachable
 matching edge sockets; it never infers support from an unrelated feature elsewhere
@@ -226,8 +227,9 @@ rejected rather than silently migrated. There is no disk-save migration service.
 The fixture-only geometry rewrite helper lives under `tests/fixtures/`; it preserves
 physical identity, exact occupied-edge matching and all stable-state invariants.
 Monastery and Abbey are playable physical overlays with persistent enclosures.
-Legacy enclosure fixtures with Development ID zero remain supported. No playable
-Transformation command exists.
+Legacy enclosure fixtures with Development ID zero remain supported. Urban
+Expansion, Bridge and Rewilding use authoritative physical commands and effective
+geometry.
 
 After editor import, run the standalone headless demonstration from this root:
 
@@ -384,3 +386,56 @@ Forest banks cannot become Road: the command rejects them with
 not continued Field geography, so otherwise-legal Rewilding preserves its copy,
 host and stage history. Mill and ordinary Monastery remain Field-dependent.
 See implementation progress for the resolved rule references and verification.
+
+## Stewards, Specialists and pending choices
+
+`ContentRegistry.load_phase_seven()` loads the current gameplay profile, retaining
+all Phase-6 tiles and exactly eight trainable roles. `HomesteadRunFactory.create`
+then starts two available generic Stewards with stable IDs. Earlier manifests
+remain explicit historical fixture profiles without Specialist state.
+
+A successful placement may leave `state.phase == PENDING_CHOICE`: the board and
+placement count are already committed, while scoring and hand refill wait. Read
+`state.pending_choice.options` for authoritative local piece/target combinations.
+Resolve exactly one option or decline through `RulesEngine.execute`:
+
+```gdscript
+var choice: PendingChoice = state.pending_choice
+if choice != null and choice.kind == &"specialist_assignment":
+    # A client may instead submit one exact offered piece/target combination.
+    assert(RulesEngine.execute(state, content,
+        ResolveSpecialistAssignmentCommand.new(choice.choice_id, 0, -1, 0, true)
+    ).is_valid)
+```
+
+The phase blocks other placement/Reserve/Survey commands until resolved. A saved
+`ResolutionState` owns the immutable completion snapshot and deferred immediate
+Development effect. Load validates this continuation without replaying anything.
+Reserve placement never refills the active hand; final-Act placement finishes its
+choice and consequences before entering the existing deferred transition boundary.
+
+Reward integrations may submit `RecruitStewardCommand` (hard cap three) or
+`RequestSpecialistTrainingCommand.new(piece_id)`. Training persists the exact
+filtered uniform offer; resolve it with `ResolveSpecialistTrainingCommand` and an
+offered role ID. Training preserves physical identity and existing commitment.
+If no generic piece can train, request piece ID zero to obtain a persisted typed
+normal Tile Reward handoff in `state.specialists.deferred_rewards`. These are reward
+integration APIs, not a complete reward entitlement/threshold system.
+
+Cartographer/Forester track stable new component IDs, not size differences.
+Components seen elsewhere before a later merger never become qualifying growth.
+Training either growth role in place starts growth credit at conversion while
+retaining the original assignment Act/index; pre-training growth earns no bonus.
+Generic Stewards may occupy an unfinished Monastery-family enclosure at either
+Monastery or Abbey stage; none of the trained alpha roles may occupy it. This
+Abbey behavior is explicitly human-confirmed. New assignments still require a
+normal local opportunity and an unfinished enclosure.
+
+Run the standalone Specialist demonstration after import:
+
+```sh
+godot --headless --path . --script res://tests/scenarios/specialist_demo.gd
+```
+
+It exercises live commands and prints roster/status, legal training pools,
+persisted assignment offers, growth IDs, completion gains and returned pieces.
