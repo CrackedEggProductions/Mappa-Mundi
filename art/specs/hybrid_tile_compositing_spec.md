@@ -275,3 +275,73 @@ candidate assessments. Whole-image distortion is removed; invisible boundary
 reconstruction is not solved for every hybrid. Gate, Riverside Hamlet and Settlement
 Road Throughway currently have neither recommendation. Do not scale to Founding or
 batch finalization before human review. No wave01 output is an approved anchor/final.
+
+
+## Production Wave 02 — judge source suitability before repair
+
+A source must already fit the intended scene composition. Regenerate it if correction
+would require conspicuous repeated motifs, large translated patches, distant moves
+of recognizable buildings, obvious cloning, heavy nonlinear warping or substantial
+reconstruction of architectural objects. A low changed-area percentage alone is
+not evidence of a good repair. Do not rescue an unsuitable illustration by stamping
+city fragments into a mechanically valid mask.
+
+Use the approved anchors directly in generation, together with the composition guide
+and exact brief. The guide governs scene layout; local illustration anchors govern
+style. Save the original image, exact prompt and references. Review source suitability
+before composition and record rejection reasons. The image model supplies a coherent
+scene; deterministic tooling remains the mechanical authority.
+
+For this wave, [repair_wave_sampler.py](../tools/repair_wave_sampler.py) preserves
+the traced Settlement footprint and rejects sources whose city edges would need
+reconstruction. Road/River intervals ease into unchanged geometry through a **128px
+edge collar**. A monotone inverse coordinate map keeps an 18px strip around each
+bank at unit scale where space permits; quiet surrounding texture absorbs the small
+adjustment. Sampling uses integer source coordinates, with no color interpolation.
+Every changed destination and sampled source pixel must lie outside the Settlement
+mask. The sampler rejects movement of architecture rather than repairing it later.
+It does not clone donor blocks or transport whole buildings. This limited local
+resampling can still bend grass or ripple lines; it is not a universal retouch tool.
+
+Source annotations describe ground footprints and ink-bank boundaries. They are
+human judgments, not automatic object segmentation. Inspect elevated roof/wall
+marks at corners separately: mask proof cannot certify every painted detail.
+Road/Settlement interior overlap retains the existing Throughway interpretation;
+there are no dual outer sockets or changed gameplay rules.
+
+[repair_wave_metrics.py](../tools/repair_wave_metrics.py) records transported area,
+RGB-changed area, maximum/p95 travel, duplicate donor coordinates and a binary
+repair-zone image. Donor reuse measures coordinates, not semantic motif repetition.
+Required visual assessments record whether major objects moved, motifs repeated,
+edge repair is visible at normal scale and the source was rejected before composition.
+Unknown assessments remain pending; a numerical pass cannot approve an image.
+
+The socket-mapping method uses fixed screening limits of **8% transported area,
+80px p95 movement, 120px maximum movement and 25% repeated transported donor
+coordinates**. These are art-review heuristics, not changes to mechanical standards.
+They were chosen for continuous quiet-margin sampling, which touches more pixels
+than isolated stamps but preserves bank lines. They do not override visual rejection.
+The metrics module's generic patch defaults remain separate. Do not raise limits
+merely to force a failing source through the gate.
+
+[repair_wave_compositor.py](../tools/repair_wave_compositor.py) validates before
+writing, saves cost/repair/provenance records and rejects unsuitable sources without
+writing a candidate. Review candidates can retain a visible-repair failure so the
+human can compare them; they cannot be recommended merely because geometry passes.
+Prefer less visible correction when scene quality is otherwise comparable.
+
+[repair_wave_reviews.py](../tools/repair_wave_reviews.py) produces native, lossless
+seams, separate ownership/contact/repair overlays and labeled comparison sheets.
+Comparison thumbnails alone are scaled. Sources, old candidates and approvals stay
+unchanged. All six repair outputs remain **CANDIDATE — AWAITING HUMAN REVIEW**.
+
+Verification from the project root:
+
+    python3 -B -W error -m unittest discover -s art/tools -p 'test_*.py'
+    python3 -B art/tools/repair_wave_compositor.py --verify art/reviews/production_wave_02/compositions/*.json
+
+Fresh generation is not deterministic. Replay uses saved sources and calibrations.
+Writers refuse existing names; explicit rebuild backs up prior evidence. A rejected
+trace does not authorize changing mechanics: correct the annotation only when image
+inspection supports it, preserving the rejected record. See the
+[Wave 02 report](../reviews/production_wave_02/TRIAL_REPORT.md) for decisions and limits.

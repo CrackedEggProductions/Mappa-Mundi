@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "resolution": [
+      1254,
+      1254
+    ],
+    "total_pixels": 1572516,
+    "transported_pixels": 24305,
+    "transported_percent": 1.545612254501703,
+    "unchanged_coordinate_pixels": 1548211,
+    "rgb_changed_pixels": 24281,
+    "rgb_changed_percent": 1.5440860379163073,
+    "displacement_p95_px": 30.0,
+    "displacement_max_px": 33.0,
+    "unique_transported_donors": 22182,
+    "transported_donor_reuse_count": 2123,
+    "transported_donor_reuse_ratio": 0.08734828224645134,
+    "all_output_duplicate_donor_count": 2266,
+    "provenance_sha256": "37b63f28151e8d063665d33a02930b7a9cc9eb5163493d0ae961606a607c9101"
+  },
+  "limits": {
+    "transported_percent": 8.0,
+    "displacement_p95_px": 80.0,
+    "displacement_max_px": 120.0,
+    "transported_donor_reuse_ratio": 0.25
+  },
+  "assessment": {
+    "major_recognizable_objects_moved": false,
+    "repeated_motifs_introduced": false,
+    "edge_repair_visible_at_review_scale": true,
+    "source_rejected_before_composition": false,
+    "notes": "The wall and gate read coherently, with believable native houses and restrained stone/terracotta. The east approach visibly dips into its final socket; no pasted masonry is apparent. Visible mild bend in the eastmost Road collar. Strict visibility gate remains REJECT; numerical limits pass. No automatic visual acceptance."
+  },
+  "source_suitability": "REJECT",
+  "rejection_reasons": [
+    "human:edge_repair_visible_at_review_scale"
+  ],
+  "pending_assessments": [],
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "limitation": "Provenance counts coordinates, not objects; human judgments are supplied, not image recognition."
+}

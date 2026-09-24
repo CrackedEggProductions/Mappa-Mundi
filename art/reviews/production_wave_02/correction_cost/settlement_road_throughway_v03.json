@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "resolution": [
+      1254,
+      1254
+    ],
+    "total_pixels": 1572516,
+    "transported_pixels": 58088,
+    "transported_percent": 3.6939528755192317,
+    "unchanged_coordinate_pixels": 1514428,
+    "rgb_changed_pixels": 58052,
+    "rgb_changed_percent": 3.691663550641138,
+    "displacement_p95_px": 31.0,
+    "displacement_max_px": 38.0,
+    "unique_transported_donors": 52471,
+    "transported_donor_reuse_count": 5617,
+    "transported_donor_reuse_ratio": 0.09669811320754718,
+    "all_output_duplicate_donor_count": 6062,
+    "provenance_sha256": "3af30c78ccf7faa01886ff5625891e432f397d31c361e6d3233106cb3050a271"
+  },
+  "limits": {
+    "transported_percent": 8.0,
+    "displacement_p95_px": 80.0,
+    "displacement_max_px": 120.0,
+    "transported_donor_reuse_ratio": 0.25
+  },
+  "assessment": {
+    "major_recognizable_objects_moved": false,
+    "repeated_motifs_introduced": false,
+    "edge_repair_visible_at_review_scale": true,
+    "source_rejected_before_composition": false,
+    "notes": "One coherent walled district surrounds the readable cross-town Road. Roofs and walls no longer show obvious pasted/clipped repeats. The west Road lip has a noticeable curved flare. The west socket collar forms a visible shallow flare; no architectural relocation is apparent. Strict visibility gate remains REJECT; numerical limits pass. No automatic visual acceptance."
+  },
+  "source_suitability": "REJECT",
+  "rejection_reasons": [
+    "human:edge_repair_visible_at_review_scale"
+  ],
+  "pending_assessments": [],
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "limitation": "Provenance counts coordinates, not objects; human judgments are supplied, not image recognition."
+}

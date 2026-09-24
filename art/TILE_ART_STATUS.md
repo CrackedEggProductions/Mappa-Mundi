@@ -3,18 +3,39 @@
 Prepared 2026-09-24. Scope: local alpha base-tile art production setup.
 No gameplay, source specification or existing example image was changed.
 
-## Production wave02 — approved winners and focused repairs
+## Production wave02 — current review checkpoint
 
-The human approved five Wave01 winners as **APPROVED PRODUCTION ANCHOR — NOT FINAL**:
-Settlement Throughway v02, Woodland Road v02, Woodland River v02, Settlement Corner
-Gate v01 and Settlement Road Bend v02. Byte-identical copies are retained in
-[production anchors](references/production_anchors/); original candidates are unchanged.
-There are now ten approved non-final anchors. No final shipping assets exist.
+Five Wave01 choices are now **APPROVED PRODUCTION ANCHOR — NOT FINAL**:
 
-Wave01 Settlement Gate, Riverside Hamlet and Settlement Road Throughway are
-**VISUALLY REJECTED — SUPERSEDED REPAIR SOURCES**, despite their valid masks.
-This wave produces only v03/v04 of those three designs, pending human review.
-Historical sections below retain their original checkpoint context.
+- [Settlement Throughway](references/production_anchors/settlement_throughway_anchor.png)
+- [Woodland Road](references/production_anchors/woodland_road_anchor.png)
+- [Woodland River](references/production_anchors/woodland_river_anchor.png)
+- [Settlement Corner Gate](references/production_anchors/settlement_corner_gate_anchor.png)
+- [Settlement Road Bend](references/production_anchors/settlement_road_bend_anchor.png)
+
+Ten production anchors now exist; no final shipping assets exist. Originals are unchanged.
+Wave01 Gate, Riverside Hamlet and Road Throughway are **VISUALLY REJECTED — SUPERSEDED REPAIR SOURCES**.
+
+All six new outputs are **CANDIDATE — AWAITING HUMAN REVIEW**.
+
+| Design | v03 | v04 | Mechanics | Transport area v03/v04 | Visual review |
+|---|---|---|---|---|---|
+| Settlement Gate | [v03](generated/candidates/production_wave_02/settlement_gate/settlement_gate_v03.png) | [v04](generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png) | Both PASS; four rotations | 1.546% / 2.022% | v04 stronger; both retain visible socket correction |
+| Riverside Hamlet | [v03](generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v03.png) | [v04](generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v04.png) | Both PASS; four rotations | 6.580% / 6.474% | v04 stronger; both retain visible socket correction |
+| Settlement Road Throughway | [v03](generated/candidates/production_wave_02/settlement_road_throughway/settlement_road_throughway_v03.png) | [v04](generated/candidates/production_wave_02/settlement_road_throughway/settlement_road_throughway_v04.png) | Both PASS; four rotations | 3.694% / 3.716% | v04 stronger; both retain visible socket correction |
+
+v04 is the preferred comparison for each design, **not production clearance**. The strict
+visible-repair gate remains REJECT for all six. v03 curvature is more noticeable; v04
+is minor. Architecture/cloning improved, no major objects moved, watercolor remained
+restrained. Numerical correction limits pass. No repair output was promoted.
+
+**208 tests passed,0 failed;34 Python files parsed;44 native seam sheets verified**
+(120 placements,84 matching seams). [Full report and exact references](reviews/production_wave_02/TRIAL_REPORT.md).
+[Hybrid method](specs/hybrid_tile_compositing_spec.md) now requires source-first suitability
+and records correction cost. Native1254px/Road126px/River250px standards are unchanged.
+
+Historical sections below retain their original checkpoint context; explicit approvals
+above supersede their older counts/statuses. Remaining nine designs are unchanged.
 
 ## Production wave01 — current review checkpoint
 

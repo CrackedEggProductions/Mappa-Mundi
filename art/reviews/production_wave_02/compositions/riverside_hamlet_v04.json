@@ -1,0 +1,122 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "riverside_hamlet",
+  "version": 4,
+  "method": "native edge-local socket mapping; bank detail retained, no architectural remapping; integer provenance",
+  "repaired_pixels": 101804,
+  "original_pixels_retained": 1470712,
+  "topology": {
+    "tile": "riverside_hamlet",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "River",
+      "S": "Field",
+      "W": "River"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "River": 1,
+      "Settlement": 1
+    },
+    "relationships": [
+      {
+        "first": "River",
+        "second": "Settlement",
+        "kind": "touch",
+        "route": "through"
+      }
+    ],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/riverside_hamlet.md"
+  },
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "River_binary": true,
+      "River_edge_N": true,
+      "River_edge_E": true,
+      "River_edge_S": true,
+      "River_edge_W": true,
+      "River_one_connected_component": true,
+      "River_rotation_0": true,
+      "River_rotation_90": true,
+      "River_rotation_180": true,
+      "River_rotation_270": true,
+      "Settlement_binary": true,
+      "Settlement_edge_N": true,
+      "Settlement_edge_E": true,
+      "Settlement_edge_S": true,
+      "Settlement_edge_W": true,
+      "Settlement_one_connected_component": true,
+      "Settlement_rotation_0": true,
+      "Settlement_rotation_90": true,
+      "Settlement_rotation_180": true,
+      "Settlement_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_River_overlap": true,
+      "Field_Settlement_overlap": true,
+      "River_Settlement_overlap": true,
+      "River_Settlement_touch": true
+    },
+    "feature_components": {
+      "River": 1,
+      "Settlement": 1
+    },
+    "contact_pixel_pairs": {
+      "River_Settlement_touch": 552
+    }
+  },
+  "masks": "art/reviews/production_wave_02/masks/riverside_hamlet_v04",
+  "source_suitability": "REJECT",
+  "limitation": "Known geometry and donor provenance do not establish visual acceptance.",
+  "source": "art/reviews/production_wave_02/sources/riverside_hamlet_v04.png",
+  "source_sha256": "a436964ea778e6922c13f14eb47243e29696441536612bf27c18abd39f2d62f4",
+  "candidate": "art/generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v04.png",
+  "candidate_sha256": "78ee2291831b27c961d0c78f370799aec3ee7d09fbbe3b1d395b0c6cdfdac532",
+  "calibration": "art/reviews/production_wave_02/calibrations/riverside_hamlet_v04.json",
+  "calibration_sha256": "dc770ee9513b9900a8fd48afc1fb14559c7d79f9d50012c04017e5dabc79ef6a",
+  "provenance": "art/reviews/production_wave_02/provenance/riverside_hamlet_v04.npz",
+  "provenance_sha256": "fcbea2d26246c4f949b2d57444cf3ea510f8eb0ea6057c6a0b248231828a2ea8",
+  "assessment": "art/reviews/production_wave_02/assessments/riverside_hamlet_v04.json",
+  "assessment_sha256": "6e87f15a768ad8aa7380658bc26181a184485d47d3cdf8a1653dc4c9fdd76a0f",
+  "repair_zone": "art/reviews/production_wave_02/repair_zones/riverside_hamlet_v04.png",
+  "repair_zone_sha256": "b53516bb553d23068c670591ea547d41931d224255f64daf5a1bea057abd682f",
+  "correction_cost": "art/reviews/production_wave_02/correction_cost/riverside_hamlet_v04.json",
+  "correction_cost_sha256": "9a8f0680f4c9ebc3952892c76f4dcacf0e3fb042e7adacbb85aee7980eaa21c2"
+}

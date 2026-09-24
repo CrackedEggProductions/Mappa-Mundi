@@ -1,0 +1,124 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "labels": "outside artwork",
+  "resampling": "LANCZOS thumbnails only; all separate seam PNGs remain native",
+  "items": [
+    {
+      "label": "Settlement Corner anchor",
+      "source": "art/references/production_anchors/settlement_corner_anchor.png",
+      "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Settlement Throughway anchor",
+      "source": "art/references/production_anchors/settlement_throughway_anchor.png",
+      "sha256": "61e09124d2b3289b5db7cc8a7405dc1c3888f45dc0a8331990ce7f3c2c451165",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Settlement Corner Gate anchor",
+      "source": "art/references/production_anchors/settlement_corner_gate_anchor.png",
+      "sha256": "94de2d6aa25f91f8f51dc6d7b2189a27d41f97be7e5a93cf4629a0bcf3204fe3",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Wave 01 v02 - visually rejected",
+      "source": "art/generated/candidates/production_wave_01/settlement_gate/settlement_gate_v02.png",
+      "sha256": "1ad3cea13121539856383553274122c55de9e49ecc2884d3b395e96a2bbdaa46",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Canonical layered topology",
+      "source": "art/templates/production_wave_01/settlement_gate/guide.png",
+      "sha256": "6462ba803f7321ae98307dd42d337ca1af547c8d58595429ad103624e7356954",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v03 - awaiting review",
+      "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v03.png",
+      "sha256": "6f815b22b7bf9bd4471ed38b9cb6072bdfb0d4278ad8cb52d9a93ba088270de0",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v04 - awaiting review",
+      "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+      "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v03 native seam preview",
+      "source": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v03_combined_3x3.png",
+      "sha256": "dcd1de95542bcd9ca37ed060727bbd1e4e8bdf8b027414d375a5513abfa2962a",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v04 native seam preview",
+      "source": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_combined_3x3.png",
+      "sha256": "5887742b8b7413aa82f39e8323e979778b610e0ba363208dd03b8118896abdbd",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    }
+  ]
+}

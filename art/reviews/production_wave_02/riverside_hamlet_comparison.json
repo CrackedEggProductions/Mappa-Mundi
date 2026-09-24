@@ -1,0 +1,111 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "labels": "outside artwork",
+  "resampling": "LANCZOS thumbnails only; all separate seam PNGs remain native",
+  "items": [
+    {
+      "label": "Settlement Corner anchor",
+      "source": "art/references/production_anchors/settlement_corner_anchor.png",
+      "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Settlement Throughway anchor",
+      "source": "art/references/production_anchors/settlement_throughway_anchor.png",
+      "sha256": "61e09124d2b3289b5db7cc8a7405dc1c3888f45dc0a8331990ce7f3c2c451165",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Wave 01 v02 - visually rejected",
+      "source": "art/generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png",
+      "sha256": "e22a6250031f0cee88d045bba4b3beb9a93f097557ef3004b7f6100c697bc950",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Canonical layered topology",
+      "source": "art/templates/production_wave_01/riverside_hamlet/guide.png",
+      "sha256": "3e2e81b16459f64537ba5e15b4c7e401c6f1402726ecb28cf7d40d6a3f7b15e4",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v03 - awaiting review",
+      "source": "art/generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v03.png",
+      "sha256": "996b0c08e310adb745a879a158527850975e15d68e136344562218c15e747b4a",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v04 - awaiting review",
+      "source": "art/generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v04.png",
+      "sha256": "78ee2291831b27c961d0c78f370799aec3ee7d09fbbe3b1d395b0c6cdfdac532",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v03 native seam preview",
+      "source": "art/reviews/production_wave_02/seams/riverside_hamlet/riverside_hamlet_v03_combined_3x3.png",
+      "sha256": "d4e878afefafc78f3fa820e4cec730761c154f9ed86ba2737a04887336467fc8",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v04 native seam preview",
+      "source": "art/reviews/production_wave_02/seams/riverside_hamlet/riverside_hamlet_v04_combined_3x3.png",
+      "sha256": "19a19f535974b4f96812f418973691a0b3ea850fbf1d56ccfc72d13dbd33ed35",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    }
+  ]
+}

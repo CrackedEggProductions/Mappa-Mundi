@@ -1,0 +1,127 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "settlement_road_throughway",
+  "version": 4,
+  "method": "native edge-local socket mapping; bank detail retained, no architectural remapping; integer provenance",
+  "repaired_pixels": 58434,
+  "original_pixels_retained": 1514082,
+  "topology": {
+    "tile": "settlement_road_throughway",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "Road",
+      "S": "Settlement",
+      "W": "Road"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "relationships": [
+      {
+        "first": "Road",
+        "second": "Settlement",
+        "kind": "access",
+        "route": "through"
+      }
+    ],
+    "allowed_interior_overlap": [
+      [
+        "Road",
+        "Settlement"
+      ]
+    ],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/settlement_road_throughway.md"
+  },
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "Road_binary": true,
+      "Road_edge_N": true,
+      "Road_edge_E": true,
+      "Road_edge_S": true,
+      "Road_edge_W": true,
+      "Road_one_connected_component": true,
+      "Road_rotation_0": true,
+      "Road_rotation_90": true,
+      "Road_rotation_180": true,
+      "Road_rotation_270": true,
+      "Settlement_binary": true,
+      "Settlement_edge_N": true,
+      "Settlement_edge_E": true,
+      "Settlement_edge_S": true,
+      "Settlement_edge_W": true,
+      "Settlement_one_connected_component": true,
+      "Settlement_rotation_0": true,
+      "Settlement_rotation_90": true,
+      "Settlement_rotation_180": true,
+      "Settlement_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_Road_overlap": true,
+      "Field_Settlement_overlap": true,
+      "Road_Settlement_overlap": true,
+      "Road_Settlement_access": true
+    },
+    "feature_components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "contact_pixel_pairs": {
+      "Road_Settlement_access": 200965
+    }
+  },
+  "masks": "art/reviews/production_wave_02/masks/settlement_road_throughway_v04",
+  "source_suitability": "REJECT",
+  "limitation": "Known geometry and donor provenance do not establish visual acceptance.",
+  "source": "art/reviews/production_wave_02/sources/settlement_road_throughway_v04.png",
+  "source_sha256": "0e486894a40b0f1d8424f8a77aa3a686f5923d38053ae986675146c63bb16e67",
+  "candidate": "art/generated/candidates/production_wave_02/settlement_road_throughway/settlement_road_throughway_v04.png",
+  "candidate_sha256": "bbf67a2f04acbfbf00bea8c48ca70102b1525154276a0211d9286bfef120bee6",
+  "calibration": "art/reviews/production_wave_02/calibrations/settlement_road_throughway_v04.json",
+  "calibration_sha256": "3a429c40ce86b006b06a205ae4ec06f938e934b57b313b81749739f45398928a",
+  "provenance": "art/reviews/production_wave_02/provenance/settlement_road_throughway_v04.npz",
+  "provenance_sha256": "81e139a714ba51811846b503cdcc023e8c0834badf28ba4a417d2394c832cdc2",
+  "assessment": "art/reviews/production_wave_02/assessments/settlement_road_throughway_v04.json",
+  "assessment_sha256": "08c5566c5fb5faf2ad25be70ef46f20afe6453863c5ed524ad9f9d98ba8a4d23",
+  "repair_zone": "art/reviews/production_wave_02/repair_zones/settlement_road_throughway_v04.png",
+  "repair_zone_sha256": "043a92fc9e5cd58da8ec3e6bed0f67f5fd775e0189e78e0707388e1cd552dfd3",
+  "correction_cost": "art/reviews/production_wave_02/correction_cost/settlement_road_throughway_v04.json",
+  "correction_cost_sha256": "87ff2cddf90a7a0ad6813bb064e1265f97e2ba81f47d93a9140d026ebceac00a"
+}

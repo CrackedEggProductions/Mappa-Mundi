@@ -1,0 +1,12 @@
+{
+  "score": 92,
+  "verdict": "pass",
+  "category_match": true,
+  "differences": [
+    "Road socket is narrower and slightly above canonical midpoint; small local correction expected."
+  ],
+  "suggestions": [
+    "Retain native town/wall; inspect only east socket correction."
+  ],
+  "reasoning": "Composition fits the canonical north cap without city leakage down the side edge. Source is suitable for correction-cost evaluation, not mechanically approved."
+}
