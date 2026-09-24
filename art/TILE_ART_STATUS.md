@@ -3,6 +3,19 @@
 Prepared 2026-09-24. Scope: local alpha base-tile art production setup.
 No gameplay, source specification or existing example image was changed.
 
+## Production wave01 — current authorization
+
+Work now lives on alpha-art after PR#4's normal merge and healthy569-test baseline.
+Five production anchors are APPROVED PRODUCTION ANCHOR — NOT FINAL:
+Forest Bend, Settlement Corner, [Forest Edge](references/production_anchors/forest_edge_anchor.png),
+[Forest Belt](references/production_anchors/forest_belt_anchor.png), and
+[Road Junction](references/production_anchors/road_junction_anchor.png).
+Original candidates remain unchanged. This explicit approval supersedes older
+pending statuses below for those three geometry-wave v02 choices only.
+Settlement Throughway geo_v02 remains REVISION SOURCE — NOT APPROVED.
+No final assets exist. Exactly eight requested hybrid designs/two candidates each
+are in production; Founding Tile and Road End identity are excluded.
+
 ## Current approval and reference priority — geometry wave
 
 The human has approved these two assets as **APPROVED PRODUCTION ANCHOR — NOT FINAL**:

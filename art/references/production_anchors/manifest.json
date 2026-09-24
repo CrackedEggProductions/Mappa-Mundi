@@ -12,5 +12,26 @@
     "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
     "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
     "authority": "Explicit human instruction in geometry-family wave"
+  },
+  {
+    "path": "art/references/production_anchors/forest_edge_anchor.png",
+    "source": "art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v02.png",
+    "sha256": "4ba9fa02d299196d0dc55f16093bf7320f8ea3eb111b5b5505ae620e284ac762",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for production wave01"
+  },
+  {
+    "path": "art/references/production_anchors/forest_belt_anchor.png",
+    "source": "art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v02.png",
+    "sha256": "95be949114ee2cb32250c2e5058db4f5c0838a0008905f00253e2319420c02f6",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for production wave01"
+  },
+  {
+    "path": "art/references/production_anchors/road_junction_anchor.png",
+    "source": "art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v02.png",
+    "sha256": "2574dd29cea77908e9e6894b5b2eeb6e9b2dc5866900e67f3f2f200cf4060a7c",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for production wave01"
   }
 ]
