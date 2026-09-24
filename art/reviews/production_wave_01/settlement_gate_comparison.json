@@ -1,0 +1,124 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "labels": "outside artwork",
+  "resampling": "LANCZOS thumbnails only; all separate seam PNGs remain native",
+  "items": [
+    {
+      "label": "Production anchor",
+      "source": "art/references/production_anchors/settlement_corner_anchor.png",
+      "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Mechanical / socket reference",
+      "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+      "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Canonical layered topology",
+      "source": "art/templates/production_wave_01/settlement_gate/guide.png",
+      "sha256": "6462ba803f7321ae98307dd42d337ca1af547c8d58595429ad103624e7356954",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v01 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/settlement_gate/settlement_gate_v01.png",
+      "sha256": "87d2473892083694b924532cd5b491431cbd9d3221c6fb8cecf11dcb5c7ea8e7",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v02 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/settlement_gate/settlement_gate_v02.png",
+      "sha256": "1ad3cea13121539856383553274122c55de9e49ecc2884d3b395e96a2bbdaa46",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 actual Settlement mask",
+      "source": "art/reviews/production_wave_01/masks/settlement_gate_v01/Settlement.png",
+      "sha256": "bac195257e4cc43facd900c06f92f439df931f8955fa72c56e8d00c3a22b2996",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 actual Settlement mask",
+      "source": "art/reviews/production_wave_01/masks/settlement_gate_v02/Settlement.png",
+      "sha256": "86914b053fa75adf98740d4873a2f3b206d03bffb621c6c525b4a7d6df94dabd",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/settlement_gate/settlement_gate_v01_combined_3x3.png",
+      "sha256": "a21d86c885c0df6b2e9f45897402d936c652101eec5bfe91f0b56651b4e1955c",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/settlement_gate/settlement_gate_v02_combined_3x3.png",
+      "sha256": "daab2d42592ee72ea2b530808e354e789ac6b03bd468c29c8a1898757540af7f",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    }
+  ]
+}

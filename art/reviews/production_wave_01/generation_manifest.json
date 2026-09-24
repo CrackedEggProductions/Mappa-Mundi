@@ -1,0 +1,118 @@
+{
+  "calls": 16,
+  "records": [
+    {
+      "name": "settlement_throughway_v01",
+      "source": "art/reviews/production_wave_01/sources/settlement_throughway_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-adc20939-8c72-4d12-9141-47f81127882c.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "9b879e48970ca10d0a425c642a9353d466021cc5de1375428c6cbe9d8ce0ab99",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_throughway_v02",
+      "source": "art/reviews/production_wave_01/sources/settlement_throughway_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-2381c524-2149-48f0-8eb1-d82ab6d69dd5.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "ad591cea2f3df623107b81e3934300a52b9a6a5967b3e97e4200cad5244a12b0",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_gate_v01",
+      "source": "art/reviews/production_wave_01/sources/settlement_gate_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-46ef7e45-dd90-4569-b384-acd8e4ccc08f.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "a3fd93bf2d1a076f5b02cd87cb316035b28876b1e886e22a3cd861a3f3a0427f",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_gate_v02",
+      "source": "art/reviews/production_wave_01/sources/settlement_gate_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-9bb51453-a152-4c6b-97a8-601fc8afc887.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "79974baddee76a215ab0999f886468100dd5de4b781773a98c64194c1d8f7d3b",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "riverside_hamlet_v01",
+      "source": "art/reviews/production_wave_01/sources/riverside_hamlet_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-74e0fecc-7c52-45d4-b11d-247942a0a6c1.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "8725f9086cf60d265b7c338eb59e5bc6b99f503f1b915429c8538f1b1772845a",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "riverside_hamlet_v02",
+      "source": "art/reviews/production_wave_01/sources/riverside_hamlet_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-edea481d-c062-4249-b95c-24e82afb2a8b.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "088e6e88b57f62ee3979dad28f3908a97443808356aeb761e7a59b0a04c03229",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "woodland_road_v01",
+      "source": "art/reviews/production_wave_01/sources/woodland_road_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-331df333-1d76-4909-9199-3258fc5603ec.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "e59388d81e7cc21c4f90e836025cf883392df2e44a9f919838df09c4a28f55d4",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "woodland_road_v02",
+      "source": "art/reviews/production_wave_01/sources/woodland_road_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-1b78fb10-1e4f-4708-ba4f-2e0f21b2358f.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "567367309eda7d1e2f9c673e4bdde0fa2e9498b06d7bfe77304b48cded5617a5",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "woodland_river_v01",
+      "source": "art/reviews/production_wave_01/sources/woodland_river_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-795f59d1-41af-4213-85a3-ffa1d84dfa12.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "de24b7ff8a295a7f0db19b7e02fb6da80490f32d5bcee54ab0b832298aca072a",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "woodland_river_v02",
+      "source": "art/reviews/production_wave_01/sources/woodland_river_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-657fbc4a-cee2-49df-ad16-6ebc5c63e2a6.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "41f9036ffd62e304adb5affa4e35c6a87347a45e11742dce55d61bd9246fc686",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_corner_gate_v01",
+      "source": "art/reviews/production_wave_01/sources/settlement_corner_gate_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-bf50a89e-14d4-4c24-8c3d-9d983b429f04.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "2bc9dbecb46926d35204312e287c3c7ec5d97a65eb5a2d747c2a60aff2cdeb89",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_corner_gate_v02",
+      "source": "art/reviews/production_wave_01/sources/settlement_corner_gate_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-5d6c7712-dbcc-42e1-a2ad-971d36649959.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "8fa35e8b8a171c5914fced201a9097410544964f1e2cae40c722c9ae5b3398fb",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_road_bend_v01",
+      "source": "art/reviews/production_wave_01/sources/settlement_road_bend_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-88eae5cb-dd7f-46ea-ba8c-9eb0d750cb20.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "5108da73e382600514b9e8fa6c4f21d307b2a8c43e48589a42df771f1a63adc5",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_road_bend_v02",
+      "source": "art/reviews/production_wave_01/sources/settlement_road_bend_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-24768591-b07d-42d6-adc8-31d0460f6526.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "aa14d25cc3dc11f586477b23a9e5b3cd8b86bfb46d797a41632b6e574f69c5fc",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_road_throughway_v01",
+      "source": "art/reviews/production_wave_01/sources/settlement_road_throughway_v01.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-ac6f4abd-80f7-43f2-8a06-fa664f9ba6f1.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "434b308d1bc40b238d3b03ea2edcdd3ae1a54ec97a4b8acc380abd54926dfd6e",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    },
+    {
+      "name": "settlement_road_throughway_v02",
+      "source": "art/reviews/production_wave_01/sources/settlement_road_throughway_v02.png",
+      "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-5755b6e5-6ae3-4a8c-881e-8c71a4ea0384.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_sha256": "8d7eeb890f0b57c71e96e68fe66dce5d3dc9769dac4b789cf099f77bf9978c3d",
+      "source_status": "ILLUSTRATION SOURCE \u2014 NOT A CANDIDATE OR APPROVED ASSET"
+    }
+  ],
+  "reference_note": "First four calls overlapped a guide label-only correction; original guides retained as guide_pre_label_fix.png. Geometry masks unchanged. Other references immutable."
+}

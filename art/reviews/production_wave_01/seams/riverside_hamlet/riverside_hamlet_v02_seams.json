@@ -1,0 +1,430 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "template_topology": {
+    "tile": "riverside_hamlet",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "River",
+      "S": "Field",
+      "W": "River"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "River": 1,
+      "Settlement": 1
+    },
+    "relationships": [
+      {
+        "first": "River",
+        "second": "Settlement",
+        "kind": "touch",
+        "route": "through"
+      }
+    ],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/riverside_hamlet.md",
+    "validation": {
+      "valid": true,
+      "checks": {
+        "canonical_topology": true,
+        "correct_feature_identities": true,
+        "native_dimensions": true,
+        "Settlement_binary": true,
+        "Settlement_edge_N": true,
+        "Settlement_edge_E": true,
+        "Settlement_edge_S": true,
+        "Settlement_edge_W": true,
+        "Settlement_one_connected_component": true,
+        "Settlement_rotation_0": true,
+        "Settlement_rotation_90": true,
+        "Settlement_rotation_180": true,
+        "Settlement_rotation_270": true,
+        "River_binary": true,
+        "River_edge_N": true,
+        "River_edge_E": true,
+        "River_edge_S": true,
+        "River_edge_W": true,
+        "River_one_connected_component": true,
+        "River_rotation_0": true,
+        "River_rotation_90": true,
+        "River_rotation_180": true,
+        "River_rotation_270": true,
+        "Field_binary": true,
+        "Field_edge_N": true,
+        "Field_edge_E": true,
+        "Field_edge_S": true,
+        "Field_edge_W": true,
+        "Field_rotation_0": true,
+        "Field_rotation_90": true,
+        "Field_rotation_180": true,
+        "Field_rotation_270": true,
+        "complete_coverage": true,
+        "Field_River_overlap": true,
+        "Field_Settlement_overlap": true,
+        "River_Settlement_overlap": true,
+        "River_Settlement_touch": true
+      },
+      "feature_components": {
+        "Settlement": 1,
+        "River": 1
+      },
+      "contact_pixel_pairs": {
+        "River_Settlement_touch": 493
+      }
+    }
+  },
+  "template_sha256": "b901f7dcf669a07852432b00a6ef2ba2d38fde6daf231caeba7c7acaf77f1812",
+  "actual_masks": {
+    "Field": {
+      "path": "art/reviews/production_wave_01/masks/riverside_hamlet_v02/Field.png",
+      "sha256": "d676dd41d839c1452b1ea0c923adacc2b88613405d10e28329a289d1a7ca2a47"
+    },
+    "Settlement": {
+      "path": "art/reviews/production_wave_01/masks/riverside_hamlet_v02/Settlement.png",
+      "sha256": "ea74899a075342872d8344f7f657617c8990739f4030036dff9bc497227737a9"
+    },
+    "River": {
+      "path": "art/reviews/production_wave_01/masks/riverside_hamlet_v02/River.png",
+      "sha256": "d5c7e5b490bfd071fcbc913f8f73e86b956ea82d082b97fd171acea3a2b4dc0a"
+    }
+  },
+  "note": "Declared feature matching and exact pixel preservation; legacy Road/River references are not certified to current sockets. Inspect visual seams.",
+  "sheets": [
+    {
+      "path": "art/reviews/production_wave_01/seams/riverside_hamlet/riverside_hamlet_v02_north_settlement_pair.png",
+      "sha256": "6c19a3fe4da799f3f9792f20a7581571f1d07975dae03fd62cdc9314d670d676",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png",
+          "sha256": "e22a6250031f0cee88d045bba4b3beb9a93f097557ef3004b7f6100c697bc950",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Settlement"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/riverside_hamlet/riverside_hamlet_v02_east_river_pair.png",
+      "sha256": "b370752a3fc1168805529d9078f158d1aea12668173ddad6ba4137911ea7af91",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png",
+          "sha256": "e22a6250031f0cee88d045bba4b3beb9a93f097557ef3004b7f6100c697bc950",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 90
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "River"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/riverside_hamlet/riverside_hamlet_v02_south_field_pair.png",
+      "sha256": "fc82f9fc548da1c459fcf2d3dba2b38b0729382b188f0c54818d8f04b0ff177a",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png",
+          "sha256": "e22a6250031f0cee88d045bba4b3beb9a93f097557ef3004b7f6100c697bc950",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Field"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/riverside_hamlet/riverside_hamlet_v02_west_river_pair.png",
+      "sha256": "ba8b2611ef1b9285b72168b52620d75eaca510e0a477894524ba668e9706a9ef",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png",
+          "sha256": "e22a6250031f0cee88d045bba4b3beb9a93f097557ef3004b7f6100c697bc950",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "River"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/riverside_hamlet/riverside_hamlet_v02_combined_3x3.png",
+      "sha256": "00ef2039317df495cea6b147826b61eaaca481491d950c6ad336b3acc1c908fc",
+      "size": [
+        3762,
+        3762
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png",
+          "sha256": "e22a6250031f0cee88d045bba4b3beb9a93f097557ef3004b7f6100c697bc950",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Settlement"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "River"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            1,
+            2
+          ],
+          "feature": "River"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            2,
+            1
+          ],
+          "feature": "Field"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/riverside_hamlet/riverside_hamlet_v02_river_bend_pair.png",
+      "sha256": "ccc02120ee2f39e8951836283da53f0dbc3b40aafafd1e0bd455d236622feed6",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png",
+          "sha256": "e22a6250031f0cee88d045bba4b3beb9a93f097557ef3004b7f6100c697bc950",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_13_river_bend.png",
+          "sha256": "60d06a079920b687d46d8f8a6280d1744dd3eb3546c4f86756f0e158b1e84b19",
+          "rotation_clockwise": 180
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "River"
+        }
+      ]
+    }
+  ]
+}

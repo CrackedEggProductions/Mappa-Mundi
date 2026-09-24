@@ -1,0 +1,12 @@
+{
+  "score": 45,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Throughway proportions retained; Gate has repeated patch fragments where source wall and template diverge."
+  ],
+  "suggestions": [
+    "Retain organic source interior geometry and enforce exact outer edges through bounded collars; do not warp buildings."
+  ],
+  "reasoning": "Mechanical masks pass but broad patch fill creates unacceptable repeated masonry."
+}

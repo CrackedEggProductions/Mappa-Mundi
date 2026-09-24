@@ -1,0 +1,91 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "settlement_throughway",
+  "version": 1,
+  "source": "art/reviews/production_wave_01/sources/settlement_throughway_v01.png",
+  "source_sha256": "9b879e48970ca10d0a425c642a9353d466021cc5de1375428c6cbe9d8ce0ab99",
+  "candidate": "art/generated/candidates/production_wave_01/settlement_throughway/settlement_throughway_v01.png",
+  "candidate_sha256": "076f1158f209c280702ea11c2ce9c44bacad2ef786d6547bfa1e663267b13e1d",
+  "calibration": "art/reviews/production_wave_01/calibrations/settlement_throughway_v01.json",
+  "calibration_sha256": "f994122baaea433bd0dae61da5ad8b5a9c3ec1a8785fb4f1472708328fefbab0",
+  "provenance": "art/reviews/production_wave_01/provenance/settlement_throughway_v01.npz",
+  "provenance_sha256": "389f7413011c56d55abc4250e929b13ea424e0fd4bed8fa473081ce82e17198a",
+  "method": "native integer translation patches; no scale, warp, or interpolation",
+  "repaired_pixels": 3432,
+  "original_pixels_retained": 1569084,
+  "topology": {
+    "tile": "settlement_throughway",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "Field",
+      "S": "Settlement",
+      "W": "Field"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Settlement": 1
+    },
+    "relationships": [],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/settlement_throughway.md"
+  },
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "Settlement_binary": true,
+      "Settlement_edge_N": true,
+      "Settlement_edge_E": true,
+      "Settlement_edge_S": true,
+      "Settlement_edge_W": true,
+      "Settlement_one_connected_component": true,
+      "Settlement_rotation_0": true,
+      "Settlement_rotation_90": true,
+      "Settlement_rotation_180": true,
+      "Settlement_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_Settlement_overlap": true
+    },
+    "feature_components": {
+      "Settlement": 1
+    },
+    "contact_pixel_pairs": {}
+  },
+  "masks": "art/reviews/production_wave_01/masks/settlement_throughway_v01",
+  "limitation": "Masks and trace provenance proven; source semantic tracing and patch artifacts require visual review."
+}

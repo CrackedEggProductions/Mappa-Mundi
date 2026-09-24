@@ -1,0 +1,420 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "template_topology": {
+    "tile": "woodland_road",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Forest",
+      "E": "Forest",
+      "S": "Road",
+      "W": "Road"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Forest": 1,
+      "Road": 1
+    },
+    "relationships": [],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/woodland_road.md",
+    "validation": {
+      "valid": true,
+      "checks": {
+        "canonical_topology": true,
+        "correct_feature_identities": true,
+        "native_dimensions": true,
+        "Forest_binary": true,
+        "Forest_edge_N": true,
+        "Forest_edge_E": true,
+        "Forest_edge_S": true,
+        "Forest_edge_W": true,
+        "Forest_one_connected_component": true,
+        "Forest_rotation_0": true,
+        "Forest_rotation_90": true,
+        "Forest_rotation_180": true,
+        "Forest_rotation_270": true,
+        "Road_binary": true,
+        "Road_edge_N": true,
+        "Road_edge_E": true,
+        "Road_edge_S": true,
+        "Road_edge_W": true,
+        "Road_one_connected_component": true,
+        "Road_rotation_0": true,
+        "Road_rotation_90": true,
+        "Road_rotation_180": true,
+        "Road_rotation_270": true,
+        "Field_binary": true,
+        "Field_edge_N": true,
+        "Field_edge_E": true,
+        "Field_edge_S": true,
+        "Field_edge_W": true,
+        "Field_rotation_0": true,
+        "Field_rotation_90": true,
+        "Field_rotation_180": true,
+        "Field_rotation_270": true,
+        "complete_coverage": true,
+        "Field_Forest_overlap": true,
+        "Field_Road_overlap": true,
+        "Forest_Road_overlap": true
+      },
+      "feature_components": {
+        "Forest": 1,
+        "Road": 1
+      },
+      "contact_pixel_pairs": {}
+    }
+  },
+  "template_sha256": "426e15191bbce2cf69212fe7bde30ebecb51dc1e025fa81de13df606a1e3fcf1",
+  "actual_masks": {
+    "Field": {
+      "path": "art/reviews/production_wave_01/masks/woodland_road_v02/Field.png",
+      "sha256": "2072736e9db7c2ac7dd10dccb1228cc579d9a8912bc85a9f9d773b19e7b50451"
+    },
+    "Road": {
+      "path": "art/reviews/production_wave_01/masks/woodland_road_v02/Road.png",
+      "sha256": "d5fe80dfb3c86512037ce45b48b40c46862bb9b1d8e8f7e9d37c72db8a0cea7f"
+    },
+    "Forest": {
+      "path": "art/reviews/production_wave_01/masks/woodland_road_v02/Forest.png",
+      "sha256": "441329d305706e1e604ee865a0bf83ca0cf6bed096bd101377d91ab454bafefc"
+    }
+  },
+  "note": "Declared feature matching and exact pixel preservation; legacy Road/River references are not certified to current sockets. Inspect visual seams.",
+  "sheets": [
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v02_north_forest_pair.png",
+      "sha256": "9d48cb420f305c4753f5a0df48c4417cda503424d1ccab2de07cdada0783f90f",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+          "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Forest"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v02_east_forest_pair.png",
+      "sha256": "dcdd351c811aecae82679c22f864a0696ac00f3c91e492eeaac13612e5a1729f",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+          "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 180
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Forest"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v02_south_road_pair.png",
+      "sha256": "4e9175b5bf5714900b4997de95d22c230c2d804119d26e7b01ed495d977f9dc7",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+          "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 90
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Road"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v02_west_road_pair.png",
+      "sha256": "57681bdf388323bda6aac38089a8ce993a089f28dc662c74fd6f0b8824ef60b8",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+          "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v02_combined_3x3.png",
+      "sha256": "efa50175553308d85194931f38f8f9e400f2ff99d0ffc084777f17adf827657c",
+      "size": [
+        3762,
+        3762
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+          "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 180
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 90
+        }
+      ],
+      "outside_board_cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Road"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            1,
+            2
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            2,
+            1
+          ],
+          "feature": "Road"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v02_road_bend_pair.png",
+      "sha256": "7713994c78112b5bafec5500f839dbd8a483a8ece13a7cefee7d1ffd78acce13",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+          "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_09_bending_road.png",
+          "sha256": "223a91fd4e161b0a981decc632ba7c925fa3e27a4b446444e297fce12cb65492",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Road"
+        }
+      ]
+    }
+  ]
+}

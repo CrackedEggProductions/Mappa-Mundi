@@ -3,18 +3,50 @@
 Prepared 2026-09-24. Scope: local alpha base-tile art production setup.
 No gameplay, source specification or existing example image was changed.
 
-## Production wave01 — current authorization
+## Production wave01 — current review checkpoint
 
-Work now lives on alpha-art after PR#4's normal merge and healthy569-test baseline.
-Five production anchors are APPROVED PRODUCTION ANCHOR — NOT FINAL:
-Forest Bend, Settlement Corner, [Forest Edge](references/production_anchors/forest_edge_anchor.png),
-[Forest Belt](references/production_anchors/forest_belt_anchor.png), and
+Work now lives on **alpha-art**, created after PR#4 merged normally into main at
+3ffc899689c3b9f497725a552696df8cd68348a6. Merged baseline:569 tests,133 parsed scripts.
+The previously local art framework is committed/pushed on its own branch.
+
+Five assets are **APPROVED PRODUCTION ANCHOR — NOT FINAL**:
+[Forest Bend](references/production_anchors/forest_bend_anchor.png),
+[Settlement Corner](references/production_anchors/settlement_corner_anchor.png),
+[Forest Edge](references/production_anchors/forest_edge_anchor.png),
+[Forest Belt](references/production_anchors/forest_belt_anchor.png),
 [Road Junction](references/production_anchors/road_junction_anchor.png).
-Original candidates remain unchanged. This explicit approval supersedes older
-pending statuses below for those three geometry-wave v02 choices only.
-Settlement Throughway geo_v02 remains REVISION SOURCE — NOT APPROVED.
-No final assets exist. Exactly eight requested hybrid designs/two candidates each
-are in production; Founding Tile and Road End identity are excluded.
+Copies match original candidates byte-for-byte. This approval supersedes historical
+pending statuses below for those five assets only. Settlement Throughway geo_v02
+remains **REVISION SOURCE — NOT APPROVED**.
+
+All16 new outputs below are **CANDIDATE — AWAITING HUMAN REVIEW**, never anchors or
+finals. All pass deterministic masks/provenance; visual judgment is separate.
+
+| Design | Candidate01 | Candidate02 | Mechanics | Recommendation |
+|---|---|---|---|---|
+| Settlement Throughway | [v01](generated/candidates/production_wave_01/settlement_throughway/settlement_throughway_v01.png) | [v02](generated/candidates/production_wave_01/settlement_throughway/settlement_throughway_v02.png) | Both PASS | v02 |
+| Settlement Gate | [v01](generated/candidates/production_wave_01/settlement_gate/settlement_gate_v01.png) | [v02](generated/candidates/production_wave_01/settlement_gate/settlement_gate_v02.png) | Both PASS | neither |
+| Riverside Hamlet | [v01](generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v01.png) | [v02](generated/candidates/production_wave_01/riverside_hamlet/riverside_hamlet_v02.png) | Both PASS | neither |
+| Woodland Road | [v01](generated/candidates/production_wave_01/woodland_road/woodland_road_v01.png) | [v02](generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png) | Both PASS | v02 |
+| Woodland River | [v01](generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png) | [v02](generated/candidates/production_wave_01/woodland_river/woodland_river_v02.png) | Both PASS | v02 |
+| Settlement Corner Gate | [v01](generated/candidates/production_wave_01/settlement_corner_gate/settlement_corner_gate_v01.png) | [v02](generated/candidates/production_wave_01/settlement_corner_gate/settlement_corner_gate_v02.png) | Both PASS | v01 |
+| Settlement Road Bend | [v01](generated/candidates/production_wave_01/settlement_road_bend/settlement_road_bend_v01.png) | [v02](generated/candidates/production_wave_01/settlement_road_bend/settlement_road_bend_v02.png) | Both PASS | v02 |
+| Settlement Road Throughway | [v01](generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v01.png) | [v02](generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png) | Both PASS | neither |
+
+**144 art tests pass;16×17 reconstruction checks pass; all four rotations pass.**
+94 native seam sheets,16 debug overlays and8 comparison sheets are linked in the
+[wave report](reviews/production_wave_01/TRIAL_REPORT.md). Houses retain native
+proportions; local collar repetition/cut details remain. Gate, Riverside Hamlet and
+Settlement Road Throughway need further visual repair. No extra generation follows.
+
+Mechanically proven geometry: single/corner/opposite regions, narrow/broad sockets,
+hybrid combinations, separate component identities and explicit contacts. Visually
+approved sources: only the five anchors above. Final assets: **none**.
+Remaining9 designs outside current candidates/anchors: Founding Tile, Open Fields,
+River End, River Run, River Bend, Road End, Straight Road, Bending Road, Hamlet Edge.
+Older examples for most remain useful, not approved final exports. Founding is still
+ungenerated; Road End identity remains unchanged/unresolved. All22 base designs
+still require final shipping approval. Phase7 and gameplay implementation excluded.
 
 ## Current approval and reference priority — geometry wave
 

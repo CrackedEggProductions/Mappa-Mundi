@@ -1,0 +1,115 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "settlement_corner_gate",
+  "version": 2,
+  "source": "art/reviews/production_wave_01/sources/settlement_corner_gate_v02.png",
+  "source_sha256": "8fa35e8b8a171c5914fced201a9097410544964f1e2cae40c722c9ae5b3398fb",
+  "candidate": "art/generated/candidates/production_wave_01/settlement_corner_gate/settlement_corner_gate_v02.png",
+  "candidate_sha256": "65a4202f6bf856ae2779eb609a4be8f6910218e9f02014778f71e3e663bf87b4",
+  "calibration": "art/reviews/production_wave_01/calibrations/settlement_corner_gate_v02.json",
+  "calibration_sha256": "34ae116a4a3ac91c72c00d370416265ffe4b52ea94a19003b05665876b45362d",
+  "provenance": "art/reviews/production_wave_01/provenance/settlement_corner_gate_v02.npz",
+  "provenance_sha256": "c0070cad0738964dd77d70ce6ef002eded766ba80eb86469bd8a78050b212ae8",
+  "method": "native integer translation patches; no scale, warp, or interpolation",
+  "repaired_pixels": 18238,
+  "original_pixels_retained": 1554278,
+  "topology": {
+    "tile": "settlement_corner_gate",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "Settlement",
+      "S": "Road",
+      "W": "Field"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "relationships": [
+      {
+        "first": "Road",
+        "second": "Settlement",
+        "kind": "access",
+        "route": "terminates"
+      }
+    ],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/settlement_corner_gate.md"
+  },
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "Road_binary": true,
+      "Road_edge_N": true,
+      "Road_edge_E": true,
+      "Road_edge_S": true,
+      "Road_edge_W": true,
+      "Road_one_connected_component": true,
+      "Road_rotation_0": true,
+      "Road_rotation_90": true,
+      "Road_rotation_180": true,
+      "Road_rotation_270": true,
+      "Settlement_binary": true,
+      "Settlement_edge_N": true,
+      "Settlement_edge_E": true,
+      "Settlement_edge_S": true,
+      "Settlement_edge_W": true,
+      "Settlement_one_connected_component": true,
+      "Settlement_rotation_0": true,
+      "Settlement_rotation_90": true,
+      "Settlement_rotation_180": true,
+      "Settlement_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_Road_overlap": true,
+      "Field_Settlement_overlap": true,
+      "Road_Settlement_overlap": true,
+      "Road_Settlement_access": true
+    },
+    "feature_components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "contact_pixel_pairs": {
+      "Road_Settlement_access": 113
+    }
+  },
+  "masks": "art/reviews/production_wave_01/masks/settlement_corner_gate_v02",
+  "limitation": "Masks and trace provenance proven; source semantic tracing and patch artifacts require visual review."
+}

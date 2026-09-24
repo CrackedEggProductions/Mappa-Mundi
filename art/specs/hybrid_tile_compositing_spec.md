@@ -210,3 +210,68 @@ wave did not implement that further method or generate extra candidates.
 Legacy Road references have inconsistent sockets; their native seam comparisons
 are diagnostic, not compatibility certification. [The report](../reviews/geometry_wave/TRIAL_REPORT.md)
 separates each mask pass from the visual verdict. Human review is the next step.
+
+## Production wave01 — multiple features without whole-image deformation
+
+The eight-design wave combines canonical single/corner/opposite full-edge regions
+with126px Road and250px River sockets. [hybrid_wave_geometry.py](../tools/hybrid_wave_geometry.py)
+builds independent feature masks and explicit topology metadata from the briefs.
+Each component must be4-connected; outer edge arrays, corner ties, socket centering
+and rotated equivalents are checked. Required access/contact must have actual mask
+adjacency, not merely a label saying it exists. No gameplay topology code changes.
+
+[production_wave_compositor.py](../tools/production_wave_compositor.py) addresses
+the previous city-warp problem by changing interior mask shape to match the source's
+organic boundary, then rebuilding exact endpoints/sockets inside96px edge collars.
+Interior shape is flexible; canonical feature identity, contacts and edge ownership
+are not. Throughway preserves its traced connected city corridor and reconstructs
+only corner fans. Every candidate saves its actual masks; the initial guide does
+not pretend to represent the final internal treeline pixel-for-pixel.
+
+Use manual source-region annotations, inspect them against the source, and retain
+those annotations in the composition record. Final source and target ownership use
+the same overlap policy. When source/target owners differ, copy a complete native
+24px donor patch from the same feature, applying only the necessary pixels and
+penalizing repeated donor use. No scaling, interpolation, palette shift or nonlinear
+transport of illustration is allowed. Save integer source_x/source_y maps and the
+actual sampled owner in compressed provenance data. Exact RGB reconstruction is
+verified against immutable source hashes.
+
+This is region-aware local reconstruction, not an automatic object segmentation
+system. Patches can still repeat or cut a crown, wall or bank. A human trace can
+mislabel ambiguous painted pixels. Known-label validation must never be reported
+as automatic semantic proof that every ink mark agrees with its feature. Throughway
+preserves99.66–99.78% of source pixels, but even a small repaired fraction may be
+conspicuous on a seam. Prefer source material already close to the target geometry.
+
+### Internal relationships
+
+- Gate/Corner Gate: the visible approach terminates at the urban gate; no extra exit.
+- Settlement Road Bend: a continuous bend touches a gate; access does not terminate it.
+- Settlement Road Throughway: a continuous street crosses one urban footprint.
+  Its independent Road/Settlement masks may overlap only inside the tile, retaining
+  both connected identities. Do not cut the Settlement mask into two pieces or
+  create dual-type outer edges. The street remains visually traceable.
+- Riverside Hamlet: keep the River continuous with a shared inhabited bank. Avoid
+  Port-scale docks, cranes or warehouses; no Road is introduced.
+- Woodland River: woods meet the bank; the River remains open and continuous.
+- Woodland Road: connected woods and Road remain separate; no extra access invented.
+
+### Review and safe rebuild
+
+[production_wave_reviews.py](../tools/production_wave_reviews.py) uses the saved
+candidate masks for debug overlays. It composes exact native quarter-turned images
+against relevant anchors/references and checks every saved tile pixel. Labels occur
+only outside art on reduced comparison previews. Existing reference sockets may
+still mismatch: preserve that evidence instead of silently correcting the reference.
+Road End identity is outside this wave and never used in these seam layouts.
+
+Run the full art tests and --verify over all composition JSON files. --rebuild is
+explicit and backs up existing candidates/masks/records. Source images are never
+modified. A fresh generation call is not deterministic; replay uses saved sources.
+
+The [wave report](../reviews/production_wave_01/TRIAL_REPORT.md) contains all16
+candidate assessments. Whole-image distortion is removed; invisible boundary
+reconstruction is not solved for every hybrid. Gate, Riverside Hamlet and Settlement
+Road Throughway currently have neither recommendation. Do not scale to Founding or
+batch finalization before human review. No wave01 output is an approved anchor/final.
