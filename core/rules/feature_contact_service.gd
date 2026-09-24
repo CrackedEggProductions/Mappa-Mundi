@@ -15,6 +15,8 @@ static func support_ids(state: RunState, feature: CurrentFeature, support_edge: 
 			var neighbor: BoardCellState = board.get_cell(coordinate + BoardState.ORTHOGONAL_OFFSETS[direction])
 			if neighbor == null:
 				continue
+			if support_edge == DomainTypes.EdgeType.FIELD and not neighbor.has_field_geography:
+				continue
 			var socket: int = cell.effective_edges[direction]
 			if socket != neighbor.effective_edges[(direction + 2) % 4]:
 				continue
@@ -36,6 +38,8 @@ static func forest_is_undeveloped(state: RunState, feature: CurrentFeature) -> b
 
 static func _touches_internally(cell: BoardCellState, first: int, second: int) -> bool:
 	if first == second:
+		return false
+	if DomainTypes.EdgeType.FIELD in [first, second] and not cell.has_field_geography:
 		return false
 	if cell.field_supports_settlement and first in [DomainTypes.EdgeType.SETTLEMENT, DomainTypes.EdgeType.FIELD] and second in [DomainTypes.EdgeType.SETTLEMENT, DomainTypes.EdgeType.FIELD]:
 		return true

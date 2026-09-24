@@ -1,5 +1,197 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 6 — complete
+
+Verified 2026-09-24 on `phase-6`. PR #3 was merged normally, retaining the
+`phase-5` branch and final commit `8746e07b5f6346fd1739cf0493930cbd34ccd83c`.
+The merged `main` baseline is `8d0074df5bda0e03edb49d077fd07b0af8d1b0f2`.
+The ancestor check succeeded; baseline verification passed 447 tests and 117
+script parses (`builds/verification/run-KCd61v3a/`). `phase-6` was created and
+published from that verified baseline before implementation.
+
+### Physical runtime and effective geography
+
+`TransformationState` records physical copy/definition, application Act/index,
+mode, orientation, target base copy and an ordered set of `TransformationChange`
+facts. Each change retains coordinate, exact before/after edges, Field geography,
+associated historical lineages and newly created component IDs. Board cells own
+array-shaped Transformation histories alongside Development arrays and original
+base identity. Transformations use no Development slot.
+
+Urban Expansion and Rewilding expansion are physical new bases. Their
+Transformation records audit growth without counting a second physical location.
+Bridge and occupied Rewilding retain the base copy and place their own copies in
+`BOARD_TRANSFORMATION`. Multiple compatible instances persist separately. Base
+Act/definition/rotation and static Resource edges remain historical truth.
+
+`effective_edges` drive current placement and topology. `has_field_geography`
+records current interior Field separately from boundary sockets: Bridge and
+boundary-only rewrites preserve interior geography, while occupied Rewilding
+consumes it. A remaining Field-facing socket cannot recreate consumed Field
+support or authorize a Field-dependent Development. This also preserves a Mill,
+Monastery or Abbey on a Bridge target even when both bank edges become Road.
+
+### Queries and atomic resolution
+
+`TransformationPlacementQuery` generates purpose-built options for all four
+runtime modes. Options contain coordinate, mechanically distinct quarter-turn,
+mode, target physical base, complete geometry/lineage signature and revisions.
+Urban keeps four orientations; symmetric Rewilding and Bridge axes normalize to
+two, with Bridge admitting only the perpendicular one. Frontier coordinates,
+occupied targets and rewrite facts have deterministic order. Queries use private
+projected cells/components and never allocate a run ID or consume gameplay RNG.
+
+`TransformationGeometry` validates the complete resulting board, occupied edge
+matches, preserved Development dependencies and lineage constraints before live
+mutation. The command revalidates complete intent and captures its plan before
+removing a hand/Reserve copy or advancing counters. Stale and forged commands
+leave the fingerprint unchanged. There is no partial mutation/rollback path.
+
+The commit applies every cell rewrite, creates missing feature components, then
+uses the existing single resolution boundary: physical topology, lineage
+growth/merger/reopening, Development host remapping, Trade reconstruction, one
+immutable completion snapshot, base scoring, Development batch, deferred hooks
+and hand refill. A normal Transformation consumes one placement. Reserve play
+has no hand refill; Survey and dead-hand/global-stalemate queries use the same
+physical inventory and actual-class legality. Emergency composition is unchanged.
+
+### Implemented designs and growth behavior
+
+- **Urban Expansion:** Act II specialized/hybrid metadata; opposite Settlement
+  edges, distinct Road with explicit Settlement access, one Field edge. It starts
+  a new Settlement under exact matching or rewrites up to two opposite eligible
+  Settlement Field boundaries. Road/Field sides retain exact matching. Open
+  growth/mergers do not score. Closed mergers immediately complete genuinely,
+  retaining ancestor component/support history. Housing, both Market stages,
+  Port and Town Square follow descendants; Port keeps its River association.
+  Attached Trade Networks meet at one descendant hub without automatic Trade.
+- **Bridge:** Act III Major/Rare, straight River Run prerequisite, perpendicular
+  Road and persistent flanking Field-to-Road rewrites only for Road/Settlement
+  neighbors. Empty sides remain open. It preserves the original River and all
+  existing Developments. Its target Road and a newly Road-bearing Settlement
+  neighbor get current-Act Transformation origins. Existing Road components
+  retain identity and age. Physical Road mergers/reopening/closed re-completion
+  preserve component and per-Road Settlement payment histories. River completion
+  history and scoring do not change merely because Bridge is applied.
+- **Rewilding:** Act III Major/Rare, opposite Forest pair and two Field edges.
+  Empty-square exact matching, one completed-Forest boundary extension and
+  occupied Field conversion are separate intents. Occupied Forest edges replace
+  eligible Field edges and must face Forest or empty space. Road, Settlement,
+  River and legal Settlement Developments survive. Mill/Monastery block the
+  occupied mode. Existing Forest components keep their IDs and age; only a
+  genuinely new Forest contribution gets a current-Act Transformation origin.
+  Forest mergers inherit scored history, remap Lodges, reevaluate preservation
+  and trigger existing Lodges on genuine completion. Rewilding itself is not a
+  Development. Consumed current Field support disappears without removing earned
+  Population or historical support records.
+
+Component allocation takes explicit source Act/kind/copy arguments and allocates
+only absent feature types. Genuine non-River growth into one completed lineage
+starts a new growth phase even when final geometry is already closed. Existing
+scored components and support/payment sets remain intact. Features with retained
+identity can represent zero exits without creating replacement components.
+
+New-square Transformations can complete Monastery/Abbey enclosures. Occupied
+Transformations cannot add surrounding occupancy. Live acceptance cases prove
+simultaneous Urban Road/Settlement completion with Housing, Market, Port, Town
+Square and Mill on one snapshot, and simultaneous Rewilding Forest/Abbey
+completion on one snapshot.
+
+### Persistence and invariants
+
+Serialization stores current edges/geography, all physical instances, exact
+modification history, component origins, lineages, Development hosts, economic
+genealogy and structured `transformation_applied` records. Loading decodes and
+validates; it never executes a Transformation or reconciles by generating new
+history. Repeated loads preserve Tracks, completion/event counts, future ID
+cursor, RNG state/operation count and normalized fingerprint exactly.
+
+Invariants validate physical zones, unique placement accounting, source-copy
+origins and Acts, canonical axes/scope, allowed edge deltas, chronological geometry
+chains, current geometry agreement, pre-existing boundary/Bridge hosts and
+explicit Bridge Settlement access. Corrupt saves are rejected. Transformation
+arrays and identity sets normalize independently of insertion order. Continuation
+from saved transformed states produces identical options, commands, scoring,
+topology, Trade genealogy, IDs, future draws and RNG. Older board records missing
+new required fields are rejected, consistent with the existing strict schema;
+no migration or gameplay replay is performed.
+
+### Resolved canonical rulings — 2026-09-24
+
+Ro accepted Phase 6 and supplied authoritative rulings for the two previously
+gated interactions. The Complete Alpha Rules were amended narrowly with
+`RULE-BRIDGE-002a` and `RULE-REWILD-007a`; unrelated rules and older prototype
+specifications were not changed.
+
+- **Bridge on a Rewilded River Run:** underlying straight-River classification
+  remains valid, but it is not sufficient for placement. Both perpendicular
+  current edges must permit Field-to-Road rewriting. Either Forest bank makes
+  Bridge illegal; stale/forged attempts return structured rejection and preserve
+  the entire state. The canonical reason is
+  `bridge_effective_edge_not_rewriteable`. No Forest removal, dual edge sockets,
+  splitting or generic overwrite permission was introduced.
+- **Abbey and Rewilding:** continued legality follows the current Development
+  stage, not its historical prerequisite. `DevelopmentState.requires_field_geography`
+  now supplies one shared dependency check for queries, projected geometry and
+  persistence invariants. Mill and ordinary Monastery still require Field.
+  Abbey requires its persistent enclosure and therefore permits otherwise-legal
+  Rewilding. Its physical copy, enclosure ID/coordinate, family and prior stage
+  history remain intact. No Abbey stage or score is created merely by Rewilding.
+  Incomplete Abbeys still complete through ordinary surrounding-eight occupancy;
+  completed stages remain recorded and never replay.
+
+The former ambiguity tests were converted into canonical behavior tests. Nine
+additional ruling tests cover normal Run/Bend/End targeting, stale and forged
+Bridge rejection, continued rejection after load, Mill/Monastery blockers,
+physical Upgrade preservation, Abbey completion after Rewilding, completed-stage
+history, occupied-edge conflicts, repeated inert loads and identical continuation.
+A surrounded Abbey still cannot bypass conflicting occupied edges: its exemption
+removes only the continued Field dependency, not ordinary Rewilding geometry.
+
+### Verification and demonstration
+
+Final ruling-patch gate `./tests/run_tests.sh` exited 0:
+
+```text
+PASS: 133 GDScript files parsed without diagnostics
+RESULT: 569 passed, 0 failed
+```
+
+Evidence: `builds/verification/run-ra0apZLS/`. All previous 560 cases remain covered,
+including the two converted ambiguity tests, plus nine new ruling cases. All
+prior 447 pre-Transformation tests still pass. Phase 6 now has 122 added cases.
+The old implementation checkpoint passed 560/132 at
+`builds/verification/run-d4djaTjW/`; the ruling patch supersedes that final report.
+
+The headless `tests/replay/phase_six_demo.gd` now runs 40 deterministic scenarios:
+the original 31 plus all nine canonical ruling scenarios. Evidence:
+`builds/phase6-rulings-demo.log`. Repeated saves/loads of Rewilded River rejection
+states and incomplete/completed Abbey + Rewilding states preserve fingerprints,
+physical zones, topology, enclosure histories, Track values, future ID cursors,
+RNG state and operation count. Reconstruction produces zero effects, completions,
+scoring, events, allocations or RNG consumption. Identical future placements
+complete the original and restored Abbey identically.
+
+### Review boundary
+
+The original Phase-6 implementation checkpoint was
+`5a4a6e28a2aa8326d712914bef9ef80af71f00f6`; its review handoff was `116945e`.
+The ruling patch remains on `phase-6` and is published through
+[PR #4 — Phase 6 — Transformations and Growth Rewrites](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/4),
+which remains open against `main` and unmerged. Main remains the merged Phase-5
+baseline. The final ruling commit is recorded in Git and the Jane continuity note.
+
+Every Phase-6 exit condition is now unconditionally satisfied. No unresolved
+Phase-6 specification ambiguity remains. Phase 7 has not started. No Specialists,
+Relics, rewards, thresholds, Charters, automatic seeding, Act transitions or final
+UI were implemented. No generated caches or backups are staged.
+
+Recommended next action: final review of PR #4. Do not merge it or begin Phase 7
+without Ro's next explicit instruction.
+
+---
+
+
 ## Phase 5 — complete
 
 Verified 2026-09-23 on `phase-5`. Ro authorized Phase-4 PR #2 to merge normally.
@@ -7,7 +199,7 @@ Main merge `a57a83e` retains final Phase-4 commit
 `da30d0100ba6d07d3feb139d351832968b4d3c8e`; the ancestry check exited 0.
 The merged baseline passed 329 tests and 102 clean script parses in
 `builds/verification/run-oaMrTxlk/`. The new branch was published before implementation.
-Phase 6 has not started.
+At that Phase-5 checkpoint, Phase 6 had not started.
 
 ### Runtime and placement
 

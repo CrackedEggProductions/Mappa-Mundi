@@ -5,7 +5,7 @@ extends RefCounted
 const KINDS: Array[StringName] = [&"feature_created", &"feature_grew", &"feature_reopened",
 	&"feature_merged", &"completion_snapshot", &"feature_completed", &"enclosure_completed",
 	&"realm_track_changed", &"development_placed", &"development_upgraded",
-	&"development_replaced", &"development_immediate_effect", &"development_completion_trigger"]
+	&"development_replaced", &"development_immediate_effect", &"development_completion_trigger", &"transformation_applied"]
 
 
 static func validate(state: RunState, _content: ContentRegistry, report: InvariantReport) -> void:
@@ -49,7 +49,7 @@ static func validate(state: RunState, _content: ContentRegistry, report: Invaria
 			report.add(&"absent_component_geometry", "Component type is absent from current geometry.")
 		if component.origin_act < 1 or component.origin_act > state.expansion.current_act \
 			or component.origin_source_runtime_id not in tile_ids \
-			or component.origin_source_type not in [&"base_tile", &"fixture_growth"]:
+			or component.origin_source_type not in [&"base_tile", &"fixture_growth", &"transformation"]:
 			report.add(&"invalid_component_origin", "Component origin must resolve to a supported acquisition.")
 		if component.origin_source_type == &"base_tile" and (component.origin_source_runtime_id != cell.base_tile_copy_id or component.origin_act != cell.act_placed):
 			report.add(&"invalid_base_component_origin", "Base component origin must agree with its physical base.")

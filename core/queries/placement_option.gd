@@ -13,6 +13,10 @@ var host_lineage_id: int = 0
 var river_lineage_id: int = 0
 var target_development_copy_id: int = 0
 var enclosure_id: int = 0
+var transformation_mode: StringName = &""
+var target_base_copy_id: int = 0
+var transformation_signature: String = ""
+var transformation_plan: TransformationState = null
 
 
 func canonical_signature() -> String:
@@ -20,6 +24,8 @@ func canonical_signature() -> String:
 		placement_mode, tile_copy_id, coordinate.x, coordinate.y,
 		rotation, board_revision, state_revision,
 	]
+	if placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
+		return base + "|%s|%d|%s" % [transformation_mode, target_base_copy_id, transformation_signature]
 	if placement_mode == DomainTypes.PlacementMode.EXPANSION:
 		return base
 	return base + "|%d|%d|%d|%d" % [host_lineage_id, river_lineage_id,

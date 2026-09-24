@@ -3,7 +3,8 @@ extends RefCounted
 ## Deterministic full reconstruction; cross-feature access is never connectivity.
 
 
-static func add_cell_components(state: RunState, cell: BoardCellState) -> void:
+static func add_cell_components(state: RunState, cell: BoardCellState, source_act: int = 0,
+		source_kind: StringName = &"base_tile", source_copy_id: int = 0) -> void:
 	for type_value: int in range(4):
 		var feature_type: DomainTypes.FeatureType = type_value as DomainTypes.FeatureType
 		if not _has_type(cell, feature_type):
@@ -14,9 +15,9 @@ static func add_cell_components(state: RunState, cell: BoardCellState) -> void:
 		component.component_id = state.id_allocator.allocate()
 		component.feature_type = feature_type
 		component.coordinate = cell.coordinate
-		component.origin_act = cell.act_placed
-		component.origin_source_type = &"base_tile"
-		component.origin_source_runtime_id = cell.base_tile_copy_id
+		component.origin_act = source_act if source_act > 0 else cell.act_placed
+		component.origin_source_type = source_kind
+		component.origin_source_runtime_id = source_copy_id if source_copy_id > 0 else cell.base_tile_copy_id
 		state.features.components.append(component)
 
 

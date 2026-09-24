@@ -21,6 +21,7 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 	_validate_zone(state, expansion.removed_ids, TileLocationState.Kind.REMOVED_FROM_RUN, represented, report)
 	var board_ids: Array[int] = []
 	var development_ids: Array[int] = []
+	var transformation_ids: Array[int] = []
 	var placement_indices: Array[int] = []
 	for coordinate: Vector2i in expansion.board.sorted_coordinates():
 		var cell: BoardCellState = expansion.board.cells[coordinate]
@@ -33,12 +34,21 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 				report.add(&"null_development", "Development slots cannot contain null.")
 			else:
 				development_ids.append(development.tile_copy_id)
+		for transformation: TransformationState in cell.transformations:
+			if transformation == null:
+				report.add(&"null_transformation", "Transformation history cannot contain null.")
+			elif transformation.mode not in [&"urban_expansion", &"rewilding_expansion"]:
+				transformation_ids.append(transformation.tile_copy_id)
+				if transformation.placement_index in placement_indices:
+					report.add(&"duplicate_placement_index", "Occupied Transformations consume unique normal placements.")
+				placement_indices.append(transformation.placement_index)
 		_validate_cell(state, content, coordinate, cell, report)
 		if cell.normal_placement_index in placement_indices:
 			report.add(&"duplicate_placement_index", "Each placed base has a unique normal placement index.", cell.base_tile_copy_id)
 		placement_indices.append(cell.normal_placement_index)
 	_validate_zone(state, board_ids, TileLocationState.Kind.BOARD_BASE, represented, report)
 	_validate_zone(state, development_ids, TileLocationState.Kind.BOARD_DEVELOPMENT, represented, report)
+	_validate_zone(state, transformation_ids, TileLocationState.Kind.BOARD_TRANSFORMATION, represented, report)
 	for tile: TileCopyState in state.tile_copies:
 		if tile != null and tile.tile_copy_id not in represented:
 			report.add(&"unrepresented_tile", "Physical location has no matching zone/container entry.", tile.tile_copy_id)
@@ -48,7 +58,7 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 			var origin: BoardCellState = expansion.board.cells.get(Vector2i.ZERO)
 			if origin == null or origin.base_tile_copy_id != tile.tile_copy_id:
 				report.add(&"illegal_founding_copy", "Founding exists only as the single origin base copy.", tile.tile_copy_id)
-	var overlay_placements: int = 0
+	var overlay_placements: int = transformation_ids.size()
 	if state.features != null:
 		for event: FeatureHistoryRecord in state.features.history:
 			if event != null and event.kind in [&"development_placed", &"development_upgraded"]:
@@ -144,8 +154,14 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	if definition == null:
 		report.add(&"unknown_board_definition", "Board definition does not resolve.", tile_id)
 		return
-	if definition.tile_class != DomainTypes.TileClass.EXPANSION:
-		report.add(&"unsupported_board_class", "Phase-2 board supports base Expansion squares only.", tile_id)
+	var specialized_base: bool = false
+	for transformation: TransformationState in cell.transformations:
+		if transformation != null and transformation.tile_copy_id == tile_id and transformation.mode in [&"urban_expansion", &"rewilding_expansion"]:
+			specialized_base = true
+	if definition.tile_class != DomainTypes.TileClass.EXPANSION and not specialized_base:
+		report.add(&"unsupported_board_class", "Board bases require Expansion or a recorded specialized Transformation placement.", tile_id)
+	if not cell.transformations.is_empty() and state.features == null:
+		report.add(&"transformation_without_features", "Transformation state requires feature provenance.")
 	if cell.effective_edges.size() != 4:
 		report.add(&"invalid_effective_edges", "Every base requires four effective edges.", tile_id)
 		return
@@ -158,6 +174,8 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 		report.add(&"rewritten_founding", "Founding geometry remains fixed.", tile_id)
 	if cell.geometry_revision == 0 and cell.effective_edges != TileRotation.edges(definition.canonical_edges, cell.rotation):
 		report.add(&"unexpected_effective_geometry", "Phase-2 effective edges must equal rotated base geometry.", tile_id)
+	if cell.geometry_revision == 0 and cell.has_field_geography != definition.canonical_edges.has(DomainTypes.EdgeType.FIELD):
+		report.add(&"invalid_field_geography", "Unmodified Field geography must match its physical base.", tile_id)
 	if cell.geometry_revision == 0 and cell.field_supports_settlement != definition.field_supports_settlement:
 		report.add(&"invalid_field_support", "Unmodified Field support must match its definition.", tile_id)
 	if cell.geometry_revision == 0 and _groups_signature(cell.feature_groups) != _groups_signature(TileRotation.groups(definition.feature_groups, cell.rotation)):
@@ -165,7 +183,7 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	if cell.geometry_revision == 0 and _relationships_signature(cell.relationships) != _relationships_signature(definition.relationships):
 		report.add(&"invalid_internal_relationships", "Current internal relationships differ from the static base.", tile_id)
 	if cell.geometry_revision > 0:
-		_validate_current_geometry(cell, report)
+		_validate_current_geometry(state, cell, report)
 	var earlier_neighbor: bool = cell.normal_placement_index == 0
 	for direction: int in range(4):
 		var neighbor_coordinate: Vector2i = coordinate + OFFSETS[direction]
@@ -181,13 +199,15 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 		report.add(&"disconnected_placement", "Every normal base must adjoin a previously placed base.", tile_id)
 
 
-static func _validate_current_geometry(cell: BoardCellState, report: InvariantReport) -> void:
+static func _validate_current_geometry(state: RunState, cell: BoardCellState, report: InvariantReport) -> void:
 	var covered: Array[int] = []
 	var types: Array[int] = []
 	for group: TileFeatureGroup in cell.feature_groups:
-		if group == null or group.edge_type not in [1, 2, 3, 4] or group.edge_type in types or group.directions.is_empty():
+		if group == null or group.edge_type not in [1, 2, 3, 4] or group.edge_type in types:
 			report.add(&"invalid_current_group", "Current groups require unique tracked feature types.")
 			continue
+		if group.directions.is_empty() and (state.features == null or state.features.component_at(cell.coordinate, FeatureState.type_for_edge(group.edge_type)) == null):
+			report.add(&"unproven_retained_group", "Zero-exit geography requires a retained feature component.")
 		types.append(group.edge_type)
 		for direction: int in group.directions:
 			if direction not in [0, 1, 2, 3] or direction in covered:
@@ -199,7 +219,7 @@ static func _validate_current_geometry(cell: BoardCellState, report: InvariantRe
 	for direction: int in range(4):
 		if cell.effective_edges[direction] != DomainTypes.EdgeType.FIELD and direction not in covered:
 			report.add(&"missing_current_socket", "Every tracked edge requires internal membership.")
-	if cell.field_supports_settlement and (4 not in types or 0 not in cell.effective_edges):
+	if cell.field_supports_settlement and (4 not in types or not cell.has_field_geography):
 		report.add(&"invalid_current_support", "Field/Settlement contact requires both geographies.")
 	for relation: TileFeatureRelationship in cell.relationships:
 		if relation == null or relation.from_edge_type not in types or relation.to_edge_type not in types:

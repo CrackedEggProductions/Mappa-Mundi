@@ -38,7 +38,7 @@ static func query(state: RunState, content: ContentRegistry, copy_id: int) -> Ar
 			continue
 		var host: int = 0
 		if definition.development_host_kind in [&"field", &"enclosure"]:
-			if not cell.effective_edges.has(DomainTypes.EdgeType.FIELD):
+			if not cell.has_field_geography:
 				continue
 		elif definition.development_host_kind in [&"settlement", &"forest"]:
 			var type: DomainTypes.FeatureType = DomainTypes.FeatureType.SETTLEMENT if definition.development_host_kind == &"settlement" else DomainTypes.FeatureType.FOREST

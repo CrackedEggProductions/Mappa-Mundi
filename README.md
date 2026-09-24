@@ -1,7 +1,7 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 5 — Developments and Upgrades**.
+GDScript**. Current implementation: **Phase 6 — Transformations and Growth Rewrites**.
 Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
@@ -182,7 +182,7 @@ implemented. Reserve-impossibility assessment conservatively returns
 `NOT_PROVABLY_IMPOSSIBLE`; later systems must expand proof before any automatic removal.
 
 See [implementation progress](IMPLEMENTATION_PROGRESS.md) for verification and
-remaining limits. Phase 6 requires a new instruction.
+remaining limits. Phase 7 requires a new instruction.
 
 ## Feature inspection and scoring
 
@@ -345,4 +345,42 @@ remains `./tests/run_tests.sh`, including script diagnostics and all earlier tes
 
 Phase-5 acceptance: **447 tests passed, 0 failed; 117 scripts parsed without
 diagnostics**. [PR #3](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/3)
-is ready for review; Phase 6 has not started.
+was merged into main at `8d0074df5bda0e03edb49d077fd07b0af8d1b0f2`.
+
+
+## Headless Transformations
+
+Load `ContentRegistry.load_phase_six()` for the 34-design profile. The initial
+Homestead bag remains exactly 55 Expansion copies; controlled scenarios acquire
+Urban Expansion (Act II), Bridge and Rewilding (Act III) directly. There are no
+reward offers, automatic seeding or Act transitions.
+
+`PlacementQueryService.query_for_copy(state, content, copy_id)` returns complete
+Transformation intents. Copy the option's ordinary identity/revision fields plus
+`transformation_mode`, `target_base_copy_id`, and `transformation_signature` to
+`PlaceTileCommand`, then execute through `RulesEngine`. The scenario helper
+`tests/fixtures/phase_six_factory.gd` demonstrates that mapping. Preview plans are
+read-only information; the engine revalidates against current authoritative state.
+
+Urban Expansion and Rewilding expansion become new physical bases. Bridge and
+occupied Rewilding retain the base and add physical Transformation instances.
+Effective edges, Field interiors, per-component origin Acts and exact rewrite
+histories persist independently of original Resources and Development overlays.
+Completion effects use one snapshot after every rewrite and topology change.
+
+Run the deterministic Transformation demonstration after editor import:
+
+```sh
+XDG_DATA_HOME="$PWD/builds/test-userdata" \
+XDG_CONFIG_HOME="$PWD/builds/test-config" \
+XDG_CACHE_HOME="$PWD/builds/test-cache" \
+godot --headless --path . --script res://tests/replay/phase_six_demo.gd
+```
+
+Phase-6 canonical rulings distinguish target shape from current rewrite legality.
+A Rewilded straight River Run retains Bridge's underlying shape prerequisite, but
+Forest banks cannot become Road: the command rejects them with
+`bridge_effective_edge_not_rewriteable`. Abbey depends on its persistent enclosure,
+not continued Field geography, so otherwise-legal Rewilding preserves its copy,
+host and stage history. Mill and ordinary Monastery remain Field-dependent.
+See implementation progress for the resolved rule references and verification.

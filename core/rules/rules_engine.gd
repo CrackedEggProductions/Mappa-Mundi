@@ -47,7 +47,7 @@ static func validate(state: RunState, content: ContentRegistry,
 	# limitation, not a reason to leave a half-applied command behind.
 	var emergency_capacity: int = content.get_config().emergency_definitions.size() * 2
 	if state.expansion.state_revision == 9223372036854775807 \
-			or state.expansion.board.revision == 9223372036854775807 \
+			or state.expansion.board.revision > 9223372036854775807 - 4 \
 			or state.rng.operation_count > 9223372036854775807 - 2 \
 			or state.next_runtime_id > RunIdAllocator.EXHAUSTED_CURSOR - emergency_capacity:
 		return _failure(&"invariant_failure", "Insufficient runtime counter capacity to resolve a command safely.")
@@ -87,7 +87,8 @@ static func _failure(code: StringName, message: String) -> ValidationResult:
 static func _validate_place(state: RunState, content: ContentRegistry,
 		command: PlaceTileCommand) -> ValidationResult:
 	if command.placement_mode not in [DomainTypes.PlacementMode.EXPANSION,
-			DomainTypes.PlacementMode.DEVELOPMENT, DomainTypes.PlacementMode.UPGRADE]:
+			DomainTypes.PlacementMode.DEVELOPMENT, DomainTypes.PlacementMode.UPGRADE,
+			DomainTypes.PlacementMode.TRANSFORMATION]:
 		return _failure(&"unsupported_mode", "This placement mode is not available.")
 	if command.source_zone == TileLocationState.Kind.ACTIVE_HAND:
 		var hand_check: ValidationResult = _validate_hand(state, command.tile_copy_id)
@@ -106,6 +107,20 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 		return _failure(&"stale_preview", "The run changed after this preview.")
 	var tile: TileCopyState = PhysicalTileRules.find_copy(state, command.tile_copy_id)
 	var definition: TileDefinition = content.get_tile(tile.definition_id)
+	if command.placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
+		var target_failure: StringName = TransformationPlacementQuery.target_failure(state, definition, command.coordinate)
+		if target_failure != &"":
+			return _failure(target_failure, "Bridge requires current Field edges on both sides of its Road axis.")
+		for option: PlacementOption in TransformationPlacementQuery.query(state, content, command.tile_copy_id):
+			if not TransformationPlacementQuery.matches(option, command):
+				continue
+			if not command.expected_signature.is_empty() and command.expected_signature != option.signature:
+				return _failure(&"stale_signature", "The Transformation preview no longer matches this intent.")
+			return ValidationResult.success()
+		return _failure(&"invalid_transformation_intent", "No legal Transformation matches the complete intent.")
+	if command.transformation_mode != &"" or command.target_base_copy_id != 0 \
+		or not command.transformation_signature.is_empty():
+		return _failure(&"unexpected_transformation_intent", "This placement class cannot carry Transformation targets.")
 	if command.placement_mode != DomainTypes.PlacementMode.EXPANSION:
 		for option: PlacementOption in DevelopmentPlacementQuery.query(state, content, command.tile_copy_id):
 			if not DevelopmentPlacementQuery.matches(option, command):
@@ -136,6 +151,10 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 
 
 static func _place(state: RunState, content: ContentRegistry, command: PlaceTileCommand) -> void:
+	var transformation: TransformationState = null
+	if command.placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
+		transformation = TransformationPlacementService.plan_for_command(state, content, command)
+		assert(transformation != null, "Complete geometry intent is available before any placement mutation")
 	state.phase = GamePhase.Type.RESOLVING_PLACEMENT
 	var expansion: ExpansionState = state.expansion
 	var tile: TileCopyState = PhysicalTileRules.find_copy(state, command.tile_copy_id)
@@ -154,6 +173,8 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 		if state.features != null:
 			TopologyService.add_cell_components(state, expansion.board.get_cell(command.coordinate))
 			FeatureResolutionService.resolve(state, tile.tile_copy_id)
+	elif command.placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
+		TransformationPlacementService.place(state, content, command, transformation)
 	else:
 		DevelopmentPlacementService.place(state, content, command)
 	# Later reward stages join the shared completion pipeline before this draw.

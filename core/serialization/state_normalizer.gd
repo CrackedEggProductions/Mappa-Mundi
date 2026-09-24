@@ -22,6 +22,12 @@ static func normalize(state: RunState) -> String:
 		# order has no rules meaning, unlike bag order and active-hand slots.
 		for cell: Dictionary in expansion["board"]["cells"]:
 			cell["developments"].sort_custom(_runtime_id_before)
+			cell["transformations"].sort_custom(_runtime_id_before)
+			for transformation: Dictionary in cell["transformations"]:
+				transformation["changes"].sort_custom(_record_before)
+				for change: Dictionary in transformation["changes"]:
+					change["target_lineage_ids"].sort_custom(_decimal_id_before)
+					change["created_component_ids"].sort_custom(_decimal_id_before)
 			for group: Dictionary in cell["feature_groups"]:
 				group["directions"].sort()
 			cell["feature_groups"].sort_custom(_record_before)

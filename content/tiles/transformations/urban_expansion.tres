@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="TileDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="1_tile"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_group.gd" id="2_group"]
+[ext_resource type="Script" path="res://content/tiles/tile_feature_relationship.gd" id="3_relation"]
+
+[sub_resource type="Resource" id="Group_3"]
+script = ExtResource("2_group")
+edge_type = 3
+directions = Array[int]([1])
+
+[sub_resource type="Resource" id="Group_4"]
+script = ExtResource("2_group")
+edge_type = 4
+directions = Array[int]([0, 2])
+
+[sub_resource type="Resource" id="Relationship"]
+script = ExtResource("3_relation")
+from_edge_type = 3
+to_edge_type = 4
+kind = 0
+
+[resource]
+script = ExtResource("1_tile")
+definition_id = &"tile.transformation.urban_expansion"
+display_name = "Urban Expansion"
+tile_class = 3
+unlock_act = 2
+reward_class = 2
+canonical_edges = Array[int]([4, 3, 4, 0])
+feature_groups = Array[ExtResource("2_group")]([SubResource("Group_3"), SubResource("Group_4")])
+relationships = Array[ExtResource("3_relation")]([SubResource("Relationship")])
+field_supports_settlement = true
+transformation_kind = &"urban_expansion"
+transformation_placement_modes = Array[StringName]([&"empty_square"])
+normal_reward_copy_count = 2
+presentation_id = &"transformation.urban_expansion"

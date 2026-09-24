@@ -40,7 +40,8 @@ static func reconcile(state: RunState, current: Array[CurrentFeature], source_id
 			for component_id: int in feature.component_ids:
 				if not lineage.member_ids.has(component_id):
 					additions.append(component_id)
-			if lineage.completed and feature.open_exits > 0:
+			var genuine_growth: bool = not additions.is_empty() and feature.feature_type != DomainTypes.FeatureType.RIVER
+			if lineage.completed and (feature.open_exits > 0 or genuine_growth):
 				lineage.completed = false
 				lineage.growth_phase += 1
 				_record(state, &"feature_reopened", lineage, feature.component_ids, source_id)
