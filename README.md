@@ -427,7 +427,9 @@ Components seen elsewhere before a later merger never become qualifying growth.
 Training either growth role in place starts growth credit at conversion while
 retaining the original assignment Act/index; pre-training growth earns no bonus.
 Generic Stewards may occupy an unfinished Monastery-family enclosure at either
-Monastery or Abbey stage; none of the trained alpha roles may occupy it.
+Monastery or Abbey stage; none of the trained alpha roles may occupy it. This
+Abbey behavior is explicitly human-confirmed. New assignments still require a
+normal local opportunity and an unfinished enclosure.
 
 Run the standalone Specialist demonstration after import:
 

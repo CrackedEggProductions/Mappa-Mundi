@@ -105,19 +105,21 @@ The exact offer and original commitment are saved; load never rerolls or recalls
 If all pieces are trained or no generic can legally train, one typed normal Tile
 Reward handoff is recorded, not discarded or implemented as a full reward.
 
-Two narrow interpretations are explicit:
+The growth interpretation and confirmed Abbey ruling are explicit:
 
 - **Growth training in place:** Cartographer/Forester credit starts at conversion,
   excluding pre-training growth as this assignment explicitly requires. Original
   assignment Act/index remains intact; training history records the conversion.
-- **Abbey:** generic assignment targets the persistent Monastery-family enclosure,
-  including its unfinished Abbey stage. This follows RULE-DEV-ABBEY-002, the family
-  identity rules and Implementation §15; it adds no trained Abbey role. Existing
+- **Abbey — explicit human ruling:** generic assignment targets the persistent
+  Monastery-family enclosure, including its unfinished Abbey stage. The user
+  confirmed this behavior after Phase-7 review. An Upgrade or other directly
+  affecting action may offer a new generic assignment under normal locality and
+  unfinished-target rules. It adds no trained Abbey role. Existing
   commitment survives Upgrade, completed stages cannot receive last-second
   assignment, and a genuine Abbey completion returns its generic Steward.
 
 No source specification was rewritten. No Phase-7-blocking ambiguity remains
-under these documented interpretations.
+under the documented growth interpretation and confirmed Abbey ruling.
 
 Optional schema-1 Specialist records preserve signed 64-bit IDs, roles, histories,
 growth sets, choice options/context, frozen snapshots and continuation stages.
@@ -156,7 +158,7 @@ Acceptance logs: `builds/verification/run-hRKCKUe6/`; summary
 The prior art branch's 15 orphan Godot `.png.import` sidecars were preserved
 byte-for-byte under `/home/rochelle/Jane/Artifacts/MappaMundi/phase7-art-import-sidecars-20260924/`;
 source images and approved anchors remain unchanged on `alpha-art`.
-All Phase-7 exit conditions are satisfied under the explicit interpretations above.
+All Phase-7 exit conditions are satisfied under the documented growth interpretation and confirmed Abbey ruling above.
 The next action is human gameplay/code review; Phase 8 requires a new instruction.
 
 No Phase 8, Relic gameplay, Steward's Relay, Ferry Rights, Charters, Grand Charters,
