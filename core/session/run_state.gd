@@ -20,6 +20,10 @@ var expansion: ExpansionState = null
 var features: FeatureState = null
 ## Null for preserved pre-Trade fixtures; economic history is separate from features.
 var trade: TradeState = null
+## Optional only for preserved earlier-phase fixtures.
+var specialists: SpecialistState = null
+var pending_choice: PendingChoice = null
+var resolution: ResolutionState = null
 
 ## Forwarding properties prevent stale duplicate continuation metadata.
 var original_seed: int:

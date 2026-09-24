@@ -117,5 +117,7 @@ static func validate(state: RunState, content: ContentRegistry, plan: Transforma
 				cell.coordinate + BoardState.ORTHOGONAL_OFFSETS[direction])
 			if neighbor != null and cell.effective_edges[direction] != neighbor.effective_edges[(direction + 2) % 4]:
 				return false
-	# Future Specialist merger restrictions belong here, before any live mutation.
+	# Universal assigned-feature merge legality is checked on private projected state.
+	if not SpecialistPlacementService.merge_is_legal(state, preview):
+		return false
 	return LineageService.validate_rebuild(preview, TopologyService.rebuild(preview)).is_valid

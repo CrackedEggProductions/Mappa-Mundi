@@ -16,7 +16,11 @@ static func query_for_copy(state: RunState, content: ContentRegistry,
 	if definition.tile_class == DomainTypes.TileClass.TRANSFORMATION:
 		return TransformationPlacementQuery.query(state, content, copy_id)
 	if definition.tile_class == DomainTypes.TileClass.EXPANSION:
-		return query(state.expansion.board, definition, copy_id, state.expansion.state_revision)
+		var legal: Array[PlacementOption] = []
+		for option: PlacementOption in query(state.expansion.board, definition, copy_id, state.expansion.state_revision):
+			if SpecialistPlacementService.expansion_is_legal(state, definition, copy_id, option.coordinate, option.rotation):
+				legal.append(option)
+		return legal
 	return DevelopmentPlacementQuery.query(state, content, copy_id)
 
 

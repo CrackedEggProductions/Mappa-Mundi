@@ -1,6 +1,6 @@
 class_name SpecialistDefinition
 extends Resource
-## Definition skeleton only. This is not an assigned runtime Specialist piece.
+## Passive alpha role metadata. SpecialistRules owns structural behavior.
 
 @export var definition_id: StringName = &""
 @export var display_name: String = ""

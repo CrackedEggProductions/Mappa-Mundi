@@ -5,7 +5,9 @@ extends RefCounted
 const KINDS: Array[StringName] = [&"feature_created", &"feature_grew", &"feature_reopened",
 	&"feature_merged", &"completion_snapshot", &"feature_completed", &"enclosure_completed",
 	&"realm_track_changed", &"development_placed", &"development_upgraded",
-	&"development_replaced", &"development_immediate_effect", &"development_completion_trigger", &"transformation_applied"]
+	&"development_replaced", &"development_immediate_effect", &"development_completion_trigger", &"transformation_applied",
+	&"specialist_triggered", &"specialist_returned", &"specialist_assigned", &"specialist_trained",
+	&"steward_recruited", &"training_reward_deferred"]
 
 
 static func validate(state: RunState, _content: ContentRegistry, report: InvariantReport) -> void:
@@ -151,7 +153,12 @@ static func _validate_current(state: RunState, report: InvariantReport) -> void:
 		current_ids.append(feature.lineage_id)
 		var members: Array[int] = lineage.member_ids.duplicate()
 		members.sort()
-		if members != feature.component_ids or lineage.completed != (feature.open_exits == 0):
+		var awaiting_completion: bool = false
+		if state.resolution != null and not lineage.completed and feature.open_exits == 0:
+			for facts: Dictionary in state.resolution.completion_snapshot.get("features", []):
+				if facts.get("lineage_id", 0) == lineage.lineage_id:
+					awaiting_completion = true
+		if members != feature.component_ids or (lineage.completed != (feature.open_exits == 0) and not awaiting_completion):
 			report.add(&"topology_lineage_mismatch", "Current membership and completion must agree with reconstructed exits.")
 	for lineage: FeatureLineageState in state.features.lineages:
 		if lineage.active != (lineage.lineage_id in current_ids):
@@ -178,7 +185,7 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		_check_id(state, event.event_id, ids, report)
 		if event.kind not in KINDS or event.act < 1 or event.act > state.expansion.current_act \
 			or event.placement_index < 0 or event.placement_index > state.expansion.normal_placements \
-			or (event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null):
+			or (event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null and not _specialist_source(state, event)):
 			report.add(&"invalid_history_record", "History kind, placement or source is invalid.")
 		if event.lineage_id != 0 and state.features.lineage(event.lineage_id) == null:
 			report.add(&"unresolved_history_lineage", "Historical lineage must resolve.")
@@ -199,9 +206,9 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		if event.kind == &"realm_track_changed":
 			if event.track not in [0, 1, 2, 3] or event.amount <= 0:
 				report.add(&"invalid_track_event", "Track events require a positive gain.")
-			if not events.has(event.parent_event_id) or events[event.parent_event_id].kind not in [&"feature_completed", &"enclosure_completed", &"development_immediate_effect", &"development_completion_trigger"]:
+			if not events.has(event.parent_event_id) or events[event.parent_event_id].kind not in [&"feature_completed", &"enclosure_completed", &"development_immediate_effect", &"development_completion_trigger", &"specialist_triggered"]:
 				report.add(&"invalid_track_parent", "Track gain must follow a completion parent.")
-			elif event.track in [0, 1, 2, 3] and event.amount > 0 and events[event.parent_event_id].kind in [&"development_immediate_effect", &"development_completion_trigger"]:
+			elif event.track in [0, 1, 2, 3] and event.amount > 0 and events[event.parent_event_id].kind in [&"development_immediate_effect", &"development_completion_trigger", &"specialist_triggered"]:
 				if totals[event.track] > 9223372036854775807 - event.amount:
 					report.add(&"invalid_cumulative_gain", "Development gains must remain representable.")
 				else:
@@ -395,7 +402,18 @@ static func _validate_enclosures(state: RunState, ids: Array[int], report: Invar
 		actual_ids.sort()
 		expected_stages.sort()
 		expected_ids.sort()
+		var pending_stage: bool = false
+		if state.resolution != null and occupied == 8 and not enclosure.completed_stages.has(enclosure.stage):
+			for facts: Dictionary in state.resolution.completion_snapshot.get("enclosures", []):
+				if facts.get("enclosure_id", 0) == enclosure.enclosure_id and StringName(facts.get("stage", "")) == enclosure.stage:
+					pending_stage = true
 		if actual_stages != expected_stages or actual_ids != expected_ids \
-			or (occupied == 8) != enclosure.completed_stages.has(enclosure.stage) \
+			or ((occupied == 8) != enclosure.completed_stages.has(enclosure.stage) and not pending_stage) \
 			or (enclosure.stage == &"monastery" and enclosure.completed_stages.has(&"abbey")):
 			report.add(&"enclosure_history_mismatch", "Current enclosure stage and retained completion facts must agree.")
+
+
+static func _specialist_source(state: RunState, event: FeatureHistoryRecord) -> bool:
+	return state.specialists != null and state.specialists.piece(event.source_id) != null \
+		and event.kind in [&"specialist_assigned", &"specialist_trained", &"specialist_triggered",
+			&"specialist_returned", &"steward_recruited", &"realm_track_changed"]
