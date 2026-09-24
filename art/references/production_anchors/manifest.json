@@ -33,5 +33,40 @@
     "sha256": "2574dd29cea77908e9e6894b5b2eeb6e9b2dc5866900e67f3f2f200cf4060a7c",
     "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
     "authority": "Explicit human approval for production wave01"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_throughway_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/settlement_throughway/settlement_throughway_v02.png",
+    "sha256": "61e09124d2b3289b5db7cc8a7405dc1c3888f45dc0a8331990ce7f3c2c451165",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/woodland_road_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+    "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/woodland_river_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v02.png",
+    "sha256": "cf9954ee82fccd69aa495eaef9cc3613de7088dfd35682b0d65d105d9410a48f",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_corner_gate_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/settlement_corner_gate/settlement_corner_gate_v01.png",
+    "sha256": "94de2d6aa25f91f8f51dc6d7b2189a27d41f97be7e5a93cf4629a0bcf3204fe3",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_road_bend_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/settlement_road_bend/settlement_road_bend_v02.png",
+    "sha256": "460fa3daca3e4ea9089dc1f05843e2ef2b43fe0907fa131459db699d97fc74d3",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
   }
 ]

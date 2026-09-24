@@ -3,6 +3,19 @@
 Prepared 2026-09-24. Scope: local alpha base-tile art production setup.
 No gameplay, source specification or existing example image was changed.
 
+## Production wave02 — approved winners and focused repairs
+
+The human approved five Wave01 winners as **APPROVED PRODUCTION ANCHOR — NOT FINAL**:
+Settlement Throughway v02, Woodland Road v02, Woodland River v02, Settlement Corner
+Gate v01 and Settlement Road Bend v02. Byte-identical copies are retained in
+[production anchors](references/production_anchors/); original candidates are unchanged.
+There are now ten approved non-final anchors. No final shipping assets exist.
+
+Wave01 Settlement Gate, Riverside Hamlet and Settlement Road Throughway are
+**VISUALLY REJECTED — SUPERSEDED REPAIR SOURCES**, despite their valid masks.
+This wave produces only v03/v04 of those three designs, pending human review.
+Historical sections below retain their original checkpoint context.
+
 ## Production wave01 — current review checkpoint
 
 Work now lives on **alpha-art**, created after PR#4 merged normally into main at
