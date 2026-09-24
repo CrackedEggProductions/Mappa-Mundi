@@ -345,3 +345,14 @@ Writers refuse existing names; explicit rebuild backs up prior evidence. A rejec
 trace does not authorize changing mechanics: correct the annotation only when image
 inspection supports it, preserving the rejected record. See the
 [Wave 02 report](../reviews/production_wave_02/TRIAL_REPORT.md) for decisions and limits.
+
+## Alpha acceptance supersedes the earlier polish gate
+
+For the playable alpha, exact topology, edge ownership and sockets, readable features,
+absence of false connections and broad parchment/ink/watercolor consistency are required.
+Minor patching, local socket curvature, repeated motifs and small compositing artifacts
+are deferred polish, not alpha blockers unless they obscure mechanics. Historical strict
+visibility reports are preserved; they do not override explicit human alpha acceptance.
+Wave02 v04 Gate, Riverside Hamlet and Road Throughway are accepted production anchors
+with polish deferred. No further polishing is required before gameplay development.
+This does not make them immutable final shipping assets.

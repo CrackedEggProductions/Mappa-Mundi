@@ -68,5 +68,26 @@
     "sha256": "460fa3daca3e4ea9089dc1f05843e2ef2b43fe0907fa131459db699d97fc74d3",
     "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
     "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_gate_anchor.png",
+    "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+    "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 ALPHA ACCEPTED \u2014 POLISH DEFERRED",
+    "authority": "Explicit human alpha acceptance; visual polish deferred"
+  },
+  {
+    "path": "art/references/production_anchors/riverside_hamlet_anchor.png",
+    "source": "art/generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v04.png",
+    "sha256": "78ee2291831b27c961d0c78f370799aec3ee7d09fbbe3b1d395b0c6cdfdac532",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 ALPHA ACCEPTED \u2014 POLISH DEFERRED",
+    "authority": "Explicit human alpha acceptance; visual polish deferred"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_road_throughway_anchor.png",
+    "source": "art/generated/candidates/production_wave_02/settlement_road_throughway/settlement_road_throughway_v04.png",
+    "sha256": "bbf67a2f04acbfbf00bea8c48ca70102b1525154276a0211d9286bfef120bee6",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 ALPHA ACCEPTED \u2014 POLISH DEFERRED",
+    "authority": "Explicit human alpha acceptance; visual polish deferred"
   }
 ]

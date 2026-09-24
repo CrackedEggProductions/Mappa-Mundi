@@ -3,6 +3,28 @@
 Prepared 2026-09-24. Scope: local alpha base-tile art production setup.
 No gameplay, source specification or existing example image was changed.
 
+## Alpha acceptance closeout — 2026-09-24
+
+The human has accepted Settlement Gate v04, Riverside Hamlet v04 and Settlement
+Road Throughway v04 as **APPROVED PRODUCTION ANCHOR — ALPHA ACCEPTED — POLISH DEFERRED**.
+Copies preserve their original candidate pixels; they are not immutable final shipping art.
+
+- [Settlement Gate](references/production_anchors/settlement_gate_anchor.png)
+- [Riverside Hamlet](references/production_anchors/riverside_hamlet_anchor.png)
+- [Settlement Road Throughway](references/production_anchors/settlement_road_throughway_anchor.png)
+
+An alpha tile is acceptable when topology, required edge ownership and sockets are
+exact, features are readable, no false mechanical connections are implied, and the
+art broadly matches the parchment/ink/watercolor identity. Minor visible patching,
+local socket curvature, repeated motifs and small compositing artifacts are deferred
+polish when they do not obscure mechanics. Historical strict visual rejection records
+remain audit evidence, not current alpha acceptance failures for these three assets.
+
+The mechanical art system is sufficient for alpha development. No additional art
+polishing is required before gameplay continues. There are thirteen production anchors,
+no immutable final shipping assets. No new generation, Founding Tile or Road End review
+occurred. Earlier checkpoint statuses below are historical and superseded by this approval.
+
 ## Production wave02 — current review checkpoint
 
 Five Wave01 choices are now **APPROVED PRODUCTION ANCHOR — NOT FINAL**:
