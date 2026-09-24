@@ -7,7 +7,8 @@ func tests() -> Array[Callable]:
 		milestones_before_thresholds, milestone_order, milestone_once, no_completion_no_milestone,
 		tile_pool_cumulative, tile_pool_ignores_playability, offers_distinct_deterministic,
 		small_offer_no_padding, invalid_choice_atomic, stale_choice_atomic,
-		frozen_outgoing_act, masterwork_quantity, major_cap_filter,
+		frozen_outgoing_act, masterwork_quantity, masterwork_excludes_ordinary,
+		masterwork_abbey_offer_roundtrip, major_cap_filter,
 		recruit_uses_existing_identity, training_uses_existing_offer, training_fallback,
 		deferred_training_handoff, relic_exhaustion_fallback, relic_cache_chain,
 		relic_full_replacement_choice, relic_decline_not_exhausted,
@@ -21,6 +22,8 @@ func tests() -> Array[Callable]:
 		result.append(pending_offer_roundtrip.bind(kind))
 	for reward_class: int in [1, 2, 3, 4]:
 		result.append(quantity_by_class.bind(reward_class))
+	for act: int in [1, 2, 3]:
+		result.append(masterwork_upgrade_unlocks.bind(act))
 	return result
 
 
@@ -218,6 +221,69 @@ func masterwork_quantity() -> bool:
 	_choose(state, content)
 	expect_equal(state.tile_copies.size() - before, 3, "Masterwork always grants three physical copies")
 	return true
+
+
+func masterwork_upgrade_unlocks(act: int) -> bool:
+	var content: ContentRegistry = _content()
+	var pool: Array[StringName] = RewardRules.tile_pool(content, act, true)
+	expect_equal(pool.has(&"tile.development.abbey"), act >= 2, "Abbey unlocks in Act II")
+	expect_equal(pool.has(&"tile.development.grand_market"), act >= 3, "Grand Market still waits for Act III")
+	for id: StringName in content.get_tile_ids():
+		var tile: TileDefinition = content.get_tile(id)
+		if tile.tile_class == DomainTypes.TileClass.UPGRADE:
+			expect_equal(pool.has(id), tile.unlock_act <= act, "Every unlocked Upgrade is eligible without a board host")
+		if tile.reward_class in [DomainTypes.RewardClass.SPECIALIZED_EXPANSION, DomainTypes.RewardClass.MAJOR_RARE]:
+			expect_equal(pool.has(id), tile.unlock_act <= act, "Existing Specialized and Major/Rare eligibility preserved")
+	return true
+
+
+func masterwork_excludes_ordinary() -> bool:
+	var content: ContentRegistry = _content()
+	var pool: Array[StringName] = RewardRules.tile_pool(content, 3, true)
+	for id: StringName in content.get_tile_ids():
+		var tile: TileDefinition = content.get_tile(id)
+		if tile.tile_class == DomainTypes.TileClass.DEVELOPMENT or tile.reward_class == DomainTypes.RewardClass.BASIC_EXPANSION:
+			expect_true(not pool.has(id), "Ordinary Developments and Basic Expansions remain excluded")
+	expect_equal(RewardRules.copy_quantity(content.get_tile(&"tile.development.abbey")), 2, "Normal Abbey reward remains two copies")
+	return true
+
+
+func masterwork_abbey_offer_roundtrip() -> bool:
+	var content: ContentRegistry = _content()
+	# Find a genuine RNG offer containing Abbey rather than forge a PendingChoice.
+	for seed_value: int in range(1, 129):
+		var state: RunState = HomesteadRunFactory.create(seed_value, content)
+		state.expansion.current_act = 2
+		RelicRules.refresh_act(state, 2)
+		_start(state, content, &"masterwork", 2)
+		for index: int in range(state.pending_choice.options.size()):
+			if state.pending_choice.options[index].definition_id != "tile.development.abbey":
+				continue
+			var same: RunState = HomesteadRunFactory.create(seed_value, content)
+			same.expansion.current_act = 2
+			RelicRules.refresh_act(same, 2)
+			_start(same, content, &"masterwork", 2)
+			expect_equal(state.pending_choice.options, same.pending_choice.options, "Expanded pool offers reproduce from same seed")
+			var original: String = RunSerializer.serialize(state, content).json_text
+			var restored: RunState = _load_copy(_load_copy(state, content), content)
+			expect_equal(RunSerializer.serialize(restored, content).json_text, original, "Abbey offer survives repeated load with no effects or RNG")
+			var before: Array[int] = []
+			for copy: TileCopyState in restored.tile_copies:
+				before.append(copy.tile_copy_id)
+			var outcome: ValidationResult = RulesEngine.execute(restored, content, ResolveRewardCommand.new(restored.pending_choice.choice_id, index))
+			expect_true(outcome.is_valid, "Public command accepts offered Abbey")
+			var added: int = 0
+			for copy: TileCopyState in restored.tile_copies:
+				if not before.has(copy.tile_copy_id):
+					added += 1
+					expect_equal(copy.definition_id, &"tile.development.abbey", "Every new physical copy is Abbey")
+			expect_equal(added, 3, "Masterwork Abbey grants three, overriding normal two")
+			_choose(same, content, index)
+			expect_equal(restored.expansion.bag, same.expansion.bag, "Saved offer resolves to the same full-bag shuffle")
+			expect_equal(restored.current_rng_state, same.current_rng_state, "Saved reward preserves RNG continuation")
+			return true
+	expect_true(false, "Expected a real Abbey offer within the deterministic seed fixture range")
+	return false
 
 
 func major_cap_filter() -> bool:

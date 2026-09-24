@@ -111,9 +111,9 @@ static func tile_pool(content: ContentRegistry, eligibility_act: int, masterwork
 
 
 static func masterwork_eligible(tile: TileDefinition) -> bool:
-	# The undefined canonical word "advanced" is isolated here pending human ruling.
-	# The explicit Specialized/Hybrid and Major/Rare classes are unambiguous.
-	return tile.reward_class in [DomainTypes.RewardClass.SPECIALIZED_EXPANSION, DomainTypes.RewardClass.MAJOR_RARE]
+	# RULE-REWARD-MAJOR-003: Upgrades qualify, ordinary Developments do not.
+	return tile.tile_class == DomainTypes.TileClass.UPGRADE or tile.reward_class in [
+		DomainTypes.RewardClass.SPECIALIZED_EXPANSION, DomainTypes.RewardClass.MAJOR_RARE]
 
 
 static func copy_quantity(tile: TileDefinition) -> int:

@@ -2202,7 +2202,9 @@ Gain 1 generic Steward if the player has fewer than the hard cap of 3 total Stew
 If already at 3, this option is invalid and excluded from the offer.
 
 ### RULE-REWARD-MAJOR-003 — Masterwork Tile Grant
-Choose 1 of up to 3 currently eligible Specialized/Hybrid/advanced tile designs and add **3 copies** to the bag instead of that design's normal reward quantity.
+Choose 1 of up to 3 currently eligible **Specialized/Hybrid, Major/Rare, or Upgrade** tile designs and add **3 copies** to the bag instead of that design's normal reward quantity.
+
+The Masterwork pool includes Upgrades such as **Abbey**, even when their normal reward class is shared with ordinary Developments. Basic Expansions and ordinary Developments are excluded. Normal Act unlock requirements still apply; immediate board playability is not required. This is the canonical meaning of advanced for this reward.
 
 The chosen copies enter the bag and trigger normal full-bag randomization.
 

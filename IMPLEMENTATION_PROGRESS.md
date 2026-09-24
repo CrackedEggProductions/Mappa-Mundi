@@ -1,6 +1,6 @@
 # Mappa Mundi — Implementation progress
 
-## Phase 8 — implemented; Masterwork pool ruling remains open
+## Phase 8 — unconditionally complete
 
 ### Phase-7 closeout and branch baseline
 
@@ -44,9 +44,9 @@ bag shuffles before the pending ordinary replacement draw. The eligibility Act i
 frozen in each job, exposing the future outgoing-Charter hook without Charters.
 
 All four Major Rewards exist. Recruit delegates to the cap-three Steward API.
-Masterwork offers advanced designs and grants three copies, subject to the open
-pool ruling below. Relic Cache resolves a normal Relic offer/replacement and then
-a Normal Tile Reward. Grand Survey freezes occupied active-hand copies, removes
+Masterwork offers Specialized/Hybrid, Major/Rare and Upgrades (including Abbey),
+subject to normal Act unlocks, and grants three copies. Relic Cache resolves a
+normal Relic offer/replacement and then a Normal Tile Reward. Grand Survey freezes occupied active-hand copies, removes
 up to two original choices with sequential emergency-safe draws, then awards one
 Survey charge. It neither spends a charge nor triggers Compass, and never selects
 Reserve tiles or the empty pending-placement hand slot.
@@ -91,12 +91,13 @@ Malformed nested saves reject cleanly; invalid commands preserve state/RNG/histo
 
 ### Verification checkpoint
 
-Implementation commit: `25a4f1a6d5ce47b0163d33b82aa3370aa466f59b`.
+Initial implementation commit: `25a4f1a6d5ce47b0163d33b82aa3370aa466f59b`.
+The post-ruling checkpoint below includes five additional Masterwork regression cases.
 Fresh complete acceptance command `./tests/run_tests.sh` exited **0**:
 
-- **980 passed, 0 failed**: all 717 prior tests plus **263 Phase-8 tests**.
+- **985 passed, 0 failed**: all 717 prior tests plus **268 Phase-8 tests**.
 - **183 GDScript files parsed without diagnostics**; editor import clean.
-- Evidence: `builds/verification/run-jendSsHN` and `builds/phase8/full-verification.log`.
+- Evidence: `builds/verification/run-a1C6BUnC` (post-ruling full verification).
 - Phase-8 command demonstration: **20 scenarios passed**.
 - Prior Specialist and Transformation demonstrations: **42 and 40 passed**.
 - Fresh bootstrap: Phase-8 content validated, 34 tile definitions, Godot 4.7.2.
@@ -104,11 +105,11 @@ Fresh complete acceptance command `./tests/run_tests.sh` exited **0**:
 - `git diff --check` clean; no `art/` or `assets/` changes.
 
 New coverage by suite: state/content/save 40; Relic runtime 38; Ferry 20;
-Relic completion facts 10; real Legacy scenarios 2; rewards 56; hand/Reserve 44;
+Relic completion facts 10; real Legacy scenarios 2; rewards 61; hand/Reserve 44;
 geometry 23; real milestones 10; command pipeline 20. Exact offers, RNG state,
 physical copy IDs, bag continuation and repeated inert load are covered.
 
-### Narrow interpretations and unresolved question
+### Resolved canonical rulings
 
 **Resolved from canonical text:** Legacy zero payout leaves otherwise-new base
 elements unpaid. RULE-SCORE-ROAD-001/003 and the Implementation Specification describe
@@ -116,13 +117,16 @@ paid-element history separately from completion. Completion records retain the
 base multiplier and eligible facts; history unions only actual payment. Later
 qualifying genuine re-completion can pay those elements for the first time.
 
-**Human ruling still required:** RULE-MAJOR-003 says Masterwork offers a
-“Specialized/Hybrid/advanced tile design”; neither canonical reward metadata nor
-that rule defines *advanced*. Does the pool include only Specialized and Major/Rare,
-also Upgrades such as Abbey, or all non-Basic designs including ordinary Developments?
-The isolated `RewardRules.masterwork_eligible()` implements only the unambiguous
-Specialized/Major-Rare portion pending that ruling. No second classification system
-was invented. **Phase 8 is not unconditionally complete while this question remains.**
+**Human ruling applied (2026-09-24):** RULE-REWARD-MAJOR-003 includes
+Specialized/Hybrid, Major/Rare and Upgrades, explicitly including Abbey. Ordinary
+Developments and Basic Expansions are excluded; normal Act unlocks still apply.
+The existing TileClass.UPGRADE metadata distinguishes Abbey from ordinary
+Developments without changing normal reward quantities or adding a classification
+system. Five regression scenarios cover all three Acts, exclusions, unchanged
+normal Abbey quantity, deterministic real Abbey offers, repeated inert saves,
+three physical Masterwork copies and identical post-load bag/RNG continuation.
+No unresolved Phase-8 specification ambiguity remains. All Phase-8 exit conditions
+are satisfied; the branch remains unmerged for human review.
 
 Phase 9, Charter/Grand Charter evaluation, full Act transitions, automatic Act
 seeding, final scoring/results, deferred Relics and presentation UI remain outside

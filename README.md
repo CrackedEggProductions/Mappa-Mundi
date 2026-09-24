@@ -2,7 +2,7 @@
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
 GDScript**. Current implementation: **Phase 8 — Relics, Thresholds, Rewards and Milestones**
-(awaiting the narrow Masterwork eligibility ruling recorded below).
+— unconditionally complete, with the canonical Masterwork eligibility ruling applied.
 Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
@@ -477,12 +477,10 @@ canonical paid-history rules. Genuine completion, other effects and size records
 still occur. A later qualifying genuine completion may pay the previously unpaid
 elements; paid elements cannot score again.
 
-The sole open specification question is the word **advanced** in Masterwork's
-“Specialized/Hybrid/advanced” pool (RULE-MAJOR-003). The isolated
-`RewardRules.masterwork_eligible()` currently includes only explicit Specialized
-and Major/Rare reward classes. Whether it must also include Upgrades such as
-Abbey, or all ordinary Developments, awaits human ruling. This provisional filter
-prevents declaring Phase 8 unconditionally complete.
+Masterwork eligibility follows the accepted canonical ruling: Specialized/Hybrid,
+Major/Rare, and Upgrades including Abbey. Basic Expansions and ordinary Developments
+are excluded. Existing Act unlocks still apply; immediate playability does not.
+Masterwork grants three copies even when the Upgrade's normal reward grants two.
 
 Useful verification/diagnostics:
 
