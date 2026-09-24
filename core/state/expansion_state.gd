@@ -7,6 +7,9 @@ var board: BoardState = BoardState.new()
 var bag: Array[int] = []
 var hand: Array[int] = []
 var reserve_id: int = 0
+var reserve_extra_id: int = 0
+## Physical copies temporarily removed from the bag by Surveyor's Compass.
+var inspected_ids: Array[int] = []
 var removed_ids: Array[int] = []
 var current_act: int = 1
 var normal_placements: int = 0

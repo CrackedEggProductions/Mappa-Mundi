@@ -1,5 +1,138 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 8 — unconditionally complete
+
+### Phase-7 closeout and branch baseline
+
+Accepted Phase-7 tip, including the Abbey clarification:
+`b21fc7077bbfa6de7d99b0707aef6858ba6003a8`. Fresh verification on that tip
+passed **717 tests, zero failures, 155 scripts without diagnostics**
+(`builds/verification/run-oGRBMG5z`). PR #5 was created against main and merged
+normally, without squash or history rewriting:
+https://github.com/CrackedEggProductions/Mappa-Mundi/pull/5
+
+Merged main is `28f316ba65b79a0db498d7d2fdd2704daf3cb7c4`. Phase-7 ancestry
+was verified, and merged main independently passed the same 717/155 baseline
+(`builds/verification/run-avPaMQk7`). `phase-8` was created and pushed from clean
+verified main. `alpha-art` remains unmerged and unchanged at
+`ea5858a5f57716b57d4cb01c4a967c7856463bc8`.
+
+### Runtime, queues and physical rewards
+
+`RelicInstanceState`, `RelicState` and `RewardState` extend authoritative RunState.
+The Phase-8 content profile contains exactly ten passive Relic definitions; deferred
+roles/Relics/Charters fail static validation. Earlier profiles remain fixture APIs.
+All persisted entities use run-local IDs and all random selection uses RunRNG.
+
+Resolution order is frozen snapshot, base scoring, Development effects, Specialist
+effects, returns/Relay, Relic effects, milestones, threshold queue, final hand
+refill. FIFO child records preserve ordering without nested UI callbacks.
+`ResolutionState.context` and typed PendingChoice preserve the precise suspension
+stage. No committed placement is replayed after loading.
+
+All sixteen one-time thresholds queue in Population/Trade/Culture/Ecology order,
+then 20/40/70/100 order within each Track. Every crossed threshold earns its reward.
+Rewards use one serialized queue, including nested Cache/Relic replacement/Tile
+Reward and Specialist training continuations. Training reuses Phase 7; its typed
+fallback now becomes a real Tile Reward.
+
+Normal Tile Rewards uniformly offer up to three distinct unlocked designs,
+including presently unplayable designs. Copy quantities follow existing metadata:
+Basic 3, Specialized/Hybrid 2, ordinary Development/Act-II Upgrade 2, Major/Rare 1.
+Every copy has a stable ID, acquisition Act and source history. The full remaining
+bag shuffles before the pending ordinary replacement draw. The eligibility Act is
+frozen in each job, exposing the future outgoing-Charter hook without Charters.
+
+All four Major Rewards exist. Recruit delegates to the cap-three Steward API.
+Masterwork offers Specialized/Hybrid, Major/Rare and Upgrades (including Abbey),
+subject to normal Act unlocks, and grants three copies. Relic Cache resolves a
+normal Relic offer/replacement and then a Normal Tile Reward. Grand Survey freezes occupied active-hand copies, removes
+up to two original choices with sequential emergency-safe draws, then awards one
+Survey charge. It neither spends a charge nor triggers Compass, and never selects
+Reserve tiles or the empty pending-placement hand slot.
+
+### Relic behavior and representative coverage
+
+| Relic | Runtime behavior and verification |
+| --- | --- |
+| Boundary Stones | Explicit once-per-Act Expansion intent permits one Field/Forest mismatch, including empty Urban/Rewilding plays. Reciprocal hard seams persist with audited provenance, close Forest exits and survive removal/load; built-edge and multiple mismatches reject atomically. |
+| Surveyor's Compass | First normal Survey history gates next-three physical-copy inspection; pending set persists, one chosen replacement enters hand, others return before shuffle. Earlier Survey before acquisition prevents retroactive use; emergency and small bags covered. |
+| Wayfarer's Satchel | Two independent Reserve slots reuse normal reservation/draw/placement. Occupied extra-slot removal is forbidden; exact copy zones and round trips covered. |
+| Village Green | Exterior Field OR Forest OR River contact awards full current Settlement size in Culture; frozen facts and re-completion/current-state tests preserve base anti-farming separation. |
+| Ferry Rights | Existing Trade graph gains same-connected-River Settlement links, propagated through Road/Settlement hubs. Acquisition/removal reconcile genealogy immediately, including splitting, without scoring. Merchant, Road base, Market, Grand Market and milestone consumers tested; physical Road size unchanged. |
+| Mixed-Use Charter | Exactly Housing-family plus Market-family coexistence; Grand Market upgrades retain family. Other pairs reject; removal while a square depends on coexistence is illegal. |
+| Historic Routes | Act-II/III Road completion awards Culture per current Act-I-origin Road component. Transformation age is independent of old base-square age; shared snapshot/current-state behavior tested. |
+| Steward's Relay | Stable piece-ID-ordered returns offer only that piece's role-legal touching unfinished targets. Explicit same-tile contacts and orthogonal member-tile contacts apply; enclosure has its canonical neighbor exception. Earlier choices exclude occupied targets from later choices; exact continuation/save and forged-return rejection tested. |
+| One Great City | Current-largest Settlement ties double only newly paying base Population; smaller base is zero while Housing/Mill/Specialist/Relic effects still run. Real completion checks retain +2 each Housing/Mill/Steward and undoubled Village Green. |
+| The Long Road | Compares full physical size with pre-batch historical record, doubles only eligible new base Trade, preserves non-base effects. Real Bridge merger joins a previously paid three-tile Road, suppressed two-tile Road and new Bridge into six; only three unpaid components pay doubled, then record becomes six. |
+
+Capacity is 2/4/5, with no inactive inventory. Equipped and replaced acquisitions
+remain exhausted forever; merely offered or declined Relics remain eligible.
+Replacement validates state legality first. Uses refresh once at Act start; unused
+uses never stack and mid-Act acquisition gets the current use. Numeric effects
+share immutable facts; sequential bookkeeping uses acquisition order. Central
+precedence is prohibition, specificity, then later acquisition.
+
+### Milestones, save validation and regressions
+
+Settlement 8+, Road network five distinct Settlements, Forest 10+ and River 10+
+require genuine completion and each trigger once per run. Their offers resolve in
+Settlement/Road/Forest/River order before thresholds. Real board-growth and final
+placement scenarios verify no premature awards, one-time behavior, serial offers,
+saved continuation and deferred hand refill.
+
+Save/load stores exact offers, inspected copies, replacement/Relay/training choices,
+Grand Survey progress, queue jobs, threshold/milestone flags, acquisition/use history,
+Trade topology, hard seams and both Reserve slots. Loading allocates no identities,
+runs no scoring/effects, awards nothing and consumes no RNG. Validation checks exact
+job shapes, flag/audit consistency, original frozen Relic facts against geometry
+and historical equipment, paid completion records, and authentic Specialist returns.
+Malformed nested saves reject cleanly; invalid commands preserve state/RNG/history.
+
+### Verification checkpoint
+
+Initial implementation commit: `25a4f1a6d5ce47b0163d33b82aa3370aa466f59b`.
+The post-ruling checkpoint below includes five additional Masterwork regression cases.
+Fresh complete acceptance command `./tests/run_tests.sh` exited **0**:
+
+- **985 passed, 0 failed**: all 717 prior tests plus **268 Phase-8 tests**.
+- **183 GDScript files parsed without diagnostics**; editor import clean.
+- Evidence: `builds/verification/run-a1C6BUnC` (post-ruling full verification).
+- Phase-8 command demonstration: **20 scenarios passed**.
+- Prior Specialist and Transformation demonstrations: **42 and 40 passed**.
+- Fresh bootstrap: Phase-8 content validated, 34 tile definitions, Godot 4.7.2.
+- No script errors, engine errors or warnings in acceptance/demonstration logs.
+- `git diff --check` clean; no `art/` or `assets/` changes.
+
+New coverage by suite: state/content/save 40; Relic runtime 38; Ferry 20;
+Relic completion facts 10; real Legacy scenarios 2; rewards 61; hand/Reserve 44;
+geometry 23; real milestones 10; command pipeline 20. Exact offers, RNG state,
+physical copy IDs, bag continuation and repeated inert load are covered.
+
+### Resolved canonical rulings
+
+**Resolved from canonical text:** Legacy zero payout leaves otherwise-new base
+elements unpaid. RULE-SCORE-ROAD-001/003 and the Implementation Specification describe
+paid-element history separately from completion. Completion records retain the
+base multiplier and eligible facts; history unions only actual payment. Later
+qualifying genuine re-completion can pay those elements for the first time.
+
+**Human ruling applied (2026-09-24):** RULE-REWARD-MAJOR-003 includes
+Specialized/Hybrid, Major/Rare and Upgrades, explicitly including Abbey. Ordinary
+Developments and Basic Expansions are excluded; normal Act unlocks still apply.
+The existing TileClass.UPGRADE metadata distinguishes Abbey from ordinary
+Developments without changing normal reward quantities or adding a classification
+system. Five regression scenarios cover all three Acts, exclusions, unchanged
+normal Abbey quantity, deterministic real Abbey offers, repeated inert saves,
+three physical Masterwork copies and identical post-load bag/RNG continuation.
+No unresolved Phase-8 specification ambiguity remains. All Phase-8 exit conditions
+are satisfied; the branch remains unmerged for human review.
+
+Phase 9, Charter/Grand Charter evaluation, full Act transitions, automatic Act
+seeding, final scoring/results, deferred Relics and presentation UI remain outside
+this work. Only capacity/use refresh and frozen reward-pool hooks are exposed.
+No art files or alpha-art branch contents changed.
+
 ## Phase 7 — complete
 
 ### Art closeout and gameplay baseline
@@ -29,7 +162,7 @@ typed deferred reward handoffs. The Phase-7 manifest contains exactly Merchant,
 Cartographer, Architect, Homesteader, Naturalist, Forester, Riverkeeper and
 Harbormaster. Deferred roles, Relics and Charters fail content validation.
 
-The current bootstrap uses `ContentRegistry.load_phase_seven()`. A standard run
+The Phase-7 bootstrap used `ContentRegistry.load_phase_seven()`. A standard run
 starts two available generic Stewards. `RecruitStewardCommand` adds a third and
 rejects a fourth without mutation. Earlier manifests remain explicitly historical
 fixture profiles, preserving every prior regression without retrofitting their

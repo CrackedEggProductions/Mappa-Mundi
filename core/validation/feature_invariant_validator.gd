@@ -7,7 +7,7 @@ const KINDS: Array[StringName] = [&"feature_created", &"feature_grew", &"feature
 	&"realm_track_changed", &"development_placed", &"development_upgraded",
 	&"development_replaced", &"development_immediate_effect", &"development_completion_trigger", &"transformation_applied",
 	&"specialist_triggered", &"specialist_returned", &"specialist_assigned", &"specialist_trained",
-	&"steward_recruited", &"training_reward_deferred"]
+	&"steward_recruited", &"training_reward_deferred", &"relic_triggered"]
 
 
 static func validate(state: RunState, _content: ContentRegistry, report: InvariantReport) -> void:
@@ -185,7 +185,7 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		_check_id(state, event.event_id, ids, report)
 		if event.kind not in KINDS or event.act < 1 or event.act > state.expansion.current_act \
 			or event.placement_index < 0 or event.placement_index > state.expansion.normal_placements \
-			or (event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null and not _specialist_source(state, event)):
+			or (event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null and not _specialist_source(state, event) and not _relic_source(state, event)):
 			report.add(&"invalid_history_record", "History kind, placement or source is invalid.")
 		if event.lineage_id != 0 and state.features.lineage(event.lineage_id) == null:
 			report.add(&"unresolved_history_lineage", "Historical lineage must resolve.")
@@ -206,9 +206,9 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		if event.kind == &"realm_track_changed":
 			if event.track not in [0, 1, 2, 3] or event.amount <= 0:
 				report.add(&"invalid_track_event", "Track events require a positive gain.")
-			if not events.has(event.parent_event_id) or events[event.parent_event_id].kind not in [&"feature_completed", &"enclosure_completed", &"development_immediate_effect", &"development_completion_trigger", &"specialist_triggered"]:
+			if not events.has(event.parent_event_id) or events[event.parent_event_id].kind not in [&"feature_completed", &"enclosure_completed", &"development_immediate_effect", &"development_completion_trigger", &"specialist_triggered", &"relic_triggered"]:
 				report.add(&"invalid_track_parent", "Track gain must follow a completion parent.")
-			elif event.track in [0, 1, 2, 3] and event.amount > 0 and events[event.parent_event_id].kind in [&"development_immediate_effect", &"development_completion_trigger", &"specialist_triggered"]:
+			elif event.track in [0, 1, 2, 3] and event.amount > 0 and events[event.parent_event_id].kind in [&"development_immediate_effect", &"development_completion_trigger", &"specialist_triggered", &"relic_triggered"]:
 				if totals[event.track] > 9223372036854775807 - event.amount:
 					report.add(&"invalid_cumulative_gain", "Development gains must remain representable.")
 				else:
@@ -284,6 +284,8 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 				continue
 			expected["completion_ids"].append(record.record_id)
 			highest_class = maxi(highest_class, record.settlement_class)
+			if record.base_multiplier == 0:
+				continue # Genuine completion retained; unpaid elements are not consumed.
 			for pair: Array in [["scored_component_ids", record.new_component_ids], ["scored_field_ids", record.new_field_ids],
 				["scored_river_ids", record.new_river_ids], ["scored_forest_ids", record.new_forest_ids], ["scored_settlement_ids", record.new_settlement_ids]]:
 				for id: int in pair[1]:
@@ -319,6 +321,10 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 			DomainTypes.FeatureType.SETTLEMENT: expected_gain[0] = 2 * record.new_component_ids.size() + record.new_field_ids.size() + record.new_river_ids.size()
 			DomainTypes.FeatureType.FOREST: expected_gain[3] = record.new_component_ids.size() + (2 if record.forest_undeveloped else 0)
 			DomainTypes.FeatureType.RIVER: expected_gain[3] = (floori(record.total_size / 2.0) if record.first_completion else 0) + record.new_forest_ids.size()
+		if record.base_multiplier not in [0, 1, 2] or (record.base_multiplier != 1 and (state.relics == null or record.feature_type not in [0, 1])):
+			report.add(&"invalid_base_modifier", "Only Phase-8 Road/Settlement Legacy effects alter base payout.")
+		for track: int in range(4):
+			expected_gain[track] *= record.base_multiplier
 		if record.gains != expected_gain:
 			report.add(&"base_scoring_mismatch", "Base gains must match recorded new growth/support and Trade payments.")
 		var ancestors: Array[int] = LineageService.get_ancestry_closure(state, record.lineage_id)
@@ -332,6 +338,8 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 			historical_class = maxi(historical_class, prior.settlement_class)
 			if prior.lineage_id == record.lineage_id and prior.growth_phase >= record.growth_phase:
 				report.add(&"completion_without_growth_phase", "Re-completion requires a genuinely new unfinished growth phase.")
+			if prior.base_multiplier == 0:
+				continue # Suppressed eligibility has never paid.
 			for pair: Array in [[record.new_component_ids, prior.new_component_ids], [record.new_field_ids, prior.new_field_ids],
 				[record.new_river_ids, prior.new_river_ids], [record.new_forest_ids, prior.new_forest_ids]]:
 				for id: int in pair[0]:
@@ -417,3 +425,12 @@ static func _specialist_source(state: RunState, event: FeatureHistoryRecord) -> 
 	return state.specialists != null and state.specialists.piece(event.source_id) != null \
 		and event.kind in [&"specialist_assigned", &"specialist_trained", &"specialist_triggered",
 			&"specialist_returned", &"steward_recruited", &"realm_track_changed"]
+
+
+static func _relic_source(state: RunState, event: FeatureHistoryRecord) -> bool:
+	if state.relics == null or event.kind not in [&"relic_triggered", &"realm_track_changed"]:
+		return false
+	for relic: RelicInstanceState in state.relics.instances:
+		if relic.runtime_id == event.source_id:
+			return true
+	return false

@@ -94,6 +94,8 @@ static func _validate_choice(state: RunState, ids: Array[int], report: Invariant
 	_check_id(state, choice.choice_id, ids, report)
 	if state.phase != GamePhase.Type.PENDING_CHOICE:
 		report.add(&"invalid_choice_phase", "Stored player choice requires PENDING_CHOICE phase.")
+	if state.relics != null and choice.kind not in [&"specialist_assignment", &"specialist_training"]:
+		return # PhaseEightInvariantValidator owns these typed choices.
 	if choice.kind not in [&"specialist_assignment", &"specialist_training"] or choice.options.is_empty():
 		report.add(&"invalid_specialist_choice", "Choice requires a supported kind and persisted options.")
 		return
@@ -129,7 +131,7 @@ static func _validate_choice(state: RunState, ids: Array[int], report: Invariant
 			if choice.options.size() != mini(3, pool.size()) or choice.context["status"] != piece.status \
 					or choice.context["assigned_target_type"] != piece.assigned_target_type \
 					or choice.context["assigned_target_id"] != piece.assigned_target_id \
-					or choice.context["resume_phase"] != GamePhase.Type.TURN_INPUT:
+					or (choice.context["resume_phase"] != GamePhase.Type.TURN_INPUT and not (state.rewards != null and state.resolution != null and state.resolution.stage == &"reward_queue" and choice.context["resume_phase"] == GamePhase.Type.RESOLVING_PLACEMENT)):
 				report.add(&"stale_training_context", "Training offer must preserve legal pool size and original occupation.")
 			for option: Dictionary in choice.options:
 				if StringName(option.get("role_definition_id", "")) not in pool:
@@ -185,6 +187,8 @@ static func _validate_resolution(state: RunState, report: InvariantReport) -> vo
 	if state.resolution == null:
 		return
 	var resolution: ResolutionState = state.resolution
+	if state.relics != null and resolution.stage != &"specialist_assignment":
+		return # Phase-8 continuation stages validate against recorded, already-applied facts.
 	if resolution.source_id <= 0 or resolution.stage != &"specialist_assignment" \
 			or resolution.source_id >= state.next_runtime_id:
 		report.add(&"invalid_specialist_resolution", "Committed continuation requires a source and stage.")

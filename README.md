@@ -1,7 +1,8 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 7 — Stewards and Specialists**.
+GDScript**. Current implementation: **Phase 8 — Relics, Thresholds, Rewards and Milestones**
+— unconditionally complete, with the canonical Masterwork eligibility ruling applied.
 Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
@@ -148,7 +149,7 @@ Canonical base orientations and explicit internal relationships are documented i
 
 ```gdscript
 var content: ContentRegistry = ContentRegistry.new()
-assert(content.load_phase_seven().is_valid)
+assert(content.load_phase_eight().is_valid)
 var state: RunState = HomesteadRunFactory.create(12345, content)
 var copy_id: int = state.expansion.hand[0]
 var options: Array[PlacementOption] = PlacementQueryService.query_for_copy(
@@ -389,7 +390,7 @@ See implementation progress for the resolved rule references and verification.
 
 ## Stewards, Specialists and pending choices
 
-`ContentRegistry.load_phase_seven()` loads the current gameplay profile, retaining
+`ContentRegistry.load_phase_seven()` loads the historical Specialist-only profile, retaining
 all Phase-6 tiles and exactly eight trainable roles. `HomesteadRunFactory.create`
 then starts two available generic Stewards with stable IDs. Earlier manifests
 remain explicit historical fixture profiles without Specialist state.
@@ -439,3 +440,57 @@ godot --headless --path . --script res://tests/scenarios/specialist_demo.gd
 
 It exercises live commands and prints roster/status, legal training pools,
 persisted assignment offers, growth IDs, completion gains and returned pieces.
+
+## Phase 8: Relics and serializable rewards
+
+Load `ContentRegistry.load_phase_eight()` for the current 34-design, eight-Specialist,
+ten-Relic profile. Earlier profiles remain available for regression fixtures.
+`RulesEngine` remains the command boundary. The new commands resolve persisted
+reward selections, Compass physical-copy selections, sequential Grand Survey
+removals, and same-piece Relay choices.
+
+A committed placement resolves the frozen base/Development/Specialist batch and
+returns, then optional Relay assignments, frozen Relic effects, Relic milestones,
+and finally Realm Track thresholds. Only after every reward chain resolves does
+the pending hand slot draw. Milestones use Settlement/Road/Forest/River order;
+thresholds use Population/Trade/Culture/Ecology order, lower threshold first.
+20/40/70/100 yield Tile Reward/training/Relic/Major Reward respectively.
+
+Tile offers use sorted unlocked content, without a board-playability filter.
+Normal quantities are 3 Basic, 2 Specialized/Hybrid, 2 ordinary Development/Act-II
+Upgrade, and 1 Major/Rare. Masterwork grants three copies. Every reward allocates
+physical copies, records their source and randomizes the whole remaining bag.
+Recruit, Masterwork, Relic Cache followed by a Tile Reward, and Grand Survey use
+the same queue. The existing training fallback now grants a real Tile Reward.
+
+Relic state retains slot/acquisition order, exhausted lifetime history, replacement
+history and once-per-Act uses. Capacity is 2/4/5. No inactive inventory exists.
+Boundary Stones persists a hard Field/Forest seam; Compass persists inspected
+physical copies; Satchel generalizes Reserve to two independent slots. Mixed-Use
+allows only Housing/Market families. Ferry Rights extends the existing Trade
+Network graph and can split it on removal without retroactive scoring. Village
+Green, Historic Routes and both Legacy effects use immutable completion facts.
+Relay reuses normal eligibility and assignment, with only the returned piece.
+
+Zero Legacy base payout leaves those base elements unpaid, consistent with the
+canonical paid-history rules. Genuine completion, other effects and size records
+still occur. A later qualifying genuine completion may pay the previously unpaid
+elements; paid elements cannot score again.
+
+Masterwork eligibility follows the accepted canonical ruling: Specialized/Hybrid,
+Major/Rare, and Upgrades including Abbey. Basic Expansions and ordinary Developments
+are excluded. Existing Act unlocks still apply; immediate playability does not.
+Masterwork grants three copies even when the Upgrade's normal reward grants two.
+
+Useful verification/diagnostics:
+
+```sh
+./tests/run_tests.sh
+godot --headless --path . --script res://tests/scenarios/relic_reward_demo.gd
+```
+
+The demonstration prints capacity, equipped order/use state, current modifiers,
+Ferry links, exact offers, threshold/milestone queues and reward-copy IDs before
+running command-level continuation scenarios. `RelicRules.refresh_act()` and
+Act-frozen reward eligibility are hooks only: Phase 9, Charters, Grand Charter,
+full Act transitions, final results and presentation dialogs are not implemented.

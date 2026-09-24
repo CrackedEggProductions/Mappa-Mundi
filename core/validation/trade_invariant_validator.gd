@@ -103,7 +103,7 @@ static func _validate_history(state: RunState, ids: Array[int], report: Invarian
 				or (event.kind == &"network_merged" and event.parent_ids.size() < 2) \
 				or (event.kind in [&"network_split", &"network_reconnected"] and event.parent_ids.is_empty()):
 				report.add(&"trade_origin_ancestry", "Split, merger and reconnection history must retain appropriate parents.")
-		if event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null:
+		if event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null and not _relic_source(state, event.source_id):
 			report.add(&"trade_history_source", "Network change source must resolve.")
 		_validate_members(state, event.road_lineage_ids, event.settlement_lineage_ids, false, report)
 		latest[event.lineage_id] = event
@@ -140,7 +140,7 @@ static func _validate_completions(state: RunState, report: InvariantReport) -> v
 		var road_ancestors: Array[int] = LineageService.get_ancestry_closure(state, record.lineage_id)
 		road_ancestors.append(record.lineage_id)
 		for prior: FeatureCompletionRecord in state.features.completions:
-			if prior.record_id < record.record_id and prior.lineage_id in road_ancestors:
+			if prior.record_id < record.record_id and prior.lineage_id in road_ancestors and prior.base_multiplier != 0:
 				paid.append_array(prior.new_settlement_ids)
 		var expected: Array[int] = []
 		for settlement_id: int in record.network_settlement_ids:
@@ -161,3 +161,11 @@ static func _same_set(first: Array[int], second: Array[int]) -> bool:
 	a.sort()
 	b.sort()
 	return a == b
+
+
+static func _relic_source(state: RunState, source_id: int) -> bool:
+	if state.relics != null:
+		for instance: RelicInstanceState in state.relics.instances:
+			if instance.runtime_id == source_id:
+				return true
+	return false

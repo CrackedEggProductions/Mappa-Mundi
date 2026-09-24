@@ -38,8 +38,8 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 			report.add(&"missing_replacement_audit", "Physical replacement requires one reciprocal audit record.")
 	for coordinate: Vector2i in state.expansion.board.sorted_coordinates():
 		var cell: BoardCellState = state.expansion.board.get_cell(coordinate)
-		if cell.developments.size() > 1:
-			report.add(&"occupied_development_slot", "Current rules allow only one Development per tile.")
+		if not RelicGeometry.slot_pair_valid(state, cell):
+			report.add(&"occupied_development_slot", "Only equipped Mixed-Use Charter allows one Housing-family and one Market-family pair.")
 		for development: DevelopmentState in cell.developments:
 			_validate_overlay(state, content, cell, development, placements, report)
 	for copy_id: int in placements:

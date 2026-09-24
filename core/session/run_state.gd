@@ -22,6 +22,8 @@ var features: FeatureState = null
 var trade: TradeState = null
 ## Optional only for preserved earlier-phase fixtures.
 var specialists: SpecialistState = null
+var relics: RelicState = null
+var rewards: RewardState = null
 var pending_choice: PendingChoice = null
 var resolution: ResolutionState = null
 

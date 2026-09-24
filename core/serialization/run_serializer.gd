@@ -69,6 +69,9 @@ static func deserialize(text: String, content: ContentRegistry) -> Deserializati
 		state.trade = TradeSerializer.decode(data["trade"])
 	if data.has("specialists"):
 		state.specialists = SpecialistSerializer.decode(data["specialists"])
+	if data.has("relics"):
+		state.relics = PhaseEightSerializer.decode_relics(data["relics"])
+		state.rewards = PhaseEightSerializer.decode_rewards(data["rewards"])
 	if data.has("pending_choice"):
 		state.pending_choice = SpecialistSerializer.decode_choice(data["pending_choice"])
 	if data.has("resolution"):
@@ -114,6 +117,10 @@ static func to_envelope(state: RunState) -> Dictionary:
 		envelope["run_state"]["trade"] = TradeSerializer.encode(state.trade)
 	if state.specialists != null:
 		envelope["run_state"]["specialists"] = SpecialistSerializer.encode(state.specialists)
+	if state.relics != null:
+		envelope["run_state"]["relics"] = PhaseEightSerializer.encode_relics(state.relics)
+	if state.rewards != null:
+		envelope["run_state"]["rewards"] = PhaseEightSerializer.encode_rewards(state.rewards)
 	if state.pending_choice != null:
 		envelope["run_state"]["pending_choice"] = SpecialistSerializer.encode_choice(state.pending_choice)
 	if state.resolution != null:
@@ -142,7 +149,7 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		run_keys.append("features")
 	if envelope["run_state"] is Dictionary and envelope["run_state"].has("trade"):
 		run_keys.append("trade")
-	for key: String in ["specialists", "pending_choice", "resolution"]:
+	for key: String in ["specialists", "pending_choice", "resolution", "relics", "rewards"]:
 		if envelope["run_state"] is Dictionary and envelope["run_state"].has(key):
 			run_keys.append(key)
 	if not _has_exact_keys(envelope["run_state"], run_keys):
@@ -182,6 +189,15 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 			var specialist_shape: ValidationResult = SpecialistSerializer.validate_shape(data[key], StringName(key))
 			if not specialist_shape.is_valid:
 				return specialist_shape
+	if data.has("relics") != data.has("rewards"):
+		return _invalid("Relic and reward state must be present together.")
+	for key: String in ["relics", "rewards"]:
+		if data.has(key):
+			if not data.has("specialists"):
+				return _invalid("Phase 8 requires established Specialist state.")
+			var phase_eight_shape: ValidationResult = PhaseEightSerializer.validate_shape(data[key], StringName(key))
+			if not phase_eight_shape.is_valid:
+				return phase_eight_shape
 	if not data["tile_copies"] is Array or not data["tile_locations"] is Array:
 		return _invalid("Physical tile registries must be arrays.")
 	for entry: Variant in data["tile_copies"]:
@@ -198,7 +214,7 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 			return _invalid("Malformed physical tile location record.")
 		var location: Dictionary = entry
 		if not _is_decimal_int64(location["tile_copy_id"]) \
-			or not _is_bounded_integer(location["kind"], 0, TileLocationState.Kind.REMOVED_FROM_RUN):
+			or not _is_bounded_integer(location["kind"], 0, TileLocationState.Kind.values().max()):
 			return _invalid("Invalid physical tile location field type or range.")
 	return ValidationResult.success()
 

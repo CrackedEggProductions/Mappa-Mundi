@@ -52,4 +52,5 @@ static func place(state: RunState, content: ContentRegistry, command: PlaceTileC
 	event.component_ids = created_ids
 	event.parent_ids = target_lineages
 	state.features.history.append(event)
+	RelicGeometry.apply_boundary(state, command)
 	FeatureResolutionService.resolve(state, plan.tile_copy_id, score)

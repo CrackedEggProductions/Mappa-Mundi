@@ -3,7 +3,7 @@ extends RefCounted
 ## Explicit Phase-2 boundary. Coordinates are signed 32-bit pairs; IDs/cursors are strings.
 
 const KEYS: Array[String] = [
-	"board", "bag", "hand", "reserve_id", "removed_ids", "current_act",
+	"board", "bag", "hand", "reserve_id", "reserve_extra_id", "inspected_ids", "removed_ids", "current_act",
 	"normal_placements", "survey_charges", "state_revision", "pending_refill_index",
 ]
 const BOARD_KEYS: Array[String] = ["revision", "cells"]
@@ -11,7 +11,7 @@ const CELL_KEYS: Array[String] = [
 	"coordinate", "base_tile_copy_id", "definition_id", "rotation", "act_placed",
 	"normal_placement_index", "effective_edges", "feature_groups", "relationships",
 	"field_supports_settlement", "geometry_revision", "developments",
-	"has_field_geography", "transformations",
+	"has_field_geography", "transformations", "hard_boundaries",
 ]
 const GROUP_KEYS: Array[String] = ["edge_type", "directions"]
 const RELATION_KEYS: Array[String] = ["from_edge_type", "to_edge_type", "kind"]
@@ -40,11 +40,13 @@ static func encode(state: ExpansionState) -> Dictionary:
 			"developments": DevelopmentSerializer.encode(cell.developments),
 			"has_field_geography": cell.has_field_geography,
 			"transformations": TransformationSerializer.encode(cell.transformations),
+			"hard_boundaries": cell.hard_boundaries.duplicate(),
 		})
 	return {
 		"board": {"revision": str(state.board.revision), "cells": cells},
 		"bag": _encode_ids(state.bag), "hand": _encode_ids(state.hand),
-		"reserve_id": str(state.reserve_id), "removed_ids": _encode_ids(state.removed_ids),
+		"reserve_id": str(state.reserve_id), "reserve_extra_id": str(state.reserve_extra_id),
+		"inspected_ids": _encode_ids(state.inspected_ids), "removed_ids": _encode_ids(state.removed_ids),
 		"current_act": state.current_act, "normal_placements": state.normal_placements,
 		"survey_charges": state.survey_charges, "state_revision": str(state.state_revision),
 		"pending_refill_index": state.pending_refill_index,
@@ -68,6 +70,8 @@ static func decode(data: Dictionary) -> ExpansionState:
 		cell.developments = DevelopmentSerializer.decode(entry["developments"])
 		cell.has_field_geography = entry["has_field_geography"]
 		cell.transformations = TransformationSerializer.decode(entry["transformations"])
+		for direction: Variant in entry.get("hard_boundaries", []):
+			cell.hard_boundaries.append(int(direction))
 		for edge: Variant in entry["effective_edges"]:
 			cell.effective_edges.append(int(edge) as DomainTypes.EdgeType)
 		for encoded_group: Dictionary in entry["feature_groups"]:
@@ -86,6 +90,8 @@ static func decode(data: Dictionary) -> ExpansionState:
 	state.bag = _decode_ids(data["bag"])
 	state.hand = _decode_ids(data["hand"])
 	state.reserve_id = String(data["reserve_id"]).to_int()
+	state.reserve_extra_id = String(data["reserve_extra_id"]).to_int()
+	state.inspected_ids = _decode_ids(data["inspected_ids"])
 	state.removed_ids = _decode_ids(data["removed_ids"])
 	state.current_act = int(data["current_act"])
 	state.normal_placements = int(data["normal_placements"])
@@ -102,6 +108,8 @@ static func validate_shape(value: Variant) -> ValidationResult:
 	if not _valid_id_array(data["bag"], false) or not _valid_id_array(data["hand"], true) \
 		or not _valid_id_array(data["removed_ids"], false) \
 		or not _nonnegative_int64(data["reserve_id"]) \
+		or not _nonnegative_int64(data["reserve_extra_id"]) \
+		or not _valid_id_array(data["inspected_ids"], false) \
 		or not _nonnegative_int64(data["state_revision"]):
 		return _invalid("Expansion zones and revisions require canonical decimal IDs/counters.")
 	if not RunSerializer._is_bounded_integer(data["current_act"], 1, 3) \
@@ -128,9 +136,20 @@ static func validate_shape(value: Variant) -> ValidationResult:
 
 
 static func _validate_cell(value: Variant) -> ValidationResult:
-	if not RunSerializer._has_exact_keys(value, CELL_KEYS):
+	var expected: Array[String] = CELL_KEYS.duplicate()
+	if value is Dictionary and not value.has("hard_boundaries"):
+		expected.erase("hard_boundaries")
+	if not RunSerializer._has_exact_keys(value, expected):
 		return _invalid("Malformed board cell record.")
 	var cell: Dictionary = value
+	var boundaries: Variant = cell.get("hard_boundaries", [])
+	if not boundaries is Array:
+		return _invalid("Hard boundaries require an explicit direction array.")
+	var previous: int = -1
+	for direction: Variant in boundaries:
+		if not RunSerializer._is_bounded_integer(direction, 0, 3) or int(direction) <= previous:
+			return _invalid("Hard boundary directions must be unique and sorted.")
+		previous = int(direction)
 	if not DevelopmentSerializer.valid_shape(cell["developments"]):
 		return _invalid("Malformed Development overlay array.")
 	if not TransformationSerializer.valid_shape(cell["transformations"]):

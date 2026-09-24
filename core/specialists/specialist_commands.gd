@@ -88,10 +88,7 @@ static func execute_command(state: RunState, _content: ContentRegistry,
 	elif command is ResolveSpecialistTrainingCommand:
 		_train(state, command as ResolveSpecialistTrainingCommand)
 	elif command is RecruitStewardCommand:
-		var piece: SpecialistPieceState = SpecialistPieceState.new()
-		piece.piece_id = state.id_allocator.allocate()
-		state.specialists.pieces.append(piece)
-		SpecialistRules.history_event(state, &"steward_recruited", piece.piece_id)
+		recruit(state)
 
 
 static func _assign(state: RunState, command: ResolveSpecialistAssignmentCommand) -> void:
@@ -152,8 +149,24 @@ static func _train(state: RunState, command: ResolveSpecialistTrainingCommand) -
 	var event: FeatureHistoryRecord = SpecialistRules.history_event(state, &"specialist_trained", piece.piece_id, details)
 	piece.training_history.append({"event_id": event.event_id, "role_definition_id": String(piece.role_definition_id),
 		"act": state.expansion.current_act, "placement_index": state.expansion.normal_placements})
+	var resume_phase: GamePhase.Type = int(state.pending_choice.context.get("resume_phase", GamePhase.Type.TURN_INPUT)) as GamePhase.Type
 	state.pending_choice = null
-	state.phase = GamePhase.Type.TURN_INPUT
+	state.phase = resume_phase
+
+
+static func begin_training_reward(state: RunState, piece_id: int) -> void:
+	# Reward validation already selected an eligible generic; reuse the one offer implementation.
+	_offer_training(state, RequestSpecialistTrainingCommand.new(piece_id))
+	if state.pending_choice != null:
+		state.pending_choice.context["resume_phase"] = GamePhase.Type.RESOLVING_PLACEMENT
+
+
+static func recruit(state: RunState) -> void:
+	assert(state.specialists.pieces.size() < SpecialistRules.HARD_CAP)
+	var piece: SpecialistPieceState = SpecialistPieceState.new()
+	piece.piece_id = state.id_allocator.allocate()
+	state.specialists.pieces.append(piece)
+	SpecialistRules.history_event(state, &"steward_recruited", piece.piece_id)
 
 
 static func _fail(code: StringName, message: String) -> ValidationResult:

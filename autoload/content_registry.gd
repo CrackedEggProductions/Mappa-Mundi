@@ -11,6 +11,8 @@ const PHASE_FIVE_MANIFEST_PATH: String = "res://content/manifests/phase_5_conten
 const PHASE_SIX_MANIFEST_PATH: String = "res://content/manifests/phase_6_content_manifest.tres"
 const PHASE_SEVEN_MANIFEST_PATH: String = "res://content/manifests/phase_7_content_manifest.tres"
 
+const PHASE_EIGHT_MANIFEST_PATH: String = "res://content/manifests/phase_8_content_manifest.tres"
+
 var _manifest: ContentManifest
 var _config: RunConfig
 
@@ -29,6 +31,27 @@ func load_phase_six() -> ValidationResult:
 
 func load_phase_seven() -> ValidationResult:
 	return load_content(PHASE_SEVEN_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
+
+
+func load_phase_eight() -> ValidationResult:
+	return load_content(PHASE_EIGHT_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
+
+
+func get_relic_ids() -> Array[StringName]:
+	var ids: Array[StringName] = []
+	if _manifest != null:
+		for definition: RelicDefinition in _manifest.relics:
+			ids.append(definition.definition_id)
+	ids.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	return ids
+
+
+func get_relic(definition_id: StringName) -> RelicDefinition:
+	if _manifest != null:
+		for definition: RelicDefinition in _manifest.relics:
+			if definition.definition_id == definition_id:
+				return definition.duplicate(true) as RelicDefinition
+	return null
 
 
 func get_specialist_ids() -> Array[StringName]:

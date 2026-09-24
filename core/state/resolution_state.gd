@@ -8,3 +8,6 @@ var affected_targets: Array[Dictionary] = []
 var completion_snapshot: Dictionary = {}
 var immediate_development_copy_id: int = 0
 var immediate_parent_event_id: int = 0
+
+## Serializable nested reward/Relic continuation; never presentation callbacks.
+var context: Dictionary = {}

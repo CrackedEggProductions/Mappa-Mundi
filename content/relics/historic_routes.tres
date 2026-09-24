@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="RelicDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/relics/relic_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"relic.historic_routes"
+display_name = "Historic Routes"
+unlock_act = 2
+behavior_id = &"historic_routes"
+tier = &"developed"
+once_per_act = false

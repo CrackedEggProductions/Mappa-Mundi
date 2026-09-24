@@ -16,8 +16,10 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 	var represented: Array[int] = []
 	_validate_zone(state, expansion.bag, TileLocationState.Kind.BAG, represented, report)
 	_validate_zone(state, expansion.hand, TileLocationState.Kind.ACTIVE_HAND, represented, report)
-	if expansion.reserve_id != 0:
-		_validate_zone(state, [expansion.reserve_id], TileLocationState.Kind.RESERVE, represented, report)
+	_validate_zone(state, RelicHandRules.reserve_ids(state), TileLocationState.Kind.RESERVE, represented, report)
+	_validate_zone(state, expansion.inspected_ids, TileLocationState.Kind.INSPECTED, represented, report)
+	if expansion.reserve_extra_id > 0 and RelicHandRules.reserve_capacity(state) < 2:
+		report.add(&"illegal_extra_reserve", "The second Reserve slot requires an equipped Satchel.")
 	_validate_zone(state, expansion.removed_ids, TileLocationState.Kind.REMOVED_FROM_RUN, represented, report)
 	var board_ids: Array[int] = []
 	var development_ids: Array[int] = []
@@ -94,14 +96,19 @@ static func _validate_turn(state: RunState, config: RunConfig, report: Invariant
 	var limit: int = config.act_placement_limits[expansion.current_act - 1]
 	if expansion.normal_placements < 0 or expansion.normal_placements > limit:
 		report.add(&"invalid_placement_count", "Normal placement counter lies outside the controlled current Act.")
-	if expansion.survey_charges < 0 or expansion.survey_charges > config.initial_survey_charges:
+	if expansion.survey_charges < 0 or (state.rewards == null and expansion.survey_charges > config.initial_survey_charges):
 		report.add(&"invalid_survey_charges", "Survey charges lie outside Phase-2 grant bounds.")
-	if expansion.state_revision < 0 or expansion.reserve_id < 0:
+	if expansion.state_revision < 0 or expansion.reserve_id < 0 or expansion.reserve_extra_id < 0:
 		report.add(&"invalid_expansion_metadata", "State revision and optional Reserve ID must be nonnegative.")
 	if expansion.state_revision < expansion.normal_placements:
 		report.add(&"rewound_state_revision", "State revision cannot precede the number of committed placements.")
 	if expansion.hand.size() != config.hand_capacity:
 		report.add(&"invalid_hand_capacity", "Stable expansion state requires all normal hand slots.")
+	if state.phase == GamePhase.Type.PENDING_CHOICE and state.pending_choice != null and state.pending_choice.kind == &"compass":
+		_validate_compass(state, report)
+		return
+	if not expansion.inspected_ids.is_empty():
+		report.add(&"stranded_inspected_tiles", "Inspected physical copies require a pending Compass choice.")
 	if state.phase == GamePhase.Type.PENDING_CHOICE and state.specialists != null:
 		if state.resolution != null:
 			if expansion.pending_refill_index == -1:
@@ -195,6 +202,9 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 		report.add(&"invalid_internal_relationships", "Current internal relationships differ from the static base.", tile_id)
 	if cell.geometry_revision > 0:
 		_validate_current_geometry(state, cell, report)
+	for direction: int in cell.hard_boundaries:
+		if not RelicGeometry.is_hard_boundary(state.expansion.board, coordinate, direction):
+			report.add(&"invalid_hard_boundary", "Hard boundaries must join a reciprocal occupied Field/Forest seam.", tile_id)
 	var earlier_neighbor: bool = cell.normal_placement_index == 0
 	for direction: int in range(4):
 		var neighbor_coordinate: Vector2i = coordinate + OFFSETS[direction]
@@ -204,7 +214,8 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 		if neighbor != null and neighbor.normal_placement_index < cell.normal_placement_index:
 			earlier_neighbor = true
 		if neighbor != null and neighbor.effective_edges.size() == 4 \
-			and cell.effective_edges[direction] != neighbor.effective_edges[(direction + 2) % 4]:
+			and cell.effective_edges[direction] != neighbor.effective_edges[(direction + 2) % 4] \
+			and not RelicGeometry.is_hard_boundary(state.expansion.board, coordinate, direction):
 			report.add(&"occupied_edge_mismatch", "Occupied orthogonal edges must match exactly.", tile_id)
 	if not earlier_neighbor:
 		report.add(&"disconnected_placement", "Every normal base must adjoin a previously placed base.", tile_id)
@@ -264,3 +275,26 @@ static func _relationships_signature(relationships: Array[TileFeatureRelationshi
 		parts.append("%d:%d:%d" % [relation.from_edge_type, relation.to_edge_type, relation.kind])
 	parts.sort()
 	return "|".join(parts)
+
+
+static func _validate_compass(state: RunState, report: InvariantReport) -> void:
+	var expansion: ExpansionState = state.expansion
+	var choice: PendingChoice = state.pending_choice
+	if not choice.context.get("hand_index") is int:
+		report.add(&"invalid_compass_slot", "Compass hand index must be an integer.")
+		return
+	var index: int = choice.context["hand_index"]
+	if state.resolution == null or state.resolution.stage != &"compass" \
+		or state.relics == null or not RelicRules.active(state, &"relic.surveyors_compass"):
+		report.add(&"invalid_compass_resolution", "Compass requires its own persisted hand continuation.")
+	if expansion.pending_refill_index != -1 or index < 0 or index >= expansion.hand.size() \
+		or expansion.hand[index] != 0 or expansion.hand.count(0) != 1:
+		report.add(&"invalid_compass_slot", "Compass must retain exactly its own vacated active-hand slot.")
+	if expansion.inspected_ids.is_empty() or expansion.inspected_ids.size() > 3 \
+		or choice.context.get("inspected_ids", []) != expansion.inspected_ids:
+		report.add(&"invalid_compass_set", "Persisted Compass set must match one to three inspected physical copies.")
+	var expected: Array[Dictionary] = []
+	for copy_id: int in expansion.inspected_ids:
+		expected.append({"tile_copy_id": copy_id})
+	if choice.options != expected:
+		report.add(&"invalid_compass_options", "Compass options must exactly preserve the inspected set.")

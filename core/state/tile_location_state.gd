@@ -12,6 +12,7 @@ enum Kind {
 	BOARD_DEVELOPMENT = 4,
 	BOARD_TRANSFORMATION = 5,
 	REMOVED_FROM_RUN = 6,
+	INSPECTED = 7,
 }
 
 var tile_copy_id: int
