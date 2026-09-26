@@ -1,9 +1,8 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 8 — Relics, Thresholds, Rewards and Milestones**
-— unconditionally complete, with the canonical Masterwork eligibility ruling applied.
-Act-I-style play runs headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
+GDScript**. Current implementation: **Phase 9 — Charters, Acts and complete three-Act run**.
+All 66 normal placements, Charter rewards, transitions and final results run headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
 ## Specifications
@@ -133,8 +132,9 @@ independent Resource copies so they cannot mutate the registered definitions.
 The validator rejects malformed samples, duplicates, invalid geometry/enums/Acts,
 unregistered behaviors, and content outside the Phase-0 pool. The historical
 Phase-0 profile keeps empty Relic, Specialist and Charter rosters.
-The current Phase-7 profile registers exactly eight passive Specialist definitions;
-central domain services own their behavior. Relics and Charters remain deferred.
+The preserved Phase-7 profile registers exactly eight passive Specialist definitions.
+The current Phase-9 profile adds the exact ten Relics and nine Charters; centralized
+domain services own all behavior. Earlier profiles remain regression fixtures.
 
 The separate `homestead_content_manifest.tres` and `homestead_run_config.tres`
 provide all 21 Act-I Expansion designs, the Founding Tile, exact 55-copy starting
@@ -149,7 +149,7 @@ Canonical base orientations and explicit internal relationships are documented i
 
 ```gdscript
 var content: ContentRegistry = ContentRegistry.new()
-assert(content.load_phase_eight().is_valid)
+assert(content.load_phase_nine().is_valid)
 var state: RunState = HomesteadRunFactory.create(12345, content)
 var copy_id: int = state.expansion.hand[0]
 var options: Array[PlacementOption] = PlacementQueryService.query_for_copy(
@@ -177,9 +177,8 @@ rotated sockets/relationships, ordered zones, counters and pending refill. Loadi
 never plays a command or draws a tile. Schema 1 retains the original foundation
 variant alongside the initialized Expansion variant; unknown fields still fail.
 
-At Act-I placement 18 the engine stops in `RESOLVING_ACT_TRANSITION`, retaining a
-pending hand refill when applicable. Act transitions and their rewards are not
-implemented. Reserve-impossibility assessment conservatively returns
+Earlier profiles stop at the deferred Act boundary. The Phase-9 profile resolves
+outgoing Charter rewards, transitions and seeding before the pending hand refill. Reserve-impossibility assessment conservatively returns
 `NOT_PROVABLY_IMPOSSIBLE`; later systems must expand proof before any automatic removal.
 
 See [implementation progress](IMPLEMENTATION_PROGRESS.md) for verification and
@@ -413,7 +412,7 @@ The phase blocks other placement/Reserve/Survey commands until resolved. A saved
 `ResolutionState` owns the immutable completion snapshot and deferred immediate
 Development effect. Load validates this continuation without replaying anything.
 Reserve placement never refills the active hand; final-Act placement finishes its
-choice and consequences before entering the existing deferred transition boundary.
+choice and consequences before Charter evaluation, Act transition or finalization.
 
 Reward integrations may submit `RecruitStewardCommand` (hard cap three) or
 `RequestSpecialistTrainingCommand.new(piece_id)`. Training persists the exact
@@ -443,7 +442,7 @@ persisted assignment offers, growth IDs, completion gains and returned pieces.
 
 ## Phase 8: Relics and serializable rewards
 
-Load `ContentRegistry.load_phase_eight()` for the current 34-design, eight-Specialist,
+Load `ContentRegistry.load_phase_eight()` for the preserved 34-design, eight-Specialist,
 ten-Relic profile. Earlier profiles remain available for regression fixtures.
 `RulesEngine` remains the command boundary. The new commands resolve persisted
 reward selections, Compass physical-copy selections, sequential Grand Survey
@@ -492,5 +491,69 @@ godot --headless --path . --script res://tests/scenarios/relic_reward_demo.gd
 The demonstration prints capacity, equipped order/use state, current modifiers,
 Ferry links, exact offers, threshold/milestone queues and reward-copy IDs before
 running command-level continuation scenarios. `RelicRules.refresh_act()` and
-Act-frozen reward eligibility are hooks only: Phase 9, Charters, Grand Charter,
-full Act transitions, final results and presentation dialogs are not implemented.
+Act-frozen reward eligibility now support the Phase-9 Act pipeline. Presentation
+dialogs remain outside the implemented headless rules layer.
+
+
+## Charters, Acts and complete runs
+
+Use `ContentRegistry.load_phase_nine()` with `HomesteadRunFactory.create()` for the
+current alpha. Setup initializes the civilization and pieces, shuffles the starting
+bag, selects one Act-I Charter, then draws the opening hand. Selection uses sorted
+canonical pools and the sole RunRNG stream.
+
+`CharterRules.evaluate(state, content, id)` returns typed `CharterProgress` with
+numeric condition keys, targets, satisfaction, current-state/history sources and
+stable witness IDs. All nine evaluators require fulfillment before exceed. Current
+Trade Network queries include Ferry Rights; genuine completion history survives
+lineage mergers without counting inherited records twice. Upgrades retain their
+base Development families.
+
+Use `visible_ordinary()` and `visible_grand()` for future presentation. Act II
+selects its ordinary Charter and then the Grand Charter once. Until all consequences
+of normal placement 11 finish, the Grand query exposes only its forecast. Exact
+reveal uses no RNG and waits through assignment, rewards and bonus chains.
+
+`ActRules` persists the fourteen canonical transition steps in `ActTransitionState`.
+Outgoing rewards use the outgoing Act pool and capacity. Only afterward do Act,
+capacity, Survey and Relic refresh, unlocks, seeding, shuffle, information selection,
+counter reset and refill occur. Act II adds Market/Port/Urban Expansion/Town Square/
+Abbey twice each (10 copies); Act III adds Bridge/Rewilding/Grand Market twice each
+(6 copies). All are physical identities with incoming-Act acquisition provenance.
+A saved transition can resume through `ResumeActTransitionCommand` without replaying
+completed steps. Normal reward commands resume pending transition rewards.
+
+The generic `BonusPlacementRules.enqueue()` effect hook retains FIFO bonus work.
+Bonus input permits placement only, reuses the full consequence pipeline, and does
+not consume a normal placement. Its own hand refill precedes the next bonus; the
+original normal-placement refill remains deferred through the chain and transition.
+No current alpha content grants bonus placements.
+
+Act III normal placement 26 finishes all consequences and rewards, then stores a
+`RunResult` and enters `RUN_COMPLETE` without a final hand refill. Score is the sum
+of all four uncapped Tracks. No-victory, Victory and Exemplary Victory are separate
+outcomes. Final statistics preserve historical size records, Relics, Specialist
+training, Charter evaluations and seed. Completed runs reject gameplay commands.
+
+Accepted Grand Charter rulings: Great Metropolis requires its fulfillment witness
+to be currently completed at size 8+; its additional size-10 exceed witness may be
+any current Settlement. Merchant Republic accepts a current Road lineage with
+genuine completion history even after reopening. These rulings are recorded in
+the canonical Complete Alpha Rules.
+
+`PhaseNineDebug.inspect(state, content)` exposes read-only Charter progress,
+transition state, unlock pool, seed records, counters and final statistics. Its
+optional `reveal_secret=true` flag is explicitly for debug inspection; ordinary
+visibility queries never expose unrevealed exact Grand requirements.
+
+```sh
+./tests/run_tests.sh
+godot --headless --path . --script res://tests/scenarios/three_act_demo.gd
+```
+
+The complete-run fixture controls tile acquisition and one initial training reward;
+all placements, scoring, selections, rewards and transitions use real rules. Five
+66-placement runs cover failure, Victory, Exemplary Victory, deterministic replay
+and save-at-every-boundary replay. This is an integration proof, not a balance or
+human-play optimization claim. Presentation UI, Save & Quit/Continue UX and export
+acceptance remain later phases; no art work belongs to this gameplay branch.
