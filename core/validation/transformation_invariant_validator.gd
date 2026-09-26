@@ -63,13 +63,14 @@ static func _validate_identity(state: RunState, content: ContentRegistry, cell: 
 		report.add(&"invalid_transformation_target", "Transformation target, orientation and changes must be explicit.")
 	if value.act_applied < definition.unlock_act or value.act_applied < copy.acquired_act \
 		or value.act_applied > state.expansion.current_act or value.act_applied < cell.act_placed \
-		or value.placement_index <= 0 or value.placement_index > state.expansion.normal_placements:
+		or value.placement_index <= 0 or value.placement_index > PlacementChronology.count_for_act(state, value.act_applied):
 		report.add(&"invalid_transformation_age", "Transformation application must follow acquisition and host construction.")
 	if value.mode in NEW_BASE_MODES:
 		if value.tile_copy_id != cell.base_tile_copy_id or value.placement_index != cell.normal_placement_index \
 			or value.act_applied != cell.act_placed or value.orientation != cell.rotation:
 			report.add(&"invalid_transformation_base", "Specialized Expansion identity must match its new physical base.")
-	elif value.tile_copy_id == cell.base_tile_copy_id or value.placement_index <= cell.normal_placement_index:
+	elif value.tile_copy_id == cell.base_tile_copy_id or PlacementChronology.rank(state, value.tile_copy_id, value.act_applied, value.placement_index) \
+		<= PlacementChronology.rank(state, cell.base_tile_copy_id, cell.act_placed, cell.normal_placement_index):
 		report.add(&"invalid_transformation_overlay", "Occupied Transformation must be a later separate physical copy.")
 
 
@@ -80,8 +81,9 @@ static func _validate_change(state: RunState, host: BoardCellState, value: Trans
 	if change.after_edges.size() != 4 or change.before_edges.size() != (0 if is_new else 4):
 		report.add(&"invalid_transformation_edges", "Geometry records require four edges except an empty new-base predecessor.")
 		return
-	if cell.normal_placement_index > value.placement_index or cell.act_placed > value.act_applied \
-		or (not is_new and cell.normal_placement_index == value.placement_index):
+	var base_rank: int = PlacementChronology.rank(state, cell.base_tile_copy_id, cell.act_placed, cell.normal_placement_index)
+	var change_rank: int = PlacementChronology.rank(state, value.tile_copy_id, value.act_applied, value.placement_index)
+	if base_rank > change_rank or (not is_new and base_rank == change_rank):
 		report.add(&"invalid_transformation_chronology", "A changed existing cell must predate its Transformation.")
 	if not FeatureInvariantValidator._unique_positive(change.target_lineage_ids) \
 		or not FeatureInvariantValidator._unique_positive(change.created_component_ids):
@@ -202,7 +204,10 @@ static func _validate_delta(state: RunState, host: BoardCellState, value: Transf
 static func _validate_chain(state: RunState, content: ContentRegistry, coordinate: Vector2i,
 		chain: Array, report: InvariantReport) -> void:
 	chain.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return a["transformation"].placement_index < b["transformation"].placement_index)
+		var first: TransformationState = a["transformation"]
+		var second: TransformationState = b["transformation"]
+		return PlacementChronology.rank(state, first.tile_copy_id, first.act_applied, first.placement_index) \
+			< PlacementChronology.rank(state, second.tile_copy_id, second.act_applied, second.placement_index))
 	var cell: BoardCellState = state.expansion.board.get_cell(coordinate)
 	var occupied_changes: int = 0
 	var previous: TransformationChange = null

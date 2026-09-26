@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CharterDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"charter.a2_market_towns"
+display_name = "Market Towns"
+evaluation_act = 2
+behavior_id = &"a2_market_towns"
+forecast_text = ""
+targets = {"trade": 40, "market_settlements": 2, "network_settlements": 3, "exceed_trade": 55}
+fulfill_rewards = Array[StringName]([&"relic_offer", &"tile_reward"])
+exceed_rewards = Array[StringName]([&"major_reward"])

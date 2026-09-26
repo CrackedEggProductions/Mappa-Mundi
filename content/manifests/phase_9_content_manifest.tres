@@ -1,0 +1,83 @@
+[gd_resource type="Resource" script_class="ContentManifest" load_steps=67 format=3]
+
+[ext_resource type="Script" path="res://content/manifests/content_manifest.gd" id="1_manifest"]
+[ext_resource type="Script" path="res://content/tiles/tile_definition.gd" id="2_type"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/bending_road.tres" id="tile_0"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/forest_belt.tres" id="tile_1"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/forest_bend.tres" id="tile_2"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/forest_edge.tres" id="tile_3"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/founding_homestead.tres" id="tile_4"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/hamlet_edge.tres" id="tile_5"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/open_fields.tres" id="tile_6"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/river_bend.tres" id="tile_7"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/river_end.tres" id="tile_8"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/river_run.tres" id="tile_9"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/riverside_hamlet.tres" id="tile_10"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/road_end.tres" id="tile_11"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/road_junction.tres" id="tile_12"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_corner.tres" id="tile_13"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_corner_gate.tres" id="tile_14"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_gate.tres" id="tile_15"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_road_bend.tres" id="tile_16"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_road_throughway.tres" id="tile_17"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/settlement_throughway.tres" id="tile_18"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/straight_road.tres" id="tile_19"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/woodland_river.tres" id="tile_20"]
+[ext_resource type="Resource" path="res://content/tiles/homestead/woodland_road.tres" id="tile_21"]
+
+[ext_resource type="Resource" path="res://content/tiles/developments/housing.tres" id="development_0"]
+[ext_resource type="Resource" path="res://content/tiles/developments/mill.tres" id="development_1"]
+[ext_resource type="Resource" path="res://content/tiles/developments/monastery.tres" id="development_2"]
+[ext_resource type="Resource" path="res://content/tiles/developments/foresters_lodge.tres" id="development_3"]
+[ext_resource type="Resource" path="res://content/tiles/developments/market.tres" id="development_4"]
+[ext_resource type="Resource" path="res://content/tiles/developments/port.tres" id="development_5"]
+[ext_resource type="Resource" path="res://content/tiles/developments/town_square.tres" id="development_6"]
+[ext_resource type="Resource" path="res://content/tiles/developments/abbey.tres" id="development_7"]
+[ext_resource type="Resource" path="res://content/tiles/developments/grand_market.tres" id="development_8"]
+
+[ext_resource type="Resource" path="res://content/tiles/transformations/urban_expansion.tres" id="transformation_0"]
+[ext_resource type="Resource" path="res://content/tiles/transformations/bridge.tres" id="transformation_1"]
+[ext_resource type="Resource" path="res://content/tiles/transformations/rewilding.tres" id="transformation_2"]
+
+[ext_resource type="Script" path="res://content/specialists/specialist_definition.gd" id="specialist_type"]
+[ext_resource type="Resource" path="res://content/specialists/merchant.tres" id="specialist_merchant"]
+[ext_resource type="Resource" path="res://content/specialists/cartographer.tres" id="specialist_cartographer"]
+[ext_resource type="Resource" path="res://content/specialists/architect.tres" id="specialist_architect"]
+[ext_resource type="Resource" path="res://content/specialists/homesteader.tres" id="specialist_homesteader"]
+[ext_resource type="Resource" path="res://content/specialists/naturalist.tres" id="specialist_naturalist"]
+[ext_resource type="Resource" path="res://content/specialists/forester.tres" id="specialist_forester"]
+[ext_resource type="Resource" path="res://content/specialists/riverkeeper.tres" id="specialist_riverkeeper"]
+[ext_resource type="Resource" path="res://content/specialists/harbormaster.tres" id="specialist_harbormaster"]
+
+[ext_resource type="Script" path="res://content/relics/relic_definition.gd" id="relic_type"]
+[ext_resource type="Resource" path="res://content/relics/boundary_stones.tres" id="relic_boundary_stones"]
+[ext_resource type="Resource" path="res://content/relics/surveyors_compass.tres" id="relic_surveyors_compass"]
+[ext_resource type="Resource" path="res://content/relics/wayfarers_satchel.tres" id="relic_wayfarers_satchel"]
+[ext_resource type="Resource" path="res://content/relics/village_green.tres" id="relic_village_green"]
+[ext_resource type="Resource" path="res://content/relics/ferry_rights.tres" id="relic_ferry_rights"]
+[ext_resource type="Resource" path="res://content/relics/mixed_use_charter.tres" id="relic_mixed_use_charter"]
+[ext_resource type="Resource" path="res://content/relics/historic_routes.tres" id="relic_historic_routes"]
+[ext_resource type="Resource" path="res://content/relics/stewards_relay.tres" id="relic_stewards_relay"]
+[ext_resource type="Resource" path="res://content/relics/one_great_city.tres" id="relic_one_great_city"]
+[ext_resource type="Resource" path="res://content/relics/the_long_road.tres" id="relic_the_long_road"]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="charter_type"]
+[ext_resource type="Resource" path="res://content/charters/a1_growing_realm.tres" id="charter_a1_growing_realm"]
+[ext_resource type="Resource" path="res://content/charters/a1_open_roads.tres" id="charter_a1_open_roads"]
+[ext_resource type="Resource" path="res://content/charters/a1_living_landscape.tres" id="charter_a1_living_landscape"]
+[ext_resource type="Resource" path="res://content/charters/a2_market_towns.tres" id="charter_a2_market_towns"]
+[ext_resource type="Resource" path="res://content/charters/a2_growing_communities.tres" id="charter_a2_growing_communities"]
+[ext_resource type="Resource" path="res://content/charters/a2_stewardship_of_land.tres" id="charter_a2_stewardship_of_land"]
+[ext_resource type="Resource" path="res://content/charters/grand_great_metropolis.tres" id="charter_grand_great_metropolis"]
+[ext_resource type="Resource" path="res://content/charters/grand_merchant_republic.tres" id="charter_grand_merchant_republic"]
+[ext_resource type="Resource" path="res://content/charters/grand_living_heritage.tres" id="charter_grand_living_heritage"]
+
+[resource]
+script = ExtResource("1_manifest")
+manifest_id = &"manifest.alpha_phase_9"
+implementation_phase = 9
+game_rules_version = "alpha-1"
+tiles = Array[ExtResource("2_type")]([ExtResource("tile_0"), ExtResource("tile_1"), ExtResource("tile_2"), ExtResource("tile_3"), ExtResource("tile_4"), ExtResource("tile_5"), ExtResource("tile_6"), ExtResource("tile_7"), ExtResource("tile_8"), ExtResource("tile_9"), ExtResource("tile_10"), ExtResource("tile_11"), ExtResource("tile_12"), ExtResource("tile_13"), ExtResource("tile_14"), ExtResource("tile_15"), ExtResource("tile_16"), ExtResource("tile_17"), ExtResource("tile_18"), ExtResource("tile_19"), ExtResource("tile_20"), ExtResource("tile_21"), ExtResource("development_0"), ExtResource("development_1"), ExtResource("development_2"), ExtResource("development_3"), ExtResource("development_4"), ExtResource("development_5"), ExtResource("development_6"), ExtResource("development_7"), ExtResource("development_8"), ExtResource("transformation_0"), ExtResource("transformation_1"), ExtResource("transformation_2")])
+specialists = Array[ExtResource("specialist_type")]([ExtResource("specialist_merchant"), ExtResource("specialist_cartographer"), ExtResource("specialist_architect"), ExtResource("specialist_homesteader"), ExtResource("specialist_naturalist"), ExtResource("specialist_forester"), ExtResource("specialist_riverkeeper"), ExtResource("specialist_harbormaster")])
+relics = Array[ExtResource("relic_type")]([ExtResource("relic_boundary_stones"), ExtResource("relic_surveyors_compass"), ExtResource("relic_wayfarers_satchel"), ExtResource("relic_village_green"), ExtResource("relic_ferry_rights"), ExtResource("relic_mixed_use_charter"), ExtResource("relic_historic_routes"), ExtResource("relic_stewards_relay"), ExtResource("relic_one_great_city"), ExtResource("relic_the_long_road")])
+charters = Array[ExtResource("charter_type")]([ExtResource("charter_a1_growing_realm"), ExtResource("charter_a1_open_roads"), ExtResource("charter_a1_living_landscape"), ExtResource("charter_a2_market_towns"), ExtResource("charter_a2_growing_communities"), ExtResource("charter_a2_stewardship_of_land"), ExtResource("charter_grand_great_metropolis"), ExtResource("charter_grand_merchant_republic"), ExtResource("charter_grand_living_heritage")])

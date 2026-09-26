@@ -34,4 +34,14 @@ static func has_resolution_capacity(state: RunState) -> bool:
 	for value: int in state.features.tracks.values:
 		if value > 9223372036854775807 - gain_budget:
 			return false
+	if state.charters != null:
+		# Final score sums all four Tracks. Reserve the same per-Track bound for
+		# their aggregate before committing a placement, not after finalization.
+		var remaining: int = 9223372036854775807
+		for value: int in state.features.tracks.values:
+			if value < 0 or value > remaining:
+				return false
+			remaining -= value
+		if remaining < gain_budget * 4:
+			return false
 	return true

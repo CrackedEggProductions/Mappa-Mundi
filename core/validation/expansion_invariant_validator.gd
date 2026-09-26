@@ -41,13 +41,15 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 				report.add(&"null_transformation", "Transformation history cannot contain null.")
 			elif transformation.mode not in [&"urban_expansion", &"rewilding_expansion"]:
 				transformation_ids.append(transformation.tile_copy_id)
-				if transformation.placement_index in placement_indices:
+				var rank: int = PlacementChronology.rank(state, transformation.tile_copy_id, transformation.act_applied, transformation.placement_index)
+				if rank in placement_indices:
 					report.add(&"duplicate_placement_index", "Occupied Transformations consume unique normal placements.")
-				placement_indices.append(transformation.placement_index)
+				placement_indices.append(rank)
 		_validate_cell(state, content, coordinate, cell, report)
-		if cell.normal_placement_index in placement_indices:
+		var cell_rank: int = PlacementChronology.rank(state, cell.base_tile_copy_id, cell.act_placed, cell.normal_placement_index)
+		if cell_rank in placement_indices:
 			report.add(&"duplicate_placement_index", "Each placed base has a unique normal placement index.", cell.base_tile_copy_id)
-		placement_indices.append(cell.normal_placement_index)
+		placement_indices.append(cell_rank)
 	_validate_zone(state, board_ids, TileLocationState.Kind.BOARD_BASE, represented, report)
 	_validate_zone(state, development_ids, TileLocationState.Kind.BOARD_DEVELOPMENT, represented, report)
 	_validate_zone(state, transformation_ids, TileLocationState.Kind.BOARD_TRANSFORMATION, represented, report)
@@ -65,10 +67,12 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 		for event: FeatureHistoryRecord in state.features.history:
 			if event != null and event.kind in [&"development_placed", &"development_upgraded"]:
 				overlay_placements += 1
-				if event.placement_index in placement_indices:
+				var rank: int = PlacementChronology.rank(state, event.source_id, event.act, event.placement_index)
+				if rank in placement_indices:
 					report.add(&"duplicate_placement_index", "Each normal placement has a unique index.")
-				placement_indices.append(event.placement_index)
-	if expansion.board.cells.size() + overlay_placements != expansion.normal_placements + 1:
+				placement_indices.append(rank)
+	var committed: int = expansion.normal_placements if state.charters == null else state.charters.placement_history.size()
+	if expansion.board.cells.size() + overlay_placements != committed + 1:
 		report.add(&"placement_count_mismatch", "Founding, base placements and overlay play history must match the placement counter.")
 	var expected_revision: int = expansion.board.cells.size()
 	for cell: BoardCellState in expansion.board.cells.values():
@@ -102,8 +106,15 @@ static func _validate_turn(state: RunState, config: RunConfig, report: Invariant
 		report.add(&"invalid_expansion_metadata", "State revision and optional Reserve ID must be nonnegative.")
 	if expansion.state_revision < expansion.normal_placements:
 		report.add(&"rewound_state_revision", "State revision cannot precede the number of committed placements.")
+	if state.charters != null and expansion.state_revision < state.charters.placement_history.size():
+		report.add(&"rewound_state_revision", "State revision must survive Act resets and include bonus commits.")
 	if expansion.hand.size() != config.hand_capacity:
 		report.add(&"invalid_hand_capacity", "Stable expansion state requires all normal hand slots.")
+	if state.charters != null:
+		if state.phase == GamePhase.Type.TURN_INPUT and expansion.normal_placements == limit:
+			report.add(&"unresolved_act_end", "A final normal placement must transition or finish instead of opening another turn.")
+		PhaseNineInvariantValidator.validate_hand_boundary(state, report)
+		return
 	if state.phase == GamePhase.Type.PENDING_CHOICE and state.pending_choice != null and state.pending_choice.kind == &"compass":
 		_validate_compass(state, report)
 		return
@@ -161,7 +172,7 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	if cell.coordinate != coordinate:
 		report.add(&"coordinate_mismatch", "Sparse key and stored cell coordinate disagree.", tile_id)
 	if cell.act_placed < 1 or cell.act_placed > state.expansion.current_act or cell.rotation < 0 or cell.rotation > 3 \
-		or cell.normal_placement_index < 0 or cell.normal_placement_index > state.expansion.normal_placements:
+		or not PlacementChronology.valid_index(state, cell.act_placed, cell.normal_placement_index):
 		report.add(&"invalid_cell_metadata", "Cell rotation, Act or placement index is invalid.", tile_id)
 	if cell.definition_id == FOUNDING_ID and coordinate != Vector2i.ZERO:
 		report.add(&"duplicate_founding_tile", "Founding definition may occur only at the origin.", tile_id)
@@ -205,13 +216,14 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	for direction: int in cell.hard_boundaries:
 		if not RelicGeometry.is_hard_boundary(state.expansion.board, coordinate, direction):
 			report.add(&"invalid_hard_boundary", "Hard boundaries must join a reciprocal occupied Field/Forest seam.", tile_id)
-	var earlier_neighbor: bool = cell.normal_placement_index == 0
+	var earlier_neighbor: bool = coordinate == Vector2i.ZERO
 	for direction: int in range(4):
 		var neighbor_coordinate: Vector2i = coordinate + OFFSETS[direction]
 		if not state.expansion.board.cells.has(neighbor_coordinate):
 			continue
 		var neighbor: BoardCellState = state.expansion.board.cells[neighbor_coordinate]
-		if neighbor != null and neighbor.normal_placement_index < cell.normal_placement_index:
+		if neighbor != null and PlacementChronology.rank(state, neighbor.base_tile_copy_id, neighbor.act_placed, neighbor.normal_placement_index) \
+				< PlacementChronology.rank(state, cell.base_tile_copy_id, cell.act_placed, cell.normal_placement_index):
 			earlier_neighbor = true
 		if neighbor != null and neighbor.effective_edges.size() == 4 \
 			and cell.effective_edges[direction] != neighbor.effective_edges[(direction + 2) % 4] \

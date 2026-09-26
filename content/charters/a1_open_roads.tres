@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CharterDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"charter.a1_open_roads"
+display_name = "Open Roads"
+evaluation_act = 1
+behavior_id = &"a1_open_roads"
+forecast_text = ""
+targets = {"trade": 20, "road_completions": 2, "network_settlements": 2, "exceed_trade": 30}
+fulfill_rewards = Array[StringName]([&"tile_reward"])
+exceed_rewards = Array[StringName]([&"relic_offer"])

@@ -28,8 +28,14 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 
 static func _validate_relics(state: RunState, content: ContentRegistry, report: InvariantReport) -> void:
 	var relics: RelicState = state.relics
-	if relics.current_act not in [1, 2, 3] or relics.current_act != state.expansion.current_act \
-			or relics.capacity != [2, 4, 5][clampi(relics.current_act - 1, 0, 2)] \
+	var expected_epoch: int = state.expansion.current_act
+	var capacity_act: int = expected_epoch
+	if state.act_transition != null:
+		var transition: ActTransitionState = state.act_transition
+		expected_epoch = transition.incoming_act if transition.relics_refreshed else transition.outgoing_act
+		capacity_act = transition.incoming_act if transition.capacity_refreshed else transition.outgoing_act
+	if relics.current_act not in [1, 2, 3] or relics.current_act != expected_epoch \
+			or relics.capacity != [2, 4, 5][clampi(capacity_act - 1, 0, 2)] \
 			or relics.normal_surveys_used < 0:
 		report.add(&"invalid_relic_capacity", "Relic capacity and use epoch must match the current Act.")
 	var ids: Array[int] = SpecialistInvariantValidator._occupied_ids(state)

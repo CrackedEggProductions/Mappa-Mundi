@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CharterDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"charter.grand_merchant_republic"
+display_name = "Merchant Republic"
+evaluation_act = 3
+behavior_id = &"grand_merchant_republic"
+forecast_text = "The realm will ultimately be judged by the reach and prosperity of its trade network."
+targets = {"trade": 70, "network_settlements": 4, "commercial_settlements": 2, "exceed_trade": 90, "exceed_network_settlements": 5}
+fulfill_rewards = Array[StringName]([])
+exceed_rewards = Array[StringName]([])

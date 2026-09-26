@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CharterDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"charter.a2_growing_communities"
+display_name = "Growing Communities"
+evaluation_act = 2
+behavior_id = &"a2_growing_communities"
+forecast_text = ""
+targets = {"population": 40, "settlement_size": 6, "developments": 2, "exceed_population": 55}
+fulfill_rewards = Array[StringName]([&"relic_offer", &"tile_reward"])
+exceed_rewards = Array[StringName]([&"major_reward"])

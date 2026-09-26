@@ -2428,19 +2428,19 @@ The run is still scored even when the Grand Charter fails.
 ### RULE-GRAND-01 — Great Metropolis
 Fulfill:
 - Population **70+**;
-- a Settlement of at least **8 tiles** has been Established and currently qualifies at evaluation;
+- a Settlement of at least **8 tiles** is currently completed (Established) at evaluation; a reopened unfinished Settlement does not qualify;
 - that Settlement contains at least **3 distinct Development families**;
 - that Settlement belongs to a Trade Network connecting it to at least **2 other distinct Settlements**.
 
 Exceed:
 - all fulfillment conditions;
 - Population **90+**;
-- at least one major Settlement has size **10+**.
+- at least one current Settlement has size **10+**. This may be a different Settlement from the fulfillment witness and need not currently be completed.
 
 ### RULE-GRAND-02 — Merchant Republic
 Fulfill:
 - Trade **70+**;
-- at least one relevant completed Road/Trade Network structure currently connects at least **4 distinct Settlements**;
+- at least one current Trade Network containing a Road lineage with genuine completion history connects at least **4 distinct Settlements**; a reopened Road or descendant retaining that history qualifies;
 - at least **2** of those Settlements contain a Market-family Development or Port.
 
 Exceed:

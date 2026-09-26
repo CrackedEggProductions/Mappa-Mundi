@@ -13,6 +13,8 @@ const PHASE_SEVEN_MANIFEST_PATH: String = "res://content/manifests/phase_7_conte
 
 const PHASE_EIGHT_MANIFEST_PATH: String = "res://content/manifests/phase_8_content_manifest.tres"
 
+const PHASE_NINE_MANIFEST_PATH: String = "res://content/manifests/phase_9_content_manifest.tres"
+
 var _manifest: ContentManifest
 var _config: RunConfig
 
@@ -35,6 +37,28 @@ func load_phase_seven() -> ValidationResult:
 
 func load_phase_eight() -> ValidationResult:
 	return load_content(PHASE_EIGHT_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
+
+
+func load_phase_nine() -> ValidationResult:
+	return load_content(PHASE_NINE_MANIFEST_PATH, HOMESTEAD_CONFIG_PATH)
+
+
+func get_charter_ids(act: int = 0) -> Array[StringName]:
+	var ids: Array[StringName] = []
+	if _manifest != null:
+		for definition: CharterDefinition in _manifest.charters:
+			if act == 0 or definition.evaluation_act == act:
+				ids.append(definition.definition_id)
+	ids.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	return ids
+
+
+func get_charter(definition_id: StringName) -> CharterDefinition:
+	if _manifest != null:
+		for definition: CharterDefinition in _manifest.charters:
+			if definition.definition_id == definition_id:
+				return definition.duplicate(true) as CharterDefinition
+	return null
 
 
 func get_relic_ids() -> Array[StringName]:

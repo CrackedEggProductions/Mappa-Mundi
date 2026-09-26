@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CharterDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"charter.a1_living_landscape"
+display_name = "Living Landscape"
+evaluation_act = 1
+behavior_id = &"a1_living_landscape"
+forecast_text = ""
+targets = {"ecology": 20, "forest_completions": 1, "river_completions": 1, "exceed_ecology": 30}
+fulfill_rewards = Array[StringName]([&"tile_reward"])
+exceed_rewards = Array[StringName]([&"relic_offer"])

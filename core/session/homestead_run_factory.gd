@@ -1,6 +1,6 @@
 class_name HomesteadRunFactory
 extends RefCounted
-## Deterministic Homestead setup. Charter selection is explicitly deferred.
+## Deterministic Homestead setup; Charter selection precedes the opening draw.
 
 
 static func create(seed_value: int, content: ContentRegistry) -> RunState:
@@ -16,6 +16,14 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 	state.expansion.board.add_cell(BoardCellState.from_definition(
 		content.get_tile(&"tile.founding.homestead"), founding_id, Vector2i.ZERO, 0, 1, 0
 	))
+	var phase_nine: bool = content.get_charter_ids().size() == 9
+	if phase_nine:
+		FeatureResolutionService.initialize(state)
+		TradeNetworkService.initialize(state)
+		SpecialistRules.initialize(state)
+		state.relics = RelicState.new()
+		state.rewards = RewardState.new()
+		state.charters = CharterState.new()
 	# Definition order is explicit and sorted before the RNG-sensitive construction.
 	var entries: Array[StartingBagEntry] = config.starting_bag.duplicate()
 	entries.sort_custom(_entry_before)
@@ -25,17 +33,20 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 				state, entry.definition_id, &"homestead_starting_bag", TileLocationState.Kind.BAG
 			))
 	state.expansion.bag = state.rng.shuffled_ids(state.expansion.bag, &"starting_bag_shuffle")
+	if phase_nine:
+		CharterRules.select_ordinary(state, content, 1)
 	for index: int in range(config.hand_capacity):
 		state.expansion.hand.append(PhysicalTileRules.draw(state, config))
 	state.phase = GamePhase.Type.TURN_INPUT
 	StalemateRules.cycle_if_dead(state, content)
-	FeatureResolutionService.initialize(state)
-	TradeNetworkService.initialize(state)
-	if content.get_specialist_ids().size() == 8:
-		SpecialistRules.initialize(state)
-	if content.get_relic_ids().size() == 10:
-		state.relics = RelicState.new()
-		state.rewards = RewardState.new()
+	if not phase_nine:
+		FeatureResolutionService.initialize(state)
+		TradeNetworkService.initialize(state)
+		if content.get_specialist_ids().size() == 8:
+			SpecialistRules.initialize(state)
+		if content.get_relic_ids().size() == 10:
+			state.relics = RelicState.new()
+			state.rewards = RewardState.new()
 	InvariantValidator.assert_valid(state, content)
 	return state
 
