@@ -1,5 +1,138 @@
 # Mappa Mundi — Implementation progress
 
+## Alpha Playtest Revision 1 — verification and review handoff
+
+Implementation commits: `15caab4` (canonical gameplay/content/tests) and `9fa20f6`
+(presentation/readability/tests). Final documentation follows on the same branch.
+
+This revision follows the first human Phase-10 playtest. It deliberately replaces
+the old bag, River lifecycle and Junction topology; it does not begin Phase 11.
+Rules version is `alpha-playtest-r1`, save schema **2**. Incompatible older active-run
+saves are rejected clearly, without migration or new Save/Continue presentation.
+
+### Accepted Phase-10 closeout
+
+Accepted tip `f1e841739411770e161bd30d774bc45a5b376c68` was clean and matched origin.
+Fresh verification before and after normal [PR #8](https://github.com/CrackedEggProductions/Mappa-Mundi/pull/8)
+merge passed **1167 gameplay tests, 86 presentation tests and 223 script parses**,
+with zero failures or Godot diagnostics. Merged main is
+`7055150c81a98a078696f8520e4e6746eb22ecb7`. `alpha-playtest-r1` was created and pushed
+from that clean main. This revision remains on its review branch.
+
+### Canonical changes and authoritative services
+
+The Complete Rules and Implementation Specification now describe the revision in
+place, with an explicit supersession section. Open Fields and Road End remain legacy
+definitions/art but cannot enter player inventory, rewards or emergency injection.
+Pure River definitions are setup-only. Emergency replenishment uses Hamlet Edge,
+Road Junction and Forest Edge.
+
+| Starting design | Copies | Starting design | Copies |
+| --- | ---: | --- | ---: |
+| Forest Edge | 4 | Forest Bend | 3 |
+| Forest Belt | 2 | Straight Road | 4 |
+| Bending Road | 4 | Road Junction | 4 |
+| Hamlet Edge | 4 | Settlement Corner | 3 |
+| Settlement Throughway | 2 | Settlement Gate | 3 |
+| Riverside Hamlet | 2 | Woodland Road | 2 |
+| Woodland River | 2 | Settlement Corner Gate | 2 |
+| Settlement Road Bend | 2 | Settlement Road Throughway | 2 |
+
+The exact total is **45 unique physical player copies**, including the two explicit
+Act-I overlay exceptions. Normal rewards grant those Specialized/Hybrid overlays
+two copies; Masterwork remains eligible and grants three.
+
+`EnvironmentalRiverService` selects one of 24 validated paths using one RunRNG
+selection before bag randomization and Act-I Charter selection. Founding's South
+River joins five Runs, two separated Bends and a final End: nine connected River
+tiles, eight setup-acquired copies, no collisions, normal placements or rewards.
+Seed 1 bends at `(0,2)` and `(4,2)`; seed 42 at `(0,3)` and `(3,3)`; seed 1010 at
+`(0,3)` and `(2,3)`. Saves retain physical coordinates/orientations rather than
+regenerating a path. River remains current topology with no completion/reopening.
+
+`IntersectionHubState/Service` extends the existing Trade Network graph. Junction
+sockets terminate attached Roads without creating a Road component. Separate Roads
+can complete simultaneously, stay separate lineages, and share commercial reach
+through Junction, Settlement and Ferry links. Junction-to-Junction links add zero
+length. Stable hub IDs, attachment queries, genealogy and serialization are covered.
+
+Riverside Hamlet and Woodland River use existing Transformation query/command paths
+on occupied Run/Bend cells. Bank matching is validated before mutation; River and
+Development capacity survive. `RiverInteractionService` queries active overlays,
+Ports and Bridges, and creation history. Setup geography and Ferry Rights do not count.
+Port/Bridge/Ferry regressions include generated environmental River targets.
+
+Forest base Ecology now pays new Forest tiles, newly paid distinct River tiles and
+the existing undeveloped bonus. Paid River IDs survive Forest merger/recompletion;
+same-tile and adjacent duplicate contact count once. Riverkeeper targets unfinished
+River-touching Forest and adds full current contact Ecology. Harbormaster targets
+unfinished River-touching Settlement and pays same-River Settlements/Ports, including
+its host. Generic Stewards exclude River. Training and Relay reuse central eligibility.
+
+Living Landscape uses interaction creation history; Stewardship of Land and Living
+Heritage use two/three active interactions. River Stewardship checks genuine
+Settlement/Forest completion touching three River tiles, once per run in the existing
+fourth milestone slot. Final River statistics report connected size, not completion.
+
+### Presentation and playtest evidence
+
+New Run displays and frames all nine environmental tiles. Occupied-cell overlay
+preview/Confirm flows preserve River geometry. Inspection identifies environment,
+interactions and Junction termination/Trade behavior. `RichTextLabel.default_color`
+in the parchment theme supplies dark ink for Charter progress, forecast and exact
+Grand requirements; an inherited-theme regression test protects the fix.
+
+Native 1280×720 captures of the opening map and Charter panel were visually inspected.
+Automated viewport mouse input passed **12 checks, zero failures**. These are automated
+checks, not a second human playtest. Use [the revision checklist](docs/ALPHA_PLAYTEST_R1.md)
+for that next review. Existing art and fallbacks are unchanged; no images were generated.
+
+The [100-seed closure diagnostic](docs/PLAYTEST_REVISION_1_DIAGNOSTIC.md) completed
+1,800 Act-I placements: **100%** of runs completed at least one feature, **median 6**,
+**mean 5.72**, range 2–9. Totals: **263 Roads, 191 Settlements, 118 Forests**. Its
+deterministic policy and all seed counts/fingerprints are retained in the linked JSON.
+This tests available closure under a deliberate heuristic, not human completion rates.
+
+Five complete scripted three-Act runs cover failure, Victory, Exemplary Victory,
+deterministic replay and save/load at every pending boundary. Two additional natural-bag
+runs use the same presentation/controller command path as mouse play, without fixture
+acquisitions or direct RunState edits. Seed-25 scripted fingerprints:
+
+- No victory, score 162: `ed05682574b36f6322464c22c5af72ff88d8bd16dbd445a7f6f77e061d7b170a`
+- Victory/replay/save-load, score 176: `9a526c7cf19f3418214eabced9baa7ecb2be4bcd7463bba9bc93dd085e4d4e3b`
+- Exemplary, score 190: `48cd1051e7459f3afec1c20eb669585d8b071864142ab48804c1e86c7d95d87e`
+
+### Superseded tests and boundaries
+
+Final verification on 2026-09-27:
+
+| Check | Result |
+| --- | --- |
+| `./tests/run_tests.sh` | **1241 passed, 0 failed** |
+| Native parse/import gate | **232 scripts; no diagnostics/warnings** |
+| `./tests/run_presentation_tests.sh` | **95 passed, 0 failed** |
+| Automated graphical mouse smoke | **12 checks, 0 failures at 1280×720** |
+| Scripted full-run suite | **14 scenarios, including five complete three-Act runs** |
+| Natural-bag controller harness | **Two complete 66-placement runs; identical fingerprints** |
+| Closure diagnostic | **100 seeds; 1,800 normal placements; 94,937 options evaluated** |
+
+Gameplay logs: `builds/verification/run-JQqY64cj`. Presentation logs:
+`builds/verification/presentation-3ODsDFAW`. Both wrappers exited zero and reject
+Godot error/warning lines. This is a net increase of 74 gameplay and nine presentation
+tests over accepted Phase 10, alongside rewritten superseded assertions.
+The two seed-1010 natural-bag controller runs share fingerprint
+`bac650b865be01ae1fd3f77649f4ff35bce439b25c5ebf91cbdf0b9b9cd510e0`.
+
+Old tests asserting the 55-copy bag, drawable Field/endpoint/River pieces, continuous
+Junction Roads, River completion/scoring, old River Specialist targets, River milestone
+or Charter River-size/completion requirements were rewritten with explicit replacement
+coverage. Unaffected assertions remain protected; synthetic geometry fixtures are
+separate from legal player inventories. Existing completion snapshots, FIFO resolution,
+threshold/reward order, Act transitions, score formula and victory outcomes are unchanged.
+
+No unresolved gameplay ambiguity remains. Phase 11 Save/Continue, Phase 12 exports,
+new art and unrelated balancing were not started. The branch is not merged automatically.
+
 ## Phase 10 — playable alpha; ready for human review
 
 Implementation checkpoint: `77369d147d76a52bff8f2200b669aca469ab9b29`.

@@ -1,10 +1,47 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 10 — playable presentation**.
+GDScript**. Current implementation: **Alpha Playtest Revision 1**, after Phase 10.
 Launch New Run to play all three Acts with the mouse. The authoritative engine also
 runs all 66 placements, rewards, transitions and final results headlessly. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
+
+## Alpha Playtest Revision 1
+
+This is a core-loop revision after the first human Phase-10 playtest, not Phase 11.
+The canonical Complete Rules and Implementation Specification have been rewritten
+for rules version `alpha-playtest-r1`, save schema **2**. Older active-run development
+saves are rejected; no migration or player-facing Save/Continue UX is included.
+
+New Run places Founding plus an eight-tile environmental River before shuffling the
+**45-copy player bag** and selecting the Act-I Charter. The River has five Runs, two
+Bends and one End, selected from 24 valid templates with one RunRNG choice. The saved
+board is authoritative; loading never regenerates it. Pure River pieces, Open Fields
+and Road End are excluded from player inventory/reward/rescue pools.
+
+Road Junctions terminate separate physical Roads while connecting Trade Networks.
+Their three Road sockets create no Road component, length or tile-scoring credit.
+Riverside Hamlet adds a Settlement bank to an occupied River Run; Woodland River adds
+Forest banks to an occupied River Bend. Both preserve River and use one normal turn.
+
+River no longer completes or scores. Forest completion gains +1 Ecology per newly
+paid distinct River contact, preserving base history. Riverkeeper works River-touching
+Forest; Harbormaster works River-touching Settlement and counts same-River Settlements
+and Ports. Generic Stewards cannot occupy River. Three affected Charters use interaction
+creation/current counts. River Stewardship awards the River milestone for genuine
+Settlement/Forest completion touching three River tiles.
+
+The opening camera frames the environment; interaction previews target occupied
+squares. River/Junction inspection explains the revised mechanics. Parchment Charter
+and Grand Charter panels use dark ink through the correct RichTextLabel theme property.
+
+See [the revision playtest checklist](docs/ALPHA_PLAYTEST_R1.md). The diagnostic script
+`tests/scenarios/revision_completion_diagnostic.gd` measures a documented deterministic
+closure heuristic. The [100-seed report](docs/PLAYTEST_REVISION_1_DIAGNOSTIC.md) records
+100% with at least one Act-I completion, median 6 and mean 5.72; these are not human
+completion rates. Phase-specific
+sections below retain earlier architectural milestones; the revised canonical rules
+supersede their old balance/lifecycle descriptions.
 
 ## Specifications
 
@@ -145,10 +182,10 @@ The current Phase-9 profile adds the exact ten Relics and nine Charters; central
 domain services own all behavior. Earlier profiles remain regression fixtures.
 
 The separate `homestead_content_manifest.tres` and `homestead_run_config.tres`
-provide all 21 Act-I Expansion designs, the Founding Tile, exact 55-copy starting
-composition, hand/Reserve capacities and emergency set. Load this profile with
+retain the legacy 22-design catalogue, with 16 player designs in the exact 45-copy
+starting bag, eight setup-only River copies beside Founding, and the revised emergency set. Load this profile with
 `ContentRegistry.load_homestead()`. The original minimal profile remains available
-for Phase-0 regressions; the bootstrap now loads Phase 7. Both profiles reject
+for Phase-0 regressions; the bootstrap loads the complete Phase-9 content profile with Revision-1 rules. Both profiles reject
 unsupported content.
 Canonical base orientations and explicit internal relationships are documented in
 [the content notes](content/tiles/homestead/README.md).
@@ -308,7 +345,8 @@ exact logs, genealogy and anti-farming evidence.
 
 Load `ContentRegistry.load_phase_five()` to expose the 22 existing Expansion
 designs and nine Development/Upgrade designs. `load_homestead()` preserves the
-historical 22-design profile. Both use the exact same 55-Expansion starting bag.
+historical 22-design catalogue. Both now use the revised 45-copy player bag,
+including the two explicit Act-I River overlay exceptions.
 Development acquisition is currently controlled by scenario helpers; rewards,
 automatic seeding and Act transitions remain deferred.
 
@@ -361,7 +399,7 @@ was merged into main at `8d0074df5bda0e03edb49d077fd07b0af8d1b0f2`.
 ## Headless Transformations
 
 Load `ContentRegistry.load_phase_six()` for the 34-design profile. The initial
-Homestead bag remains exactly 55 Expansion copies; controlled scenarios acquire
+Homestead bag now contains exactly 45 player copies, including River overlays; controlled scenarios acquire
 Urban Expansion (Act II), Bridge and Rewilding (Act III) directly. There are no
 reward offers, automatic seeding or Act transitions.
 
