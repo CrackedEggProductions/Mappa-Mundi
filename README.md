@@ -1,8 +1,9 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Phase 9 — Charters, Acts and complete three-Act run**.
-All 66 normal placements, Charter rewards, transitions and final results run headlessly; the application remains a minimal bootstrap. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
+GDScript**. Current implementation: **Phase 10 — playable presentation**.
+Launch New Run to play all three Acts with the mouse. The authoritative engine also
+runs all 66 placements, rewards, transitions and final results headlessly. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
 
 ## Specifications
@@ -28,9 +29,16 @@ godot --editor --path .
 godot --path .
 ```
 
-The bootstrap loads and validates static content and shows a short status screen.
-The window is resizable; F11 toggles fullscreen. The interface baseline is
-1920×1080, with a 1280×720 initial/minimum window size.
+The default scene opens New Run with an optional integer seed. Select a hand tile,
+choose a highlighted target or exact option, then Confirm. Rotate and Cancel remain
+local previews. Store sends a hand tile to Reserve; Survey spends a charge. Required
+choices appear in a blocking panel. Every decision has a visible mouse control.
+
+Wheel zooms; middle/right drag pans; Center / Fit Board frames the map. Optional
+shortcuts: 1/2/3 select, Q/E rotate, Enter confirms, Escape cancels, F fits, F11
+toggles fullscreen. The window is resizable; layout targets 1920×1080 and remains
+usable at 1280×720. [Playtest checklist](docs/PHASE_10_PLAYTEST.md) describes the
+full run and current limitations. Save & Quit/Continue UX remains Phase 11.
 
 ## Tests
 
@@ -555,5 +563,57 @@ The complete-run fixture controls tile acquisition and one initial training rewa
 all placements, scoring, selections, rewards and transitions use real rules. Five
 66-placement runs cover failure, Victory, Exemplary Victory, deterministic replay
 and save-at-every-boundary replay. This is an integration proof, not a balance or
-human-play optimization claim. Presentation UI, Save & Quit/Continue UX and export
-acceptance remain later phases; no art work belongs to this gameplay branch.
+human-play optimization claim. Phase 10 adds the playable interface described
+below. Save & Quit/Continue UX and export acceptance remain later phases.
+
+
+## Playable presentation architecture
+
+The existing `presentation/scenes/bootstrap.tscn` is the default entry and gameplay
+scene. `GameController` owns one headless-compatible `GameSession`, which delegates
+commands unchanged to `RulesEngine`. `ResolutionResult` captures validation,
+ordered audit deltas and Track changes after synchronous rules resolution.
+Presentation never determines topology, legality, scoring, offers or Act order.
+
+`BoardView` renders signed grid coordinates as 192-pixel `TileView` nodes beneath a
+Camera2D in a SubViewport. World parchment has no gaps/card shadows. Base artwork
+uses exact quarter turns. Effective geometry overrides misleading transformed art;
+Development/Upgrade badges and assigned-piece markers draw above it. Legal targets
+and ghosts are separate, disposable layers. Inspection uses authoritative feature
+and Trade Network queries.
+
+`TileArtRegistry` caches thirteen approved production anchors and seven reference
+images. Founding and Road End use clear canonical fallbacks; the twelve Development,
+Upgrade and Transformation designs have generated thumbnails/badges. The source
+archive is unchanged. [Exact mappings](presentation/assets/README.md) include source
+orientation corrections. No image generation or seam-polish work occurred.
+
+`PendingChoicePresenter` supports all eleven current kinds, including training-piece
+selection and sequential Grand Survey. Buttons preserve saved order, IDs and state
+revision. A stale choice/preview is rejected by the engine and the view resynchronizes.
+Required choices block normal input; mouse double clicks cannot accept a fresh next
+offer accidentally. Assignment and Relay expose only persisted legal targets.
+
+`PresentationQueries` supplies HUD/inspection text and frozen final statistics.
+Grand secrecy uses `visible_grand()` exclusively. Transition/reveal notices describe
+completed authoritative events; dismissing them changes no run state. Results retain
+the map, allow returning to statistics and starting a fresh run, and disable gameplay.
+
+Run the independent presentation tests:
+
+```sh
+./tests/run_presentation_tests.sh
+godot --headless --path . --script res://tests/scenarios/presentation_demo.gd
+godot --path . --script res://tests/scenarios/presentation_mouse_smoke.gd
+```
+
+The controller harness plays two complete natural-bag runs through actual Confirm
+and choice handlers without injected tiles or direct RunState changes. Graphical
+mouse-event smoke coverage supplements it. Neither is a claim that a human completed
+the manual checklist. Gameplay regressions still run independently with
+`./tests/run_tests.sh`; no textures or presentation scenes are required by rules.
+
+Simple fallback art, badges, typography and cue polish remain alpha quality.
+Save/Continue/recovery UX and release exports remain later phases. Runtime image
+loading reads the ignored art archive; Phase-12 packaging must explicitly stage or
+include the selected sources. The presentation branch is left unmerged for review.
