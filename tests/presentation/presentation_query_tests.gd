@@ -102,7 +102,7 @@ func _results(outcome: StringName, expected: String) -> bool:
 	state.final_result.tracks = [123, 234, 345, 174]
 	state.final_result.grand_charter_id = &"charter.grand_living_heritage"
 	state.final_result.statistics = {"largest_settlement_established": 8, "longest_road_completed": 9,
-		"largest_forest_completed": 10, "longest_river_completed": 11, "run_seed": 999,
+		"largest_forest_completed": 10, "longest_river_size": 11, "run_seed": 999,
 		"relics_acquired": ["relic.boundary_stones"], "relics_equipped": [], "relics_replaced": ["relic.boundary_stones"],
 		"specialist_training": [{"role_definition_id": "specialist.merchant", "history": [{"act": 2}]}],
 		"charters": [{"charter_id": "charter.a1_growing_realm", "overall_state": "fulfilled"}]}
@@ -110,7 +110,7 @@ func _results(outcome: StringName, expected: String) -> bool:
 	expect_true(text.contains(expected), "Authoritative outcome displayed")
 	for required: String in ["Final score: 987", "Population: 123", "Trade: 234", "Culture: 345", "Ecology: 174",
 		"Largest Settlement established: 8", "Longest Road completed: 9", "Largest Forest completed: 10",
-		"Longest River completed: 11", "Run seed: 999", "Merchant", "Growing Realm", "Relics replaced: Boundary Stones"]:
+		"Longest connected River: 11", "Run seed: 999", "Merchant", "Growing Realm", "Relics replaced: Boundary Stones"]:
 		expect_true(text.contains(required), "Stored result field shown: " + required)
 	return true
 

@@ -3,15 +3,15 @@ extends RefCounted
 ## Presentation wording only. The canonical services still calculate every effect.
 
 const DESCRIPTIONS: Dictionary = {
-	&"": "On completion: Road +2 Trade; Settlement +2 Population; Forest or River +2 Ecology; Monastery-family enclosure +2 Culture. Then returns.",
+	&"": "On completion: Road +2 Trade; Settlement +2 Population; Forest +2 Ecology; Monastery-family enclosure +2 Culture. Rivers are environment, not assignment targets. Then returns.",
 	&"specialist.merchant": "Road. On completion, +2 Trade per distinct Settlement beyond the first in its full Trade Network.",
 	&"specialist.cartographer": "Road. On completion, +1 Trade per genuinely new Road tile added after assignment. Absorbed old tiles do not count; training in place starts growth credit at training.",
 	&"specialist.architect": "Settlement. On completion, +2 Culture per distinct Development family. Upgrades count as their base family.",
 	&"specialist.homesteader": "Settlement. On completion, +1 Population per distinct touching Field tile, in addition to base support.",
 	&"specialist.naturalist": "Forest. On completion, +1 Ecology per Forest tile if no ordinary Development disqualifies it. Forester’s Lodge is allowed.",
 	&"specialist.forester": "Forest. On completion, +1 Ecology per genuinely new Forest tile after assignment. Absorbed old tiles do not count; training in place starts growth credit at training.",
-	&"specialist.riverkeeper": "River. On completion, +1 Ecology per distinct touching Forest tile, in addition to base contact scoring.",
-	&"specialist.harbormaster": "River touching a Settlement. On completion, +2 Trade per touching Settlement, plus +1 for each of those with a Port.",
+	&"specialist.riverkeeper": "Forest touching River. On Forest completion, +1 Ecology per distinct current River tile contact, in addition to base contact scoring.",
+	&"specialist.harbormaster": "Settlement touching River. On Settlement completion, +2 Trade per distinct Settlement touching the same connected River system, including its host, plus +1 for each of those with a Port.",
 	&"relic.boundary_stones": "Once per Act, an Expansion may ignore exactly one Field/Forest mismatch. That edge remains a hard boundary. All other edges must match.",
 	&"relic.surveyors_compass": "On the first normal Survey of the Act, inspect up to three next bag tiles and choose a replacement. Return the others and shuffle. Grand Survey does not trigger this.",
 	&"relic.wayfarers_satchel": "Gain a second Reserve slot. Cannot be replaced while the extra slot would strand a tile.",

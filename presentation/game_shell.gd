@@ -171,6 +171,8 @@ static func button(value: String, parent: Node) -> Button:
 static func parchment_theme() -> Theme:
 	var result: Theme = Theme.new()
 	result.default_font_size = 22
+	# RichTextLabel uses default_color, unlike Label's font_color.
+	result.set_color("default_color", "RichTextLabel", Color("30271e"))
 	for kind: String in ["Label", "Button", "OptionButton", "RichTextLabel", "LineEdit"]:
 		result.set_color("font_color", kind, Color("30271e"))
 		result.set_color("font_hover_color", kind, Color("30271e"))

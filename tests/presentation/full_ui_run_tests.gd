@@ -9,7 +9,7 @@ func tests() -> Array[Callable]:
 	return [natural_bag_completes_three_acts, exact_limits_and_real_transitions,
 		midpoint_reveal_waits_for_input, final_placement_does_not_refill,
 		complete_controller_replay_is_deterministic, all_choice_buttons_make_progress,
-		completed_map_results_navigation]
+		completed_map_results_navigation, revised_opening_environment, river_remains_environment]
 
 
 static func play(seed_value: int = 1010) -> Dictionary:
@@ -17,6 +17,11 @@ static func play(seed_value: int = 1010) -> Dictionary:
 	var tree: SceneTree = Engine.get_main_loop() as SceneTree
 	tree.root.add_child(controller)
 	controller.start_run(seed_value)
+	var opening_cells: int = controller.session.state.expansion.board.cells.size()
+	var opening_copies: Dictionary = {}
+	for copy: TileCopyState in controller.session.state.tile_copies:
+		if copy.acquisition_source == &"homestead_starting_bag":
+			opening_copies[copy.definition_id] = int(opening_copies.get(copy.definition_id, 0)) + 1
 	var counts: Array[int] = [0, 0, 0]
 	var turns: Array[Dictionary] = []
 	var choices: Array[StringName] = []
@@ -62,7 +67,9 @@ static func play(seed_value: int = 1010) -> Dictionary:
 	var trace: Dictionary = {"state": final_state, "counts": counts, "turns": turns,
 		"choices": choices, "errors": errors, "transitions": transitions, "cycles": cycles,
 		"fingerprint": StateNormalizer.fingerprint(final_state),
-		"results_visible": controller.results_active}
+		"results_visible": controller.results_active, "opening_cells": opening_cells,
+		"opening_copies": opening_copies}
+	print("FULL UI RUN: seed=", seed_value, " placements=", counts, " fingerprint=", trace.fingerprint)
 	controller.free()
 	return trace
 
@@ -190,4 +197,30 @@ func completed_map_results_navigation() -> bool:
 	expect_true(controller.results_active, "Mouse Results control restores final overlay")
 	expect_equal(StateNormalizer.fingerprint(state), before, "Both views preserve final state exactly")
 	controller.free()
+	return true
+
+
+func revised_opening_environment() -> bool:
+	var trace: Dictionary = _run()
+	expect_equal(trace.opening_cells, 9, "New Run displays Founding plus eight generated environmental tiles")
+	var count: int = 0
+	for value: int in trace.opening_copies.values():
+		count += value
+	expect_equal(count, 45, "Controller starts the revised forty-five-copy player inventory")
+	for forbidden: StringName in [&"tile.open_fields", &"tile.road_end", &"tile.river_end", &"tile.river_run", &"tile.river_bend"]:
+		expect_true(not trace.opening_copies.has(forbidden), "Removed/setup design is absent from initial player copies: " + String(forbidden))
+	return true
+
+
+func river_remains_environment() -> bool:
+	var state: RunState = _run().state
+	var rivers: int = 0
+	for feature: CurrentFeature in TopologyService.rebuild(state):
+		if feature.feature_type == DomainTypes.FeatureType.RIVER:
+			rivers += 1
+			expect_equal(feature.coordinates.size(), 9, "Entire controller run preserves the setup River spine")
+			expect_true(not state.features.lineage(feature.lineage_id).completed, "Environmental River has no completed lifecycle")
+	for record: FeatureCompletionRecord in state.features.completions:
+		expect_true(record.feature_type != DomainTypes.FeatureType.RIVER, "Controller never announces or resolves River completion")
+	expect_equal(rivers, 1, "Exactly one connected River survives all three Acts")
 	return true

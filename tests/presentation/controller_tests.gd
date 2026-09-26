@@ -185,7 +185,7 @@ func boundary_stones_explicit_preview() -> bool:
 	var fixture: RefCounted = Geometry.new()
 	var content: ContentRegistry = fixture._content()
 	var state: RunState = fixture._state(content)
-	var copy_id: int = Acquisition.acquire_hand(state, &"tile.open_fields")
+	var copy_id: int = Acquisition.acquire_hand(state, &"tile.hamlet_edge")
 	var controller: GameController = _controller()
 	controller.attach_session(GameSession.new(state, content))
 	controller.select_copy(copy_id)
@@ -354,7 +354,7 @@ func results_overlay_valid_exemplary() -> bool:
 
 func _assert_completed_results(outcome: int, title: String) -> bool:
 	var content: ContentRegistry = ThreeActs.content()
-	var state: RunState = ThreeActs.scripted(content, 212, outcome).state
+	var state: RunState = ThreeActs.scripted(content, ThreeActs.RUN_SEED, outcome).state
 	var controller: GameController = _controller()
 	controller.attach_session(GameSession.new(state, content))
 	var before: String = StateNormalizer.fingerprint(state)

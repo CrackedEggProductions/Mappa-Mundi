@@ -29,7 +29,7 @@ func founding_view() -> bool:
 	var state: RunState = HomesteadRunFactory.create(10, content)
 	var board: BoardView = BoardView.new()
 	board.sync(state, content, TileArtRegistry.new())
-	expect_equal(board.tiles.size(), 1, "One view per occupied square")
+	expect_equal(board.tiles.size(), 9, "Founding and eight environmental River squares are visible")
 	expect_equal(board.tiles[Vector2i.ZERO].position, Vector2.ZERO, "Founding origin is centered")
 	expect_true(board.tiles[Vector2i.ZERO].mechanical_visible, "Founding uses readable fallback")
 	board.free()
@@ -199,7 +199,11 @@ func camera_fit() -> bool:
 	var board: BoardView = BoardView.new()
 	board.sync(state, content, TileArtRegistry.new())
 	board.fit_board(Vector2(800, 600))
-	expect_equal(board.camera.position, Vector2(-192, -288), "Fit includes negative board extents")
+	for tile: TileView in board.tiles.values():
+		var center: Vector2 = (tile.position - board.camera.position) * board.camera.zoom + Vector2(400, 300)
+		var half: float = BoardView.TILE_SIZE * board.camera.zoom.x / 2.0
+		expect_true(center.x - half >= 0 and center.x + half <= 800 and center.y - half >= 0 and center.y + half <= 600,
+			"Fit includes every environmental tile and negative board extent")
 	expect_true(board.camera.zoom.x >= BoardView.MIN_ZOOM and board.camera.zoom.x <= 2.0, "Fit uses bounded zoom")
 	board.free()
 	return true

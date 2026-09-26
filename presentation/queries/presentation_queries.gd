@@ -8,14 +8,14 @@ const CONDITION_NAMES: Dictionary = {
 	"settlement_completions": "Genuine Settlement completions",
 	"road_completions": "Genuine Road completions",
 	"forest_completions": "Genuine Forest completions",
-	"river_completions": "Genuine River completions",
+	"river_interactions_created": "River interactions created",
 	"enclosure_completions": "Monastery-family completions",
 	"network_settlements": "Settlements in a qualifying Trade Network",
 	"historically_completed_road": "Roads with genuine completion history",
 	"market_settlements": "Current Settlements with Market family",
 	"settlement_size": "Current Settlement size",
 	"forest_size": "Current Forest size",
-	"river_size": "Current River size",
+	"active_river_interactions": "Current active River interactions",
 	"developments_on_size_qualified_settlement": "Developments in that size-qualified Settlement",
 	"currently_established_settlement_size": "Currently completed Settlement size",
 	"families_on_established_size_qualified_settlement": "Distinct Development families in that completed Settlement",
@@ -98,6 +98,10 @@ static func inspect_tile(state: RunState, content: ContentRegistry, coordinate: 
 	var definition: TileDefinition = content.get_tile(cell.definition_id)
 	var lines: Array[String] = [definition.display_name if definition != null else "Tile",
 		"(%d, %d) · placed Act %d" % [coordinate.x, coordinate.y, cell.act_placed]]
+	if definition != null and definition.setup_environment:
+		lines.append("Setup environment — this River is landscape and does not complete.")
+	if cell.intersection_hub:
+		lines.append("Intersection hub — Roads terminate here; Trade continues through every connected arm. Adds no physical Road length.")
 	var edges: Array[String] = []
 	const DIRECTIONS: Array[String] = ["N", "E", "S", "W"]
 	for direction: int in range(cell.effective_edges.size()):
@@ -114,8 +118,12 @@ static func inspect_tile(state: RunState, content: ContentRegistry, coordinate: 
 			continue
 		var lineage: FeatureLineageState = state.features.lineage(feature.lineage_id)
 		var complete: bool = lineage != null and lineage.completed
+		var lifecycle: String = "environment" if feature.feature_type == DomainTypes.FeatureType.RIVER else (
+			"completed" if complete else "unfinished")
 		lines.append("%s · %d tiles · %s" % [ChoiceText.feature_name(feature.feature_type),
-			feature.coordinates.size(), "completed" if complete else "unfinished"])
+			feature.coordinates.size(), lifecycle])
+		if feature.feature_type == DomainTypes.FeatureType.RIVER:
+			_append_river_contacts(lines, state, feature)
 		for network: CurrentTradeNetwork in networks:
 			if feature.lineage_id in network.road_lineage_ids or feature.lineage_id in network.settlement_lineage_ids:
 				lines.append("Trade Network reaches %d distinct Settlements" % network.settlement_lineage_ids.size())
@@ -126,6 +134,27 @@ static func inspect_tile(state: RunState, content: ContentRegistry, coordinate: 
 				"completed" if enclosure.stage in enclosure.completed_stages else "unfinished"])
 			_append_pieces(lines, state, content, SpecialistRules.ENCLOSURE, enclosure.enclosure_id)
 	return "\n".join(lines)
+
+
+static func _append_river_contacts(lines: Array[String], state: RunState, river: CurrentFeature) -> void:
+	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
+	var settlements: Array[int] = SpecialistRules.touching_settlements(state, river, current)
+	var forests: int = 0
+	var river_tiles: Array[int] = []
+	for coordinate: Vector2i in river.coordinates:
+		river_tiles.append(state.expansion.board.get_cell(coordinate).base_tile_copy_id)
+	for feature: CurrentFeature in current:
+		if feature.feature_type != DomainTypes.FeatureType.FOREST:
+			continue
+		for id: int in FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.RIVER):
+			if id in river_tiles:
+				forests += 1
+				break
+	lines.append("River contacts: %d Settlements · %d Forests" % [settlements.size(), forests])
+	for interaction: Dictionary in RiverInteractionService.current(state):
+		if river.lineage_id in interaction["river_ids"]:
+			var at: Vector2i = interaction["coordinate"]
+			lines.append("River interaction: %s at (%d, %d)" % [String(interaction["kind"]).capitalize(), at.x, at.y])
 
 
 static func _append_pieces(lines: Array[String], state: RunState, content: ContentRegistry, type: int, id: int) -> void:
@@ -150,7 +179,8 @@ static func results_text(state: RunState, content: ContentRegistry) -> String:
 	lines.append("Grand Charter: %s — %s" % [_charter_name(content, result.grand_charter_id), _result_name(String(result.grand_charter_result))])
 	for record: Array in [["Largest Settlement established", "largest_settlement_established"],
 		["Longest Road completed", "longest_road_completed"], ["Largest Forest completed", "largest_forest_completed"],
-		["Longest River completed", "longest_river_completed"]]:
+		["Longest connected River", "longest_river_size"],
+		["Active River interactions", "river_interaction_count"]]:
 		lines.append("%s: %s" % [record[0], stats.get(record[1], 0)])
 	lines.append("\nCharter results")
 	for evaluation: Dictionary in stats.get("charters", []):
