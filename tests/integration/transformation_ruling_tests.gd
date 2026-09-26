@@ -52,9 +52,18 @@ func _abbey(content: ContentRegistry) -> RunState:
 
 
 func _surround(state: RunState, content: ContentRegistry) -> void:
-	for at: Vector2i in RING:
-		var forest: bool = at.y == CENTER.y
-		F.Previous.play(state, content, &"tile.forest_edge" if forest else &"tile.open_fields", at)
+	# Player-built Forest Edges replace the removed filler; outward sockets avoid
+	# creating an incompatible obligation inside the remaining enclosure ring.
+	var rotations: Array[int] = [0, 3, 1, 2, 2, 1, 0]
+	for index: int in range(RING.size()):
+		var id: int = F.Previous.acquire_hand(state, &"tile.forest_edge")
+		var placed: bool = false
+		for option: PlacementOption in F.Previous.options(state, content, id):
+			if option.coordinate == RING[index] and option.rotation == rotations[index]:
+				assert(RulesEngine.execute(state, content, F.command(option)).is_valid)
+				placed = true
+				break
+		assert(placed, "Canonical player tile must fill the intended enclosure neighbor")
 
 
 func bridge_shape_and_current_edges() -> bool:
@@ -204,7 +213,7 @@ func completed_abbey_stays_completed() -> bool:
 	var enclosure: EnclosureState = state.features.enclosures[0]
 	var history: Array[int] = enclosure.completion_ids.duplicate()
 	var culture: int = state.features.tracks.values[2]
-	F.Previous.play(state, content, &"tile.open_fields", Vector2i(2, 4))
+	F.Previous.play(state, content, &"tile.forest_edge", Vector2i(2, 4))
 	F.play(state, content, F.REWILD, Vector2i(2, 4), &"rewilding", 0)
 	expect_equal(enclosure.completed_stages, [&"abbey"], "Completed Abbey remains completed through later geometry changes")
 	expect_equal(enclosure.completion_ids, history, "No new Abbey stage or history record")

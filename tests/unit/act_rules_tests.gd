@@ -300,7 +300,7 @@ func final_no_refill() -> bool:
 func final_statistics_histories() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content, 3)
-	state.features.largest_completed_sizes = [15, 12, 11, 17]
+	state.features.largest_completed_sizes = [15, 12, 11, 0]
 	assert(RelicRules.acquire(state, content, RelicRules.BOUNDARY).is_valid)
 	state.relics.capacity = 1
 	assert(RelicRules.acquire(state, content, RelicRules.GREEN, RelicRules.BOUNDARY).is_valid)
@@ -312,7 +312,7 @@ func final_statistics_histories() -> bool:
 	expect_equal(stats.largest_settlement_established, 12, "Historical largest Settlement, not current board")
 	expect_equal(stats.longest_road_completed, 15, "Historical longest Road")
 	expect_equal(stats.largest_forest_completed, 11, "Historical largest Forest")
-	expect_equal(stats.longest_river_completed, 17, "Historical longest River")
+	expect_equal(stats.longest_river_size, 9, "Connected environmental River size, never a completion record")
 	expect_equal(stats.relics_acquired.size(), 2, "Acquired history includes replacement")
 	expect_equal(stats.relics_replaced, [String(RelicRules.BOUNDARY)], "Replaced history retained")
 	expect_equal(stats.relics_equipped, [String(RelicRules.GREEN)], "Currently equipped separate")
@@ -401,9 +401,8 @@ func _act_two_success(content: ContentRegistry, exceeded: bool) -> RunState:
 	for index: int in range(6):
 		Graph.add(state, Vector2i(10, index), [DomainTypes.EdgeType.FOREST,
 			DomainTypes.EdgeType.FIELD, DomainTypes.EdgeType.FOREST, DomainTypes.EdgeType.FIELD])
-		Graph.add(state, Vector2i(20, index), [DomainTypes.EdgeType.RIVER,
-			DomainTypes.EdgeType.FIELD, DomainTypes.EdgeType.RIVER, DomainTypes.EdgeType.FIELD])
 	Graph.reconcile(state)
+	preload("res://tests/unit/charter_rules_tests.gd").new()._river_interactions(state, 2)
 	return state
 
 

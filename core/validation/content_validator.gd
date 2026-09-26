@@ -60,12 +60,19 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 		if tile.definition_id in seen_ids:
 			return _invalid(&"duplicate_definition_id", "Definition IDs must be unique.", tile.definition_id)
 		seen_ids.append(tile.definition_id)
+		if tile.player_drawable != (tile.definition_id not in HomesteadContentValidator.NON_PLAYER_IDS) \
+				or tile.setup_environment != (tile.definition_id in HomesteadContentValidator.SETUP_RIVER_IDS) \
+				or tile.intersection_hub != (tile.definition_id == &"tile.road_junction"):
+			return _invalid(&"invalid_player_environment_metadata", "Player pools, setup-only geography and Junction hubs must match Revision 1.", tile.definition_id)
 		var tile_result: ValidationResult
 		if tile.tile_class != DomainTypes.TileClass.TRANSFORMATION \
 				and (not tile.transformation_kind.is_empty() or not tile.transformation_placement_modes.is_empty() \
 				or not tile.transformation_prerequisite_id.is_empty()):
 			return _invalid(&"unexpected_transformation_metadata", "Only Transformation designs declare Transformation metadata.", tile.definition_id)
-		if manifest.implementation_phase >= 6 and tile.tile_class == DomainTypes.TileClass.TRANSFORMATION:
+		if manifest.implementation_phase >= 2 and tile.definition_id in HomesteadContentValidator.RIVER_OVERLAY_IDS:
+			tile_result = HomesteadContentValidator.validate_tile(tile)
+			expansion_ids.append(tile.definition_id)
+		elif manifest.implementation_phase >= 6 and tile.tile_class == DomainTypes.TileClass.TRANSFORMATION:
 			tile_result = TransformationContentValidator.validate_tile(tile)
 		elif manifest.implementation_phase in [5, 6, 7, 8, 9] and tile.tile_class != DomainTypes.TileClass.EXPANSION:
 			tile_result = validate_development(tile)

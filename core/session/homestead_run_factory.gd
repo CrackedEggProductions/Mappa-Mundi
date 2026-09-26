@@ -1,12 +1,12 @@
 class_name HomesteadRunFactory
 extends RefCounted
-## Deterministic Homestead setup; Charter selection precedes the opening draw.
+## Setup RNG order: environmental path, starting bag shuffle, Charter selection, hand draw.
 
 
 static func create(seed_value: int, content: ContentRegistry) -> RunState:
 	assert(content.is_loaded(), "Load the validated Homestead content before setup.")
 	var config: RunConfig = content.get_config()
-	assert(config.starting_bag.size() == 21, "Homestead needs the complete starting manifest.")
+	assert(config.starting_bag.size() == 16, "Homestead needs the complete starting manifest.")
 	var state: RunState = RunState.new(seed_value)
 	state.expansion = ExpansionState.new()
 	state.expansion.survey_charges = config.initial_survey_charges
@@ -16,13 +16,16 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 	state.expansion.board.add_cell(BoardCellState.from_definition(
 		content.get_tile(&"tile.founding.homestead"), founding_id, Vector2i.ZERO, 0, 1, 0
 	))
-	var phase_nine: bool = content.get_charter_ids().size() == 9
-	if phase_nine:
-		FeatureResolutionService.initialize(state)
-		TradeNetworkService.initialize(state)
+	EnvironmentalRiverService.generate(state, content)
+	FeatureResolutionService.initialize(state)
+	TradeNetworkService.initialize(state)
+	if content.get_specialist_ids().size() == 8:
 		SpecialistRules.initialize(state)
+	if content.get_relic_ids().size() == 10:
 		state.relics = RelicState.new()
 		state.rewards = RewardState.new()
+	var phase_nine: bool = content.get_charter_ids().size() == 9
+	if phase_nine:
 		state.charters = CharterState.new()
 	# Definition order is explicit and sorted before the RNG-sensitive construction.
 	var entries: Array[StartingBagEntry] = config.starting_bag.duplicate()
@@ -39,14 +42,6 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 		state.expansion.hand.append(PhysicalTileRules.draw(state, config))
 	state.phase = GamePhase.Type.TURN_INPUT
 	StalemateRules.cycle_if_dead(state, content)
-	if not phase_nine:
-		FeatureResolutionService.initialize(state)
-		TradeNetworkService.initialize(state)
-		if content.get_specialist_ids().size() == 8:
-			SpecialistRules.initialize(state)
-		if content.get_relic_ids().size() == 10:
-			state.relics = RelicState.new()
-			state.rewards = RewardState.new()
 	InvariantValidator.assert_valid(state, content)
 	return state
 

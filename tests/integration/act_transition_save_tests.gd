@@ -22,7 +22,7 @@ func _prepare() -> void:
 	if not _trace.is_empty():
 		return
 	_content = F.content()
-	_trace = F.scripted(_content, 212, 1, true, 2)
+	_trace = F.scripted(_content, F.RUN_SEED, 1, true, 2)
 	for act: int in [1, 2]:
 		var initial: String = ""
 		for saved: Dictionary in _trace["saved_choices"]:
@@ -41,7 +41,10 @@ func _prepare() -> void:
 			assert(guard < 100, "Transition preparation must finish")
 			if state.pending_choice != null:
 				_execute_choice_only(state)
-			assert(ActRules.advance_one(state, _content).is_valid)
+				if state.pending_choice != null:
+					continue # Nested reward choices must finish before advancing transition.
+			var advanced: ValidationResult = ActRules.advance_one(state, _content)
+			assert(advanced.is_valid, advanced.user_message + str(advanced.debug_details))
 			if state.act_transition != null and state.act_transition.step > 2:
 				_checkpoints["%d:%d" % [act, state.act_transition.step]] = _save(state)
 

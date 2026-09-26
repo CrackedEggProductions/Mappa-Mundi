@@ -11,7 +11,7 @@ static func query_for_copy(state: RunState, content: ContentRegistry,
 	if copy == null:
 		return []
 	var definition: TileDefinition = content.get_tile(copy.definition_id)
-	if definition == null:
+	if definition == null or not definition.player_drawable:
 		return []
 	if definition.tile_class == DomainTypes.TileClass.TRANSFORMATION:
 		return TransformationPlacementQuery.query(state, content, copy_id)

@@ -134,8 +134,9 @@ func _final_act_pending(assign_piece: bool) -> bool:
 	Fixture.play(state, content, &"tile.straight_road", Vector2i.RIGHT, 1)
 	Fixture.decline(state, content)
 	for y: int in range(1, 17):
-		Fixture.play(state, content, &"tile.open_fields", Vector2i(1, y))
-		expect_true(state.pending_choice == null, "Field-only placements offer no Specialist target")
+		Fixture.play(state, content, &"tile.forest_edge", Vector2i(1, y), 1)
+		Fixture.decline(state, content)
+		expect_true(state.pending_choice == null, "Each local Forest opportunity resolves before the next placement")
 	expect_equal(state.expansion.normal_placements, 17, "Controlled Act-I scenario reaches penultimate placement")
 	Fixture.play(state, content, &"tile.straight_road", Vector2i(2, 0), 1)
 	expect_equal(state.expansion.normal_placements, 18, "Last Act placement committed exactly once")
@@ -178,7 +179,8 @@ func abbey_generic_assignment_uses_persistent_enclosure() -> bool:
 		expect_true(not SpecialistRules.role_eligible(state, role, 4, enclosure_id, TopologyService.rebuild(state)), "No trained alpha role can occupy Abbey")
 	var loaded: RunState = Fixture.load_copy(state, content)
 	Fixture.assign(loaded, content, 4, enclosure_id)
-	Fixture.play(loaded, content, &"tile.open_fields", center + Vector2i(-1, -1))
+	Fixture.play(loaded, content, &"tile.forest_edge", center + Vector2i(-1, -1))
+	Fixture.decline(loaded, content)
 	var piece_id: int = loaded.specialists.pieces[0].piece_id
 	var gain: int = 0
 	for event: FeatureHistoryRecord in loaded.features.history:

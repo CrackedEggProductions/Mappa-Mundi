@@ -12,16 +12,18 @@ func tests() -> Array[Callable]:
 		merchant_deduplicates_access, merchant_network_growth_is_not_scoring,
 		architect_deduplicates_upgrade_families, homesteader_counts_current_old_support,
 		naturalist_lodge_exception, naturalist_ordinary_development_disqualifies,
-		riverkeeper_counts_forest_tiles, harbormaster_requires_explicit_contact,
+		riverkeeper_counts_river_tiles, harbormaster_requires_explicit_contact,
 		harbormaster_counts_settlements_and_port_hosts, generic_monastery_snapshot,
 		completed_targets_excluded, growth_credits_only_new_target_components,
 		growth_excludes_foreign_postassignment_construction, forest_growth_excludes_absorbed_old_tiles,
 		snapshot_freezes_family_and_support_facts, effects_return_only_after_batch,
-		bonus_does_not_change_base_history, no_completion_no_specialist_fact]
+		bonus_does_not_change_base_history, no_completion_no_specialist_fact,
+		harbormaster_shared_river_unions_distinct_hosts, riverkeeper_stacks_and_recompletion_rechecks,
+		river_specialists_relay_to_revised_targets, generic_river_rejected]
 
 
 func generic_tracks_by_host() -> bool:
-	for type: int in range(5):
+	for type: int in [0, 1, 2, 4]:
 		var facts: Dictionary = _facts("", type)
 		var expected: Array[int] = [0, 0, 0, 0]
 		expected[[1, 0, 3, 3, 2][type]] = 2
@@ -119,36 +121,41 @@ func naturalist_ordinary_development_disqualifies() -> bool:
 	return true
 
 
-func riverkeeper_counts_forest_tiles() -> bool:
+func riverkeeper_counts_river_tiles() -> bool:
 	var state: RunState = _river_contacts()
-	var river: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.RIVER)
-	_bind(state, river, &"specialist.riverkeeper")
-	var count: int = FeatureContactService.support_ids(state, river, EDGE.FOREST).size()
-	expect_equal(count, 1, "Explicit hybrid Forest contact is one tile")
-	state.features.lineage(river.lineage_id).scored_forest_ids = FeatureContactService.support_ids(state, river, EDGE.FOREST)
-	expect_equal(_capture(state, [river.lineage_id])[0]["gains"][3], 1, "Base-paid Forest contact still contributes")
+	var forest: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.FOREST)
+	_bind(state, forest, &"specialist.riverkeeper")
+	var contact: Array[int] = FeatureContactService.support_ids(state, forest, EDGE.RIVER)
+	expect_equal(contact.size(), 1, "Explicit same-square River contact counts once")
+	state.features.lineage(forest.lineage_id).scored_river_ids = contact
+	expect_equal(_capture(state, [forest.lineage_id])[0]["gains"][3], 1, "Previously base-paid River still contributes current Specialist bonus")
+	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
+	expect_true(SpecialistRules.role_eligible(state, &"specialist.riverkeeper", TYPE.FOREST, forest.lineage_id, current), "River-touching Forest eligible")
+	expect_true(not SpecialistRules.role_eligible(state, &"specialist.riverkeeper", TYPE.RIVER, _at(state, Vector2i.ZERO, TYPE.RIVER).lineage_id, current), "River geography is never assigned")
+	state.expansion.board.get_cell(Vector2i.ZERO).relationships.clear()
+	expect_true(not SpecialistRules.role_eligible(state, &"specialist.riverkeeper", TYPE.FOREST, forest.lineage_id, current), "Non-River Forest ineligible")
 	return true
 
 
 func harbormaster_requires_explicit_contact() -> bool:
 	var state: RunState = _river_contacts()
-	var river: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.RIVER)
+	var settlement: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.SETTLEMENT)
 	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
-	expect_true(SpecialistRules.role_eligible(state, &"specialist.harbormaster", TYPE.RIVER, river.lineage_id, current), "Explicit River/Settlement relationship permits assignment")
+	expect_true(SpecialistRules.role_eligible(state, &"specialist.harbormaster", TYPE.SETTLEMENT, settlement.lineage_id, current), "River-touching Settlement permits assignment")
+	expect_true(not SpecialistRules.role_eligible(state, &"specialist.harbormaster", TYPE.RIVER, _at(state, Vector2i.ZERO, TYPE.RIVER).lineage_id, current), "Harbormaster no longer assigns to River")
 	state.expansion.board.get_cell(Vector2i.ZERO).relationships.clear()
-	expect_true(not SpecialistRules.role_eligible(state, &"specialist.harbormaster", TYPE.RIVER, river.lineage_id, current), "Coexisting geography alone is not contact")
+	expect_true(not SpecialistRules.role_eligible(state, &"specialist.harbormaster", TYPE.SETTLEMENT, settlement.lineage_id, current), "Coexisting geography alone is not contact")
 	return true
 
 
 func harbormaster_counts_settlements_and_port_hosts() -> bool:
 	var state: RunState = _river_contacts()
-	var river: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.RIVER)
 	var settlement: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.SETTLEMENT)
-	_bind(state, river, &"specialist.harbormaster")
-	expect_equal(_capture(state, [river.lineage_id])[0]["gains"][1], 2, "One touching Settlement gives two")
+	_bind(state, settlement, &"specialist.harbormaster")
+	expect_equal(_capture(state, [settlement.lineage_id])[0]["gains"][1], 2, "Host Settlement itself counts")
 	_overlay(state, Vector2i.ZERO, &"port", &"port", settlement.lineage_id)
 	_overlay(state, Vector2i.ZERO, &"port", &"port", settlement.lineage_id)
-	expect_equal(_capture(state, [river.lineage_id])[0]["gains"][1], 3, "Multiple Ports in one host count once")
+	expect_equal(_capture(state, [settlement.lineage_id])[0]["gains"][1], 3, "Multiple Ports in one host count once")
 	return true
 
 
@@ -247,7 +254,7 @@ func no_completion_no_specialist_fact() -> bool:
 func _facts(role: String, type: int = 0) -> Dictionary:
 	return {"piece_id": 1, "role_definition_id": role, "target_type": type,
 		"target_id": 1, "growth_count": 0, "size": 0, "network_settlement_count": 0,
-		"families": [], "field_count": 0, "forest_count": 0, "undeveloped": false,
+		"families": [], "field_count": 0, "river_count": 0, "undeveloped": false,
 		"touching_settlements": [], "port_settlements": []}
 
 
@@ -360,4 +367,71 @@ func _merger_growth(type: int, role: StringName) -> bool:
 	expect_equal(piece.assigned_act, original_act, "Commitment timing retained")
 	var gain_track: int = 1 if type == TYPE.ROAD else 3
 	expect_equal(_capture(state, [piece.assigned_target_id])[0]["gains"][gain_track], 1, "Scoring uses qualifying identities, not size subtraction")
+	return true
+
+
+func harbormaster_shared_river_unions_distinct_hosts() -> bool:
+	var state: RunState = _river_contacts()
+	var second: BoardCellState = Fixture.add(state, Vector2i.RIGHT, [EDGE.SETTLEMENT, EDGE.RIVER, EDGE.FIELD, EDGE.RIVER])
+	var relation: TileFeatureRelationship = state.expansion.board.get_cell(Vector2i.ZERO).relationships[0]
+	second.relationships.append(relation.duplicate(true) as TileFeatureRelationship)
+	second.relationships.append(relation.duplicate(true) as TileFeatureRelationship)
+	var remote: BoardCellState = Fixture.add(state, Vector2i(4, 0), [EDGE.SETTLEMENT, EDGE.RIVER, EDGE.FIELD, EDGE.RIVER])
+	remote.relationships.append(relation.duplicate(true) as TileFeatureRelationship)
+	Fixture.reconcile(state)
+	var host: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.SETTLEMENT)
+	var peer: CurrentFeature = _at(state, Vector2i.RIGHT, TYPE.SETTLEMENT)
+	_overlay(state, Vector2i.RIGHT, &"port", &"port", peer.lineage_id)
+	_bind(state, host, &"specialist.harbormaster")
+	var effects: Array[Dictionary] = _capture(state, [host.lineage_id])
+	expect_equal(effects[0]["touching_settlements"].size(), 2, "Host and peer on same connected River count; disconnected River excluded")
+	expect_equal(effects[0]["gains"][1], 5, "Two distinct settlements plus one Port host, duplicate contacts ignored")
+	return true
+
+
+func riverkeeper_stacks_and_recompletion_rechecks() -> bool:
+	var state: RunState = _river_contacts()
+	var forest: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.FOREST)
+	_bind(state, forest, &"specialist.riverkeeper")
+	Fixture.add(state, Vector2i.DOWN, [EDGE.FOREST, EDGE.FIELD, EDGE.FIELD, EDGE.FIELD])
+	var current: Array[CurrentFeature] = Fixture.reconcile(state)
+	SpecialistRules.remap_and_growth(state, current)
+	FeatureScoringService.resolve(state, current)
+	expect_equal(state.features.tracks.values[3], 6, "Two Forest tiles + River contact + preservation + Riverkeeper")
+	var lineage: FeatureLineageState = state.features.lineage(_at(state, Vector2i.ZERO, TYPE.FOREST).lineage_id)
+	expect_equal(lineage.scored_river_ids.size(), 1, "Base payment recorded once independently of Specialist bonus")
+	Fixture.set_geometry(state.expansion.board.get_cell(Vector2i.DOWN), [EDGE.FOREST, EDGE.FIELD, EDGE.FOREST, EDGE.FIELD])
+	Fixture.reconcile(state)
+	_bind(state, _at(state, Vector2i.ZERO, TYPE.FOREST), &"specialist.riverkeeper")
+	Fixture.add(state, Vector2i(0, 2), [EDGE.FOREST, EDGE.FIELD, EDGE.FIELD, EDGE.FIELD])
+	current = Fixture.reconcile(state)
+	SpecialistRules.remap_and_growth(state, current)
+	FeatureScoringService.resolve(state, current)
+	expect_equal(state.features.tracks.values[3], 10, "Later completion adds one new Forest + preservation + current Riverkeeper, no old River base payment")
+	return true
+
+
+func river_specialists_relay_to_revised_targets() -> bool:
+	for role: StringName in [&"specialist.riverkeeper", &"specialist.harbormaster"]:
+		var state: RunState = _river_contacts()
+		Fixture.add(state, Vector2i.LEFT, [EDGE.ROAD, EDGE.FIELD, EDGE.FIELD, EDGE.FIELD])
+		Fixture.reconcile(state)
+		var piece: SpecialistPieceState = state.specialists.pieces[0]
+		piece.role_definition_id = role
+		var returned: Dictionary = {"piece_id": piece.piece_id, "target_type": TYPE.ROAD,
+			"target_id": _at(state, Vector2i.LEFT, TYPE.ROAD).lineage_id}
+		var options: Array[Dictionary] = StewardRelayRules.options_for(state, returned)
+		expect_equal(options.size(), 1, "Exactly one eligible adjacent revised target")
+		expect_equal(options[0]["target_type"], TYPE.FOREST if role == &"specialist.riverkeeper" else TYPE.SETTLEMENT, "Relay retains redesigned role target")
+		state.expansion.board.get_cell(Vector2i.ZERO).relationships.clear()
+		expect_true(StewardRelayRules.options_for(state, returned).is_empty(), "Relay cannot invent River contact")
+	return true
+
+
+func generic_river_rejected() -> bool:
+	var state: RunState = _river_contacts()
+	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
+	var river: CurrentFeature = _at(state, Vector2i.ZERO, TYPE.RIVER)
+	expect_true(not SpecialistRules.role_eligible(state, &"", TYPE.RIVER, river.lineage_id, current), "Generic Steward cannot target River")
+	expect_true(not SpecialistRules.target_unfinished(state, TYPE.RIVER, river.lineage_id, current), "River is not an unfinished assignment feature")
 	return true

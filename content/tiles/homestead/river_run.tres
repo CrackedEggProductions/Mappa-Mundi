@@ -18,3 +18,6 @@ unlock_act = 1
 reward_class = 1
 canonical_edges = Array[int]([2, 0, 2, 0])
 feature_groups = Array[ExtResource("2_group")]([SubResource("Group_2")])
+
+player_drawable = false
+setup_environment = true

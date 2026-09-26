@@ -8,7 +8,7 @@ const TRACK = DomainTypes.TrackType
 
 func tests() -> Array[Callable]:
 	return [road_steward_completion, settlement_steward_completion, forest_steward_completion,
-		river_steward_completion, monastery_steward_completion,
+		river_geography_never_offers_steward, monastery_steward_completion,
 		placement_pauses_before_refill, decline_resumes_once, only_one_assignment,
 		unrelated_feature_excluded, completed_feature_excluded, completed_monastery_excluded,
 		housing_locality, market_locality, town_square_locality, port_locality,
@@ -47,7 +47,7 @@ func _generic(type: int, extension: StringName, at: Vector2i, rotation: int,
 
 func road_steward_completion() -> bool:
 	return _generic(TYPE.ROAD, &"tile.straight_road", Vector2i.RIGHT, 1,
-		&"tile.road_end", Vector2i(2, 0), 3, TRACK.TRADE)
+		&"tile.road_junction", Vector2i(2, 0), 3, TRACK.TRADE)
 
 
 func settlement_steward_completion() -> bool:
@@ -60,9 +60,13 @@ func forest_steward_completion() -> bool:
 		&"tile.forest_edge", Vector2i(-2, 0), 1, TRACK.ECOLOGY)
 
 
-func river_steward_completion() -> bool:
-	return _generic(TYPE.RIVER, &"tile.river_run", Vector2i.DOWN, 0,
-		&"tile.river_end", Vector2i(0, 2), 0, TRACK.ECOLOGY)
+func river_geography_never_offers_steward() -> bool:
+	var content: ContentRegistry = Fixture.content()
+	var state: RunState = Fixture.create(content)
+	var target: int = Fixture.member(state, Vector2i.ZERO, TYPE.RIVER)
+	var options: Array[Dictionary] = SpecialistRules.assignment_options(state, [{"target_type": TYPE.RIVER, "target_id": target}])
+	expect_true(options.is_empty(), "Environmental River never offers generic Steward assignment")
+	return true
 
 
 func monastery_steward_completion() -> bool:
@@ -72,7 +76,8 @@ func monastery_steward_completion() -> bool:
 	Fixture.activate(state)
 	Fixture.play(state, content, &"tile.development.monastery", center)
 	var piece_id: int = Fixture.assign(state, content, 4)
-	Fixture.play(state, content, &"tile.open_fields", center + Vector2i(-1, -1))
+	Fixture.play(state, content, &"tile.forest_edge", center + Vector2i(-1, -1))
+	Fixture.decline(state, content)
 	expect_equal(_specialist_gains(state, piece_id, TRACK.CULTURE), 2, "Eighth square completes assigned Monastery")
 	expect_equal(state.specialists.pieces[0].status, 0, "Monastery returns generic Steward")
 	_valid(state, content)
@@ -140,7 +145,7 @@ func unrelated_feature_excluded() -> bool:
 func completed_feature_excluded() -> bool:
 	var content: ContentRegistry = Fixture.content()
 	var state: RunState = Fixture.create(content)
-	Fixture.play(state, content, &"tile.road_end", Vector2i.RIGHT, 3)
+	Fixture.play(state, content, &"tile.road_junction", Vector2i.RIGHT, 3)
 	expect_true(state.pending_choice == null, "Closing Road cannot receive last-second assignment")
 	for piece: SpecialistPieceState in state.specialists.pieces:
 		expect_equal(piece.status, 0, "Available pieces never deploy automatically")
@@ -226,7 +231,8 @@ func abbey_preserves_assignment() -> bool:
 	Fixture.play(state, content, &"tile.development.abbey", center)
 	Fixture.decline(state, content)
 	expect_equal(state.specialists.pieces[0].assigned_target_id, enclosure, "Physical Upgrade preserves occupied persistent enclosure")
-	Fixture.play(state, content, &"tile.open_fields", center + Vector2i(-1, -1))
+	Fixture.play(state, content, &"tile.forest_edge", center + Vector2i(-1, -1))
+	Fixture.decline(state, content)
 	expect_equal(_specialist_gains(state, piece_id, TRACK.CULTURE), 2, "Existing generic assignment resolves with completed Abbey stage")
 	return true
 
@@ -413,7 +419,7 @@ func completed_return_round_trip() -> bool:
 	var state: RunState = Fixture.create(content)
 	Fixture.play(state, content, &"tile.straight_road", Vector2i.RIGHT, 1)
 	Fixture.assign(state, content, TYPE.ROAD)
-	Fixture.play(state, content, &"tile.road_end", Vector2i(2, 0), 3)
+	Fixture.play(state, content, &"tile.road_junction", Vector2i(2, 0), 3)
 	var fingerprint: String = StateNormalizer.fingerprint(state)
 	for iteration: int in range(3):
 		state = Fixture.load_copy(state, content)
@@ -465,8 +471,8 @@ func deterministic_pending_continuation() -> bool:
 	Fixture.assign(state, content, TYPE.ROAD)
 	Fixture.assign(loaded, content, TYPE.ROAD)
 	expect_equal(StateNormalizer.fingerprint(loaded), StateNormalizer.fingerprint(state), "Identical pending decision resumes same consequences/refill")
-	Fixture.play(state, content, &"tile.road_end", Vector2i(2, 0), 3)
-	Fixture.play(loaded, content, &"tile.road_end", Vector2i(2, 0), 3)
+	Fixture.play(state, content, &"tile.road_junction", Vector2i(2, 0), 3)
+	Fixture.play(loaded, content, &"tile.road_junction", Vector2i(2, 0), 3)
 	expect_equal(StateNormalizer.fingerprint(loaded), StateNormalizer.fingerprint(state), "Identical future completion keeps scores, IDs, RNG and histories equal")
 	return true
 
@@ -530,11 +536,11 @@ func bridge_growth_scores_on_later_completion() -> bool:
 	var piece_id: int = state.specialists.pieces[0].piece_id
 	Fixture.play(state, content, Fixture.Previous.BRIDGE, Vector2i.DOWN, -1, &"bridge")
 	Fixture.decline(state, content)
-	Fixture.play(state, content, &"tile.road_end", Vector2i(1, 2), 0)
+	Fixture.play(state, content, &"tile.road_junction", Vector2i(1, 2), 0)
 	Fixture.decline(state, content)
-	Fixture.play(state, content, &"tile.road_end", Vector2i(-1, 2), 0)
+	Fixture.play(state, content, &"tile.road_junction", Vector2i(-1, 2), 0)
 	Fixture.decline(state, content)
-	expect_equal(_specialist_gains(state, piece_id, TRACK.TRADE), 3, "Cartographer scores Bridge and two new caps, excluding every absorbed old component")
+	expect_equal(_specialist_gains(state, piece_id, TRACK.TRADE), 1, "Cartographer scores new Bridge only; Junction caps add no physical Road components")
 	expect_equal(state.specialists.pieces[0].status, 0, "Cartographer returns after later physical Road completion")
 	return true
 

@@ -24,6 +24,9 @@ func tests() -> Array[Callable]:
 		result.append(quantity_by_class.bind(reward_class))
 	for act: int in [1, 2, 3]:
 		result.append(masterwork_upgrade_unlocks.bind(act))
+	for type: int in [DomainTypes.FeatureType.SETTLEMENT, DomainTypes.FeatureType.FOREST]:
+		result.append(river_stewardship_three_contacts.bind(type))
+	result.append(river_stewardship_waits_for_genuine_completion)
 	return result
 
 
@@ -90,9 +93,9 @@ func thresholds_never_duplicate() -> bool:
 
 func _milestone_snapshot() -> CompletionSnapshot:
 	var facts: Array[Dictionary] = []
-	for type: int in [3, 2, 0, 1]:
+	for type: int in [2, 0, 1]:
 		facts.append({"feature_type": type, "lineage_id": type + 100, "total_size": 10,
-			"network_settlement_ids": [1, 2, 3, 4, 5]})
+			"network_settlement_ids": [1, 2, 3, 4, 5], "river_support_ids": [71, 72, 73]})
 	return CompletionSnapshot.new({"act": 1, "source_id": 0, "features": facts})
 
 
@@ -537,4 +540,27 @@ func reward_copy_can_be_next_draw() -> bool:
 			found = true
 			break
 	expect_true(found, "Newly awarded physical copy can occupy next replacement position after whole-bag shuffle")
+	return true
+
+
+func river_stewardship_three_contacts(type: int) -> bool:
+	var state: RunState = _state(_content())
+	var facts: Dictionary = {"feature_type": type, "lineage_id": 500, "total_size": 2, "river_support_ids": [91, 92]}
+	RewardRules.queue_completion(state, CompletionSnapshot.new({"act": 1, "features": [facts]}))
+	expect_true(state.rewards.milestone_flags.is_empty(), "Two River contacts cannot earn stewardship")
+	facts["river_support_ids"] = [91, 92, 93]
+	RewardRules.queue_completion(state, CompletionSnapshot.new({"act": 1, "features": [facts]}))
+	expect_equal(state.rewards.milestone_flags, [&"river"], "Settlement or Forest completion at three River contacts earns existing ordered milestone slot")
+	var before: int = state.rewards.history.size()
+	RewardRules.queue_completion(state, CompletionSnapshot.new({"act": 1, "features": [facts]}))
+	expect_equal(state.rewards.history.size(), before, "Later qualifying genuine completion cannot reaward stewardship")
+	return true
+
+
+func river_stewardship_waits_for_genuine_completion() -> bool:
+	var state: RunState = _state(_content())
+	RewardRules.queue_completion(state, CompletionSnapshot.new({"act": 1, "features": []}))
+	expect_true(state.rewards.milestone_flags.is_empty(), "Unfinished River-connected features do not enter genuine completion snapshot")
+	RewardRules.queue_completion(state, CompletionSnapshot.new({"act": 1, "features": [{"feature_type": 3, "lineage_id": 90, "total_size": 10, "river_support_ids": [1, 2, 3]}]}))
+	expect_true(state.rewards.milestone_flags.is_empty(), "Obsolete River-length completion cannot earn stewardship")
 	return true

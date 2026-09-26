@@ -14,18 +14,19 @@ func tests() -> Array[Callable]:
 
 func initial_charter_rng_order() -> bool:
 	var content: ContentRegistry = Fixture.content()
-	var state: RunState = HomesteadRunFactory.create(907, content)
+	var state: RunState = HomesteadRunFactory.create(Fixture.RUN_SEED, content)
 	var ids: Array[int] = []
 	for copy: TileCopyState in state.tile_copies:
 		if copy.acquisition_source == &"homestead_starting_bag":
 			ids.append(copy.tile_copy_id)
-	var expected: RunRNG = RunRNG.new(907)
+	var expected: RunRNG = RunRNG.new(Fixture.RUN_SEED)
+	expected.select_index(EnvironmentalRiverService.templates().size(), &"environmental_river_path")
 	var bag: Array[int] = expected.shuffled_ids(ids, &"starting_bag_shuffle")
 	var charter: StringName = expected.choose_definition_id(content.get_charter_ids(1), &"act_one_charter")
 	expect_equal(state.charters.act_one_id, charter, "One uniform sorted Charter choice follows starting bag shuffle")
 	expect_equal(state.expansion.hand, bag.slice(0, 3), "Opening draw uses the canonically shuffled physical bag")
-	expect_equal(state.current_rng_state, expected.current_state, "Setup uses precisely shuffle then Charter RNG")
-	expect_equal(state.rng.operation_count, 2, "No forecast or Grand selection during Act I")
+	expect_equal(state.current_rng_state, expected.current_state, "Setup uses precisely River selection, shuffle, then Charter RNG")
+	expect_equal(state.rng.operation_count, 3, "No forecast or Grand selection during Act I")
 	expect_true(state.charters.grand_id.is_empty(), "Grand remains unselected until Act II")
 	return true
 
@@ -44,7 +45,7 @@ func final_score_headroom() -> bool:
 
 func debug_query_is_pure() -> bool:
 	var content: ContentRegistry = Fixture.content()
-	var state: RunState = HomesteadRunFactory.create(907, content)
+	var state: RunState = HomesteadRunFactory.create(Fixture.RUN_SEED, content)
 	var before: String = StateNormalizer.fingerprint(state)
 	var view: Dictionary = PhaseNineDebug.inspect(state, content)
 	expect_equal(view["act"], 1, "Inspector exposes current Act")
@@ -77,7 +78,7 @@ func _drain(state: RunState, content: ContentRegistry) -> void:
 
 
 func _bonus_start(content: ContentRegistry) -> RunState:
-	var state: RunState = HomesteadRunFactory.create(907, content)
+	var state: RunState = HomesteadRunFactory.create(Fixture.RUN_SEED, content)
 	var source: int = _play(state, content, &"tile.forest_belt", Vector2i.LEFT, 1)
 	assert(state.pending_choice != null)
 	assert(BonusPlacementRules.enqueue(state, source).is_valid)
@@ -92,13 +93,13 @@ func bonus_chain_no_normal_count() -> bool:
 	expect_equal(state.phase, GamePhase.Type.BONUS_INPUT, "Queued child placement waits after all parent consequences")
 	state = Fixture.round_trip(state, content)
 	var deferred: int = state.charters.deferred_refill_index
-	_play(state, content, &"tile.open_fields", Vector2i(-1, 1))
+	_play(state, content, &"tile.forest_belt", Vector2i(-2, 0), 1)
 	_drain(state, content)
 	expect_equal(state.expansion.normal_placements, 1, "First bonus does not consume normal placement")
 	expect_equal(state.expansion.hand.count(0), 1, "Bonus refills its own slot before next bonus")
 	expect_equal(state.expansion.hand[deferred], 0, "Original normal refill remains deferred")
 	state = Fixture.round_trip(state, content)
-	_play(state, content, &"tile.open_fields", Vector2i(-2, 1))
+	_play(state, content, &"tile.forest_edge", Vector2i(-3, 0), 1)
 	_drain(state, content)
 	expect_equal(state.expansion.normal_placements, 1, "Chained bonus also preserves normal counter")
 	expect_equal(state.charters.placement_history.size(), 3, "Three physical commits retained in exact order")
@@ -120,18 +121,18 @@ func bonus_rejects_turn_actions() -> bool:
 
 func final_act_one_bonus_before_transition() -> bool:
 	var content: ContentRegistry = Fixture.content()
-	var state: RunState = HomesteadRunFactory.create(907, content)
-	for entry: Dictionary in Fixture.placements(1).slice(0, 17):
+	var state: RunState = HomesteadRunFactory.create(Fixture.RUN_SEED, content)
+	for entry: Dictionary in Fixture.placements(1, 0, state).slice(0, 17):
 		_play(state, content, StringName(entry.definition_id), entry.coordinate, int(entry.rotation))
 		_drain(state, content)
-	var source: int = _play(state, content, &"tile.forest_edge", Vector2i(1, 8))
+	var source: int = _play(state, content, &"tile.forest_edge", Vector2i(-2, -2), 3)
 	expect_equal(state.expansion.normal_placements, 18, "Final normal placement committed")
 	expect_true(BonusPlacementRules.enqueue(state, source).is_valid, "Final placement consequence can queue child work")
 	_drain(state, content)
 	expect_equal(state.expansion.current_act, 1, "Outgoing Act retained through bonus choice")
 	expect_true(state.act_transition == null, "No early Charter evaluation/transition")
 	state = Fixture.round_trip(state, content)
-	var bonus_id: int = _play(state, content, &"tile.open_fields", Vector2i(2, 8))
+	var bonus_id: int = _play(state, content, &"tile.forest_belt", Vector2i(-3, -2), 1)
 	_drain(state, content)
 	expect_equal(state.expansion.current_act, 2, "Transition follows exhausted bonus chain")
 	expect_equal(state.expansion.normal_placements, 0, "Incoming normal counter reset")
@@ -143,7 +144,7 @@ func final_act_one_bonus_before_transition() -> bool:
 
 func midpoint_bonus_defers_reveal() -> bool:
 	var content: ContentRegistry = Fixture.content()
-	var state: RunState = Fixture.scripted(content, 212, 0, false, 1).state
+	var state: RunState = Fixture.scripted(content, Fixture.RUN_SEED, 0, false, 1).state
 	for entry: Dictionary in Fixture.placements(2).slice(0, 10):
 		_play(state, content, StringName(entry.definition_id), entry.coordinate, int(entry.rotation))
 		_drain(state, content)
@@ -155,7 +156,7 @@ func midpoint_bonus_defers_reveal() -> bool:
 	expect_equal(state.phase, GamePhase.Type.BONUS_INPUT, "Midpoint child placement remains pending")
 	expect_true(not state.charters.exact_revealed, "Exact Grand remains concealed through bonus chain")
 	state = Fixture.round_trip(state, content)
-	_play(state, content, &"tile.open_fields", Vector2i(2, 0))
+	_play(state, content, &"tile.forest_edge", Vector2i(-9, -1))
 	_drain(state, content)
 	expect_equal(state.expansion.normal_placements, 11, "Midpoint bonus does not increment normal count")
 	expect_true(state.charters.exact_revealed, "Reveal occurs before next normal input after full chain")

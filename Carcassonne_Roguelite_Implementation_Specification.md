@@ -1,12 +1,18 @@
 # Carcassonne Roguelite — Alpha Implementation Specification
 
-**Status:** Canonical engineering handoff for the first playable alpha  
+**Status:** Canonical engineering handoff, Alpha Playtest Revision 1 (2026-09-27)
 **Target engine:** Godot 4.x  
 **Language:** GDScript  
 **Primary target platforms:** Windows and Linux desktop  
-**Implementation-spec version:** 1  
+**Implementation-spec version:** 1; Revision-1 rules/state amendments below
 
 ---
+
+# Alpha Playtest Revision 1 engineering change record
+
+The first human Phase-10 playtest requires a gameplay revision before Phase 11. This specification now replaces its old 55-copy bag, player River construction/completion, continuous Junction Road and River-contact scoring ownership assumptions. Core command, snapshot, lineage, reward, determinism and presentation boundaries remain authoritative.
+
+Runtime rules version is **alpha-playtest-r1**, save schema **2**. Reject incompatible pre-revision development saves clearly; do not add a migration framework. Phase 11 Save/Continue UX and Phase 12 exports remain future work.
 
 # 0. Authority, Purpose, and Scope
 
@@ -38,7 +44,7 @@ Implement a stripped-down but complete three-Act playable alpha capable of execu
 - final score and victory result;
 - automated rule verification and development debug tooling.
 
-Deferred systems remain deferred exactly as specified by the Complete Alpha Rules Specification. In particular, do **not** implement Legendary Projects, meta-progression, extra Foundations, the full future Relic/Specialist pools, advanced River reopening, or unlisted future tile families merely because older design files discuss them.
+Deferred systems remain deferred exactly as specified by the Complete Alpha Rules Specification. In particular, do **not** implement Legendary Projects, meta-progression, extra Foundations, the full future Relic/Specialist pools, River completion/reopening, or unlisted future tile families merely because older design files discuss them.
 
 ## 0.3 Core implementation principle
 
@@ -314,6 +320,9 @@ display_name: String
 tile_class: TileClass
 unlock_act: int
 reward_class: RewardClass
+player_drawable: bool
+setup_environment: bool
+intersection_hub: bool
 canonical_edges: Array[EdgeType]
 placement_behavior_id: StringName
 effect_behavior_id: StringName
@@ -326,7 +335,9 @@ presentation references
 
 Not every field applies to every tile class.
 
-The Founding Tile is a static definition but is not a normal bag-eligible reward design.
+The Founding Tile is a static definition but is not a normal bag-eligible reward design. River End/Run/Bend remain static definitions marked setup-only environment and not player drawable. Open Fields and Road End retain legacy IDs/art but are neither player drawable nor setup environment.
+
+Riverside Hamlet and Woodland River are Act-I Transformation-style overlays with Specialized/Hybrid reward quantity 2 and Masterwork eligibility. They are the explicit exception to the otherwise Expansion-only starting bag. Player-pool filtering consults authoritative metadata before unlock filtering/sorting; immediate board playability does not filter rewards.
 
 ## 4.3 Stable human-readable definition IDs
 
@@ -381,7 +392,7 @@ Store tunable values in data/configuration:
 Keep structural rule algorithms in GDScript:
 
 - topology;
-- completion detection;
+- Road/Settlement/Forest/enclosure completion detection, with no River lifecycle;
 - merging/reopening;
 - Trade Network construction;
 - Bridge/Urban Expansion/Rewilding rewrites;
@@ -423,7 +434,12 @@ At minimum validate:
 - Act eligibility is valid;
 - reward classes are valid;
 - required Charter/Relic/Specialist definitions exist;
-- Homestead starting-bag counts total exactly 55 and match the canonical rules;
+- Homestead starting-bag counts total exactly 45 and match the canonical rules;
+- legacy/setup-only definitions cannot enter player bags, reward/Masterwork offers or emergency sets;
+- required River Run/Bend/End setup definitions exist;
+- Riverside Hamlet/Woodland River have overlay behaviors, Act-I unlock and Specialized/Hybrid reward classification;
+- Road Junction has explicit Intersection Hub metadata and no ordinary Road feature group;
+- Riverkeeper targets Forest and Harbormaster Settlement with contextual River contact; no Specialist targets River;
 - the alpha Specialist pool contains exactly the canonical reduced roster;
 - the alpha Relic pool contains exactly the canonical reduced roster;
 - deferred content is not accidentally included in the alpha manifest.
@@ -641,13 +657,14 @@ feature_components by FeatureType
 development/upgrade tile-copy IDs
 transformation instances
 explicit internal access/relationship metadata
+intersection_hub: bool (identity is the stable base tile-copy ID)
 ```
 
 ## 9.3 Effective edges are runtime state
 
 Do not derive current edge legality only by rereading the original tile definition.
 
-Urban Expansion, Bridge, Rewilding, Boundary Stones, and future rule effects can create persistent edge state different from the original static Resource.
+Urban Expansion, Bridge, Rewilding, Riverside Hamlet, Woodland River, Boundary Stones, and future rule effects can create persistent edge state different from the original static Resource.
 
 Store current **effective edges** in runtime state and update them only through validated rule behavior.
 
@@ -680,12 +697,21 @@ Example:
 This directly supports the alpha's tile-age rules.
 
 ## 9.5 One component per feature type per square in alpha
+All same-type edges normally connect internally, but Road Junction explicitly declares terminal Road sockets on an Intersection Hub. It has **no Road feature component**, rather than three disconnected Road components. One component per actual tracked feature type per square remains sufficient.
 
-The alpha grammar never requires two disconnected Road components of the same type on one square.
+## 9.6 Environmental River setup service
+`EnvironmentalRiverService.generate(state, content)` owns River path selection, physical setup-copy allocation, orientation and board writes. It has no presentation dependency. Generate after Founding and before bag shuffle/Charter selection.
 
-All same-type edges on a tile are internally connected unless an explicit future rule says otherwise.
+The fixed composition is five River Runs, two River Bends and one final River End. Including Founding, derived River topology contains one nine-tile spine. Environmental copies use board-base location, Act I age, placement index 0 and setup-environment provenance. They never consume player bag copies or enter normal placement resolution.
 
-Therefore one `FeatureComponentState` per tracked `FeatureType` per board square is sufficient for the alpha.
+Use one RunRNG selection (`environmental_river_path`) among 24 deterministically ordered prevalidated templates: seven continuation positions contain five Runs and two separated Bends; neither Bend is at the first/last continuation position. Turn directions vary. Append the End. Validate unique coordinates, matching River sockets, no self-intersection/Founding collision and exact counts. Serialize the actual board; loading never invokes the generator.
+
+Gameplay RNG order is River-template choice → full 45-copy player-bag shuffle → Act-I Charter selection → opening hand draws. Domain containers may initialize earlier without gameplay randomness. Setup topology initialization emits no completion/scoring/Specialist/reward events.
+
+## 9.7 Intersection Hub identity
+`BoardCellState.intersection_hub` persists the definition's explicit hub flag. `IntersectionHubService` derives `IntersectionHubState` from board/features: stable `hub_id` equal to the existing base tile-copy ID, coordinate, socket directions, attached Road lineage IDs and neighboring hub IDs. No scene IDs or extra Road components are allocated.
+
+Matching occupied Junction sockets close an approaching physical Road exit. Empty hub sockets create no Road lineage/open obligation. A hub contributes zero physical Road size, Road tile score, Cartographer growth, Historic Routes count or Long Road size. A Junction placement can complete several separate Roads in one immutable batch. Its directly affected neighboring Roads are local Specialist candidates only if still unfinished after placement.
 
 ---
 
@@ -703,6 +729,8 @@ Road, Settlement, Forest, and River connected components are derived from:
 Field is not a tracked feature object.
 
 Monastery/Abbey enclosure is tracked separately as an enclosure object.
+
+River topology retains connected membership, identity, size and contacts but is never marked as a scoring-completed/unfinished feature. Completion discovery and reopening event production explicitly exclude River. Road Junction hub queries complement physical topology without merging Road arms.
 
 ## 10.2 Recompute rather than fragile incremental mutation
 
@@ -841,19 +869,14 @@ When checking whether a current merged Settlement can pay a Road connection bonu
 Track at minimum:
 
 - Forest feature-component IDs that have paid base +1 Ecology;
+- distinct River board-tile contacts already paid base +1 Ecology to this Forest lineage;
 - completion history;
 - current/historical development context as needed.
 
-The flat preservation bonus is reevaluated on every genuine completion rather than permanently exhausted.
+The flat preservation bonus is reevaluated on every genuine completion rather than permanently exhausted. Union paid River-contact identities through mergers and preserve them through reopening; same-tile and adjacent contact with one River tile deduplicate. Riverkeeper evaluates current contact independently of this base history.
 
-## 12.4 River lineage history
-
-Track at minimum:
-
-- completion history;
-- Forest-contact board cells that have already paid the River's base contact Ecology.
-
-Normal alpha Rivers cannot reopen, but keep the explicit contact history required by the canonical specification.
+## 12.4 River environmental identity
+Persist River component origins, connected lineage identity and contact relationships, with no River completion records or River base scoring history. Forest owns River-contact base history; Settlement retains its existing River-support history. The final River-size statistic reads connected environmental size and must not claim a player completion.
 
 ## 12.5 Bonus systems are not base history
 
@@ -893,6 +916,7 @@ A Trade Network is the economic graph formed from:
 
 - Road Features;
 - Settlements acting as hubs;
+- Intersection Hubs, including hub-to-hub socket links;
 - explicit Road–Settlement access relationships;
 - Ferry Rights links when active.
 
@@ -902,7 +926,7 @@ Do not merge these concepts into one feature object.
 
 Trade Network construction must use explicit Road–Settlement access metadata from canonical tile topology/Transformations.
 
-Simple orthogonal visual adjacency is insufficient.
+Simple orthogonal visual adjacency is insufficient. Explicit matching Junction sockets add Road↔hub and hub↔hub graph edges; no visual proximity rule is introduced.
 
 ## 14.3 Current Trade graph rebuild
 
@@ -913,6 +937,7 @@ Simple orthogonal visual adjacency is insufficient.
 - explicit Road–Settlement access;
 - Urban Expansion Settlement merger;
 - Bridge Road/access changes;
+- Junction placement/attached Roads/hub-to-hub links;
 - Ferry Rights acquisition/removal.
 
 Unfinished Roads and unfinished Settlements participate immediately as specified by the rules.
@@ -934,7 +959,7 @@ When descendants reconnect, create/reuse a lineage whose ancestry records the re
 
 ## 14.5 Trade membership identity
 
-Use Road lineage IDs and Settlement lineage IDs as the durable members of the economic graph.
+Use Road lineage IDs, Settlement lineage IDs and existing physical base-copy IDs for Junction hubs as durable economic graph members. Store `junction_hub_ids` alongside current/network-history membership. Hub-only infrastructure graphs are valid with zero Road length and zero Settlement count; Ferry activation still requires a Road-reached Settlement.
 
 Persist network lineage history, but do not make current network membership a substitute for Road/Settlement anti-farming histories.
 
@@ -1060,6 +1085,11 @@ Evaluate occupied board squares in deterministic coordinate order and delegate e
 Urban Expansion, Bridge, and Rewilding use purpose-written placement-option generators.
 
 If one coordinate supports multiple materially different legal intents — for example, different rewrites, modes, or target lineages — return separate `PlacementOption`s.
+
+## 17.4a River overlay options and River Interaction query
+Riverside Hamlet uses mode `riverside_hamlet` on an underlying straight River Run. Offer each currently Field bank separately only if it faces empty space or matching Settlement. Woodland River uses mode `woodland_river` on an underlying Bend only when both non-River banks are currently Field and face empty space or matching Forest. Neither mode creates a board cell or uses a Development slot. Both preserve River and record explicit same-tile contact. Reject occupied incompatible banks before mutation; Boundary Stones cannot waive overlay legality.
+
+Persist normal Transformation instances, physical copy provenance and exact before/after geometry. `RiverInteractionService.current(state)` returns active objects with kind, object ID, coordinate and connected River IDs; `current_count(state)` derives current instance count. `creation_count(state)` uses persistent transformation/development creation audit records and stable physical definition identity. Riverside Hamlet, Woodland River, Port and Bridge count; environment, Ferry Rights and passive adjacency do not. This reuses authoritative object/history state, not a parallel event log.
 
 ## 17.5 Preview is not authoritative state
 
@@ -1382,6 +1412,7 @@ No gameplay class may independently call uncontrolled random helpers.
 
 The one stream governs all canonical randomness, including:
 
+- environmental River path/template selection before initial bag shuffle;
 - starting bag shuffle;
 - draws;
 - bag re-randomization;
@@ -1470,6 +1501,8 @@ Because alpha state is small, legality checks may enumerate candidate placements
 
 For bag-wide stalemate checks, identical physical copies of the same static definition may share a legality query result when their runtime state is equivalent; physical identity must still remain intact when actual tiles are moved.
 
+The revised emergency set is Hamlet Edge, Road Junction and Forest Edge. Every player-bag/offer/rescue query excludes Open Fields, Road End and setup-only pure Rivers. Overlay designs remain legitimate player tiles even when currently unplayable.
+
 ## 24.7 Bonus-placement support
 
 Implement the generic bonus-placement machinery even though the current alpha content roster does not grant bonus placements. The Complete Alpha Rules Specification explicitly requires the engine behavior and handoff tests.
@@ -1530,6 +1563,13 @@ A feature completed by the committed placement itself is not an assignment candi
 If a generic Steward is committed when the 40-point reward occurs, filter trainable roles by legality on that current occupied feature and leave the piece committed.
 
 The offer generator must use the canonical uniform filtered pool.
+
+## 25.5a Revision-1 River specialist targets
+Generic Stewards target unfinished Road, Settlement, Forest or Monastery-family enclosure only. River and Junction hubs are not targets.
+
+Riverkeeper targets an unfinished River-touching Forest and gives +1 Ecology per distinct current River tile contact on Forest completion. Harbormaster targets an unfinished River-touching Settlement; on its completion, union distinct Settlements touching its connected River systems (including host), award +2 Trade each and +1 for each with a Port. Both use immutable completion snapshots and current-state bonuses outside base history.
+
+Committed Forest training offers Naturalist/Forester plus Riverkeeper only with River contact. Settlement training offers Architect/Homesteader plus Harbormaster only with River contact. Filter before deterministic uniform sampling. Relay reuses these same predicates; no River target is offered. Other Specialist/growth semantics remain unchanged.
 
 ## 25.6 Relay
 
@@ -1655,6 +1695,11 @@ ConditionProgress
 
 This allows the HUD to distinguish current-state and historical requirements without duplicating Charter logic.
 
+## 28.2a Revised River-related conditions and milestone
+Living Landscape uses Ecology 20+, Forest completion history and at least one River Interaction creation; exceed requires Ecology 30+. Stewardship of Land uses Ecology 40+, current Forest size 6+ and at least two active interactions; exceed requires Ecology 55+. Living Heritage uses Ecology 60+, Culture 40+, current Forest size 8+, at least three active interactions and genuine Monastery-family completion history; exceed requires Ecology 80+/Culture 60+. Unrelated Charter conditions remain unchanged.
+
+River Stewardship occupies the existing once-per-run River milestone slot. Check only genuine Settlement/Forest completion snapshots with at least three distinct River tile contacts. Preserve milestone order Settlement → Road → Forest → River, then thresholds. Neither environment generation nor unfinished contact growth triggers a milestone.
+
 ## 28.3 Grand Charter secret selection
 
 At Act II start:
@@ -1734,6 +1779,8 @@ BoardView
         selection/highlight layer
         optional debug layer
 ```
+
+The opening BoardView includes Founding and all eight environmental River tiles; Fit Board frames the whole environment. Setup-only River art remains visible/inspectable but absent from hands/offers. Riverside Hamlet/Woodland River previews target occupied River cells and show the resulting Settlement/Forest while preserving visible River. Junction inspection explains physical Road termination and economic continuation. UI obtains all target modes and contact data from authoritative queries.
 
 ## 30.2 Board coordinate conversion
 
@@ -1874,8 +1921,8 @@ Top level should include at minimum:
 
 ```json
 {
-  "save_schema_version": 1,
-  "game_rules_version": "alpha-1",
+  "save_schema_version": 2,
+  "game_rules_version": "alpha-playtest-r1",
   "implementation_spec_version": 1,
   "godot_version": "...",
   "run_state": { }
@@ -1898,7 +1945,7 @@ Encode Godot-specific types explicitly, e.g.:
 
 Do not silently load an incompatible rules-version save and hope for the best.
 
-Early alpha saves are not guaranteed to survive incompatible development revisions.
+Early alpha saves are not guaranteed to survive incompatible development revisions. Revision 1 requires schema 2 and rules `alpha-playtest-r1`; older incompatible runs are rejected clearly rather than regenerated or migrated.
 
 ## 32.4 Save RNG state
 
@@ -1986,7 +2033,13 @@ Additional engineering invariants should include:
 - assigned Specialists point to valid unfinished targets;
 - active Trade Network membership agrees with the rebuilt economic graph;
 - pending-choice options reference valid current entities/content;
-- no duplicate runtime IDs exist.
+- no duplicate runtime IDs exist;
+- normal new runs retain one nine-tile setup River with eight environmental board copies and exact composition;
+- environment copies never enter bag/hand/Reserve/offers;
+- River never gains completion/reopening records;
+- Junction hubs have no physical Road component;
+- active interaction objects and Forest paid River-contact identities resolve;
+- Riverkeeper/Harbormaster assignments satisfy the revised contextual target rules.
 
 ---
 
@@ -2248,7 +2301,7 @@ Without expanding alpha scope into a full accessibility pass, follow these basel
 - combine color with outlines/icons/patterns;
 - keep rules-critical text at readable scalable UI sizes;
 - expose hover/click textual explanations for Relics, Specialists, tile effects, and Charter conditions;
-- maintain usable contrast;
+- maintain usable contrast; parchment Charter/Grand Charter/forecast/progress and other modal body text defaults to dark ink `#30271E`, never white/near-white;
 - keyboard shortcuts supplement rather than replace mouse-accessible controls.
 
 ---
@@ -2259,8 +2312,8 @@ Maintain explicit constants/build metadata for:
 
 ```text
 IMPLEMENTATION_SPEC_VERSION = 1
-SAVE_SCHEMA_VERSION = 1
-GAME_RULES_VERSION = "alpha-1"
+SAVE_SCHEMA_VERSION = 2
+GAME_RULES_VERSION = "alpha-playtest-r1"
 ```
 
 Expose these in development diagnostics and save headers.
@@ -2313,7 +2366,7 @@ Implement:
 - exact edge matching;
 - placement query service;
 - basic `PlaceTileCommand`;
-- 55-tile Homestead bag;
+- 45-copy Homestead player bag and setup-only River environment;
 - active hand;
 - Reserve;
 - Survey;
@@ -2328,7 +2381,7 @@ Implement:
 - Road/Settlement/Forest/River feature components;
 - topology rebuild;
 - feature lineage creation/growth/merge/reopen history;
-- completion detection;
+- Road/Settlement/Forest/enclosure completion detection, with no River lifecycle;
 - Monastery enclosure object;
 - base scoring histories;
 - Realm Track state;
@@ -2341,7 +2394,7 @@ Implement:
 Implement:
 
 - explicit Road–Settlement access;
-- Settlement hubs;
+- Settlement and Intersection hubs;
 - transitive Trade graph;
 - current network reconstruction;
 - network genealogy;
@@ -2442,6 +2495,14 @@ Implement/refine:
 - presentation cue playback.
 
 **Exit condition:** full run playable with mouse and optional keyboard shortcuts.
+
+## Alpha Playtest Revision 1 — Post-Phase-10 rules revision
+
+Implement the revised canonical bag/player eligibility, generated environmental River, Junction terminal/Trade hub topology, River overlays/interaction queries, Forest contact scoring/history, revised Specialists/Charters/milestone, schema compatibility and parchment text contrast. Preserve unaffected rules and headless/presentation boundaries.
+
+Verify exact setup composition/RNG order, separate Junction Roads and simultaneous completions, contact anti-farming, contextual training/Relay, save/load without regeneration, revised full three-Act/controller runs and a documented non-canonical 100-seed closure-preferring Act-I diagnostic. Suggested completion-density health indicators are not authority to rebalance specified content without a new user ruling.
+
+**Exit condition:** revised rules and presentation pass tests and are ready for a second human playtest. This is not Phase 11.
 
 ## Phase 11 — Save/Continue + development tools integration
 

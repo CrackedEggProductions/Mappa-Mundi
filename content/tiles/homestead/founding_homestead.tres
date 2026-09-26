@@ -40,3 +40,5 @@ reward_class = 0
 canonical_edges = Array[int]([4, 3, 2, 1])
 feature_groups = Array[ExtResource("2_group")]([SubResource("Group_1"), SubResource("Group_2"), SubResource("Group_3"), SubResource("Group_4")])
 relationships = Array[ExtResource("3_relation")]([SubResource("Relationship")])
+
+player_drawable = false

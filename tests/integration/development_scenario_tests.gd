@@ -187,7 +187,7 @@ func monastery_immediate_completion() -> bool:
 	expect_equal(enclosure.coordinate, center, "Enclosure is centered on host tile")
 	expect_equal(enclosure.completed_stages, [&"monastery"], "Already occupied eight squares complete stage immediately")
 	expect_equal(state.features.tracks.values[TRACK.CULTURE], 13, "Monastery gets five plus eight natural squares")
-	Fixture.play(state, registry, &"tile.open_fields", Vector2i(2, 3))
+	Fixture.play(state, registry, &"tile.forest_edge", Vector2i(2, 3))
 	expect_equal(state.features.tracks.values[TRACK.CULTURE], 13, "Later placements do not rescore stage")
 	return true
 
@@ -199,7 +199,7 @@ func monastery_later_eighth_square() -> bool:
 	Fixture.play(state, registry, &"tile.development.monastery", center)
 	expect_true(state.features.enclosures[0].completed_stages.is_empty(), "Seven neighbors keep stage unfinished")
 	expect_equal(state.features.tracks.values[TRACK.CULTURE], 0, "No early score")
-	Fixture.play(state, registry, &"tile.open_fields", center + Vector2i(-1, -1))
+	Fixture.play(state, registry, &"tile.forest_edge", center + Vector2i(-1, -1))
 	expect_equal(state.features.enclosures[0].completed_stages, [&"monastery"], "Eighth neighbor completes via normal Expansion command")
 	expect_equal(state.features.tracks.values[TRACK.CULTURE], 13, "Later live completion scores once")
 	return true
@@ -228,7 +228,7 @@ func abbey_incomplete_upgrade() -> bool:
 	var abbey: int = Fixture.play(state, registry, &"tile.development.abbey", center)
 	_replacement(state, monastery, abbey, center, &"family.monastery")
 	expect_equal(state.features.tracks.values[TRACK.CULTURE], 0, "Incomplete upgraded enclosure has no immediate score")
-	Fixture.play(state, registry, &"tile.open_fields", center + Vector2i(-1, -1))
+	Fixture.play(state, registry, &"tile.forest_edge", center + Vector2i(-1, -1))
 	expect_equal(state.features.tracks.values[TRACK.CULTURE], 16, "Only Abbey stage resolves when eighth neighbor arrives")
 	expect_equal(state.features.enclosures[0].completed_stages, [&"abbey"], "Never-completed Monastery does not acquire false completion history")
 	return true

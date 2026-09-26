@@ -43,7 +43,7 @@ func loads_complete_homestead_profile() -> bool:
 	var registry: ContentRegistry = ContentRegistry.new()
 	var result: ValidationResult = registry.load_homestead()
 	expect_true(result.is_valid, result.user_message)
-	expect_equal(registry.get_tile_ids().size(), 22, "21 Expansion definitions plus Founding")
+	expect_equal(registry.get_tile_ids().size(), 22, "21 catalogue definitions plus Founding")
 	expect_equal(registry.get_config().initial_survey_charges, 1, "One initial Survey")
 	expect_equal(registry.get_config().reserve_capacity, 1, "One Reserve slot")
 	return true
@@ -72,7 +72,7 @@ func canonical_edges_cover_all_designs() -> bool:
 		PackedInt32Array([2,2,0,0]), PackedInt32Array([3,0,0,0]), PackedInt32Array([3,0,3,0]),
 		PackedInt32Array([3,3,0,0]), PackedInt32Array([3,3,3,0]), PackedInt32Array([4,0,0,0]),
 		PackedInt32Array([4,4,0,0]), PackedInt32Array([4,0,4,0]), PackedInt32Array([4,3,0,0]),
-		PackedInt32Array([4,2,0,2]), PackedInt32Array([1,1,3,3]), PackedInt32Array([1,1,2,2]),
+		PackedInt32Array([]), PackedInt32Array([1,1,3,3]), PackedInt32Array([]),
 		PackedInt32Array([4,4,3,0]), PackedInt32Array([4,4,3,3]), PackedInt32Array([4,3,4,3]),
 	]
 	for index: int in range(ids.size()):
@@ -88,22 +88,21 @@ func exact_starting_bag_counts() -> bool:
 	# Independent expected counts in the documented deterministic ID order.
 	var ids: Array[StringName] = [
 		&"tile.bending_road", &"tile.forest_belt", &"tile.forest_bend", &"tile.forest_edge",
-		&"tile.hamlet_edge", &"tile.open_fields", &"tile.river_bend", &"tile.river_end",
-		&"tile.river_run", &"tile.riverside_hamlet", &"tile.road_end", &"tile.road_junction",
+		&"tile.hamlet_edge", &"tile.riverside_hamlet", &"tile.road_junction",
 		&"tile.settlement_corner", &"tile.settlement_corner_gate", &"tile.settlement_gate",
 		&"tile.settlement_road_bend", &"tile.settlement_road_throughway", &"tile.settlement_throughway",
 		&"tile.straight_road", &"tile.woodland_river", &"tile.woodland_road",
 	]
-	var counts: Array[int] = [4,2,3,3,3,4,3,2,3,2,3,2,3,2,2,2,2,2,4,2,2]
+	var counts: Array[int] = [4,2,3,4,4,2,4,3,2,3,2,2,2,4,2,2]
 	var config: RunConfig = _config()
 	var total: int = 0
-	expect_equal(config.starting_bag.size(), 21, "Exactly 21 starting designs")
+	expect_equal(config.starting_bag.size(), 16, "Exactly 16 starting player designs")
 	for index: int in range(config.starting_bag.size()):
 		var entry: StartingBagEntry = config.starting_bag[index]
 		expect_equal(entry.definition_id, ids[index], "Starting bag stable definition order")
 		expect_equal(entry.count, counts[index], "Canonical count for %s" % entry.definition_id)
 		total += entry.count
-	expect_equal(total, 55, "Exactly 55 starting physical copies")
+	expect_equal(total, 45, "Exactly 45 starting physical copies")
 	return true
 
 
@@ -127,9 +126,9 @@ func hybrids_keep_explicit_relationships() -> bool:
 		expect_equal(tile.feature_groups.size(), 2, "Road and Settlement stay distinct")
 		expect_equal(tile.relationships[0].kind, TileFeatureRelationship.Kind.ROAD_SETTLEMENT_ACCESS, "Road access")
 	var riverside: TileDefinition = _tile(manifest, &"tile.riverside_hamlet")
-	expect_equal(riverside.relationships[0].kind, TileFeatureRelationship.Kind.SETTLEMENT_RIVER_TOUCH, "Settlement touches River")
+	expect_equal(riverside.transformation_kind, &"riverside_hamlet", "Runtime overlay creates explicit Settlement/River touch")
 	var woodland: TileDefinition = _tile(manifest, &"tile.woodland_river")
-	expect_equal(woodland.relationships[0].kind, TileFeatureRelationship.Kind.FOREST_RIVER_TOUCH, "Forest touches River")
+	expect_equal(woodland.transformation_kind, &"woodland_river", "Runtime overlay creates explicit Forest/River touch")
 	expect_true(_tile(manifest, &"tile.woodland_road").relationships.is_empty(), "Woodland Road invents no access/touch")
 	return true
 
@@ -145,8 +144,8 @@ func all_non_field_edges_have_connected_groups() -> bool:
 				expect_true(direction not in covered, "Socket belongs to exactly one component")
 				covered.append(direction)
 				expect_equal(tile.canonical_edges[direction], group.edge_type, "Component socket matches edge")
-		for direction: int in range(4):
-			expect_equal(direction in covered, tile.canonical_edges[direction] != DomainTypes.EdgeType.FIELD,
+		for direction: int in range(tile.canonical_edges.size()):
+			expect_equal(direction in covered, tile.canonical_edges[direction] != DomainTypes.EdgeType.FIELD and not tile.intersection_hub,
 				"Exactly the non-Field sockets have feature metadata")
 	return true
 
@@ -203,7 +202,9 @@ func rejects_spurious_cross_feature_link() -> bool:
 
 func rejects_wrong_touch_endpoints() -> bool:
 	var manifest: ContentManifest = _manifest()
-	_tile(manifest, &"tile.woodland_river").relationships[0].from_edge_type = DomainTypes.EdgeType.SETTLEMENT
+	var relation: TileFeatureRelationship = TileFeatureRelationship.new()
+	relation.from_edge_type = DomainTypes.EdgeType.SETTLEMENT
+	_tile(manifest, &"tile.woodland_river").relationships.append(relation)
 	_rejected(manifest, _config())
 	return true
 

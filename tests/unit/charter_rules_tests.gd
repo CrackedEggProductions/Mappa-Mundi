@@ -24,7 +24,9 @@ func tests() -> Array[Callable]:
 		evaluation_does_not_mutate_state, reward_order, invalid_id_is_explicit,
 		inherited_road_history_after_legal_merge, market_settlements_distinct,
 		metropolis_current_open_exit_disqualifies, communities_upgrade_one_instance,
-		heritage_natural_sizes_not_historical, selection_ignores_dictionary_order]
+		heritage_natural_sizes_not_historical, selection_ignores_dictionary_order,
+		landscape_uses_creation_history_after_removal, stewardship_requires_active_interactions,
+		heritage_requires_three_active_interactions]
 	for id: StringName in CharterContentValidator.ROSTER:
 		cases.append(fulfill_exceed_and_track_failure.bind(id))
 	for mutation: StringName in [&"missing", &"duplicate", &"deferred", &"act", &"behavior", &"forecast", &"rewards", &"targets"]:
@@ -131,7 +133,7 @@ func _successful(id: StringName) -> RunState:
 			_completion(state, TYPE.ROAD)
 		&"charter.a1_living_landscape":
 			_completion(state, TYPE.FOREST)
-			_completion(state, TYPE.RIVER)
+			_river_interactions(state, 1)
 		&"charter.a2_market_towns":
 			state = _ferry_chain(3)
 			_completion(state, TYPE.ROAD, state.features.component_at(Vector2i.ZERO, TYPE.ROAD).lineage_id, false)
@@ -143,7 +145,7 @@ func _successful(id: StringName) -> RunState:
 			_development(state, Vector2i.RIGHT, &"market")
 		&"charter.a2_stewardship_of_land":
 			_row(state, TYPE.FOREST, 6, Vector2i.ZERO)
-			_row(state, TYPE.RIVER, 6, Vector2i(0, 10))
+			_river_interactions(state, 2)
 		&"charter.grand_great_metropolis":
 			state = _metropolis_state()
 		&"charter.grand_merchant_republic":
@@ -153,7 +155,7 @@ func _successful(id: StringName) -> RunState:
 			_development(state, Vector2i.RIGHT, &"port")
 		&"charter.grand_living_heritage":
 			_row(state, TYPE.FOREST, 8, Vector2i.ZERO)
-			_row(state, TYPE.RIVER, 8, Vector2i(0, 10))
+			_river_interactions(state, 3)
 			_completion(state, -1)
 	var targets: Dictionary = _content().get_charter(id).targets
 	for name: String in CharterRules.TRACKS:
@@ -164,6 +166,31 @@ func _successful(id: StringName) -> RunState:
 
 func _result(state: RunState, id: StringName) -> StringName:
 	return CharterRules.evaluate(state, _content(), id).overall_state
+
+
+func _river_interactions(state: RunState, count: int) -> void:
+	# Isolated query fixture: physical overlay objects and independent creation history.
+	for index: int in range(count):
+		var at: Vector2i = Vector2i(100 + index * 2, 100)
+		var cell: BoardCellState = Graph.add(state, at, [EDGE.RIVER, EDGE.SETTLEMENT, EDGE.RIVER, EDGE.FIELD])
+		var id: int = PhysicalTileRules.acquire(state, &"tile.riverside_hamlet", &"query_fixture", TileLocationState.Kind.BOARD_TRANSFORMATION)
+		var overlay: TransformationState = TransformationState.new()
+		overlay.tile_copy_id = id
+		overlay.definition_id = &"tile.riverside_hamlet"
+		overlay.mode = &"riverside_hamlet"
+		overlay.target_base_copy_id = cell.base_tile_copy_id
+		var change: TransformationChange = TransformationChange.new()
+		change.coordinate = at
+		change.before_edges.assign([EDGE.RIVER, EDGE.FIELD, EDGE.RIVER, EDGE.FIELD])
+		change.after_edges = cell.effective_edges.duplicate()
+		overlay.changes.append(change)
+		cell.transformations.append(overlay)
+		var event: FeatureHistoryRecord = FeatureHistoryRecord.new()
+		event.event_id = state.id_allocator.allocate()
+		event.kind = &"transformation_applied"
+		event.source_id = id
+		state.features.history.append(event)
+	Graph.reconcile(state)
 
 
 func exact_roster() -> bool:
@@ -265,9 +292,43 @@ func open_roads_ferry_current_network() -> bool:
 
 func living_landscape_both_histories_required() -> bool:
 	var state: RunState = _successful(&"charter.a1_living_landscape")
-	state.features.completions.pop_back()
+	state.features.history.clear()
 	state.features.tracks.values[3] = 50
-	expect_equal(_result(state, &"charter.a1_living_landscape"), &"failed", "River completion cannot be replaced by Ecology")
+	expect_equal(_result(state, &"charter.a1_living_landscape"), &"failed", "River interaction history cannot be replaced by Ecology")
+	expect_equal(CharterRules.completion_count(state, TYPE.RIVER), 0, "No River completion required or fabricated")
+	return true
+
+
+func _remove_interaction(state: RunState) -> void:
+	var overlay: TransformationState = state.expansion.board.get_cell(Vector2i(100, 100)).transformations[0]
+	PhysicalTileRules.set_location(state, overlay.tile_copy_id, TileLocationState.Kind.REMOVED_FROM_RUN)
+
+
+func landscape_uses_creation_history_after_removal() -> bool:
+	var state: RunState = _successful(&"charter.a1_living_landscape")
+	_remove_interaction(state)
+	expect_equal(RiverInteractionService.current_count(state), 0, "Removed interaction is no longer active")
+	expect_equal(_result(state, &"charter.a1_living_landscape"), &"fulfilled", "Act I retains genuine creation history")
+	state.features.completions.clear()
+	expect_equal(_result(state, &"charter.a1_living_landscape"), &"failed", "Interaction does not replace Forest completion")
+	return true
+
+
+func stewardship_requires_active_interactions() -> bool:
+	var state: RunState = _successful(&"charter.a2_stewardship_of_land")
+	_remove_interaction(state)
+	expect_equal(RiverInteractionService.creation_count(state), 2, "Both historical creations persist")
+	expect_equal(_result(state, &"charter.a2_stewardship_of_land"), &"failed", "Historical interactions cannot replace two current interactions")
+	return true
+
+
+func heritage_requires_three_active_interactions() -> bool:
+	var state: RunState = _successful(&"charter.grand_living_heritage")
+	_remove_interaction(state)
+	expect_equal(RiverInteractionService.current_count(state), 2, "Only two active interactions remain")
+	state.features.tracks.values[3] = 100
+	state.features.tracks.values[2] = 100
+	expect_equal(_result(state, &"charter.grand_living_heritage"), &"failed", "Exceed Track values cannot bypass three active interactions")
 	return true
 
 
@@ -313,7 +374,7 @@ func communities_counts_instances_not_families() -> bool:
 func stewardship_current_sizes() -> bool:
 	var state: RunState = _successful(&"charter.a2_stewardship_of_land")
 	expect_true(state.features.completions.is_empty(), "Current-sized features have no completion history")
-	expect_equal(_result(state, &"charter.a2_stewardship_of_land"), &"fulfilled", "Unfinished Forest and River current sizes count")
+	expect_equal(_result(state, &"charter.a2_stewardship_of_land"), &"fulfilled", "Current Forest size and two active interactions count")
 	return true
 
 

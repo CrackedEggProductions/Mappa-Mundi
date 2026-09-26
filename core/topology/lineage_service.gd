@@ -13,8 +13,6 @@ static func validate_rebuild(state: RunState, current: Array[CurrentFeature]) ->
 			if occupied_lineages.has(lineage_id):
 				return ValidationResult.failure(&"unsupported_feature_split", "One lineage cannot occupy disconnected features.")
 			occupied_lineages[lineage_id] = true
-			if lineage.feature_type == DomainTypes.FeatureType.RIVER and lineage.completed and feature.open_exits > 0:
-				return ValidationResult.failure(&"completed_river_reopening", "Completed Rivers cannot normally reopen.")
 	return ValidationResult.success()
 
 
@@ -41,7 +39,7 @@ static func reconcile(state: RunState, current: Array[CurrentFeature], source_id
 				if not lineage.member_ids.has(component_id):
 					additions.append(component_id)
 			var genuine_growth: bool = not additions.is_empty() and feature.feature_type != DomainTypes.FeatureType.RIVER
-			if lineage.completed and (feature.open_exits > 0 or genuine_growth):
+			if feature.feature_type != DomainTypes.FeatureType.RIVER and lineage.completed and (feature.open_exits > 0 or genuine_growth):
 				lineage.completed = false
 				lineage.growth_phase += 1
 				_record(state, &"feature_reopened", lineage, feature.component_ids, source_id)

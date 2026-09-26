@@ -8,7 +8,7 @@ const ROLE_TYPES: Dictionary = {
 	&"specialist.merchant": 0, &"specialist.cartographer": 0,
 	&"specialist.architect": 1, &"specialist.homesteader": 1,
 	&"specialist.naturalist": 2, &"specialist.forester": 2,
-	&"specialist.riverkeeper": 3, &"specialist.harbormaster": 3,
+	&"specialist.riverkeeper": 2, &"specialist.harbormaster": 1,
 }
 
 
@@ -45,6 +45,8 @@ static func find_enclosure(state: RunState, id: int) -> EnclosureState:
 
 static func target_unfinished(state: RunState, type: int, id: int,
 		current: Array[CurrentFeature]) -> bool:
+	if type == DomainTypes.FeatureType.RIVER:
+		return false
 	if type != ENCLOSURE:
 		var feature: CurrentFeature = find_feature(current, id)
 		return feature != null and feature.feature_type == type and feature.open_exits > 0
@@ -72,15 +74,35 @@ static func touching_settlements(state: RunState, river: CurrentFeature,
 	return result
 
 
+static func same_river_settlements(state: RunState, host: CurrentFeature,
+		current: Array[CurrentFeature]) -> Array[int]:
+	var result: Array[int] = []
+	var river_tiles: Array[int] = FeatureContactService.support_ids(state, host, DomainTypes.EdgeType.RIVER)
+	for river: CurrentFeature in current:
+		if river.feature_type != DomainTypes.FeatureType.RIVER:
+			continue
+		var touches: bool = false
+		for coordinate: Vector2i in river.coordinates:
+			if river_tiles.has(state.expansion.board.get_cell(coordinate).base_tile_copy_id):
+				touches = true
+				break
+		if touches:
+			for settlement_id: int in touching_settlements(state, river, current):
+				if not result.has(settlement_id):
+					result.append(settlement_id)
+	result.sort()
+	return result
+
+
 static func role_eligible(state: RunState, role: StringName, type: int, id: int,
 		current: Array[CurrentFeature]) -> bool:
 	if role == &"":
-		return type >= 0 and type <= ENCLOSURE
+		return type in [DomainTypes.FeatureType.ROAD, DomainTypes.FeatureType.SETTLEMENT, DomainTypes.FeatureType.FOREST, ENCLOSURE]
 	if not ROLE_TYPES.has(role) or int(ROLE_TYPES[role]) != type:
 		return false
-	if role == &"specialist.harbormaster":
-		var river: CurrentFeature = find_feature(current, id)
-		return river != null and not touching_settlements(state, river, current).is_empty()
+	if role in [&"specialist.harbormaster", &"specialist.riverkeeper"]:
+		var feature: CurrentFeature = find_feature(current, id)
+		return feature != null and not FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.RIVER).is_empty()
 	return true
 
 
@@ -185,7 +207,7 @@ static func capture(state: RunState, current: Array[CurrentFeature], trigger_ids
 		var facts: Dictionary = {"piece_id": piece.piece_id, "role_definition_id": String(piece.role_definition_id),
 			"target_type": piece.assigned_target_type, "target_id": piece.assigned_target_id,
 			"growth_count": 0, "size": 0, "network_settlement_count": 0, "families": [],
-			"field_count": 0, "forest_count": 0, "undeveloped": false,
+			"field_count": 0, "river_count": 0, "undeveloped": false,
 			"touching_settlements": [], "port_settlements": []}
 		if piece.assigned_target_type == ENCLOSURE:
 			var completes: bool = false
@@ -218,16 +240,16 @@ static func capture(state: RunState, current: Array[CurrentFeature], trigger_ids
 				facts["field_count"] = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.FIELD).size()
 			DomainTypes.FeatureType.FOREST:
 				facts["undeveloped"] = FeatureContactService.forest_is_undeveloped(state, feature)
-			DomainTypes.FeatureType.RIVER:
-				facts["forest_count"] = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.FOREST).size()
-				var settlements: Array[int] = touching_settlements(state, feature, current)
-				var ports: Array[int] = []
-				for development: DevelopmentState in DevelopmentService.all(state):
-					if development.stage == &"port" and settlements.has(development.host_lineage_id) and not ports.has(development.host_lineage_id):
-						ports.append(development.host_lineage_id)
-				ports.sort()
-				facts["touching_settlements"] = settlements
-				facts["port_settlements"] = ports
+				facts["river_count"] = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.RIVER).size()
+		if piece.role_definition_id == &"specialist.harbormaster":
+			var settlements: Array[int] = same_river_settlements(state, feature, current)
+			var ports: Array[int] = []
+			for development: DevelopmentState in DevelopmentService.all(state):
+				if development.stage == &"port" and settlements.has(development.host_lineage_id) and not ports.has(development.host_lineage_id):
+					ports.append(development.host_lineage_id)
+			ports.sort()
+			facts["touching_settlements"] = settlements
+			facts["port_settlements"] = ports
 		result.append(facts)
 	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["piece_id"] < b["piece_id"])
 	return result
@@ -239,8 +261,9 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[Dictionary]:
 		var gains: Array[int] = [0, 0, 0, 0]
 		match StringName(facts["role_definition_id"]):
 			&"":
-				const TRACKS: Array[int] = [1, 0, 3, 3, 2]
-				gains[TRACKS[int(facts["target_type"])]] = 2
+				const TRACKS: Dictionary = {0: 1, 1: 0, 2: 3, 4: 2}
+				if TRACKS.has(int(facts["target_type"])):
+					gains[TRACKS[int(facts["target_type"])]] = 2
 			&"specialist.merchant":
 				gains[1] = maxi(0, int(facts["network_settlement_count"]) - 1) * 2
 			&"specialist.cartographer":
@@ -254,7 +277,7 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[Dictionary]:
 			&"specialist.forester":
 				gains[3] = facts["growth_count"]
 			&"specialist.riverkeeper":
-				gains[3] = facts["forest_count"]
+				gains[3] = facts["river_count"]
 			&"specialist.harbormaster":
 				gains[1] = 2 * facts["touching_settlements"].size() + facts["port_settlements"].size()
 			_:

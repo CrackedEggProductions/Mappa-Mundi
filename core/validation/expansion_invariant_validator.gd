@@ -47,9 +47,10 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 				placement_indices.append(rank)
 		_validate_cell(state, content, coordinate, cell, report)
 		var cell_rank: int = PlacementChronology.rank(state, cell.base_tile_copy_id, cell.act_placed, cell.normal_placement_index)
-		if cell_rank in placement_indices:
+		if not EnvironmentalRiverService.is_environment(state, cell.base_tile_copy_id) and cell_rank in placement_indices:
 			report.add(&"duplicate_placement_index", "Each placed base has a unique normal placement index.", cell.base_tile_copy_id)
-		placement_indices.append(cell_rank)
+		if not EnvironmentalRiverService.is_environment(state, cell.base_tile_copy_id):
+			placement_indices.append(cell_rank)
 	_validate_zone(state, board_ids, TileLocationState.Kind.BOARD_BASE, represented, report)
 	_validate_zone(state, development_ids, TileLocationState.Kind.BOARD_DEVELOPMENT, represented, report)
 	_validate_zone(state, transformation_ids, TileLocationState.Kind.BOARD_TRANSFORMATION, represented, report)
@@ -72,7 +73,7 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 					report.add(&"duplicate_placement_index", "Each normal placement has a unique index.")
 				placement_indices.append(rank)
 	var committed: int = expansion.normal_placements if state.charters == null else state.charters.placement_history.size()
-	if expansion.board.cells.size() + overlay_placements != committed + 1:
+	if expansion.board.cells.size() + overlay_placements != committed + 1 + EnvironmentalRiverService.path(state).size():
 		report.add(&"placement_count_mismatch", "Founding, base placements and overlay play history must match the placement counter.")
 	var expected_revision: int = expansion.board.cells.size()
 	for cell: BoardCellState in expansion.board.cells.values():
@@ -90,6 +91,54 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 		if founding == null or founding.definition_id != FOUNDING_ID or founding.rotation != 0 \
 			or founding.act_placed != 1 or founding.normal_placement_index != 0:
 			report.add(&"invalid_founding_tile", "Origin requires the fixed Act-I Founding Tile with placement index zero.")
+	_validate_environment(state, content, report)
+
+
+static func _validate_environment(state: RunState, content: ContentRegistry, report: InvariantReport) -> void:
+	var environment_ids: Array[int] = []
+	var counts: Dictionary = {&"tile.river_run": 0, &"tile.river_bend": 0, &"tile.river_end": 0}
+	for copy: TileCopyState in state.tile_copies:
+		if copy == null:
+			continue
+		var definition: TileDefinition = content.get_tile(copy.definition_id)
+		if definition != null and not definition.player_drawable and (
+				copy.tile_copy_id in state.expansion.bag or copy.tile_copy_id in state.expansion.hand
+				or copy.tile_copy_id in RelicHandRules.reserve_ids(state) or copy.tile_copy_id in state.expansion.inspected_ids):
+			report.add(&"non_player_tile_in_inventory", "Legacy and setup-only tiles cannot enter player inventory.", copy.tile_copy_id)
+		if copy.acquisition_source != EnvironmentalRiverService.SOURCE:
+			continue
+		environment_ids.append(copy.tile_copy_id)
+		if copy.definition_id not in counts or copy.acquired_act != 1:
+			report.add(&"invalid_environment_copy", "Setup River copies must use Act-I environmental definitions.", copy.tile_copy_id)
+		else:
+			counts[copy.definition_id] += 1
+	# Isolated earlier-phase fixtures have no setup journal. Real initialized runs
+	# identify their environment with persistent acquisition provenance.
+	var founding: BoardCellState = state.expansion.board.get_cell(Vector2i.ZERO)
+	var founding_copy: TileCopyState = PhysicalTileRules.find_copy(state, founding.base_tile_copy_id) if founding != null else null
+	var generated_run: bool = founding_copy != null and founding_copy.acquisition_source == &"homestead_founding"
+	if environment_ids.is_empty() and not generated_run:
+		return
+	if counts != {&"tile.river_run": 5, &"tile.river_bend": 2, &"tile.river_end": 1}:
+		report.add(&"invalid_environment_composition", "The generated River requires five Runs, two Bends and one End.")
+	var placed_ids: Array[int] = []
+	for cell: BoardCellState in state.expansion.board.cells.values():
+		if cell != null and cell.base_tile_copy_id in environment_ids:
+			placed_ids.append(cell.base_tile_copy_id)
+			if cell.act_placed != 1 or cell.normal_placement_index != 0:
+				report.add(&"invalid_environment_placement", "Setup geography is Act I and consumes no placement.", cell.base_tile_copy_id)
+	placed_ids.sort()
+	environment_ids.sort()
+	if placed_ids != environment_ids:
+		report.add(&"missing_environment_board_copy", "Every generated environmental tile must remain on the board.")
+	if state.features == null or not report.is_valid:
+		return
+	var rivers: Array[CurrentFeature] = []
+	for current: CurrentFeature in TopologyService.rebuild(state):
+		if current.feature_type == DomainTypes.FeatureType.RIVER:
+			rivers.append(current)
+	if rivers.size() != 1 or rivers[0].coordinates.size() != 9 or rivers[0].open_exits != 0:
+		report.add(&"invalid_environment_spine", "Generated geography must remain one nine-tile River spine.")
 
 
 static func _validate_turn(state: RunState, config: RunConfig, report: InvariantReport) -> void:
@@ -183,6 +232,12 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	if definition == null:
 		report.add(&"unknown_board_definition", "Board definition does not resolve.", tile_id)
 		return
+	if cell.intersection_hub != definition.intersection_hub:
+		report.add(&"invalid_intersection_hub", "Hub identity must match its base definition.", tile_id)
+	if cell.intersection_hub:
+		for group: TileFeatureGroup in cell.feature_groups:
+			if group != null and group.edge_type == DomainTypes.EdgeType.ROAD:
+				report.add(&"physical_junction_road", "Junction sockets cannot form a physical Road.", tile_id)
 	var specialized_base: bool = false
 	for transformation: TransformationState in cell.transformations:
 		if transformation != null and transformation.tile_copy_id == tile_id and transformation.mode in [&"urban_expansion", &"rewilding_expansion"]:
@@ -216,12 +271,15 @@ static func _validate_cell(state: RunState, content: ContentRegistry, coordinate
 	for direction: int in cell.hard_boundaries:
 		if not RelicGeometry.is_hard_boundary(state.expansion.board, coordinate, direction):
 			report.add(&"invalid_hard_boundary", "Hard boundaries must join a reciprocal occupied Field/Forest seam.", tile_id)
+	var setup_cell: bool = EnvironmentalRiverService.is_environment(state, cell.base_tile_copy_id)
 	var earlier_neighbor: bool = coordinate == Vector2i.ZERO
 	for direction: int in range(4):
 		var neighbor_coordinate: Vector2i = coordinate + OFFSETS[direction]
 		if not state.expansion.board.cells.has(neighbor_coordinate):
 			continue
 		var neighbor: BoardCellState = state.expansion.board.cells[neighbor_coordinate]
+		if setup_cell and neighbor != null and neighbor.base_tile_copy_id < cell.base_tile_copy_id:
+			earlier_neighbor = true
 		if neighbor != null and PlacementChronology.rank(state, neighbor.base_tile_copy_id, neighbor.act_placed, neighbor.normal_placement_index) \
 				< PlacementChronology.rank(state, cell.base_tile_copy_id, cell.act_placed, cell.normal_placement_index):
 			earlier_neighbor = true
@@ -251,6 +309,8 @@ static func _validate_current_geometry(state: RunState, cell: BoardCellState, re
 			if cell.effective_edges[direction] != group.edge_type:
 				report.add(&"current_socket_mismatch", "Effective edge must match its internal group.")
 	for direction: int in range(4):
+		if cell.intersection_hub and cell.effective_edges[direction] == DomainTypes.EdgeType.ROAD:
+			continue
 		if cell.effective_edges[direction] != DomainTypes.EdgeType.FIELD and direction not in covered:
 			report.add(&"missing_current_socket", "Every tracked edge requires internal membership.")
 	if cell.field_supports_settlement and (4 not in types or not cell.has_field_geography):

@@ -17,7 +17,8 @@ func tests() -> Array[Callable]:
 		rejects_track_corruption, rejects_negative_track_encoding,
 		rejects_topology_revision_mismatch, rejects_fake_network_history,
 		rejects_invalid_enclosure_host, rejects_replayed_completion,
-		loaded_reopened_feature_scores_only_new_growth]
+		loaded_reopened_feature_scores_only_new_growth, rejects_nonriver_contact_history,
+		rejects_nonriver_completion_contact, forest_river_contact_roundtrip, rejects_river_reopening_history]
 
 
 func phase_three_round_trip_preserves_history_and_topology() -> bool:
@@ -268,3 +269,55 @@ func _topology(state: RunState) -> Array[String]:
 	for feature: CurrentFeature in TopologyService.rebuild(state):
 		result.append(str([feature.feature_type, feature.component_ids, feature.coordinates, feature.open_exits, feature.lineage_id]))
 	return result
+
+
+func rejects_nonriver_contact_history() -> bool:
+	var content: ContentRegistry = Fixture.content()
+	var state: RunState = _representative(content)
+	var forest: FeatureLineageState = Fixture.lineage_at(state, Vector2i.LEFT, DomainTypes.FeatureType.FOREST)
+	forest.scored_river_ids.append(state.expansion.board.get_cell(Vector2i.LEFT).base_tile_copy_id)
+	var loaded: DeserializationResult = RunSerializer.deserialize(JSON.stringify(RunSerializer.to_envelope(state)), content)
+	expect_true(not loaded.validation.is_valid and loaded.state == null, "Existing non-River board identity cannot forge paid River support")
+	expect_true(str(loaded.validation.debug_details).contains("invalid_river_contact"), "Failure specifically rejects false River geography")
+	return true
+
+
+func rejects_nonriver_completion_contact() -> bool:
+	var content: ContentRegistry = Fixture.content()
+	var state: RunState = _representative(content)
+	state.features.completions[0].river_support_ids.append(state.expansion.board.get_cell(Vector2i.LEFT).base_tile_copy_id)
+	var loaded: DeserializationResult = RunSerializer.deserialize(JSON.stringify(RunSerializer.to_envelope(state)), content)
+	expect_true(not loaded.validation.is_valid and loaded.state == null, "Snapshot River support must be real River geography")
+	expect_true(str(loaded.validation.debug_details).contains("invalid_river_contact"), "Completion check identifies invalid River contact")
+	return true
+
+
+func forest_river_contact_roundtrip() -> bool:
+	var content: ContentRegistry = Fixture.content()
+	var state: RunState = Fixture.create(content)
+	Fixture.add(state, content, &"tile.woodland_river", Vector2i.DOWN, 2)
+	Fixture.add(state, content, &"tile.forest_edge", Vector2i(-1, 1), 1)
+	Fixture.add(state, content, &"tile.river_end", Vector2i.ONE, 3)
+	Fixture.add(state, content, &"tile.forest_edge", Vector2i(0, 2))
+	var before: String = StateNormalizer.fingerprint(state)
+	var loaded: DeserializationResult = RunSerializer.deserialize(RunSerializer.serialize(state, content).json_text, content)
+	expect_true(loaded.validation.is_valid, "Revised Forest contact state saves and loads")
+	if loaded.state != null:
+		expect_equal(StateNormalizer.fingerprint(loaded.state), before, "Direct load preserves paid contacts, effects, River identity and RNG")
+		FeatureResolutionService.resolve(loaded.state)
+		expect_equal(StateNormalizer.fingerprint(loaded.state), before, "Loaded geography cannot replay scoring")
+	return true
+
+
+func rejects_river_reopening_history() -> bool:
+	var content: ContentRegistry = Fixture.content()
+	var state: RunState = _representative(content)
+	for event: FeatureHistoryRecord in state.features.history:
+		if event.kind == &"feature_created" and event.feature_type == DomainTypes.FeatureType.RIVER:
+			event.kind = &"feature_reopened"
+			state.features.lineage(event.lineage_id).growth_phase = 2
+			break
+	var loaded: DeserializationResult = RunSerializer.deserialize(JSON.stringify(RunSerializer.to_envelope(state)), content)
+	expect_true(not loaded.validation.is_valid and loaded.state == null, "Even internally coordinated River reopening history is obsolete")
+	expect_true(str(loaded.validation.debug_details).contains("river_lifecycle_history_forbidden"), "Explicit environmental lifecycle invariant reports the corruption")
+	return true

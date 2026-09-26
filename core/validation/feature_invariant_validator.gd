@@ -113,20 +113,25 @@ static func _validate_lineage(state: RunState, lineage: FeatureLineageState, boa
 	for support_id: int in lineage.scored_field_ids + lineage.scored_river_ids + lineage.scored_forest_ids:
 		if support_id not in board_ids:
 			report.add(&"invalid_support_history", "Historical support requires a persistent board identity.")
+	for river_id: int in lineage.scored_river_ids:
+		if not _is_river_tile(state, river_id):
+			report.add(&"invalid_river_contact", "River support history must reference actual River geography.")
 	if not lineage.scored_settlement_ids.is_empty() and (state.trade == null or lineage.feature_type != DomainTypes.FeatureType.ROAD):
 		report.add(&"invalid_trade_payment_owner", "Only initialized Road Trade history may retain Settlement payments.")
 	for settlement_id: int in lineage.scored_settlement_ids:
 		var settlement: FeatureLineageState = state.features.lineage(settlement_id)
 		if settlement == null or settlement.feature_type != DomainTypes.FeatureType.SETTLEMENT:
 			report.add(&"invalid_settlement_payment", "Road payment history must resolve historical Settlements.")
-	if lineage.feature_type != DomainTypes.FeatureType.SETTLEMENT and (not lineage.scored_field_ids.is_empty() or not lineage.scored_river_ids.is_empty() or lineage.highest_settlement_class != 0):
-		report.add(&"wrong_support_category", "Only Settlement lineages own Field/River support history.")
+	if lineage.feature_type != DomainTypes.FeatureType.SETTLEMENT and (not lineage.scored_field_ids.is_empty() or lineage.highest_settlement_class != 0):
+		report.add(&"wrong_support_category", "Only Settlement lineages own Field support history.")
 	if lineage.highest_settlement_class < 0 or lineage.highest_settlement_class > 4:
 		report.add(&"unsupported_settlement_class", "Historical Settlement class must be canonical.")
-	if lineage.feature_type != DomainTypes.FeatureType.RIVER and not lineage.scored_forest_ids.is_empty():
-		report.add(&"wrong_contact_category", "Only River lineages own Forest-contact history.")
-	if lineage.feature_type == DomainTypes.FeatureType.RIVER and not lineage.completion_ids.is_empty() and not lineage.completed:
-		report.add(&"completed_river_reopened", "A historical completed River cannot become unfinished.")
+	if lineage.feature_type not in [DomainTypes.FeatureType.SETTLEMENT, DomainTypes.FeatureType.FOREST] and not lineage.scored_river_ids.is_empty():
+		report.add(&"wrong_river_contact_owner", "Only Settlement and Forest lineages own River contact history.")
+	if not lineage.scored_forest_ids.is_empty():
+		report.add(&"obsolete_river_scoring", "River Forest-contact scoring is superseded.")
+	if lineage.feature_type == DomainTypes.FeatureType.RIVER and (lineage.completed or not lineage.completion_ids.is_empty() or not lineage.scored_component_ids.is_empty()):
+		report.add(&"river_completion_forbidden", "Environmental River has no completion or scoring lifecycle.")
 	var expected_phase: int = 1
 	for parent_id: int in lineage.parent_ids:
 		var parent: FeatureLineageState = state.features.lineage(parent_id)
@@ -158,7 +163,8 @@ static func _validate_current(state: RunState, report: InvariantReport) -> void:
 			for facts: Dictionary in state.resolution.completion_snapshot.get("features", []):
 				if facts.get("lineage_id", 0) == lineage.lineage_id:
 					awaiting_completion = true
-		if members != feature.component_ids or (lineage.completed != (feature.open_exits == 0) and not awaiting_completion):
+		var should_complete: bool = feature.feature_type != DomainTypes.FeatureType.RIVER and feature.open_exits == 0
+		if members != feature.component_ids or (lineage.completed != should_complete and not awaiting_completion):
 			report.add(&"topology_lineage_mismatch", "Current membership and completion must agree with reconstructed exits.")
 	for lineage: FeatureLineageState in state.features.lineages:
 		if lineage.active != (lineage.lineage_id in current_ids):
@@ -193,6 +199,8 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 			var owner: FeatureLineageState = state.features.lineage(event.lineage_id)
 			if owner == null or owner.feature_type != event.feature_type:
 				report.add(&"invalid_feature_event", "Feature events require their typed lineage.")
+		if event.feature_type == DomainTypes.FeatureType.RIVER and event.kind in [&"feature_completed", &"feature_reopened"]:
+			report.add(&"river_lifecycle_history_forbidden", "Environmental River cannot record completion or reopening events.")
 		if not _unique_positive(event.component_ids) or not _unique_positive(event.parent_ids):
 			report.add(&"duplicate_event_fact", "Event identity sets cannot contain duplicates.")
 		for parent_id: int in event.parent_ids:
@@ -256,6 +264,9 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 		for id: int in record.field_support_ids + record.river_support_ids + record.forest_contact_ids:
 			if id not in board_ids:
 				report.add(&"invalid_completion_support", "Recorded support must resolve to a board base.")
+		for river_id: int in record.river_support_ids:
+			if not _is_river_tile(state, river_id):
+				report.add(&"invalid_river_contact", "Recorded River contact must reference actual River geography.")
 		if record.gains.size() != 4:
 			report.add(&"invalid_completion_gains", "All four Track gains must be explicit.")
 			continue
@@ -319,8 +330,8 @@ static func _validate_scoring_history(state: RunState, record_ids: Array[int], r
 		match record.feature_type:
 			DomainTypes.FeatureType.ROAD: expected_gain[1] = record.new_component_ids.size() + 2 * record.new_settlement_ids.size()
 			DomainTypes.FeatureType.SETTLEMENT: expected_gain[0] = 2 * record.new_component_ids.size() + record.new_field_ids.size() + record.new_river_ids.size()
-			DomainTypes.FeatureType.FOREST: expected_gain[3] = record.new_component_ids.size() + (2 if record.forest_undeveloped else 0)
-			DomainTypes.FeatureType.RIVER: expected_gain[3] = (floori(record.total_size / 2.0) if record.first_completion else 0) + record.new_forest_ids.size()
+			DomainTypes.FeatureType.FOREST: expected_gain[3] = record.new_component_ids.size() + record.new_river_ids.size() + (2 if record.forest_undeveloped else 0)
+			DomainTypes.FeatureType.RIVER: report.add(&"river_completion_forbidden", "Environmental River cannot produce a completion record.")
 		if record.base_multiplier not in [0, 1, 2] or (record.base_multiplier != 1 and (state.relics == null or record.feature_type not in [0, 1])):
 			report.add(&"invalid_base_modifier", "Only Phase-8 Road/Settlement Legacy effects alter base payout.")
 		for track: int in range(4):
@@ -433,4 +444,13 @@ static func _relic_source(state: RunState, event: FeatureHistoryRecord) -> bool:
 	for relic: RelicInstanceState in state.relics.instances:
 		if relic.runtime_id == event.source_id:
 			return true
+	return false
+
+
+static func _is_river_tile(state: RunState, tile_id: int) -> bool:
+	for component: FeatureComponentState in state.features.components:
+		if component != null and component.feature_type == DomainTypes.FeatureType.RIVER:
+			var cell: BoardCellState = state.expansion.board.get_cell(component.coordinate)
+			if cell != null and cell.base_tile_copy_id == tile_id:
+				return true
 	return false

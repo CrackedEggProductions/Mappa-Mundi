@@ -27,7 +27,7 @@ static func evaluate(state: RunState, content: ContentRegistry, id: StringName) 
 			progress.add(&"network_settlements", _largest_network(networks), int(targets["network_settlements"]))
 		&"a1_living_landscape":
 			progress.add(&"forest_completions", completion_count(state, TYPE.FOREST), int(targets["forest_completions"]), &"history")
-			progress.add(&"river_completions", completion_count(state, TYPE.RIVER), int(targets["river_completions"]), &"history")
+			progress.add(&"river_interactions_created", RiverInteractionService.creation_count(state), int(targets["river_interactions_created"]), &"history")
 		&"a2_market_towns":
 			var markets: Array[int] = _commercial_settlements(state, current, false)
 			progress.add(&"market_settlements", markets.size(), int(targets["market_settlements"]), &"current_state", false, markets)
@@ -37,7 +37,7 @@ static func evaluate(state: RunState, content: ContentRegistry, id: StringName) 
 			_growing_communities(progress, state, current, targets)
 		&"a2_stewardship_of_land", &"grand_living_heritage":
 			progress.add(&"forest_size", _largest_feature(current, TYPE.FOREST), int(targets["forest_size"]))
-			progress.add(&"river_size", _largest_feature(current, TYPE.RIVER), int(targets["river_size"]))
+			progress.add(&"active_river_interactions", RiverInteractionService.current_count(state), int(targets["active_river_interactions"]))
 			if definition.behavior_id == &"grand_living_heritage":
 				progress.add(&"enclosure_completions", completion_count(state, -1), int(targets["enclosure_completions"]), &"history")
 		&"grand_great_metropolis":

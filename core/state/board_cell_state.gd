@@ -6,6 +6,8 @@ var coordinate: Vector2i = Vector2i.ZERO
 var base_tile_copy_id: int = 0
 var definition_id: StringName = &""
 var rotation: int = 0
+## Intersection sockets terminate physical Roads and connect only economic hubs.
+var intersection_hub: bool = false
 var act_placed: int = 1
 var normal_placement_index: int = 0
 var effective_edges: Array[DomainTypes.EdgeType] = []
@@ -32,6 +34,7 @@ static func from_definition(
 	cell.base_tile_copy_id = tile_copy_id
 	cell.definition_id = definition.definition_id
 	cell.rotation = posmod(quarter_turns, 4)
+	cell.intersection_hub = definition.intersection_hub
 	cell.act_placed = act
 	cell.normal_placement_index = placement_index
 	cell.effective_edges = TileRotation.edges(definition.canonical_edges, quarter_turns)

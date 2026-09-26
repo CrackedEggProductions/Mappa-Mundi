@@ -13,6 +13,9 @@ static func validate(state: RunState, report: InvariantReport) -> void:
 	var ids: Array[int] = []
 	for tile: TileCopyState in state.tile_copies:
 		ids.append(tile.tile_copy_id)
+	for cell: BoardCellState in state.expansion.board.cells.values():
+		if cell.intersection_hub and state.features.component_at(cell.coordinate, DomainTypes.FeatureType.ROAD) != null:
+			report.add(&"junction_has_road_component", "Intersection hubs cannot contribute physical Road components.")
 	for component: FeatureComponentState in state.features.components:
 		ids.append(component.component_id)
 	for lineage: FeatureLineageState in state.features.lineages:
@@ -28,7 +31,7 @@ static func validate(state: RunState, report: InvariantReport) -> void:
 			report.add(&"null_trade_lineage", "Network registry cannot contain null.")
 			return
 		FeatureInvariantValidator._check_id(state, lineage.lineage_id, ids, report)
-		_validate_members(state, lineage.road_lineage_ids, lineage.settlement_lineage_ids, lineage.active, report)
+		_validate_members(state, lineage.road_lineage_ids, lineage.settlement_lineage_ids, lineage.active, report, lineage.junction_hub_ids)
 		if not FeatureInvariantValidator._unique_positive(lineage.parent_ids):
 			report.add(&"duplicate_trade_parent", "Network parents must be unique positive identities.")
 		for parent_id: int in lineage.parent_ids:
@@ -69,10 +72,17 @@ static func _current_member(state: RunState, id: int) -> bool:
 	return lineage != null and lineage.active and lineage.feature_type in [DomainTypes.FeatureType.ROAD, DomainTypes.FeatureType.SETTLEMENT]
 
 
-static func _validate_members(state: RunState, roads: Array[int], settlements: Array[int], current: bool, report: InvariantReport) -> void:
-	if roads.is_empty() or settlements.is_empty() or not FeatureInvariantValidator._unique_positive(roads) \
-		or not FeatureInvariantValidator._unique_positive(settlements):
-		report.add(&"invalid_trade_members", "Every qualifying network needs distinct Road and Settlement members.")
+static func _validate_members(state: RunState, roads: Array[int], settlements: Array[int], current: bool,
+		report: InvariantReport, hubs: Array[int] = [], completion_members: bool = false) -> void:
+	if (hubs.is_empty() and not completion_members and (roads.is_empty() or settlements.is_empty())) \
+		or not FeatureInvariantValidator._unique_positive(roads) \
+		or not FeatureInvariantValidator._unique_positive(settlements) \
+		or not FeatureInvariantValidator._unique_positive(hubs):
+		report.add(&"invalid_trade_members", "Networks require distinct physical members or explicit Junction infrastructure.")
+	for id: int in hubs:
+		var hub: IntersectionHubState = IntersectionHubService.hub(state, id)
+		if hub == null:
+			report.add(&"unresolved_junction_hub", "Junction membership must resolve to a persisted board hub.")
 	for pair: Array in [[roads, DomainTypes.FeatureType.ROAD], [settlements, DomainTypes.FeatureType.SETTLEMENT]]:
 		for id: int in pair[0]:
 			var member: FeatureLineageState = state.features.lineage(id)
@@ -105,7 +115,7 @@ static func _validate_history(state: RunState, ids: Array[int], report: Invarian
 				report.add(&"trade_origin_ancestry", "Split, merger and reconnection history must retain appropriate parents.")
 		if event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null and not _relic_source(state, event.source_id):
 			report.add(&"trade_history_source", "Network change source must resolve.")
-		_validate_members(state, event.road_lineage_ids, event.settlement_lineage_ids, false, report)
+		_validate_members(state, event.road_lineage_ids, event.settlement_lineage_ids, false, report, event.junction_hub_ids)
 		latest[event.lineage_id] = event
 	for lineage: TradeNetworkLineageState in state.trade.lineages:
 		if not latest.has(lineage.lineage_id):
@@ -113,7 +123,8 @@ static func _validate_history(state: RunState, ids: Array[int], report: Invarian
 			continue
 		var event: TradeHistoryRecord = latest[lineage.lineage_id]
 		if not _same_set(lineage.road_lineage_ids, event.road_lineage_ids) \
-			or not _same_set(lineage.settlement_lineage_ids, event.settlement_lineage_ids):
+			or not _same_set(lineage.settlement_lineage_ids, event.settlement_lineage_ids) \
+			or not _same_set(lineage.junction_hub_ids, event.junction_hub_ids):
 			report.add(&"trade_history_membership", "Last recorded membership must agree with reconciliation metadata.")
 
 
@@ -126,7 +137,7 @@ static func _validate_completions(state: RunState, report: InvariantReport) -> v
 		if record.feature_type != DomainTypes.FeatureType.ROAD or state.trade.lineage(record.trade_network_id) == null \
 			or record.trade_network_id >= record.record_id or record.lineage_id not in record.network_road_ids:
 			report.add(&"invalid_completion_network", "Only Road completions reference containing historical networks.")
-		_validate_members(state, record.network_road_ids, record.network_settlement_ids, false, report)
+		_validate_members(state, record.network_road_ids, record.network_settlement_ids, false, report, [], true)
 		if not FeatureInvariantValidator._unique_positive(record.new_settlement_ids):
 			report.add(&"duplicate_completion_payment", "Settlement payments must be distinct.")
 		var historical: TradeHistoryRecord = null

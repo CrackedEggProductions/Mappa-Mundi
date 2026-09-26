@@ -44,7 +44,7 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 static func _validate_assignment(state: RunState, piece: SpecialistPieceState, report: InvariantReport) -> void:
 	if piece.assigned_act < 1 or piece.assigned_act > state.expansion.current_act \
 			or piece.assigned_placement_index < 0 or piece.assigned_placement_index > PlacementChronology.count_for_act(state, piece.assigned_act) \
-			or piece.assigned_target_type not in [0, 1, 2, 3, 4]:
+			or piece.assigned_target_type not in [0, 1, 2, 4]:
 		report.add(&"invalid_specialist_assignment", "Assignment timing/type is outside current run context.", piece.piece_id)
 		return
 	if piece.assigned_target_type == 4:
@@ -66,9 +66,9 @@ static func _validate_assignment(state: RunState, piece: SpecialistPieceState, r
 				and SpecialistContentValidator.ROLES.get(piece.role_definition_id, -1) != piece.assigned_target_type:
 			report.add(&"ineligible_specialist_target", "Role cannot occupy this feature type.", piece.piece_id)
 	_validate_growth(state, piece, report)
-	if piece.role_definition_id == &"specialist.harbormaster" and not SpecialistRules.role_eligible(
+	if piece.role_definition_id in [&"specialist.harbormaster", &"specialist.riverkeeper"] and not SpecialistRules.role_eligible(
 		state, piece.role_definition_id, piece.assigned_target_type, piece.assigned_target_id, TopologyService.rebuild(state)):
-		report.add(&"ineligible_harbormaster", "Harbormaster requires current River/Settlement contact.", piece.piece_id)
+		report.add(&"ineligible_river_specialist", "Riverkeeper and Harbormaster require current River contact.", piece.piece_id)
 
 
 static func _validate_growth(state: RunState, piece: SpecialistPieceState, report: InvariantReport) -> void:

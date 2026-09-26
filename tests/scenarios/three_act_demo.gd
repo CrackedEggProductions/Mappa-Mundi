@@ -48,8 +48,10 @@ func _run() -> void:
 
 func _find_seed() -> void:
 	var registry: ContentRegistry = Fixture.content()
-	for seed_value: int in range(1, 300):
+	for seed_value: int in range(1, 4001):
 		var initial: RunState = HomesteadRunFactory.create(seed_value, registry)
+		if not _safe_fixture_environment(initial):
+			continue
 		if initial.charters.act_one_id != &"charter.a1_living_landscape":
 			continue
 		assert(RulesEngine.execute(initial, registry, RequestSpecialistTrainingCommand.new(initial.specialists.pieces[0].piece_id)).is_valid)
@@ -65,3 +67,12 @@ func _find_seed() -> void:
 			return
 	printerr("No matching deterministic integration seed in the bounded search")
 	quit(1)
+
+
+func _safe_fixture_environment(state: RunState) -> bool:
+	# This recipe builds northwest. Select an ordinary randomized seed whose
+	# environment leaves that controlled construction footprint available.
+	for at: Vector2i in state.expansion.board.sorted_coordinates():
+		if at != Vector2i.ZERO and (at.y <= 0 or (at.x < 0 and at.y <= 1)):
+			return false
+	return true

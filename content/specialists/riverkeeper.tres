@@ -7,4 +7,4 @@ script = ExtResource("1")
 definition_id = &"specialist.riverkeeper"
 display_name = "Riverkeeper"
 behavior_id = &"riverkeeper"
-eligible_feature_types = Array[int]([3])
+eligible_feature_types = Array[int]([2])

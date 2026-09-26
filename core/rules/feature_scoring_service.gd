@@ -15,7 +15,7 @@ static func capture(state: RunState, current: Array[CurrentFeature], source_id: 
 	ordered.sort_custom(func(a: CurrentFeature, b: CurrentFeature) -> bool: return a.lineage_id < b.lineage_id)
 	for feature: CurrentFeature in ordered:
 		var lineage: FeatureLineageState = state.features.lineage(feature.lineage_id)
-		if feature.open_exits != 0 or lineage.completed:
+		if feature.feature_type == DomainTypes.FeatureType.RIVER or feature.open_exits != 0 or lineage.completed:
 			continue
 		var field_ids: Array[int] = []
 		var river_ids: Array[int] = []
@@ -26,8 +26,8 @@ static func capture(state: RunState, current: Array[CurrentFeature], source_id: 
 		if feature.feature_type == DomainTypes.FeatureType.SETTLEMENT:
 			field_ids = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.FIELD)
 			river_ids = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.RIVER)
-		elif feature.feature_type == DomainTypes.FeatureType.RIVER:
-			forest_ids = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.FOREST)
+		elif feature.feature_type == DomainTypes.FeatureType.FOREST:
+			river_ids = FeatureContactService.support_ids(state, feature, DomainTypes.EdgeType.RIVER)
 		elif feature.feature_type == DomainTypes.FeatureType.ROAD:
 			for network: CurrentTradeNetwork in networks:
 				if network.road_lineage_ids.has(lineage.lineage_id):
@@ -70,6 +70,8 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[FeatureCompletionRe
 	var records: Array[FeatureCompletionRecord] = []
 	var data: Dictionary = snapshot.data()
 	for facts: Dictionary in data["features"]:
+		if int(facts["feature_type"]) == DomainTypes.FeatureType.RIVER:
+			continue # Environmental geography has no completion or base scoring lifecycle.
 		var record: FeatureCompletionRecord = _record(data)
 		record.lineage_id = facts["lineage_id"]
 		record.feature_type = facts["feature_type"]
@@ -101,11 +103,7 @@ static func calculate(snapshot: CompletionSnapshot) -> Array[FeatureCompletionRe
 			DomainTypes.FeatureType.ROAD:
 				record.gains[DomainTypes.TrackType.TRADE] = record.new_component_ids.size() + 2 * record.new_settlement_ids.size()
 			DomainTypes.FeatureType.FOREST:
-				record.gains[DomainTypes.TrackType.ECOLOGY] = record.new_component_ids.size() + (2 if facts["undeveloped"] else 0)
-			DomainTypes.FeatureType.RIVER:
-				# Completed Rivers cannot reopen; inherited completion prevents length farming.
-				var length_gain: int = floori(record.total_size / 2.0) if record.first_completion else 0
-				record.gains[DomainTypes.TrackType.ECOLOGY] = length_gain + record.new_forest_ids.size()
+				record.gains[DomainTypes.TrackType.ECOLOGY] = record.new_component_ids.size() + record.new_river_ids.size() + (2 if facts["undeveloped"] else 0)
 		record.base_multiplier = RelicRules.base_multiplier(snapshot, facts)
 		for track: int in range(4):
 			record.gains[track] *= record.base_multiplier

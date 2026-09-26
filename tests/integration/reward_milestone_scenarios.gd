@@ -10,7 +10,7 @@ func tests() -> Array[Callable]:
 	var result: Array[Callable] = [settlement_milestone_before_threshold,
 		milestone_queue_save_load, forest_milestone_once_across_two_features,
 		road_network_milestone_on_recompletion]
-	for type: int in [TYPE.SETTLEMENT, TYPE.FOREST, TYPE.RIVER]:
+	for type: int in [TYPE.SETTLEMENT, TYPE.FOREST]:
 		result.append(unfinished_growth_no_milestone.bind(type))
 		result.append(real_completion_milestone.bind(type))
 	return result
@@ -161,7 +161,7 @@ func road_network_milestone_on_recompletion() -> bool:
 	TradeFixture.reopen_first_road(state, registry)
 	state = F.activate(state)
 	expect_true(state.rewards.milestone_flags.is_empty(), "Existing large network is not a completion event")
-	F.play(state, registry, &"tile.road_end", Vector2i(1, -1), 2)
+	F.play(state, registry, &"tile.road_junction", Vector2i(1, -1), 2)
 	F.decline_assignment(state, registry)
 	expect_true(state.rewards.milestone_flags.has(&"road"), "Genuine recompletion earns previously unearned current-network milestone")
 	expect_equal(state.pending_choice.kind, &"relic_offer", "Road milestone uses ordinary persisted Relic offer")

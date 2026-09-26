@@ -1,5 +1,6 @@
 extends "res://tests/framework/test_suite.gd"
 
+const TopologyFixture = preload("res://tests/fixtures/topology_fixture.gd")
 const TYPE = DomainTypes.FeatureType
 const EDGE = DomainTypes.EdgeType
 const TRACK = DomainTypes.TrackType
@@ -9,13 +10,14 @@ func tests() -> Array[Callable]:
 	return [snapshot_owns_nested_input, snapshot_returns_isolated_views,
 		settlement_scores_new_components_and_support, settlement_recompletion_scores_only_new_eligibility,
 		forest_preservation_repeats_without_repaying_old_tiles, road_scores_tiles_without_network_bonus,
-		river_length_rounds_down, river_contact_is_distinct_historical_eligibility,
-		river_length_does_not_repay_historical_completion, simultaneous_calculation_is_state_independent,
+		river_has_no_completion_score, forest_river_contact_is_historical_eligibility,
+		forest_river_contact_recompletion, simultaneous_calculation_is_state_independent,
 		monastery_requires_eight_neighbors, monastery_counts_natural_squares_once,
 		monastery_completed_stage_does_not_repeat, abbey_scores_its_new_stage,
 		same_tile_support_requires_explicit_relationship, support_requires_shared_reachable_socket,
 		woodland_river_has_explicit_same_tile_contact, pipeline_child_events_are_fifo,
-		pipeline_stages_preserve_canonical_order, settlement_classes_require_canonical_qualification]
+		pipeline_stages_preserve_canonical_order, settlement_classes_require_canonical_qualification, forest_river_history_survives_merge_and_codec,
+		forest_same_tile_and_adjacent_river_contacts_deduplicate, river_never_enters_completion_snapshot]
 
 
 func snapshot_owns_nested_input() -> bool:
@@ -75,25 +77,29 @@ func road_scores_tiles_without_network_bonus() -> bool:
 	return true
 
 
-func river_length_rounds_down() -> bool:
-	expect_equal(_score(_facts(TYPE.RIVER, [11, 12, 13])).gains[TRACK.ECOLOGY], 1, "Odd length rounds down")
-	expect_equal(_score(_facts(TYPE.RIVER, [11, 12, 13, 14])).gains[TRACK.ECOLOGY], 2, "Even length divides by two")
+func river_has_no_completion_score() -> bool:
+	var records: Array[FeatureCompletionRecord] = FeatureScoringService.calculate(CompletionSnapshot.new(_data([_facts(TYPE.RIVER, [11, 12, 13])])))
+	expect_true(records.is_empty(), "Environmental River never creates a completion record or points")
 	return true
 
 
-func river_contact_is_distinct_historical_eligibility() -> bool:
-	var facts: Dictionary = _facts(TYPE.RIVER, [11, 12])
-	facts["forest_contact_ids"] = [21, 22]
-	facts["new_forest_ids"] = [22]
-	expect_equal(_score(facts).gains[TRACK.ECOLOGY], 2, "Length plus only previously unscored Forest contact")
+func forest_river_contact_is_historical_eligibility() -> bool:
+	var facts: Dictionary = _facts(TYPE.FOREST, [11, 12])
+	facts["river_support_ids"] = [21, 22]
+	facts["new_river_ids"] = [22]
+	expect_equal(_score(facts).gains[TRACK.ECOLOGY], 5, "Two Forest tiles, one new River contact, and preservation")
 	return true
 
 
-func river_length_does_not_repay_historical_completion() -> bool:
-	var facts: Dictionary = _facts(TYPE.RIVER, [11, 12])
+func forest_river_contact_recompletion() -> bool:
+	var facts: Dictionary = _facts(TYPE.FOREST, [11, 12])
 	facts["first_completion"] = false
 	facts["new_component_ids"] = []
-	expect_equal(_score(facts).gains, [0, 0, 0, 0], "Historical River length is never paid twice")
+	facts["river_support_ids"] = [21, 22]
+	facts["new_river_ids"] = []
+	expect_equal(_score(facts).gains[TRACK.ECOLOGY], 2, "Old River contacts and old Forest tiles do not repay; preservation reevaluates")
+	facts["new_river_ids"] = [23]
+	expect_equal(_score(facts).gains[TRACK.ECOLOGY], 3, "Genuinely new River support can pay on later completion")
 	return true
 
 
@@ -180,10 +186,14 @@ func support_requires_shared_reachable_socket() -> bool:
 
 
 func woodland_river_has_explicit_same_tile_contact() -> bool:
-	var state: RunState = _state()
-	var definition: TileDefinition = load("res://content/tiles/homestead/woodland_river.tres") as TileDefinition
-	state.expansion.board.add_cell(BoardCellState.from_definition(definition, 10, Vector2i.ZERO, 0, 1, 0))
-	expect_equal(FeatureContactService.support_ids(state, _feature(TYPE.RIVER, Vector2i.ZERO), EDGE.FOREST), [10], "Woodland River explicitly contributes own Forest cell")
+	var state: RunState = TopologyFixture.empty()
+	var cell: BoardCellState = TopologyFixture.add(state, Vector2i.ZERO, [EDGE.FOREST, EDGE.FOREST, EDGE.RIVER, EDGE.RIVER])
+	var relation: TileFeatureRelationship = TileFeatureRelationship.new()
+	relation.kind = TileFeatureRelationship.Kind.FOREST_RIVER_TOUCH
+	relation.from_edge_type = EDGE.FOREST
+	relation.to_edge_type = EDGE.RIVER
+	cell.relationships.append(relation)
+	expect_equal(FeatureContactService.support_ids(state, _feature(TYPE.FOREST, Vector2i.ZERO), EDGE.RIVER), [cell.base_tile_copy_id], "Woodland River explicit relationship supplies its own River square")
 	return true
 
 
@@ -270,3 +280,54 @@ func _enclosure_state(count: int) -> RunState:
 			state.expansion.board.add_cell(_cell(Vector2i(x, y), 3 + added))
 			added += 1
 	return state
+
+
+func forest_river_history_survives_merge_and_codec() -> bool:
+	var state: RunState = TopologyFixture.empty()
+	TopologyFixture.add(state, Vector2i.ZERO, [EDGE.FIELD, EDGE.FOREST, EDGE.FIELD, EDGE.FIELD])
+	TopologyFixture.add(state, Vector2i(2, 0), [EDGE.FIELD, EDGE.FIELD, EDGE.FIELD, EDGE.FOREST])
+	var peers: Array[CurrentFeature] = TopologyFixture.reconcile(state)
+	state.features.lineage(peers[0].lineage_id).scored_river_ids = [91, 92]
+	state.features.lineage(peers[1].lineage_id).scored_river_ids = [92, 93]
+	TopologyFixture.add(state, Vector2i.RIGHT, [EDGE.FIELD, EDGE.FOREST, EDGE.FIELD, EDGE.FOREST])
+	var merged: Array[CurrentFeature] = TopologyFixture.reconcile(state)
+	var lineage: FeatureLineageState = state.features.lineage(merged[0].lineage_id)
+	expect_equal(lineage.scored_river_ids, [91, 92, 93], "Forest descendant unions prior paid River contacts without duplication")
+	var restored: FeatureState = FeatureSerializer.decode(FeatureSerializer.encode(state.features))
+	expect_equal(restored.lineage(lineage.lineage_id).scored_river_ids, [91, 92, 93], "Direct snapshot codec preserves Forest/River anti-farming state")
+	return true
+
+
+func forest_same_tile_and_adjacent_river_contacts_deduplicate() -> bool:
+	var state: RunState = TopologyFixture.empty()
+	var cell: BoardCellState = TopologyFixture.add(state, Vector2i.ZERO, [EDGE.RIVER, EDGE.FOREST, EDGE.RIVER, EDGE.FIELD])
+	var relation: TileFeatureRelationship = TileFeatureRelationship.new()
+	relation.kind = TileFeatureRelationship.Kind.FOREST_RIVER_TOUCH
+	relation.from_edge_type = EDGE.FOREST
+	relation.to_edge_type = EDGE.RIVER
+	cell.relationships.append(relation)
+	cell.relationships.append(relation.duplicate(true) as TileFeatureRelationship)
+	TopologyFixture.add(state, Vector2i.UP, [EDGE.FIELD, EDGE.FIELD, EDGE.RIVER, EDGE.FIELD])
+	TopologyFixture.add(state, Vector2i.DOWN, [EDGE.RIVER, EDGE.FIELD, EDGE.FIELD, EDGE.FIELD])
+	var current: Array[CurrentFeature] = TopologyFixture.reconcile(state)
+	var forest: CurrentFeature
+	for feature: CurrentFeature in current:
+		if feature.feature_type == TYPE.FOREST:
+			forest = feature
+	var contacts: Array[int] = FeatureContactService.support_ids(state, forest, EDGE.RIVER)
+	expect_equal(contacts.size(), 3, "Own River and both connected neighboring River squares each count once")
+	expect_true(contacts.has(cell.base_tile_copy_id), "Same-tile explicit contact is retained")
+	return true
+
+
+func river_never_enters_completion_snapshot() -> bool:
+	var state: RunState = TopologyFixture.empty()
+	TopologyFixture.add(state, Vector2i.ZERO, [EDGE.FIELD, EDGE.RIVER, EDGE.FIELD, EDGE.FIELD])
+	TopologyFixture.add(state, Vector2i.RIGHT, [EDGE.FIELD, EDGE.FIELD, EDGE.FIELD, EDGE.RIVER])
+	var current: Array[CurrentFeature] = TopologyFixture.reconcile(state)
+	var snapshot: CompletionSnapshot = FeatureScoringService.capture(state, current)
+	expect_true(snapshot.data()["features"].is_empty(), "Closed environmental geography is absent from completion batch")
+	FeatureScoringService.apply_snapshot(state, snapshot)
+	expect_true(state.features.completions.is_empty(), "No River completion record")
+	expect_equal(state.features.tracks.values, [0, 0, 0, 0], "River existence never scores")
+	return true

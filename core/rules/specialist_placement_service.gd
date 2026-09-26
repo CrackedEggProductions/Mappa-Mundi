@@ -62,6 +62,9 @@ static func affected_targets(state: RunState, command: PlaceTileCommand,
 			if plan == null:
 				if command.coordinate in feature.coordinates:
 					_add(result, feature.feature_type, feature.lineage_id)
+				var hub: IntersectionHubState = IntersectionHubService.at(state, command.coordinate)
+				if hub != null and feature.lineage_id in hub.road_lineage_ids:
+					_add(result, feature.feature_type, feature.lineage_id)
 			else:
 				for change: TransformationChange in plan.changes:
 					if change.coordinate not in feature.coordinates:

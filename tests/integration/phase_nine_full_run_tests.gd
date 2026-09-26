@@ -2,7 +2,7 @@ extends "res://tests/framework/test_suite.gd"
 ## Complete real-command runs; controlled source acquisition is documented in F.
 
 const F = preload("res://tests/fixtures/phase_nine_factory.gd")
-const RUN_SEED: int = 212
+const RUN_SEED: int = F.RUN_SEED
 var _runs: Dictionary = {}
 
 
@@ -37,7 +37,7 @@ func completed_failure() -> bool:
 
 func completed_victory() -> bool:
 	var state: RunState = _run(1)["state"]
-	expect_equal(state.final_result.victory_result, &"victory", "True forest, river and enclosure history supports Victory")
+	expect_equal(state.final_result.victory_result, &"victory", "Real Forest, River-interaction and enclosure history supports Victory")
 	expect_equal(state.final_result.grand_charter_result, &"fulfilled", "Fulfillment without exceed retained")
 	expect_equal(state.final_result.score, _track_sum(state), "Victory score is exactly the four uncapped Tracks")
 	return true
@@ -149,8 +149,9 @@ func genuine_completion_history() -> bool:
 			types[record.feature_type] = maxi(int(types.get(record.feature_type, 0)), record.total_size)
 		if record.enclosure_id != 0:
 			monastery = true
-	expect_equal(types.get(DomainTypes.FeatureType.FOREST), 9, "Forest history originates in nine connected, really completed tiles")
-	expect_equal(types.get(DomainTypes.FeatureType.RIVER), 9, "River history originates in nine connected, really completed tiles")
+	expect_equal(types.get(DomainTypes.FeatureType.FOREST), 25, "Final long Forest genuinely completes twenty-five connected tiles")
+	expect_true(not types.has(DomainTypes.FeatureType.RIVER), "Environmental River never enters completion history")
+	expect_equal(RiverInteractionService.creation_count(state), 3, "Three real player overlays supply interaction history")
 	expect_true(monastery, "Real surrounding placements complete the Monastery enclosure")
 	expect_equal(state.charters.evaluations.size(), 3, "Each of two ordinary Charters and one Grand evaluates once")
 	return true
@@ -181,7 +182,7 @@ func persistent_civilization() -> bool:
 	expect_true(transitions[1]["board_size"] > transitions[0]["board_size"], "One board accumulates across Acts")
 	expect_equal(transitions[1]["grand_id"], transitions[0]["grand_id"], "Entering Act III neither selects nor replaces Grand Charter")
 	var state: RunState = run["state"]
-	expect_equal(state.expansion.board.cells.size(), 61, "Founding plus 60 Expansion commands, with six Development/Upgrade overlays")
+	expect_equal(state.expansion.board.cells.size(), 69, "Nine setup squares plus sixty actual Expansion placements; six actions are overlays")
 	expect_equal(state.charters.completed_act_placements, [18, 22, 26], "Historical Act counters retained")
 	return true
 
@@ -192,9 +193,9 @@ func final_statistics() -> bool:
 	expect_equal(stats["run_seed"], RUN_SEED, "Original seed retained")
 	expect_equal(stats["final_total_score"], _track_sum(state), "Statistics retain actual uncapped score")
 	expect_equal(stats["largest_settlement_established"], 2, "Settlement historical record retained")
-	expect_equal(stats["longest_road_completed"], 2, "Road historical record retained")
-	expect_equal(stats["largest_forest_completed"], 9, "Forest historical record retained")
-	expect_equal(stats["longest_river_completed"], 9, "River historical record retained")
+	expect_equal(stats["longest_road_completed"], 1, "Road historical record retained")
+	expect_equal(stats["largest_forest_completed"], 24, "Forest historical record retained")
+	expect_equal(stats["longest_river_size"], 9, "River statistic reports environmental size without a completion")
 	expect_equal(stats["charters"].size(), 3, "Selected ordinary and Grand results retained structurally")
 	for key: String in ["relics_acquired", "relics_equipped", "relics_replaced", "relic_history", "specialist_training"]:
 		expect_true(stats.has(key), "Final statistics include " + key)

@@ -9,6 +9,6 @@ display_name = "Stewardship of Land"
 evaluation_act = 2
 behavior_id = &"a2_stewardship_of_land"
 forecast_text = ""
-targets = {"ecology": 40, "forest_size": 6, "river_size": 6, "exceed_ecology": 55}
+targets = {"ecology": 40, "forest_size": 6, "active_river_interactions": 2, "exceed_ecology": 55}
 fulfill_rewards = Array[StringName]([&"relic_offer", &"tile_reward"])
 exceed_rewards = Array[StringName]([&"major_reward"])

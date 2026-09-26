@@ -3,8 +3,8 @@ extends RefCounted
 ## Persist historical identities and authorized inputs, never derived graph objects.
 
 const KEYS: Array[String] = ["trade_revision", "topology_signature", "lineages", "history", "authorized_links"]
-const LINEAGE_KEYS: Array[String] = ["lineage_id", "parent_ids", "active", "road_lineage_ids", "settlement_lineage_ids"]
-const HISTORY_KEYS: Array[String] = ["event_id", "kind", "lineage_id", "act", "placement_index", "source_id", "parent_ids", "road_lineage_ids", "settlement_lineage_ids"]
+const LINEAGE_KEYS: Array[String] = ["lineage_id", "parent_ids", "active", "road_lineage_ids", "settlement_lineage_ids", "junction_hub_ids"]
+const HISTORY_KEYS: Array[String] = ["event_id", "kind", "lineage_id", "act", "placement_index", "source_id", "parent_ids", "road_lineage_ids", "settlement_lineage_ids", "junction_hub_ids"]
 const LINK_KEYS: Array[String] = ["from_lineage_id", "to_lineage_id", "source_id", "source_kind", "explicit_access"]
 
 
@@ -15,13 +15,15 @@ static func encode(state: TradeState) -> Dictionary:
 		data["lineages"].append({"lineage_id": str(lineage.lineage_id), "active": lineage.active,
 			"parent_ids": ExpansionSerializer._encode_ids(lineage.parent_ids),
 			"road_lineage_ids": ExpansionSerializer._encode_ids(lineage.road_lineage_ids),
-			"settlement_lineage_ids": ExpansionSerializer._encode_ids(lineage.settlement_lineage_ids)})
+			"settlement_lineage_ids": ExpansionSerializer._encode_ids(lineage.settlement_lineage_ids),
+			"junction_hub_ids": ExpansionSerializer._encode_ids(lineage.junction_hub_ids)})
 	for event: TradeHistoryRecord in state.history:
 		data["history"].append({"event_id": str(event.event_id), "kind": String(event.kind),
 			"lineage_id": str(event.lineage_id), "act": event.act, "placement_index": str(event.placement_index),
 			"source_id": str(event.source_id), "parent_ids": ExpansionSerializer._encode_ids(event.parent_ids),
 			"road_lineage_ids": ExpansionSerializer._encode_ids(event.road_lineage_ids),
-			"settlement_lineage_ids": ExpansionSerializer._encode_ids(event.settlement_lineage_ids)})
+			"settlement_lineage_ids": ExpansionSerializer._encode_ids(event.settlement_lineage_ids),
+			"junction_hub_ids": ExpansionSerializer._encode_ids(event.junction_hub_ids)})
 	for link: TradeLinkState in state.authorized_links:
 		data["authorized_links"].append({"from_lineage_id": str(link.from_lineage_id),
 			"to_lineage_id": str(link.to_lineage_id), "source_id": str(link.source_id),
@@ -40,6 +42,7 @@ static func decode(data: Dictionary) -> TradeState:
 		lineage.parent_ids = ExpansionSerializer._decode_ids(entry["parent_ids"])
 		lineage.road_lineage_ids = ExpansionSerializer._decode_ids(entry["road_lineage_ids"])
 		lineage.settlement_lineage_ids = ExpansionSerializer._decode_ids(entry["settlement_lineage_ids"])
+		lineage.junction_hub_ids = ExpansionSerializer._decode_ids(entry["junction_hub_ids"])
 		state.lineages.append(lineage)
 	for entry: Dictionary in data["history"]:
 		var event: TradeHistoryRecord = TradeHistoryRecord.new()
@@ -52,6 +55,7 @@ static func decode(data: Dictionary) -> TradeState:
 		event.parent_ids = ExpansionSerializer._decode_ids(entry["parent_ids"])
 		event.road_lineage_ids = ExpansionSerializer._decode_ids(entry["road_lineage_ids"])
 		event.settlement_lineage_ids = ExpansionSerializer._decode_ids(entry["settlement_lineage_ids"])
+		event.junction_hub_ids = ExpansionSerializer._decode_ids(entry["junction_hub_ids"])
 		state.history.append(event)
 	for entry: Dictionary in data["authorized_links"]:
 		var link: TradeLinkState = TradeLinkState.new()
@@ -101,7 +105,7 @@ static func _ids(data: Dictionary, keys: Array[String]) -> bool:
 
 
 static func _sets(data: Dictionary) -> bool:
-	for key: String in ["parent_ids", "road_lineage_ids", "settlement_lineage_ids"]:
+	for key: String in ["parent_ids", "road_lineage_ids", "settlement_lineage_ids", "junction_hub_ids"]:
 		if not ExpansionSerializer._valid_id_array(data[key], false):
 			return false
 	return true

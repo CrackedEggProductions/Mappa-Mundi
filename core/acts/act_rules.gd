@@ -170,10 +170,21 @@ static func _statistics(state: RunState, result: RunResult) -> Dictionary:
 		"largest_settlement_established": state.features.largest_completed_sizes[DomainTypes.FeatureType.SETTLEMENT],
 		"longest_road_completed": state.features.largest_completed_sizes[DomainTypes.FeatureType.ROAD],
 		"largest_forest_completed": state.features.largest_completed_sizes[DomainTypes.FeatureType.FOREST],
-		"longest_river_completed": state.features.largest_completed_sizes[DomainTypes.FeatureType.RIVER],
+		"longest_river_size": _river_size(state),
+		"river_interaction_count": RiverInteractionService.current_count(state),
+		"river_interactions_created": RiverInteractionService.creation_count(state),
+		"road_completions": CharterRules.completion_count(state, DomainTypes.FeatureType.ROAD),
 		"relics_acquired": acquired, "relics_equipped": equipped, "relics_replaced": replaced,
 		"relic_history": state.relics.history.duplicate(true), "specialist_training": training,
 		"charters": state.charters.evaluations.duplicate(true), "run_seed": state.original_seed}
+
+
+static func _river_size(state: RunState) -> int:
+	var largest: int = 0
+	for feature: CurrentFeature in TopologyService.rebuild(state):
+		if feature.feature_type == DomainTypes.FeatureType.RIVER:
+			largest = maxi(largest, feature.coordinates.size())
+	return largest
 
 
 static func advance(state: RunState, content: ContentRegistry) -> ValidationResult:

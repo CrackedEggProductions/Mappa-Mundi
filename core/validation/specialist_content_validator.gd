@@ -9,8 +9,8 @@ const ROLES: Dictionary = {
 	&"specialist.homesteader": DomainTypes.FeatureType.SETTLEMENT,
 	&"specialist.naturalist": DomainTypes.FeatureType.FOREST,
 	&"specialist.forester": DomainTypes.FeatureType.FOREST,
-	&"specialist.riverkeeper": DomainTypes.FeatureType.RIVER,
-	&"specialist.harbormaster": DomainTypes.FeatureType.RIVER,
+	&"specialist.riverkeeper": DomainTypes.FeatureType.FOREST,
+	&"specialist.harbormaster": DomainTypes.FeatureType.SETTLEMENT,
 }
 
 

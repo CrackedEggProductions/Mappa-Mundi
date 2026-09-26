@@ -11,7 +11,7 @@ const CELL_KEYS: Array[String] = [
 	"coordinate", "base_tile_copy_id", "definition_id", "rotation", "act_placed",
 	"normal_placement_index", "effective_edges", "feature_groups", "relationships",
 	"field_supports_settlement", "geometry_revision", "developments",
-	"has_field_geography", "transformations", "hard_boundaries",
+	"has_field_geography", "transformations", "hard_boundaries", "intersection_hub",
 ]
 const GROUP_KEYS: Array[String] = ["edge_type", "directions"]
 const RELATION_KEYS: Array[String] = ["from_edge_type", "to_edge_type", "kind"]
@@ -32,6 +32,7 @@ static func encode(state: ExpansionState) -> Dictionary:
 			"coordinate": [coordinate.x, coordinate.y],
 			"base_tile_copy_id": str(cell.base_tile_copy_id),
 			"definition_id": String(cell.definition_id), "rotation": cell.rotation,
+			"intersection_hub": cell.intersection_hub,
 			"act_placed": cell.act_placed, "normal_placement_index": cell.normal_placement_index,
 			"effective_edges": cell.effective_edges.duplicate(),
 			"feature_groups": groups, "relationships": relationships,
@@ -63,6 +64,7 @@ static func decode(data: Dictionary) -> ExpansionState:
 		cell.base_tile_copy_id = String(entry["base_tile_copy_id"]).to_int()
 		cell.definition_id = StringName(entry["definition_id"])
 		cell.rotation = int(entry["rotation"])
+		cell.intersection_hub = entry["intersection_hub"]
 		cell.act_placed = int(entry["act_placed"])
 		cell.normal_placement_index = int(entry["normal_placement_index"])
 		cell.field_supports_settlement = entry["field_supports_settlement"]
@@ -154,7 +156,7 @@ static func _validate_cell(value: Variant) -> ValidationResult:
 		return _invalid("Malformed Development overlay array.")
 	if not TransformationSerializer.valid_shape(cell["transformations"]):
 		return _invalid("Malformed Transformation geometry history.")
-	if not cell["field_supports_settlement"] is bool or not cell["has_field_geography"] is bool or not _nonnegative_int64(cell["geometry_revision"]):
+	if not cell["intersection_hub"] is bool or not cell["field_supports_settlement"] is bool or not cell["has_field_geography"] is bool or not _nonnegative_int64(cell["geometry_revision"]):
 		return _invalid("Invalid explicit Field support or geometry revision.")
 	if not cell["coordinate"] is Array or cell["coordinate"].size() != 2:
 		return _invalid("Coordinates must be explicit two-element arrays.")

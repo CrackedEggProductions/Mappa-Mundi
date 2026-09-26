@@ -10,7 +10,7 @@ static func content() -> ContentRegistry:
 
 static func create(registry: ContentRegistry) -> RunState:
 	var state: RunState = PhaseTwo.minimal(registry,
-		[&"tile.road_end", &"tile.hamlet_edge", &"tile.forest_edge"], [&"tile.river_end"])
+		[&"tile.road_junction", &"tile.hamlet_edge", &"tile.forest_edge"], [&"tile.forest_edge"])
 	FeatureResolutionService.initialize(state)
 	assert(InvariantValidator.validate(state, registry).is_valid)
 	return state
@@ -18,6 +18,8 @@ static func create(registry: ContentRegistry) -> RunState:
 
 static func add(state: RunState, registry: ContentRegistry, id: StringName,
 		coordinate: Vector2i, rotation: int = 0) -> int:
+	if id in [&"tile.riverside_hamlet", &"tile.woodland_river"]:
+		return _river_overlay(state, registry, id, coordinate, rotation)
 	var definition: TileDefinition = registry.get_tile(id)
 	assert(PlacementQueryService.validate(state.expansion.board, definition, coordinate, rotation).is_valid)
 	var copy_id: int = PhysicalTileRules.acquire(state, id, &"scenario_fixture", TileLocationState.Kind.BOARD_BASE)
@@ -86,3 +88,32 @@ static func add_monastery(state: RunState, registry: ContentRegistry, coordinate
 	FeatureScoringService.resolve(state, TopologyService.rebuild(state))
 	assert(InvariantValidator.validate(state, registry).is_valid, InvariantValidator.validate(state, registry).describe())
 	return enclosure
+
+
+static func _river_overlay(state: RunState, registry: ContentRegistry, id: StringName,
+		coordinate: Vector2i, rotation: int) -> int:
+	# Isolated topology fixture: stage environmental geography, then apply the
+	# canonical occupied overlay plan. This is not a player River-expansion command.
+	var hamlet: bool = id == &"tile.riverside_hamlet"
+	var base_id: StringName = &"tile.river_run" if hamlet else &"tile.river_bend"
+	var base_rotation: int = (rotation + 1) % 2 if hamlet else (rotation + 2) % 4
+	var base_copy: int = PhysicalTileRules.acquire(state, base_id, &"scenario_environment", TileLocationState.Kind.BOARD_BASE)
+	state.expansion.normal_placements += 1
+	var cell: BoardCellState = BoardCellState.from_definition(registry.get_tile(base_id), base_copy,
+		coordinate, base_rotation, 1, state.expansion.normal_placements)
+	state.expansion.board.add_cell(cell)
+	TopologyService.add_cell_components(state, cell)
+	FeatureResolutionService.resolve(state, base_copy, false)
+	var overlay: int = PhysicalTileRules.acquire(state, id, &"scenario_fixture", TileLocationState.Kind.BOARD_TRANSFORMATION)
+	var wanted_rotation: int = rotation if hamlet else base_rotation
+	for option: PlacementOption in TransformationPlacementQuery.query(state, registry, overlay):
+		if option.coordinate != coordinate or option.rotation != wanted_rotation:
+			continue
+		state.expansion.normal_placements += 1
+		var command: PlaceTileCommand = PlaceTileCommand.new(overlay, TileLocationState.Kind.ACTIVE_HAND, coordinate, option.rotation)
+		TransformationPlacementService.place(state, registry, command, option.transformation_plan)
+		state.expansion.state_revision += 2
+		assert(InvariantValidator.validate(state, registry).is_valid, InvariantValidator.validate(state, registry).describe())
+		return base_copy
+	assert(false, "No canonical River overlay fixture plan: %s at %s" % [id, coordinate])
+	return 0

@@ -33,9 +33,7 @@ static func minimal(registry: ContentRegistry, hand_definitions: Array[StringNam
 
 
 static func options(state: RunState, registry: ContentRegistry, copy_id: int) -> Array[PlacementOption]:
-	var copy: TileCopyState = PhysicalTileRules.find_copy(state, copy_id)
-	return PlacementQueryService.query(state.expansion.board,
-		registry.get_tile(copy.definition_id), copy_id, state.expansion.state_revision)
+	return PlacementQueryService.query_for_copy(state, registry, copy_id)
 
 
 static func first_placement(state: RunState, registry: ContentRegistry,
@@ -43,6 +41,16 @@ static func first_placement(state: RunState, registry: ContentRegistry,
 	for copy_id: int in state.expansion.hand:
 		for option: PlacementOption in options(state, registry, copy_id):
 			if not prefer_rotation or option.rotation != 0:
-				return PlaceTileCommand.new(copy_id, TileLocationState.Kind.ACTIVE_HAND,
-					option.coordinate, option.rotation)
+				return command(option)
 	return null
+
+
+static func command(option: PlacementOption, source: TileLocationState.Kind = TileLocationState.Kind.ACTIVE_HAND) -> PlaceTileCommand:
+	var result: PlaceTileCommand = PlaceTileCommand.new(option.tile_copy_id, source, option.coordinate, option.rotation)
+	for key: String in ["placement_mode", "host_lineage_id", "river_lineage_id", "target_development_copy_id", "enclosure_id",
+			"boundary_direction", "transformation_mode", "target_base_copy_id", "transformation_signature"]:
+		result.set(key, option.get(key))
+	result.expected_board_revision = option.board_revision
+	result.expected_state_revision = option.state_revision
+	result.expected_signature = option.signature
+	return result

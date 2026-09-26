@@ -11,7 +11,7 @@ func tests() -> Array[Callable]:
 	return [available_pool_exact_eight, available_offer_three_distinct,
 		same_rng_state_same_offer, uniform_sampling_uses_sorted_pool,
 		assigned_road_pool, assigned_settlement_pool, assigned_forest_pool,
-		assigned_river_pool_without_settlement, assigned_river_pool_with_settlement,
+		assigned_river_touching_forest_pool, assigned_river_touching_settlement_pool,
 		assigned_monastery_pool_empty, training_preserves_identity,
 		training_in_place_preserves_commitment, growth_training_excludes_pretraining_growth,
 		trained_role_cannot_retrain, duplicate_roles_allowed, invalid_role_inert,
@@ -76,15 +76,23 @@ func assigned_forest_pool() -> bool:
 	return _filtered(TYPE.FOREST, ["specialist.forester", "specialist.naturalist"])
 
 
-func assigned_river_pool_without_settlement() -> bool:
-	return _filtered(TYPE.RIVER, ["specialist.riverkeeper"])
-
-
-func assigned_river_pool_with_settlement() -> bool:
-	var state: RunState = _state(TYPE.RIVER, true)
-	_bind(state, 0, TYPE.RIVER)
+func assigned_river_touching_forest_pool() -> bool:
+	var state: RunState = _state(TYPE.FOREST, true)
+	_bind(state, 0, TYPE.FOREST)
 	_offer(state, 0)
-	expect_equal(_roles(state), ["specialist.harbormaster", "specialist.riverkeeper"], "Harbormaster included only with authoritative contact")
+	var roles: Array[String] = _roles(state)
+	roles.sort()
+	expect_equal(roles, ["specialist.forester", "specialist.naturalist", "specialist.riverkeeper"], "River-connected Forest adds Riverkeeper after filtering")
+	return true
+
+
+func assigned_river_touching_settlement_pool() -> bool:
+	var state: RunState = _state(TYPE.SETTLEMENT, true)
+	_bind(state, 0, TYPE.SETTLEMENT)
+	_offer(state, 0)
+	var roles: Array[String] = _roles(state)
+	roles.sort()
+	expect_equal(roles, ["specialist.architect", "specialist.harbormaster", "specialist.homesteader"], "River-connected Settlement adds Harbormaster")
 	return true
 
 
@@ -261,14 +269,14 @@ func training_offer_never_recalls_assigned_piece() -> bool:
 	return true
 
 
-func _state(type: int = TYPE.ROAD, settlement_touch: bool = false) -> RunState:
+func _state(type: int = TYPE.ROAD, river_touch: bool = false) -> RunState:
 	var state: RunState = Fixture.empty()
 	var edge: DomainTypes.EdgeType = FeatureState.edge_for_type(type)
-	var cell: BoardCellState = Fixture.add(state, Vector2i.ZERO, [edge, EDGE.FIELD, EDGE.FIELD, EDGE.SETTLEMENT if settlement_touch else EDGE.FIELD])
-	if settlement_touch:
+	var cell: BoardCellState = Fixture.add(state, Vector2i.ZERO, [edge, EDGE.FIELD, EDGE.FIELD, EDGE.RIVER if river_touch else EDGE.FIELD])
+	if river_touch:
 		var relation: TileFeatureRelationship = TileFeatureRelationship.new()
-		relation.kind = TileFeatureRelationship.Kind.SETTLEMENT_RIVER_TOUCH
-		relation.from_edge_type = EDGE.SETTLEMENT
+		relation.kind = TileFeatureRelationship.Kind.FOREST_RIVER_TOUCH if type == TYPE.FOREST else TileFeatureRelationship.Kind.SETTLEMENT_RIVER_TOUCH
+		relation.from_edge_type = edge
 		relation.to_edge_type = EDGE.RIVER
 		cell.relationships.append(relation)
 	Fixture.reconcile(state)

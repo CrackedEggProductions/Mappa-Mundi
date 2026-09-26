@@ -146,6 +146,8 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 		return _failure(&"stale_preview", "The run changed after this preview.")
 	var tile: TileCopyState = PhysicalTileRules.find_copy(state, command.tile_copy_id)
 	var definition: TileDefinition = content.get_tile(tile.definition_id)
+	if not definition.player_drawable:
+		return _failure(&"non_player_tile", "This design is environmental or legacy content and cannot be played from hand or Reserve.")
 	if command.placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
 		var target_failure: StringName = TransformationPlacementQuery.target_failure(state, definition, command.coordinate)
 		if target_failure != &"":

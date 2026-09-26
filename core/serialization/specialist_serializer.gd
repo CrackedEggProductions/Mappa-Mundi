@@ -162,7 +162,7 @@ static func valid_snapshot_collections(snapshot: Dictionary) -> bool:
 				or not facts.get("settlement_count") is int:
 			return false
 	for facts: Dictionary in snapshot["specialists"]:
-		for key: String in ["piece_id", "target_type", "target_id", "growth_count", "size", "network_settlement_count", "field_count", "forest_count"]:
+		for key: String in ["piece_id", "target_type", "target_id", "growth_count", "size", "network_settlement_count", "field_count", "river_count"]:
 			if not facts.get(key) is int:
 				return false
 		if not facts.get("role_definition_id") is String or not facts.get("undeveloped") is bool \

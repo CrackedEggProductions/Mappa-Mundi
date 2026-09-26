@@ -61,7 +61,7 @@ func _play(state: RunState, content: ContentRegistry, option: PlacementOption) -
 func boundary_query_pure() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
-	var copy_id: int = Fixture.acquire_hand(state, &"tile.open_fields")
+	var copy_id: int = Fixture.acquire_hand(state, &"tile.hamlet_edge")
 	var before: String = StateNormalizer.fingerprint(state)
 	var first: Array[PlacementOption] = PlacementQueryService.query_for_copy(state, content, copy_id)
 	var second: Array[PlacementOption] = PlacementQueryService.query_for_copy(state, content, copy_id)
@@ -75,7 +75,7 @@ func boundary_query_pure() -> bool:
 func boundary_intent_required() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
-	var option: PlacementOption = _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1)
+	var option: PlacementOption = _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1)
 	var command: PlaceTileCommand = _command(option)
 	command.boundary_direction = -1
 	command.expected_signature = ""
@@ -88,7 +88,7 @@ func boundary_intent_required() -> bool:
 func boundary_consumed_on_commit() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
-	var option: PlacementOption = _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1)
+	var option: PlacementOption = _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1)
 	expect_true(RulesEngine.validate(state, content, _command(option)).is_valid, "Query revalidates")
 	expect_true(RelicRules.use_available(state, RelicGeometry.BOUNDARY), "Validation does not consume use")
 	_play(state, content, option)
@@ -130,7 +130,7 @@ func hard_boundary_closes_forest() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
 	var lineage: FeatureLineageState = state.features.lineage(state.features.component_at(Vector2i.ZERO, DomainTypes.FeatureType.FOREST).lineage_id)
-	_play(state, content, _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1))
+	_play(state, content, _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1))
 	expect_true(lineage.completed, "Hard Field/Forest seam closes existing Forest exit without connection")
 	expect_equal(lineage.member_ids.size(), 1, "Field neighbor never becomes Forest component")
 	return true
@@ -139,14 +139,14 @@ func hard_boundary_closes_forest() -> bool:
 func hard_boundary_round_trip() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
-	_play(state, content, _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1))
+	_play(state, content, _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1))
 	return _round_trip(state, content)
 
 
 func hard_boundary_survives_removal() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content, RelicGeometry.BOUNDARY, 1)
-	_play(state, content, _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1))
+	_play(state, content, _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1))
 	assert(RelicRules.acquire(state, content, RelicRules.COMPASS).is_valid)
 	assert(RelicRules.acquire(state, content, RelicRules.SATCHEL, RelicGeometry.BOUNDARY).is_valid)
 	expect_true(RelicGeometry.is_hard_boundary(state.expansion.board, Vector2i.ZERO, 3), "Hard seam never relies on active Relic")
@@ -280,7 +280,7 @@ func _round_trip(state: RunState, content: ContentRegistry) -> bool:
 func forged_boundary_history_rejected() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
-	_play(state, content, _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1))
+	_play(state, content, _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1))
 	for event: Dictionary in state.relics.history:
 		if event.kind == "boundary_stones_applied":
 			event.source_id = state.expansion.board.get_cell(Vector2i.ZERO).base_tile_copy_id
@@ -293,7 +293,7 @@ func forged_boundary_history_rejected() -> bool:
 func missing_boundary_history_rejected() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
-	_play(state, content, _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1))
+	_play(state, content, _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1))
 	for index: int in range(state.relics.history.size() - 1, -1, -1):
 		if state.relics.history[index].kind == "boundary_stones_applied":
 			state.relics.history.remove_at(index)
@@ -306,7 +306,7 @@ func missing_boundary_history_rejected() -> bool:
 func boundary_cannot_be_reused() -> bool:
 	var content: ContentRegistry = _content()
 	var state: RunState = _state(content)
-	var option: PlacementOption = _option(state, content, &"tile.open_fields", Vector2i.LEFT, 1)
+	var option: PlacementOption = _option(state, content, &"tile.hamlet_edge", Vector2i.LEFT, 1)
 	assert(RelicRules.consume_use(state, RelicGeometry.BOUNDARY).is_valid)
 	var before: String = StateNormalizer.fingerprint(state)
 	expect_true(not RulesEngine.execute(state, content, _command(option)).is_valid, "Spent Act use cannot commit a cached intent")

@@ -29,11 +29,17 @@ static func queue_completion(state: RunState, snapshot: CompletionSnapshot) -> v
 		if state.rewards.milestone_flags.has(milestone):
 			continue
 		for facts: Dictionary in data.get("features", []):
-			if int(facts["feature_type"]) != MILESTONE_TYPES[index]:
+			var type: int = int(facts["feature_type"])
+			if index == 3:
+				if type not in [DomainTypes.FeatureType.SETTLEMENT, DomainTypes.FeatureType.FOREST]:
+					continue
+			elif type != MILESTONE_TYPES[index]:
 				continue
 			var qualifies: bool = int(facts["total_size"]) >= (8 if index == 0 else 10)
 			if index == 1:
 				qualifies = facts.get("network_settlement_ids", []).size() >= 5
+			elif index == 3:
+				qualifies = facts.get("river_support_ids", []).size() >= 3
 			if qualifies:
 				state.rewards.milestone_flags.append(milestone)
 				record(state, &"milestone_earned", {"milestone": String(milestone),
@@ -102,7 +108,7 @@ static func tile_pool(content: ContentRegistry, eligibility_act: int, masterwork
 	var result: Array[StringName] = []
 	for definition_id: StringName in content.get_tile_ids():
 		var tile: TileDefinition = content.get_tile(definition_id)
-		if tile.unlock_act > eligibility_act or tile.reward_class == DomainTypes.RewardClass.NONE:
+		if not tile.player_drawable or tile.unlock_act > eligibility_act or tile.reward_class == DomainTypes.RewardClass.NONE:
 			continue
 		if masterwork and not masterwork_eligible(tile):
 			continue
@@ -112,8 +118,8 @@ static func tile_pool(content: ContentRegistry, eligibility_act: int, masterwork
 
 static func masterwork_eligible(tile: TileDefinition) -> bool:
 	# RULE-REWARD-MAJOR-003: Upgrades qualify, ordinary Developments do not.
-	return tile.tile_class == DomainTypes.TileClass.UPGRADE or tile.reward_class in [
-		DomainTypes.RewardClass.SPECIALIZED_EXPANSION, DomainTypes.RewardClass.MAJOR_RARE]
+	return tile.player_drawable and (tile.tile_class == DomainTypes.TileClass.UPGRADE or tile.reward_class in [
+		DomainTypes.RewardClass.SPECIALIZED_EXPANSION, DomainTypes.RewardClass.MAJOR_RARE])
 
 
 static func copy_quantity(tile: TileDefinition) -> int:

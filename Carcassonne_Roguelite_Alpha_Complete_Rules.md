@@ -1,6 +1,6 @@
 # Carcassonne Roguelite — Complete Alpha Rules Specification
 
-**Status:** Canonical rules handoff for the first complete three-Act playable alpha  
+**Status:** Canonical Alpha Playtest Revision 1 (2026-09-27); three-Act playable alpha
 **Purpose:** Single source of truth for implementation by local Codex  
 **Supersedes for alpha implementation:** unresolved or conflicting prototype text in the Core Design Bible, Tile Design Specification, and Relics/Specialists Prototype Specification  
 **Source basis:**
@@ -10,6 +10,14 @@
 - the subsequent alpha rules pass that resolved the prototype's open questions
 
 ---
+
+# Alpha Playtest Revision 1 — Replaced rules
+
+This revision follows the first human Phase-10 playtest. It intentionally replaces the prior alpha's 55-tile bag, player-drawable Open Fields/Road End/pure River pieces, River completion/scoring, continuous three-arm Junction Road, River-targeted Stewards/Riverkeeper/Harbormaster, River completion milestone, and River-dependent Living Landscape/Stewardship of Land/Living Heritage conditions. The operative sections below incorporate these replacements; older versions are historical only.
+
+The world provides Field countryside and one generated River. The player builds Roads, Settlements, Forests and Developments, and interacts with that River through explicit overlays, Ports and Bridges. The starting bag has 45 copies. Road Junctions terminate physical Roads but connect Trade Networks. River never completes; its value comes from contacts and interactions.
+
+Rules identifier: **alpha-playtest-r1**. Incompatible pre-revision active-run saves may be rejected; no migration is required. Phase 11 Save/Continue presentation and Phase 12 exports remain outside this revision.
 
 # 0. Authority, Scope, and Interpretation
 
@@ -41,7 +49,7 @@ The following are **not part of the first playable alpha**:
 - the full future Relic pool;
 - the full future Specialist roster;
 - additional Foundations beyond the alpha Homestead baseline unless separately added later;
-- advanced River reopening;
+- any River completion/reopening lifecycle;
 - future tile families not listed here.
 
 The engine may retain clean extension hooks for these systems, but no alpha rule depends on them.
@@ -158,7 +166,7 @@ Multiple systems may coexist inside one tile, but an individual edge is never si
 Unless a tile explicitly says otherwise, all edges of the same feature type shown on that tile belong to one internally connected component.
 
 Examples:
-- all three Road edges of a Road Junction form one Road component;
+- Road Junction is the explicit exception: its three Road sockets are terminals on an Intersection Hub, with no physical Road component;
 - both Settlement edges of a Settlement Corner form one Settlement component;
 - both Forest edges of a Forest Bend form one Forest component.
 
@@ -196,7 +204,7 @@ The Road explicitly **terminates at/connects to the Settlement** inside the tile
 Forest and River remain separate from the Settlement and Road unless a later rule or explicit tile relationship says otherwise.
 
 ## RULE-SETUP-003 — Founding Tile participation
-The Founding Tile counts normally as one tile in each of the four features it contains for:
+The Founding Tile counts normally as one tile in each feature it contains for applicable rules. River contributes environmental size/contacts only and has no completion, scoring or Specialist-assignment lifecycle. Other features participate in:
 - feature size;
 - completion;
 - scoring;
@@ -214,20 +222,27 @@ The Founding Tile has the normal one-Development slot and may receive any Develo
 
 ## RULE-SETUP-005 — Exact setup sequence
 A run is initialized in this order:
-1. Create the unbounded board.
-2. Place the fixed-orientation Founding Tile at `(0,0)`.
-3. Set Population, Trade, Culture, and Ecology to 0.
-4. Create 2 generic Stewards; both begin available.
-5. Set active Relic capacity to 2; begin with no Relics.
-6. Grant 1 Act I Survey charge.
-7. Build the 55-tile Homestead starting bag.
-8. Generate/record the deterministic run seed and randomize the bag.
-9. Uniformly select and reveal 1 Act I Charter.
-10. Draw the opening active hand of 3 tiles.
-11. Begin with the Reserve empty.
-12. Begin Act I at 0/18 normal placements completed.
+1. Initialize run identity, recorded seed and the one RunRNG stream.
+2. Create the unbounded board and place the fixed Founding Tile at `(0,0)`.
+3. Generate and place the environmental River spine from its South River socket.
+4. Set Population, Trade, Culture and Ecology to 0.
+5. Create 2 available generic Stewards; initialize Relic capacity 2 with no Relics.
+6. Grant 1 Act I Survey charge and an empty Reserve.
+7. Build the 45-copy Homestead player bag and randomize the entire bag.
+8. Uniformly select and reveal 1 Act I Charter.
+9. Draw the opening active hand of 3 tiles.
+10. Enter Act I TURN_INPUT at 0/18 normal placements.
 
-There is no opening mulligan beyond the normal dead-hand/stalemate rules.
+River path selection consumes RunRNG before bag shuffle and Charter selection. Pure state-container initialization may precede board creation without consuming randomness. There is no opening mulligan beyond normal dead-hand/stalemate rules.
+
+## RULE-SETUP-006 — Generated environmental River
+The Founding River component joins exactly 8 setup environmental tiles: **River Run ×5, River Bend ×2, River End ×1**. The one connected spine therefore has size **9** including Founding.
+
+The first 7 generated tiles are continuations; the eighth is the End. Choose a deterministic legal path using RunRNG. Bends do not occupy the first or final continuation position and are separated by at least one Run. Paths must avoid occupied coordinates, self-intersection and looping back into Founding. A validated finite template set is permitted; a fallback must also be deterministic.
+
+Each environmental tile has a stable physical copy ID, rotation, coordinate and setup-environment acquisition/placement provenance. It is Act-I-age geography. It occupies a board square, contributes River size/contact, counts toward enclosure occupancy and may receive legal overlays/Transformations.
+
+Setup tiles never enter bag/hand/Reserve, consume normal placements, create player-placement/completion events, award score/rewards, or offer Specialists. Save/load restores the actual board and RNG state; it never regenerates the River.
 
 ---
 
@@ -309,12 +324,13 @@ Monastery/Abbey enclosure is the explicit eight-neighbor exception.
 
 # 5. Alpha Tile Catalogue
 
-## 5.1 Act I Expansion designs
+## 5.1 Act I geography, player designs and retained reference definitions
 
 ### RULE-CAT-001 — Open Fields
 - Edges: Field / Field / Field / Field.
-- Role: neutral support geography.
-- Basic Expansion.
+- Retained legacy/reference definition and artwork only; not player drawable or part of setup.
+- Excluded from bag, rewards, Masterwork, emergency replenishment and player placement pools.
+- Field itself remains normal background/support geography.
 
 ### RULE-CAT-002 — Forest Edge
 - 1 Forest edge + 3 Field edges.
@@ -333,26 +349,24 @@ Monastery/Abbey enclosure is the explicit eight-neighbor exception.
 - Basic Expansion.
 
 ### RULE-CAT-005 — River End
-- 1 River edge + 3 Field edges.
-- The same tile is used for both a River start/source and a River terminus.
-- There is no separate River Source tile in the alpha.
-- Basic Expansion.
+- 1 River edge + 3 Field edges; River sockets connect internally where multiple sockets exist.
+- **Setup-only environmental** definition; excluded from player bag, hand, Reserve and all player reward pools.
+- Used by the generated River spine; not a player Expansion.
 
 ### RULE-CAT-006 — River Run
-- 2 opposite River edges + 2 Field edges.
-- The River edges are internally connected.
-- Basic Expansion.
+- 2 opposite River edges + 2 Field edges; River sockets connect internally where multiple sockets exist.
+- **Setup-only environmental** definition; excluded from player bag, hand, Reserve and all player reward pools.
+- Used by the generated River spine; not a player Expansion.
 
 ### RULE-CAT-007 — River Bend
-- 2 adjacent River edges + 2 Field edges.
-- The River edges are internally connected.
-- Basic Expansion.
+- 2 adjacent River edges + 2 Field edges; River sockets connect internally where multiple sockets exist.
+- **Setup-only environmental** definition; excluded from player bag, hand, Reserve and all player reward pools.
+- Used by the generated River spine; not a player Expansion.
 
 ### RULE-CAT-008 — Road End
-- 1 Road edge + 3 Field edges.
-- The same tile can start a Road or terminate/close one.
-- There is no separate Road Start tile.
-- Basic Expansion.
+- Retained legacy/reference definition with 1 Road edge + 3 Field edges.
+- Not player drawable or eligible for rewards/emergency replenishment.
+- Revised Road closure uses explicit Settlement access and Road Junction terminals.
 
 ### RULE-CAT-009 — Straight Road
 - 2 opposite Road edges + 2 Field edges.
@@ -365,10 +379,14 @@ Monastery/Abbey enclosure is the explicit eight-neighbor exception.
 - Basic Expansion.
 
 ### RULE-CAT-011 — Road Junction
-- 3 Road edges + 1 Field edge.
-- All three Road edges form one connected Road Feature.
-- Four-way crossroads are deferred.
-- Specialized/Hybrid Expansion.
+- 3 Road sockets + 1 Field edge; Specialized/Hybrid Expansion.
+- An **Intersection Hub**, not a continuous physical Road component.
+- Each attached physical Road terminates independently at its matching socket.
+- Empty sockets permit future connections but create no unfinished Road Feature.
+- All attached Roads connect economically through the same Trade Network hub.
+- Adjacent matching Junction sockets connect their hubs with zero physical Road length.
+- The Junction contributes zero Road size, base Road-tile score, Cartographer growth or Historic Routes age count; it cannot be assigned a Road Specialist.
+- Four-way crossroads remain deferred.
 
 ### RULE-CAT-012 — Hamlet Edge
 - 1 Settlement edge + 3 Field edges.
@@ -394,10 +412,11 @@ Monastery/Abbey enclosure is the explicit eight-neighbor exception.
 - Specialized/Hybrid Expansion.
 
 ### RULE-CAT-016 — Riverside Hamlet
-- 1 Settlement edge + 2 opposite River edges + 1 Field edge.
-- River runs straight through the tile.
-- Settlement and River are mechanically distinct but explicitly touch within the tile.
-- Specialized/Hybrid Expansion.
+- Act-I River-interaction Transformation/overlay; Specialized/Hybrid reward class (2 copies).
+- Targets an existing straight environmental River Run; adds no board square or River component.
+- Preserves River and converts one eligible Field bank edge to Settlement, creating one Settlement component and explicit same-tile Settlement–River contact.
+- Opposite bank stays unchanged. Uses a normal placement, not a Development slot.
+- Full targeting and relationship rules appear in Section 12.5.
 
 ### RULE-CAT-017 — Woodland Road
 - 2 adjacent Forest edges + 2 adjacent Road edges.
@@ -407,11 +426,10 @@ Monastery/Abbey enclosure is the explicit eight-neighbor exception.
 - Specialized/Hybrid Expansion.
 
 ### RULE-CAT-018 — Woodland River
-- 2 adjacent Forest edges + 2 adjacent River edges.
-- The Forest pair is internally connected.
-- The River pair is internally connected.
-- Forest and River are distinct but explicitly touch within the tile.
-- Specialized/Hybrid Expansion.
+- Act-I River-interaction Transformation/overlay; Specialized/Hybrid reward class (2 copies).
+- Targets an existing River Bend, preserving River and converting both eligible non-River Field edges to one connected Forest component.
+- Creates explicit same-tile Forest–River contact; consumes one normal placement and no Development slot.
+- Full targeting rules appear in Section 12.6.
 
 ### RULE-CAT-019 — Settlement Corner Gate
 - 2 adjacent Settlement edges + 1 Road edge + 1 Field edge.
@@ -481,54 +499,46 @@ Act III Major/Rare Development Upgrade of Market. See Section 11.
 
 # 6. Homestead Starting Bag and Tile Reward Classes
 
-## RULE-BAG-001 — Starting bag contains Expansion tiles only
-The initial Homestead bag contains no Developments, Upgrades, or Transformations.
+## RULE-BAG-001 — Starting bag classification
+The initial bag contains the listed player Expansions plus the explicit **Riverside Hamlet and Woodland River overlay exception**. No ordinary Developments, Upgrades or other Transformations enter the starting bag.
 
 ## RULE-BAG-002 — Starting bag size
-The Homestead starting bag contains **55 physical tiles**:
+The Homestead player bag contains **45 physical tiles before the opening hand is drawn**:
 
 | Design | Copies |
 |---|---:|
-| Open Fields | 4 |
-| Forest Edge | 3 |
+| Forest Edge | 4 |
 | Forest Bend | 3 |
 | Forest Belt | 2 |
-| River End | 2 |
-| River Run | 3 |
-| River Bend | 3 |
-| Road End | 3 |
 | Straight Road | 4 |
 | Bending Road | 4 |
-| Road Junction | 2 |
-| Hamlet Edge | 3 |
+| Road Junction | 4 |
+| Hamlet Edge | 4 |
 | Settlement Corner | 3 |
 | Settlement Throughway | 2 |
-| Settlement Gate | 2 |
+| Settlement Gate | 3 |
 | Riverside Hamlet | 2 |
 | Woodland Road | 2 |
 | Woodland River | 2 |
 | Settlement Corner Gate | 2 |
 | Settlement Road Bend | 2 |
 | Settlement Road Throughway | 2 |
-| **Total** | **55** |
+| **Total** | **45** |
+
+Open Fields, Road End, River End, River Run and River Bend have zero player copies. The 8 environmental River copies and Founding Tile are separate setup board copies.
 
 ## RULE-BAG-003 — Basic Expansion reward class
 Choosing one of these from a normal Tile Reward adds **3 copies**:
-- Open Fields
 - Forest Edge
 - Forest Bend
 - Forest Belt
-- River End
-- River Run
-- River Bend
-- Road End
 - Straight Road
 - Bending Road
 - Hamlet Edge
 - Settlement Corner
 - Settlement Throughway
 
-## RULE-BAG-004 — Specialized/Hybrid Expansion reward class
+## RULE-BAG-004 — Specialized/Hybrid player reward class
 Choosing one of these from a normal Tile Reward adds **2 copies**:
 - Road Junction
 - Settlement Gate
@@ -659,6 +669,7 @@ If the bag empties before a Grand Survey replacement draw, normal emergency repl
 Every run uses a single recorded deterministic random seed.
 
 That seed governs all random decisions, including:
+- environmental River path selection before initial bag randomization;
 - initial bag order;
 - draws;
 - dead-hand cycling;
@@ -703,7 +714,7 @@ If the engine establishes that neither the active hand nor any tile remaining in
 
 Emergency set:
 - 1 Hamlet Edge
-- 1 Road End
+- 1 Road Junction
 - 1 Forest Edge
 
 This safeguard can occur even after repeated dead-hand cycling.
@@ -711,7 +722,7 @@ This safeguard can occur even after repeated dead-hand cycling.
 ## RULE-BAG-012 — Empty-bag emergency replenishment
 Whenever the bag is empty and a draw is required, add exactly:
 - 1 Hamlet Edge
-- 1 Road End
+- 1 Road Junction
 - 1 Forest Edge
 
 Then randomize and continue the draw.
@@ -736,7 +747,7 @@ Monastery/Abbey is tracked as an enclosure object centered on one tile.
 ## RULE-FEAT-002 — Road completion
 A connected Road Feature completes when it has **no unresolved Road exits facing empty board squares**.
 
-All branches of a Road Junction must be closed.
+A matching Road Junction socket resolves the attached Road exit without joining any other arm physically. One Junction placement can complete multiple separate Roads simultaneously through the normal shared snapshot/batch pipeline.
 
 A loop with no open Road exits completes.
 
@@ -750,18 +761,16 @@ A connected Forest Feature completes when it has **no unresolved Forest exits fa
 
 Any physical tile containing part of that connected Forest counts as one Forest tile for size.
 
-## RULE-FEAT-005 — River completion
-A connected River Feature completes when it has **no unresolved River exits facing empty board squares**.
+## RULE-FEAT-005 — River environmental topology
+River remains a connected environmental feature/lineage for size, contacts, Ferry Rights, Port relationships, Bridge/overlay targeting, Specialist relationship checks, inspection and statistics.
 
-This supports endpoint-to-endpoint Rivers and closed loops.
+It has **no unfinished/completed lifecycle**, genuine completion event, reopening event or completion score. A closed environmental spine is not a completed scoring feature.
 
-The alpha deliberately uses the same closure grammar as other connection features; River identity comes primarily from scoring and relationships.
-
-## RULE-FEAT-006 — Completed Rivers cannot normally reopen
-A completed River is permanently closed in the alpha unless a future explicit effect grants River-reopening permission.
+## RULE-FEAT-006 — River preservation
+Players do not build or extend River. Legal overlays and Transformations preserve its topology and connected identity; they never complete, reopen or rescore it.
 
 ## RULE-FEAT-007 — Genuine completion event
-A genuine `feature_completed` event occurs when a feature transitions from unfinished to complete.
+A genuine `feature_completed` event occurs when a Road, Settlement, Forest or Monastery-family enclosure transitions from unfinished to complete. River is excluded.
 
 A completed feature that is genuinely reopened, enters a new unfinished growth phase, and later closes again creates a genuine re-completion event.
 
@@ -820,7 +829,7 @@ The run permanently tracks:
 - Largest Settlement ever Established;
 - Largest Forest ever completed;
 - Longest Road ever completed;
-- Longest River ever completed.
+- Longest connected River size (environmental statistic, not a completion record).
 
 These are historical records/statistics unless a rule explicitly references them.
 
@@ -833,7 +842,6 @@ Base feature associations are:
 - Settlement → Population
 - Road → Trade
 - Forest → Ecology
-- River → Ecology
 - Monastery/civic development → Culture
 
 Later Developments, Specialists, and Relics create cross-Track scoring.
@@ -917,6 +925,7 @@ Old already-scored Settlements do not pay again.
 ### RULE-SCORE-FOREST-001 — Forest base Ecology
 On genuine Forest completion:
 - gain **+1 Ecology per newly scoring Forest tile**;
+- gain **+1 Ecology per newly scoring distinct River tile currently touching that Forest**;
 - if the completed Forest is undeveloped, gain an additional flat **+2 Ecology preservation bonus**.
 
 ### RULE-SCORE-FOREST-002 — Forest tile history
@@ -934,24 +943,21 @@ Forester's Lodge explicitly preserves undeveloped status.
 
 Transformations such as Bridge and Rewilding are not Developments and do not by themselves break undeveloped status.
 
-## 9.4 River scoring
+### RULE-SCORE-FOREST-005 — Forest–River contact history
+A distinct River tile pays its +1 base contact Ecology to a particular Forest lineage only once. Preserve and union paid contact identities through Forest mergers/reopening. Old paid contacts do not pay again; genuinely new contacts may pay on a later genuine Forest completion.
 
-### RULE-SCORE-RIVER-001 — River base Ecology
-On River completion:
-- gain **+1 Ecology per 2 River tiles, rounded down**;
-- gain **+1 Ecology per distinct Forest tile touching that River**.
+Same-tile explicit Forest–River contact, including Woodland River, qualifies. Deduplicate by River board tile: same-tile and adjacent contact with the same River tile never pay twice to the same Forest lineage.
 
-Because completed Rivers cannot normally reopen in the alpha, the River-length component is normally evaluated once from the River's full size at its completion.
+## 9.4 River geography and interaction
 
-### RULE-SCORE-RIVER-002 — River–Forest contact history
-Each distinct Forest tile may provide its +1 base Ecology contact bonus to a given River lineage only once.
+### RULE-SCORE-RIVER-001 — No River base score
+River has no base completion scoring. The old floor(length / 2) Ecology and River-completion Forest-contact Ecology are removed. Merely generating or retaining River awards nothing.
 
-This history is retained for future-proofing even though ordinary alpha Rivers do not reopen.
+### RULE-SCORE-RIVER-002 — Contact bonus ownership
+Forest owns the revised Forest–River base Ecology history under RULE-SCORE-FOREST-005. Riverkeeper evaluates full current River contact separately as a Specialist bonus.
 
-### RULE-SCORE-RIVER-003 — Same-tile River–Forest contact
-If Forest and River geography explicitly meet within the same hybrid tile, that tile counts as one Forest tile touching that River.
-
-It can contribute to River base Ecology, Riverkeeper, and relevant checks once per applicable rule.
+### RULE-SCORE-RIVER-003 — Same-tile contact
+An explicit River/Forest hybrid square counts once as a River tile touching its Forest. An explicit River/Settlement square counts once as River support touching its Settlement. Geography remains distinct for feature size and all applicable relationship checks.
 
 ## 9.5 Monastery/Abbey scoring
 
@@ -985,6 +991,7 @@ A **Road Feature** is a physically continuous component of Road geometry.
 A **Trade Network** is the larger economic graph formed by:
 - Road Features;
 - Settlements acting as hubs;
+- Road Junction Intersection Hubs;
 - Ferry Rights links when that Relic is active.
 
 These are distinct concepts.
@@ -1020,7 +1027,7 @@ Separate Road Features that connect to the same Settlement remain separate Road 
 The Settlement is a trade hub between them.
 
 ## RULE-TRADE-005 — Transitive Trade Network connectivity
-Trade Network connectivity propagates transitively through Settlement hubs.
+Trade Network connectivity propagates transitively through Settlement and Intersection hubs. Matching Junction-to-Junction sockets connect hubs without creating a Road component or increasing Road length.
 
 Example:
 Road A → Settlement 1 → Road B → Settlement 2 → Road C → Settlement 3
@@ -1036,12 +1043,12 @@ A connected Settlement does not need to be Established before acting as a Trade 
 
 Trade topology follows current physical/economic connectivity, not completion status.
 
-## RULE-TRADE-008 — A Trade Network requires Road access
-An isolated Settlement with no Road connection is not itself a Trade Network.
+## RULE-TRADE-008 — Trade infrastructure and Ferry access
+An isolated Settlement with no Road connection is not itself a Trade Network. Physical Roads and Settlement hubs retain their existing explicit-access qualification.
 
-A Trade Network exists only when at least one Road Feature is explicitly connected to at least one Settlement.
+Intersection hubs may form infrastructure networks with attached Roads or other Junctions even before reaching a Settlement; such networks contain zero Settlements until a real connection exists. They never manufacture physical Road length or a flat intersection bonus.
 
-Ferry Rights cannot create a free-standing river-only Trade Network; it extends a network that already has Road access.
+Ferry Rights still requires a network to reach at least one Settlement by Road. It cannot turn a river-only group of Settlements or an unattached Junction into free commercial access.
 
 ## RULE-TRADE-009 — Road completion sees full network snapshot
 When a Road Feature genuinely completes, its Settlement-connectivity base Trade uses the **entire current Trade Network** containing that Road at the exact completion snapshot.
@@ -1050,6 +1057,7 @@ This includes connectivity contributed by:
 - other completed Roads;
 - other unfinished Roads;
 - unfinished Settlements;
+- Junction hubs, including Junction-to-Junction links;
 - Ferry Rights, if active.
 
 Later Trade Network expansion does not retroactively alter the completed Road's resolved base score unless that Road genuinely reopens and completes again.
@@ -1448,12 +1456,7 @@ Any existing Development on the target River Run is preserved.
 A Rewilded straight River Run still satisfies the underlying straight-River prerequisite. This does not grant Forest → Road rewrite permission. Bridge requires both perpendicular effective edges to be legally rewriteable under its explicit Field → Road rule. If Rewilding has converted either required edge to Forest, no legal Bridge placement exists on that square in the current alpha. The Forest and its Transformation history remain intact; underlying target eligibility never bypasses effective-edge legality.
 
 ### RULE-BRIDGE-003 — River state
-Bridge does not by itself:
-- reopen the River;
-- re-complete the River;
-- rescore the River.
-
-The underlying River remains in its prior completion state.
+Bridge preserves the connected environmental River. River has no completion/reopening/scoring lifecycle, so Bridge creates none of those events. Road creation, legal Road reopening/merger, component age and scoring remain normal.
 
 ### RULE-BRIDGE-004 — Bridge Road sides
 For each side along the Bridge Road axis:
@@ -1613,6 +1616,37 @@ If any Forest exit remains open, the merged Forest remains unfinished.
 
 ---
 
+## 12.5 Riverside Hamlet River overlay
+
+### RULE-RIVERSIDE-001 — Target and bank choice
+Target an existing square whose underlying River Run geometry is straight. Choose one of its two non-River banks. That bank must currently be Field and free of an incompatible rewrite.
+
+If the bank faces an empty square, the new Settlement exit is open. If it faces an occupied square with Settlement on the facing edge, connect normally. Every other occupied facing edge makes that bank choice illegal before mutation. Do not rewrite the neighbor.
+
+### RULE-RIVERSIDE-002 — Effect and relationships
+Preserve River, Developments and compatible prior modifications. Convert the chosen bank edge into Settlement and create/extend the target's Settlement component. Declare explicit same-tile Settlement–River contact. Leave the opposite bank unchanged.
+
+The Settlement counts normally for size/completion and River support, may host eligible Developments including Port, participates in Ferry Rights and receives eligible Specialists. The overlay consumes its physical player tile and one normal placement, with no Development-slot use. Boundary Stones cannot waive this overlay's target legality.
+
+## 12.6 Woodland River overlay
+
+### RULE-WOODLAND-RIVER-001 — Target and banks
+Target an underlying River Bend. Both non-River edges must currently be eligible Field boundaries without incompatible rewrites. Each new Forest edge must face empty space or a matching Forest edge. Any incompatible occupied neighbor rejects placement atomically; do not rewrite neighboring squares.
+
+### RULE-WOODLAND-RIVER-002 — Effect and growth
+Preserve River and create one connected Forest component with both bank edges. Declare explicit same-tile Forest–River contact. This Forest has ordinary size, completion, Ecology, Naturalist/Riverkeeper/Forester, Rewilding and milestone/Charter behavior. New-component growth attribution follows existing timing rules.
+
+The square counts once as River and once as Forest for their separate systems. The overlay consumes one normal placement, no Development slot, and is not a Boundary Stones Expansion mode.
+
+## 12.7 River Interaction instances
+
+### RULE-RIVER-INTERACTION-001 — Current and historical interaction
+Each player-created **Riverside Hamlet overlay, Woodland River overlay, Port Development or Bridge Transformation** counts as one River Interaction instance. Multiple valid instances on one square count separately by object identity.
+
+Current count includes only active board objects; historical creation count retains genuine creations even if a later legal change removes an object. Query both authoritatively. The generated River, Ferry Rights and passive adjacency do not count. Act-I Living Landscape uses creation history; later affected Charters use current active instances.
+
+---
+
 # 13. Settlement Growth, Classification, and History
 
 ## RULE-SETCLASS-001 — Settlement growth phases
@@ -1672,15 +1706,13 @@ A generic Steward may be assigned to an eligible unfinished:
 - Road;
 - Settlement;
 - Forest;
-- River;
-- Monastery.
+- Monastery-family enclosure (Monastery or Abbey).
 
 On genuine completion, the Steward gives **+2 to the associated Realm Track**:
 - Road → +2 Trade
 - Settlement → +2 Population
 - Forest → +2 Ecology
-- River → +2 Ecology
-- Monastery → +2 Culture
+- Monastery-family enclosure → +2 Culture
 
 Then the Steward returns to availability.
 
@@ -1841,22 +1873,18 @@ On genuine completion, gain **+1 Ecology for every genuinely new Forest tile add
 Old Forest tiles absorbed through mergers do not count as new growth. A newly placed/created Rewilding Forest tile can count.
 
 ### RULE-SPEC-RIVERKEEPER — Riverkeeper
-**Assign:** River.
+**Assign:** an unfinished Forest currently touching at least one River tile.
 
-On genuine completion, gain **+1 Ecology per distinct Forest tile currently touching the River**.
+On genuine Forest completion gain **+1 Ecology per distinct River tile currently touching that Forest**. Same-tile explicit contact qualifies. This stacks with revised Forest base contact Ecology but evaluates full current contacts without Specialist anti-farming history. Legal reassignment and later genuine re-completion reevaluate current contact.
 
-This intentionally stacks with River base Forest-contact Ecology.
-
-Riverkeeper is a current-state Specialist bonus with no per-Forest anti-farming history. Alpha Rivers normally cannot reopen, but the rule is defined for future-proofing.
+An assigned generic Steward on an ordinary Forest may train into Naturalist or Forester; a River-touching Forest additionally permits Riverkeeper. Filter before uniform offer selection. River itself is never a target.
 
 ### RULE-SPEC-HARBORMASTER — Harbormaster
-**Assign:** River containing at least one Settlement touching that River.
+**Assign:** an unfinished Settlement currently touching at least one connected River.
 
-On genuine completion, gain:
-- **+2 Trade per Settlement currently touching the River**;
-- **+1 additional Trade for each of those Settlements containing a Port**.
+At genuine Settlement completion, identify every connected River touching the host, then count distinct Settlements touching any of those same River systems. The host itself counts. Award **+2 Trade per distinct Settlement**, plus **+1 Trade for each counted Settlement containing a Port**. Deduplicate Settlements across multiple contacts/Rivers. Evaluate full current relationships on every genuine completion after reassignment.
 
-Harbormaster reevaluates the full current River relationship on each genuine completion after reassignment.
+An assigned generic Steward on an ordinary Settlement may train into Architect or Homesteader; a River-touching Settlement additionally permits Harbormaster. Filter before uniform offer selection. River itself is never a target.
 
 ## RULE-SPEC-020 — Deferred Specialists
 Not in the alpha trainable pool:
@@ -2021,7 +2049,7 @@ Whenever a Steward/Specialist returns from a completed feature, the player may i
 
 If multiple eligible touching features exist, the player chooses.
 
-Normal eligibility and one-Specialist-per-feature rules still apply.
+Normal eligibility and one-Specialist-per-feature rules still apply. Riverkeeper can Relay only to an eligible touching unfinished River-connected Forest; Harbormaster only to an eligible touching unfinished River-connected Settlement. No River Feature is offered.
 
 Relay is the explicit exception to the normal no-same-turn-reassignment rule.
 
@@ -2149,13 +2177,13 @@ Threshold rewards wait until the complete completion package and Relic milestone
 ## 16.1 Normal Tile Rewards
 
 ### RULE-REWARD-TILE-001 — Eligible pool
-A normal Tile Reward may offer **any currently unlocked tile design**, including:
+A normal Tile Reward may offer **any currently unlocked player-drawable tile design**, including:
 - basic Expansion tiles;
 - Specialized/Hybrid Expansions;
 - ordinary Developments;
 - Upgrades;
 - Transformations;
-provided the design is unlocked in the current Act.
+provided the design is unlocked in the current Act and is not setup-only/legacy content. Open Fields, Road End and pure River End/Run/Bend are excluded. Riverside Hamlet and Woodland River remain eligible Specialized/Hybrid overlays awarding 2 copies.
 
 The design does not need to be currently playable on the board.
 
@@ -2228,12 +2256,12 @@ Each of the following can trigger once per run:
 - **Settlement milestone:** genuinely Establish a Settlement of at least 8 tiles.
 - **Road milestone:** genuinely complete a Road whose current full Trade Network reaches at least 5 distinct Settlements.
 - **Forest milestone:** genuinely complete a Forest of at least 10 tiles.
-- **River milestone:** genuinely complete a River of at least 10 tiles.
+- **River Stewardship milestone:** genuinely complete a Settlement or Forest currently touching at least **3 distinct River tiles**. It occupies the existing River milestone slot.
 
 Each newly satisfied milestone awards a Relic offer.
 
 ### RULE-MILESTONE-002 — Completion timing
-A milestone is checked only on the relevant genuine feature-completion event.
+A milestone is checked only on the relevant genuine feature-completion event. River Stewardship is checked on Settlement/Forest completion; an unfinished feature reaching three River contacts does not trigger it.
 
 Merely growing an unfinished feature past the size/connectivity threshold does not trigger the completion-based milestone until the feature closes.
 
@@ -2273,7 +2301,7 @@ Examples:
 - current Track value;
 - current Settlement size;
 - current Development families;
-- current Forest/River size;
+- current Forest size and active River Interaction count;
 - current Trade Network connectivity.
 
 Charter language describing what the player **did** uses persistent run history.
@@ -2337,7 +2365,7 @@ Road-connected Settlement counts use the full Trade Network semantics in this do
 Fulfill:
 - Ecology **20+**;
 - at least **1 genuine Forest completion event**;
-- at least **1 genuine River completion event**.
+- at least **1 River Interaction has been created** during the run so far (historical creation).
 
 Exceed:
 - all fulfillment conditions;
@@ -2388,7 +2416,7 @@ Exceed:
 Fulfill:
 - Ecology **40+**;
 - at least one current Forest has size **6+**;
-- at least one current River has size **6+**.
+- at least **2 current active River Interaction instances** exist.
 
 Exceed:
 - all fulfillment conditions;
@@ -2453,7 +2481,7 @@ Fulfill:
 - Ecology **60+**;
 - Culture **40+**;
 - at least one current Forest has size **8+**;
-- at least one current River has size **8+**;
+- at least **3 current active River Interaction instances**;
 - at least **1 Monastery-family enclosure has genuinely completed** during the run.
 
 Exceed:
@@ -2467,7 +2495,7 @@ Exceed:
 
 ## RULE-ACT-001 — Act I unlocked content
 Act I Tile Reward eligibility includes:
-- all 21 Act I Expansion designs listed in Section 5;
+- the 14 player Expansion designs plus Riverside Hamlet and Woodland River overlays listed in Section 6;
 - Housing;
 - Mill;
 - Monastery;
@@ -2704,11 +2732,13 @@ The alpha should retain/display enough statistics for playtest review, including
 - Largest Settlement ever Established;
 - Longest Road ever completed;
 - Largest Forest ever completed;
-- Longest River ever completed;
+- Longest connected River size (environmental statistic, not a completion record);
 - Relics acquired/equipped/replaced;
 - Specialist training choices;
 - Charters selected and results;
-- run seed.
+- run seed;
+- generated River path/size and current/historical River Interaction counts;
+- per-kind interaction and Road-completion diagnostics where available.
 
 ---
 
@@ -2720,7 +2750,7 @@ These are high-value implementation invariants that should be testable in unit/i
 Outside explicit mismatch/rewrite effects, no occupied orthogonal edge pair may disagree.
 
 ## RULE-INVARIANT-002 — One Specialist per connected unfinished feature
-No connected unfinished Road/Settlement/Forest/River/Monastery may contain more than one Steward/Specialist.
+No connected unfinished Road/Settlement/Forest/Monastery-family enclosure may contain more than one Steward/Specialist. River and Junction hubs are never assignment targets.
 
 ## RULE-INVARIANT-003 — Development slot legality
 A tile normally has one Development slot. Only explicit rules such as Mixed-Use Charter permit more.
@@ -2737,7 +2767,7 @@ History categories include:
 - Road tiles;
 - per-Road Settlement connection bonuses;
 - Forest tiles;
-- River–Forest base contact bonuses.
+- Forest-lineage River-tile contact bonuses.
 
 ## RULE-INVARIANT-005 — Bonus effects vs base history
 Specialist/Relic/Development completion bonuses that explicitly evaluate full current state may score the same old board relationships again on a later **genuine** re-completion after the relevant piece/effect is legally active.
@@ -2765,6 +2795,9 @@ Normal Tile Reward, Relic, Charter, Grand Charter, and Specialist offer selectio
 ## RULE-INVARIANT-010 — Persistent civilization
 Act transitions never clear the board or silently reset strategic commitments.
 
+## RULE-INVARIANT-011 — Revision-1 environment and hubs
+A new Homestead run has one connected size-9 setup River with the exact environmental composition. Environmental copies never occupy bag/hand/Reserve or player offers. No River completion record/lifecycle is created. Junction hubs have no physical Road component. River interactions refer to valid board objects; Forest River-contact history preserves paid identities.
+
 ---
 
 # 23. Superseded / Deferred Prototype Concepts
@@ -2774,10 +2807,10 @@ This section exists specifically to stop Codex from re-importing older prototype
 ## RULE-SUPER-001 — River Source renamed/redefined
 The old `River Source` starter tile name is superseded by **River End**.
 
-The same one-edge River tile may function as either source/start or terminus/end.
+River End is setup-only environment, used as the generated spine terminus; it is not a player source/endpoint tile.
 
 ## RULE-SUPER-002 — Starting bag changed
-The old provisional pre-alpha bag is superseded by the **55-tile Homestead bag** in Section 6.
+The provisional pre-alpha and prior 55-copy bags are superseded by the **45-copy Homestead player bag** in Section 6.
 
 ## RULE-SUPER-003 — Market and Port cadence
 Although Market and Port appear in the broader Starter 24 source set, the alpha unlocks/seeds them at the **start of Act II**, not in the initial bag.
@@ -2828,16 +2861,16 @@ Older exploratory language about contextual Specialist/reward weighting is super
 Before implementation is considered faithful to this specification, Codex should be able to demonstrate/test the following rule-level behaviors:
 
 1. Three Acts run continuously at 18/22/26 normal placements.
-2. The fixed Founding Tile creates four immediately extensible feature stubs.
+2. Founding plus 5 Runs, 2 Bends and 1 End creates one deterministic size-9 environmental River without setup scoring/events; other Founding features remain buildable.
 3. Exact edge matching works on an unbounded grid.
-4. The 55-tile Homestead bag is correct and deterministic under a seed.
+4. The 45-copy Homestead player bag is exact and deterministic; legacy/setup-only pieces never enter player pools.
 5. Hand, Reserve, Survey, dead-hand cycle, bag exhaustion, and emergency fallback all work.
-6. Road, Settlement, Forest, River, and Monastery completion are independently detected.
+6. Road, Settlement, Forest and Monastery-family completion are detected; River never completes or scores. Junctions terminate separate Roads without physical Road components.
 7. Scoring histories prevent base-score farming after reopening/merging.
 8. Urban Expansion can reopen and merge Settlements.
 9. Rewilding can start, reopen, merge, and transform Forest geography legally.
 10. Bridge can transform straight River Runs, rewrite legal flanking Field edges, and merge/reopen Roads.
-11. Trade Network topology propagates transitively through Settlements and Ferry Rights while physical Road Features remain distinct.
+11. Trade Network topology propagates through Settlement hubs, Junction hubs (including hub-to-hub links) and Ferry Rights while physical Roads remain distinct.
 12. The expanded Road/Settlement connector family appears in the starting bag at the correct counts.
 13. Developments can be placed on already-completed features and resolve only their own immediate trigger.
 14. Upgrades replace their base Development and immediately resolve if their condition is already satisfied.
@@ -2851,7 +2884,10 @@ Before implementation is considered faithful to this specification, Codex should
 22. Event processing uses shared snapshots, batches, deferred child events, and FIFO queues.
 23. Bonus placement chains resolve before Act transition and do not increment normal placement counts.
 24. End of Act III performs no replacement draw and produces final score + Charter result.
-25. Replaying the same seed with the same decisions reproduces RNG outcomes.
+25. Replaying the same seed with the same decisions reproduces River layout and later RNG outcomes.
+26. River overlays preserve environmental topology, produce current/history interaction queries and obey occupied-bank legality.
+27. Forest River-contact base history, revised Specialists/Charters and River Stewardship milestone follow the revised rules.
+28. Save/load restores environment/hubs/interactions without regeneration, extra RNG, events or scoring.
 
 ---
 
@@ -2859,7 +2895,7 @@ Before implementation is considered faithful to this specification, Codex should
 
 The first alpha is a peaceful, run-based tile-placement roguelite in which the **map is the build**.
 
-The player develops one persistent civilization across three Acts. Roads and Settlements build a transitive Trade Network; Forests and Rivers create ecological structure; Developments reinterpret completed geography; Urban Expansion, Rewilding, and Bridge make later Acts capable of rewriting earlier decisions without erasing history. Stewards and Specialists create local commitment pressure, while Relics alter realm-wide rules. Four cumulative Realm Tracks drive rewards and Charters, and the Grand Charter determines victory at the end of Act III.
+The player develops one persistent civilization across three Acts. Roads terminate at Settlements and Junctions while their Trade Network continues through hubs. The world supplies River geography; the player develops Forests and River interactions; Developments reinterpret completed geography; Urban Expansion, Rewilding, and Bridge make later Acts capable of rewriting earlier decisions without erasing history. Stewards and Specialists create local commitment pressure, while Relics alter realm-wide rules. Four cumulative Realm Tracks drive rewards and Charters, and the Grand Charter determines victory at the end of Act III.
 
 The core implementation principle is:
 

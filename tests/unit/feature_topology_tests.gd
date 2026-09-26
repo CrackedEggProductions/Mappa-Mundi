@@ -11,12 +11,12 @@ func tests() -> Array[Callable]:
 		hybrids_keep_components_separate, component_creation_is_idempotent,
 		component_origins_are_independent_of_base_age, matching_orthogonal_components_connect,
 		nonmatching_types_never_connect, diagonal_same_types_do_not_connect,
-		junction_requires_all_branches_closed, canonical_bends_are_internally_connected,
+		junction_terminates_separate_roads, canonical_bends_are_internally_connected,
 		endpoint_pairs_complete_for_each_tracked_type, unresolved_exit_remains_unfinished,
 		closed_loop_has_no_exits, field_has_no_component, topology_rebuild_is_pure_and_deterministic,
 		rebuild_ignores_registry_and_board_insertion_order, topology_revision_advances_on_reconcile,
 		new_feature_allocates_lineage, ordinary_growth_retains_identity,
-		reopening_retains_identity_and_history, completed_river_reopening_rejected,
+		reopening_retains_identity_and_history, river_geometry_has_no_completion_lifecycle,
 		merge_creates_descendant_and_preserves_history, ancestry_is_transitive_and_sorted,
 		repeated_reconcile_does_not_allocate_or_record, disconnected_lineage_is_rejected]
 
@@ -45,7 +45,7 @@ func single_feature_types_create_one_component() -> bool:
 
 func hybrids_keep_components_separate() -> bool:
 	var content: ContentRegistry = PhaseTwo.content()
-	for definition_id: StringName in [&"tile.settlement_gate", &"tile.riverside_hamlet", &"tile.woodland_road", &"tile.woodland_river"]:
+	for definition_id: StringName in [&"tile.settlement_gate", &"tile.woodland_road"]:
 		var state: RunState = Fixture.empty()
 		var cell: BoardCellState = BoardCellState.from_definition(content.get_tile(definition_id), state.id_allocator.allocate(), Vector2i.ZERO, 0, 1, 0)
 		state.expansion.board.add_cell(cell)
@@ -99,14 +99,19 @@ func diagonal_same_types_do_not_connect() -> bool:
 	return true
 
 
-func junction_requires_all_branches_closed() -> bool:
+func junction_terminates_separate_roads() -> bool:
 	var state: RunState = Fixture.empty()
-	Fixture.add(state, Vector2i.ZERO, [EDGE.ROAD, EDGE.ROAD, EDGE.ROAD, EDGE.FIELD])
+	var definition: TileDefinition = preload("res://content/tiles/homestead/road_junction.tres")
+	var hub: BoardCellState = BoardCellState.from_definition(definition, state.id_allocator.allocate(), Vector2i.ZERO, 0, 1, 0)
+	state.expansion.board.add_cell(hub)
+	TopologyService.add_cell_components(state, hub)
 	Fixture.add(state, Vector2i.UP, [EDGE.FIELD, EDGE.FIELD, EDGE.ROAD, EDGE.FIELD])
 	Fixture.add(state, Vector2i.RIGHT, [EDGE.FIELD, EDGE.FIELD, EDGE.FIELD, EDGE.ROAD])
-	expect_equal(TopologyService.rebuild(state)[0].open_exits, 1, "One open branch prevents junction completion")
-	Fixture.add(state, Vector2i.DOWN, [EDGE.ROAD, EDGE.FIELD, EDGE.FIELD, EDGE.FIELD])
-	expect_equal(TopologyService.rebuild(state)[0].open_exits, 0, "Every junction branch closes")
+	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
+	expect_equal(current.size(), 2, "Each incoming Road remains physically distinct")
+	for road: CurrentFeature in current:
+		expect_equal(road.open_exits, 0, "Hub terminates attached Road despite its empty third socket")
+		expect_equal(road.component_ids.size(), 1, "Junction contributes zero Road size")
 	return true
 
 
@@ -225,11 +230,14 @@ func reopening_retains_identity_and_history() -> bool:
 	return true
 
 
-func completed_river_reopening_rejected() -> bool:
+func river_geometry_has_no_completion_lifecycle() -> bool:
 	var state: RunState = _pair(EDGE.RIVER)
-	FeatureScoringService.resolve(state, Fixture.reconcile(state))
+	var current: Array[CurrentFeature] = Fixture.reconcile(state)
+	FeatureScoringService.resolve(state, current)
+	expect_true(state.features.completions.is_empty(), "Closed River geography creates no completion event")
+	expect_true(not state.features.lineage(current[0].lineage_id).completed, "River has no completed lifecycle state")
 	Fixture.set_geometry(state.expansion.board.get_cell(Vector2i.RIGHT), [EDGE.FIELD, EDGE.RIVER, EDGE.FIELD, EDGE.RIVER])
-	expect_equal(LineageService.validate_rebuild(state, TopologyService.rebuild(state)).error_code, &"completed_river_reopening", "River reopening prohibited")
+	expect_true(LineageService.validate_rebuild(state, TopologyService.rebuild(state)).is_valid, "Topology rebuild never applies obsolete River reopening restriction")
 	return true
 
 

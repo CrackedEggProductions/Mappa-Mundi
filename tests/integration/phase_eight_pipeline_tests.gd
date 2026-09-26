@@ -177,10 +177,10 @@ func completion_relic_children_follow_returns() -> bool:
 func reward_chain_before_hand_refill() -> bool:
 	var registry: ContentRegistry = F.content()
 	var state: RunState = F.create(registry)
-	for x: int in range(1, 19):
+	for x: int in range(1, 20):
 		F.play(state, registry, &"tile.straight_road", Vector2i(x, 0), 1)
 		F.decline_assignment(state, registry)
-	F.play(state, registry, &"tile.road_end", Vector2i(19, 0), 3)
+	F.play(state, registry, &"tile.road_junction", Vector2i(20, 0), 2)
 	F.decline_assignment(state, registry)
 	expect_true(state.pending_choice != null, "Crossed Trade 20 produces a reward")
 	expect_equal(state.pending_choice.kind, &"tile_reward", "First threshold is a Tile Reward")

@@ -3,8 +3,8 @@ extends RefCounted
 ## Save schema and gameplay rules evolve independently (implementation spec §40).
 
 const IMPLEMENTATION_SPEC_VERSION: int = 1
-const SAVE_SCHEMA_VERSION: int = 1
-const GAME_RULES_VERSION: String = "alpha-1"
+const SAVE_SCHEMA_VERSION: int = 2
+const GAME_RULES_VERSION: String = "alpha-playtest-r1"
 const IMPLEMENTATION_PHASE: int = 10
 ## Legacy minimal profile remains Phase 0; Homestead explicitly declares Phase 2.
 const CONTENT_IMPLEMENTATION_PHASE: int = 0

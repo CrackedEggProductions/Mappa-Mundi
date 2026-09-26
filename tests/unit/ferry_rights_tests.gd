@@ -16,7 +16,7 @@ func tests() -> Array[Callable]:
 		genealogy_retains_split_ancestry, queries_are_deterministic,
 		river_contact_requires_authoritative_relationship, old_snapshot_keeps_old_network,
 		second_river_propagates_transitively, invalid_acquisition_does_not_recompute,
-		ferry_roundtrip_preserves_graph_and_rng]
+		ferry_roundtrip_preserves_graph_and_rng, generated_river_ferry_commands_and_roundtrip]
 
 
 func _registry() -> ContentRegistry:
@@ -281,7 +281,10 @@ func invalid_acquisition_does_not_recompute() -> bool:
 
 func ferry_roundtrip_preserves_graph_and_rng() -> bool:
 	var registry: ContentRegistry = _registry()
-	var state: RunState = HomesteadRunFactory.create(82471, registry)
+	const Isolated = preload("res://tests/fixtures/phase_eight_factory.gd")
+	# This graph-specific codec fixture stages independent geography; it does not
+	# alter or extend the immutable generated River of a real new run.
+	var state: RunState = Isolated.create(registry, 1)
 	const Geography = preload("res://tests/fixtures/phase_three_factory.gd")
 	Geography.add(state, registry, &"tile.riverside_hamlet", Vector2i.UP, 2)
 	Geography.add(state, registry, &"tile.riverside_hamlet", Vector2i(1, -1))
@@ -312,3 +315,69 @@ func ferry_roundtrip_preserves_graph_and_rng() -> bool:
 			expect_equal(StateNormalizer.fingerprint(removed.state), StateNormalizer.fingerprint(state), "Removed Ferry history and split graph round-trip")
 			expect_equal(TradeNetworkService.settlement_count(removed.state, road_id), 1, "Removed Ferry links do not rebuild on load")
 	return true
+
+
+func generated_river_ferry_commands_and_roundtrip() -> bool:
+	var registry: ContentRegistry = ContentRegistry.new()
+	assert(registry.load_phase_nine().is_valid)
+	var state: RunState = HomesteadRunFactory.create(1, registry)
+	var original_path: Array[Dictionary] = EnvironmentalRiverService.path(state)
+	# Seed 1 has straight Runs at (0,1) and (4,3). Both east banks are empty.
+	_generated_play(state, registry, &"tile.riverside_hamlet", Vector2i(0, 1), 1)
+	_generated_play(state, registry, &"tile.riverside_hamlet", Vector2i(4, 3), 1)
+	_generated_play(state, registry, &"tile.settlement_gate", Vector2i(1, 1), 3)
+	var road_id: int = state.features.component_at(Vector2i(1, 1), TYPE.ROAD).lineage_id
+	expect_equal(TradeNetworkService.settlement_count(state, road_id), 1, "Gate Road reaches its native riverside Settlement")
+	var physical_before: String = Graph.signature(TopologyService.rebuild(state))
+	var tracks_before: Array[int] = state.features.tracks.values.duplicate()
+	var completions_before: int = state.features.completions.size()
+	var rng_before: int = state.current_rng_state
+	expect_true(RelicRules.acquire(state, registry, RelicRules.FERRY).is_valid, "Ferry equipped through authoritative acquisition service")
+	expect_equal(TradeNetworkService.settlement_count(state, road_id), 2, "Generated spine links two player-created Hamlet Settlements")
+	expect_equal(Graph.signature(TopologyService.rebuild(state)), physical_before, "Ferry adds no Road length or physical components")
+	expect_equal(state.features.tracks.values, tracks_before, "Ferry acquisition never retroactively scores")
+	expect_equal(state.features.completions.size(), completions_before, "Ferry acquisition creates no completion")
+	expect_equal(state.current_rng_state, rng_before, "Connectivity recomputation consumes no RNG")
+	var saved: SerializationResult = RunSerializer.serialize(state, registry)
+	expect_true(saved.validation.is_valid, str(saved.validation.debug_details))
+	var loaded: DeserializationResult = RunSerializer.deserialize(saved.json_text, registry)
+	expect_true(loaded.validation.is_valid, str(loaded.validation.debug_details))
+	if loaded.state == null:
+		return true
+	expect_equal(StateNormalizer.fingerprint(loaded.state), StateNormalizer.fingerprint(state), "Generated River, Ferry genealogy and RNG round-trip")
+	state = loaded.state
+	# A genuine River Stewardship milestone may already have filled the other
+	# slot during these placements; use the actual exhausted acquisition pool.
+	while RelicRules.equipped(state).size() < state.relics.capacity:
+		expect_true(RelicRules.acquire(state, registry, RelicRules.eligible_ids(state, registry)[0]).is_valid, "Fill available capacity")
+	var replacement: StringName = RelicRules.eligible_ids(state, registry)[0]
+	expect_true(RelicRules.acquire(state, registry, replacement, RelicRules.FERRY).is_valid, "Replace Ferry normally")
+	expect_equal(TradeNetworkService.settlement_count(state, road_id), 1, "Removing Ferry drops environmental commercial links")
+	expect_equal(Graph.signature(TopologyService.rebuild(state)), physical_before, "Removal also preserves physical Road length")
+	expect_equal(state.features.tracks.values, tracks_before, "Previously earned scoring remains unchanged")
+	expect_equal(EnvironmentalRiverService.path(state), original_path, "River is not regenerated or modified by overlays/Ferry")
+	for completion: FeatureCompletionRecord in state.features.completions:
+		expect_true(completion.feature_type != TYPE.RIVER, "Generated River never creates a completion record")
+	saved = RunSerializer.serialize(state, registry)
+	loaded = RunSerializer.deserialize(saved.json_text, registry)
+	expect_true(loaded.validation.is_valid, "Removed Ferry and environment load safely")
+	if loaded.state != null:
+		expect_equal(StateNormalizer.fingerprint(loaded.state), StateNormalizer.fingerprint(state), "Removed Ferry, exhaustion and split genealogy persist")
+	return true
+
+
+func _generated_play(state: RunState, registry: ContentRegistry, definition_id: StringName,
+		coordinate: Vector2i, rotation: int) -> void:
+	const Acquisition = preload("res://tests/fixtures/phase_five_factory.gd")
+	const Intent = preload("res://tests/fixtures/phase_six_factory.gd")
+	const Choices = preload("res://tests/fixtures/phase_nine_factory.gd")
+	var copy_id: int = Acquisition.acquire_hand(state, definition_id)
+	for option: PlacementOption in PlacementQueryService.query_for_copy(state, registry, copy_id):
+		if option.coordinate != coordinate or option.rotation != rotation:
+			continue
+		var result: ValidationResult = RulesEngine.execute(state, registry, Intent.command(option))
+		assert(result.is_valid, result.user_message)
+		while state.pending_choice != null:
+			assert(RulesEngine.execute(state, registry, Choices.choice_command(state)).is_valid)
+		return
+	assert(false, "Expected generated-River command must be legal")

@@ -1,6 +1,6 @@
 class_name HomesteadContentValidator
 extends RefCounted
-## Canonical Phase-2 content boundary; no runtime topology or placement behavior.
+## Revision-1 catalogue: 16 player designs, legacy/setup references and Founding.
 
 const FOUNDING_ID: StringName = &"tile.founding.homestead"
 const EXPANSION_IDS: Array[StringName] = [
@@ -18,51 +18,61 @@ const SPECIALIZED_IDS: Array[StringName] = [
 	&"tile.settlement_road_bend", &"tile.settlement_road_throughway",
 ]
 
+const RIVER_OVERLAY_IDS: Array[StringName] = [&"tile.riverside_hamlet", &"tile.woodland_river"]
+const SETUP_RIVER_IDS: Array[StringName] = [&"tile.river_end", &"tile.river_run", &"tile.river_bend"]
+const NON_PLAYER_IDS: Array[StringName] = [FOUNDING_ID, &"tile.open_fields", &"tile.road_end",
+	&"tile.river_end", &"tile.river_run", &"tile.river_bend"]
+
 
 static func validate_roster_and_config(ids: Array[StringName], config: RunConfig) -> ValidationResult:
 	if ids.size() != EXPANSION_IDS.size() + 1 or FOUNDING_ID not in ids:
-		return _invalid("Homestead requires all 21 Expansion designs and the Founding Tile.")
+		return _invalid("Homestead requires all 21 catalogue designs and the Founding Tile.")
 	for definition_id: StringName in EXPANSION_IDS:
 		if definition_id not in ids:
-			return _invalid("Missing Homestead Expansion definition.", definition_id)
+			return _invalid("Missing Homestead catalogue definition.", definition_id)
 	if config.hand_capacity != 3 or config.reserve_capacity != 1 or config.initial_survey_charges != 1:
 		return _invalid("Homestead requires a three-tile hand, one Reserve slot and one initial Survey.")
-	if config.starting_bag.size() != EXPANSION_IDS.size():
-		return _invalid("Every Homestead Expansion design needs a starting bag entry.")
+	if config.starting_bag.size() != 16:
+		return _invalid("Revision 1 requires exactly 16 starting player designs.")
 	var bag_ids: Array[StringName] = []
 	var total_copies: int = 0
 	for entry: StartingBagEntry in config.starting_bag:
 		if entry == null or entry.count <= 0:
 			return _invalid("Starting bag entries must be present with positive copy counts.")
-		if entry.definition_id not in EXPANSION_IDS or entry.definition_id in bag_ids:
-			return _invalid("Starting bag definitions must resolve uniquely to Expansions.", entry.definition_id)
+		if entry.definition_id not in EXPANSION_IDS or entry.definition_id in NON_PLAYER_IDS or entry.definition_id in bag_ids:
+			return _invalid("Starting bag definitions must resolve uniquely to player designs.", entry.definition_id)
 		if entry.count != _canonical_starting_count(entry.definition_id):
 			return _invalid("Starting bag copy count differs from RULE-BAG-002.", entry.definition_id)
 		bag_ids.append(entry.definition_id)
 		total_copies += entry.count
-	if total_copies != 55:
-		return _invalid("The Homestead starting bag must contain exactly 55 physical copies.")
+	if total_copies != 45:
+		return _invalid("The Homestead starting bag must contain exactly 45 physical copies.")
 	var emergency_ids: Array[StringName] = config.emergency_definitions.duplicate()
 	emergency_ids.sort_custom(func(left: StringName, right: StringName) -> bool:
 		return String(left) < String(right)
 	)
-	var expected_emergency: Array[StringName] = [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_end"]
+	var expected_emergency: Array[StringName] = [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_junction"]
 	if emergency_ids != expected_emergency:
-		return _invalid("Emergency replenishment must contain Forest Edge, Hamlet Edge and Road End once each.")
+		return _invalid("Emergency replenishment must contain Forest Edge, Hamlet Edge and Road Junction once each.")
 	return ValidationResult.success()
 
 
 static func _canonical_starting_count(definition_id: StringName) -> int:
 	# Validation contract only. Gameplay allocates exclusively from RunConfig data.
 	match definition_id:
-		&"tile.open_fields", &"tile.straight_road", &"tile.bending_road": return 4
-		&"tile.forest_edge", &"tile.forest_bend", &"tile.river_run", &"tile.river_bend", \
-				&"tile.road_end", &"tile.hamlet_edge", &"tile.settlement_corner": return 3
+		&"tile.forest_edge", &"tile.straight_road", &"tile.bending_road", &"tile.road_junction", &"tile.hamlet_edge": return 4
+		&"tile.forest_bend", &"tile.settlement_corner", &"tile.settlement_gate": return 3
 	return 2
 
 
 static func validate_tile(tile: TileDefinition) -> ValidationResult:
 	var tile_id: StringName = tile.definition_id
+	if tile.player_drawable != (tile_id not in NON_PLAYER_IDS) or tile.setup_environment != (tile_id in SETUP_RIVER_IDS):
+		return _invalid("Player/setup eligibility must match the Revision-1 catalogue.", tile_id)
+	if tile.intersection_hub != (tile_id == &"tile.road_junction"):
+		return _invalid("Only Road Junction declares the required intersection hub.", tile_id)
+	if tile_id in RIVER_OVERLAY_IDS:
+		return TransformationContentValidator.validate_tile(tile)
 	if tile_id not in EXPANSION_IDS and tile_id != FOUNDING_ID:
 		return _invalid("Tile is outside the canonical Homestead roster.", tile_id)
 	if tile.display_name.strip_edges().is_empty() or tile.display_name == "River Source":
@@ -108,7 +118,11 @@ static func _validate_groups(tile: TileDefinition) -> ValidationResult:
 			if tile.canonical_edges[direction] != group.edge_type:
 				return _invalid("Feature socket type must match its canonical edge.", tile.definition_id)
 			covered.append(direction)
+	if tile.intersection_hub and not tile.feature_groups.is_empty():
+		return _invalid("Intersection sockets must not create physical Road components.", tile.definition_id)
 	for direction: int in range(4):
+		if tile.intersection_hub and tile.canonical_edges[direction] == DomainTypes.EdgeType.ROAD:
+			continue
 		if tile.canonical_edges[direction] != DomainTypes.EdgeType.FIELD and direction not in covered:
 			return _invalid("Every non-Field edge needs an explicit internal feature component.", tile.definition_id)
 	return ValidationResult.success()

@@ -11,3 +11,4 @@ var source_id: int = 0
 var parent_ids: Array[int] = []
 var road_lineage_ids: Array[int] = []
 var settlement_lineage_ids: Array[int] = []
+var junction_hub_ids: Array[int] = []

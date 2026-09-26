@@ -18,7 +18,7 @@ static func create(registry: ContentRegistry, act: int = 1) -> RunState:
 	state.expansion.current_act = act
 	# Keep legal Expansion draws available so a Development consequence is isolated.
 	for index: int in range(16):
-		state.expansion.bag.append(PhysicalTileRules.acquire(state, &"tile.open_fields",
+		state.expansion.bag.append(PhysicalTileRules.acquire(state, &"tile.forest_edge",
 			&"scenario_fixture", TileLocationState.Kind.BAG))
 	return state
 
@@ -39,6 +39,7 @@ static func options(state: RunState, registry: ContentRegistry, copy_id: int) ->
 static func command(option: PlacementOption, source: TileLocationState.Kind = TileLocationState.Kind.ACTIVE_HAND) -> PlaceTileCommand:
 	var intent: PlaceTileCommand = PlaceTileCommand.new(option.tile_copy_id, source, option.coordinate, option.rotation)
 	intent.placement_mode = option.placement_mode
+	intent.boundary_direction = option.boundary_direction
 	intent.host_lineage_id = option.host_lineage_id
 	intent.river_lineage_id = option.river_lineage_id
 	intent.target_development_copy_id = option.target_development_copy_id

@@ -13,7 +13,7 @@ func tests() -> Array[Callable]:
 		endpoint_rotations_preserve_single_socket,
 		bend_rotations_preserve_adjacency,
 		opposite_edges_preserve_opposition,
-		junction_rotations_preserve_three_connected_sockets,
+		junction_rotations_preserve_three_terminal_sockets,
 		hybrid_rotations_preserve_distinct_groups_and_access,
 		cell_geometry_is_owned_and_retains_history,
 		exact_matcher_covers_all_five_types,
@@ -113,14 +113,14 @@ func opposite_edges_preserve_opposition() -> bool:
 	return true
 
 
-func junction_rotations_preserve_three_connected_sockets() -> bool:
-	var definition: TileDefinition = _definition([EDGE.ROAD, EDGE.ROAD, EDGE.ROAD, EDGE.FIELD])
+func junction_rotations_preserve_three_terminal_sockets() -> bool:
+	var definition: TileDefinition = preload("res://content/tiles/homestead/road_junction.tres")
 	for rotation: int in range(4):
-		var edges: Array[DomainTypes.EdgeType] = TileRotation.edges(definition.canonical_edges, rotation)
-		expect_equal(edges[(3 + rotation) % 4], EDGE.FIELD, "Junction Field edge rotates")
-		var groups: Array[TileFeatureGroup] = TileRotation.groups(definition.feature_groups, rotation)
-		expect_equal(groups.size(), 1, "Junction remains one internal group")
-		expect_equal(groups[0].directions.size(), 3, "All three Road sockets remain connected")
+		var cell: BoardCellState = BoardCellState.from_definition(definition, 1, Vector2i.ZERO, rotation, 1, 1)
+		expect_equal(cell.effective_edges[(3 + rotation) % 4], EDGE.FIELD, "Junction Field edge rotates")
+		expect_equal(cell.effective_edges.count(EDGE.ROAD), 3, "All three matching terminal sockets remain")
+		expect_true(cell.intersection_hub, "Rotation preserves hub metadata")
+		expect_equal(cell.feature_groups.size(), 0, "Sockets create no physical Road group")
 	return true
 
 

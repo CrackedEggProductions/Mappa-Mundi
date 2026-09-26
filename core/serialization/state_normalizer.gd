@@ -82,5 +82,5 @@ static func _normalize_trade(data: Dictionary) -> void:
 	data["authorized_links"].sort_custom(_record_before)
 	for key: String in ["lineages", "history"]:
 		for record: Dictionary in data[key]:
-			for set_key: String in ["parent_ids", "road_lineage_ids", "settlement_lineage_ids"]:
+			for set_key: String in ["parent_ids", "road_lineage_ids", "settlement_lineage_ids", "junction_hub_ids"]:
 				record[set_key].sort_custom(_decimal_id_before)

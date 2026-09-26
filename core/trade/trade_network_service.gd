@@ -41,6 +41,7 @@ static func access_links(state: RunState) -> Array[TradeLinkState]:
 			link.source_kind = contribution.source_kind
 			links.append(link)
 	links.append_array(_ferry_links(state))
+	links.append_array(_junction_links(state))
 	links.sort_custom(func(a: TradeLinkState, b: TradeLinkState) -> bool: return a.signature() < b.signature())
 	return links
 
@@ -51,8 +52,13 @@ static func rebuild(state: RunState) -> Array[CurrentTradeNetwork]:
 		return result
 	var links: Array[TradeLinkState] = access_links(state)
 	var adjacency: Dictionary[int, Array] = {}
+	var hub_ids: Dictionary[int, bool] = {}
+	for hub: IntersectionHubState in IntersectionHubService.rebuild(state):
+		adjacency[hub.hub_id] = []
+		hub_ids[hub.hub_id] = true
 	for link: TradeLinkState in links:
-		if not _current_member(state, link.from_lineage_id) or not _current_member(state, link.to_lineage_id):
+		if (not hub_ids.has(link.from_lineage_id) and not _current_member(state, link.from_lineage_id)) \
+			or (not hub_ids.has(link.to_lineage_id) and not _current_member(state, link.to_lineage_id)):
 			continue
 		for id: int in [link.from_lineage_id, link.to_lineage_id]:
 			if not adjacency.has(id):
@@ -72,7 +78,9 @@ static func rebuild(state: RunState) -> Array[CurrentTradeNetwork]:
 			if visited.has(id):
 				continue
 			visited[id] = true
-			if state.features.lineage(id).feature_type == DomainTypes.FeatureType.ROAD:
+			if hub_ids.has(id):
+				network.junction_hub_ids.append(id)
+			elif state.features.lineage(id).feature_type == DomainTypes.FeatureType.ROAD:
 				network.road_lineage_ids.append(id)
 			else:
 				network.settlement_lineage_ids.append(id)
@@ -83,12 +91,13 @@ static func rebuild(state: RunState) -> Array[CurrentTradeNetwork]:
 					pending.append(neighbor)
 		network.road_lineage_ids.sort()
 		network.settlement_lineage_ids.sort()
+		network.junction_hub_ids.sort()
 		var has_access: bool = false
 		for link: TradeLinkState in links:
 			if _contains(network, link.from_lineage_id) and _contains(network, link.to_lineage_id):
 				network.links.append(link)
 				has_access = has_access or link.explicit_access
-		if has_access and not network.road_lineage_ids.is_empty() and not network.settlement_lineage_ids.is_empty():
+		if not network.junction_hub_ids.is_empty() or (has_access and not network.road_lineage_ids.is_empty() and not network.settlement_lineage_ids.is_empty()):
 			_assign_persisted_identity(state, network)
 			result.append(network)
 	return result
@@ -129,6 +138,7 @@ static func reconcile(state: RunState, source_id: int = 0) -> Array[CurrentTrade
 				kind = &"network_split" if uses[parents[0]] > 1 else &"network_reconnected"
 		lineage.road_lineage_ids = network.road_lineage_ids.duplicate()
 		lineage.settlement_lineage_ids = network.settlement_lineage_ids.duplicate()
+		lineage.junction_hub_ids = network.junction_hub_ids.duplicate()
 		lineage.active = true
 		network.lineage_id = lineage.lineage_id
 		retained.append(lineage.lineage_id)
@@ -145,6 +155,8 @@ static func reconcile(state: RunState, source_id: int = 0) -> Array[CurrentTrade
 
 static func graph_signature(state: RunState) -> String:
 	var parts: Array[String] = []
+	for hub: IntersectionHubState in IntersectionHubService.rebuild(state):
+		parts.append("hub:%d" % hub.hub_id)
 	for link: TradeLinkState in access_links(state):
 		parts.append(link.signature())
 	return "trade/" + "|".join(parts)
@@ -210,7 +222,7 @@ static func _current_member(state: RunState, id: int) -> bool:
 
 
 static func _contains(network: CurrentTradeNetwork, id: int) -> bool:
-	return id in network.road_lineage_ids or id in network.settlement_lineage_ids
+	return id in network.road_lineage_ids or id in network.settlement_lineage_ids or id in network.junction_hub_ids
 
 
 static func _sorted_lineages(state: RunState) -> Array[TradeNetworkLineageState]:
@@ -222,9 +234,11 @@ static func _sorted_lineages(state: RunState) -> Array[TradeNetworkLineageState]
 static func _membership_changed(lineage: TradeNetworkLineageState, network: CurrentTradeNetwork) -> bool:
 	var roads: Array[int] = lineage.road_lineage_ids.duplicate()
 	var settlements: Array[int] = lineage.settlement_lineage_ids.duplicate()
+	var hubs: Array[int] = lineage.junction_hub_ids.duplicate()
 	roads.sort()
 	settlements.sort()
-	return roads != network.road_lineage_ids or settlements != network.settlement_lineage_ids
+	hubs.sort()
+	return roads != network.road_lineage_ids or settlements != network.settlement_lineage_ids or hubs != network.junction_hub_ids
 
 
 static func _assign_persisted_identity(state: RunState, network: CurrentTradeNetwork) -> void:
@@ -240,8 +254,8 @@ static func _candidate_ids(state: RunState, network: CurrentTradeNetwork) -> Arr
 	var candidates: Array[int] = []
 	for lineage: TradeNetworkLineageState in _sorted_lineages(state):
 		var overlaps: bool = false
-		for id: int in network.road_lineage_ids + network.settlement_lineage_ids:
-			for old_id: int in lineage.road_lineage_ids + lineage.settlement_lineage_ids:
+		for id: int in network.road_lineage_ids + network.settlement_lineage_ids + network.junction_hub_ids:
+			for old_id: int in lineage.road_lineage_ids + lineage.settlement_lineage_ids + lineage.junction_hub_ids:
 				if id == old_id or LineageService.is_ancestor(state, old_id, id):
 					overlaps = true
 		if overlaps:
@@ -282,7 +296,24 @@ static func _record(state: RunState, kind: StringName, lineage: TradeNetworkLine
 	event.parent_ids = lineage.parent_ids.duplicate()
 	event.road_lineage_ids = lineage.road_lineage_ids.duplicate()
 	event.settlement_lineage_ids = lineage.settlement_lineage_ids.duplicate()
+	event.junction_hub_ids = lineage.junction_hub_ids.duplicate()
 	state.trade.history.append(event)
+
+
+static func _junction_links(state: RunState) -> Array[TradeLinkState]:
+	var result: Array[TradeLinkState] = []
+	for hub: IntersectionHubState in IntersectionHubService.rebuild(state):
+		for id: int in hub.road_lineage_ids + hub.neighboring_hub_ids:
+			# A hub pair is emitted once; physical Road IDs never alias tile-copy IDs.
+			if id in hub.neighboring_hub_ids and id < hub.hub_id:
+				continue
+			var link: TradeLinkState = TradeLinkState.new()
+			link.from_lineage_id = hub.hub_id
+			link.to_lineage_id = id
+			link.source_id = hub.hub_id
+			link.source_kind = &"junction_hub"
+			result.append(link)
+	return result
 
 
 static func _ferry_links(state: RunState) -> Array[TradeLinkState]:

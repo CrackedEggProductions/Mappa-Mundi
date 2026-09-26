@@ -3,7 +3,8 @@ extends RefCounted
 ## Validate persisted physical provenance and geometry history without replaying gameplay.
 
 const NEW_BASE_MODES: Array[StringName] = [&"urban_expansion", &"rewilding_expansion"]
-const MODES: Array[StringName] = [&"urban_expansion", &"rewilding_expansion", &"bridge", &"rewilding"]
+const MODES: Array[StringName] = [&"urban_expansion", &"rewilding_expansion", &"bridge", &"rewilding",
+	&"riverside_hamlet", &"woodland_river"]
 
 
 static func validate(state: RunState, content: ContentRegistry, report: InvariantReport) -> void:
@@ -40,6 +41,7 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 		if component.origin_source_type == &"transformation" and component.component_id not in created_ids:
 			report.add(&"missing_transformation_provenance", "Transformation components require a matching creation record.")
 	_validate_audit(state, copies, report)
+	RiverInteractionService.validate(state, report)
 
 
 static func _validate_identity(state: RunState, content: ContentRegistry, cell: BoardCellState,
@@ -53,13 +55,17 @@ static func _validate_identity(state: RunState, content: ContentRegistry, cell: 
 	var expected_kind: StringName = &"rewilding" if value.mode == &"rewilding_expansion" else value.mode
 	if value.mode not in MODES or expected_kind != definition.transformation_kind:
 		report.add(&"invalid_transformation_mode", "Transformation mode must match its static design.")
-	var maximum_changes: int = 2 if value.mode == &"rewilding_expansion" else (1 if value.mode == &"rewilding" else 3)
+	var river_overlay: bool = value.mode in [&"riverside_hamlet", &"woodland_river"]
+	var maximum_changes: int = 2 if value.mode == &"rewilding_expansion" else (1 if value.mode == &"rewilding" or river_overlay else 3)
 	if value.changes.size() > maximum_changes:
 		report.add(&"excess_transformation_changes", "Transformation exceeds its canonical affected-square count.")
 	if value.mode == &"bridge" and (cell.definition_id != &"tile.river_run" or value.orientation != (cell.rotation + 1) % 2):
 		report.add(&"invalid_bridge_axis", "Bridge crosses its underlying straight River Run perpendicularly.")
+	if river_overlay and (cell.definition_id != (&"tile.river_run" if value.mode == &"riverside_hamlet" else &"tile.river_bend") \
+			or (value.mode == &"woodland_river" and value.orientation != cell.rotation)):
+		report.add(&"invalid_river_overlay_target", "River interactions preserve their canonical underlying Run or Bend.")
 	if value.target_base_copy_id != cell.base_tile_copy_id or value.changes.is_empty() \
-		or value.orientation < 0 or value.orientation > (3 if value.mode == &"urban_expansion" else 1):
+		or value.orientation < 0 or value.orientation > (3 if value.mode == &"urban_expansion" or river_overlay else 1):
 		report.add(&"invalid_transformation_target", "Transformation target, orientation and changes must be explicit.")
 	if value.act_applied < definition.unlock_act or value.act_applied < copy.acquired_act \
 		or value.act_applied > state.expansion.current_act or value.act_applied < cell.act_placed \
@@ -137,9 +143,9 @@ static func _validate_delta(state: RunState, host: BoardCellState, value: Transf
 		changed += 1
 		var allowed: bool = false
 		match value.mode:
-			&"urban_expansion":
+			&"urban_expansion", &"riverside_hamlet":
 				allowed = before == DomainTypes.EdgeType.FIELD and after == DomainTypes.EdgeType.SETTLEMENT
-			&"rewilding", &"rewilding_expansion":
+			&"rewilding", &"rewilding_expansion", &"woodland_river":
 				allowed = before == DomainTypes.EdgeType.FIELD and after == DomainTypes.EdgeType.FOREST
 			&"bridge":
 				allowed = after == DomainTypes.EdgeType.ROAD and before == DomainTypes.EdgeType.FIELD
@@ -147,6 +153,9 @@ static func _validate_delta(state: RunState, host: BoardCellState, value: Transf
 			report.add(&"illegal_transformation_rewrite", "Transformation history cannot overwrite unrelated built or River edges.")
 	if changed == 0:
 		report.add(&"empty_transformation_change", "Occupied change must actually rewrite geometry.")
+	if value.mode in [&"riverside_hamlet", &"woodland_river"]:
+		_validate_river_overlay(host, value, change, changed, report)
+		return
 	if value.mode == &"bridge" and change.field_after != change.field_before:
 		report.add(&"bridge_field_loss", "Bridge preserves current interior Field geography.")
 	if value.mode == &"rewilding" and (not change.field_before or change.field_after):
@@ -198,6 +207,26 @@ static func _validate_delta(state: RunState, host: BoardCellState, value: Transf
 					access = true
 			if not access:
 				report.add(&"missing_bridge_access", "Rewritten Settlement neighbor must retain explicit Road access.")
+
+
+static func _validate_river_overlay(host: BoardCellState, value: TransformationState,
+		change: TransformationChange, changed: int, report: InvariantReport) -> void:
+	var hamlet: bool = value.mode == &"riverside_hamlet"
+	if change.coordinate != host.coordinate or changed != (1 if hamlet else 2):
+		report.add(&"invalid_river_overlay_change", "A River overlay changes only its own selected bank(s).")
+	for direction: int in range(4):
+		var should_change: bool = direction == value.orientation if hamlet else direction not in [host.rotation, (host.rotation + 1) % 4]
+		if (change.before_edges[direction] != change.after_edges[direction]) != should_change:
+			report.add(&"invalid_river_overlay_bank", "River overlay bank geometry differs from its saved orientation.")
+		if change.before_edges[direction] == DomainTypes.EdgeType.RIVER and change.after_edges[direction] != DomainTypes.EdgeType.RIVER:
+			report.add(&"river_overlay_changed_river", "River overlays preserve all River sockets.")
+	if hamlet and (value.orientation % 2 == host.rotation % 2 or change.field_before != change.field_after):
+		report.add(&"invalid_hamlet_bank", "Hamlet uses a lateral bank and preserves remaining Field geography.")
+	if not hamlet and (not change.field_before or change.field_after):
+		report.add(&"invalid_woodland_field", "Woodland River converts the remaining Field banks into Forest.")
+	var source: int = DomainTypes.EdgeType.SETTLEMENT if hamlet else DomainTypes.EdgeType.FOREST
+	if not FeatureContactService._touches_internally(host, source, DomainTypes.EdgeType.RIVER):
+		report.add(&"missing_river_overlay_contact", "River overlay requires its explicit same-tile natural contact.")
 
 
 

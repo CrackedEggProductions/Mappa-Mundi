@@ -12,3 +12,5 @@ tile_class = 0
 unlock_act = 1
 reward_class = 1
 canonical_edges = Array[int]([0, 0, 0, 0])
+
+player_drawable = false

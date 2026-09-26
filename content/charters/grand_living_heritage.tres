@@ -9,6 +9,6 @@ display_name = "Living Heritage"
 evaluation_act = 3
 behavior_id = &"grand_living_heritage"
 forecast_text = "The realm will ultimately be judged by its stewardship of nature and cultural legacy."
-targets = {"ecology": 60, "culture": 40, "forest_size": 8, "river_size": 8, "enclosure_completions": 1, "exceed_ecology": 80, "exceed_culture": 60}
+targets = {"ecology": 60, "culture": 40, "forest_size": 8, "active_river_interactions": 3, "enclosure_completions": 1, "exceed_ecology": 80, "exceed_culture": 60}
 fulfill_rewards = Array[StringName]([])
 exceed_rewards = Array[StringName]([])

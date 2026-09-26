@@ -9,7 +9,7 @@ const TRACK = DomainTypes.TrackType
 func tests() -> Array[Callable]:
 	return [urban_starts_new_settlement, urban_reopens_completed_host,
 		urban_closed_merger_retains_history_and_developments, urban_query_is_pure_and_deterministic,
-		bridge_preserves_completed_river, bridge_new_settlement_road_components,
+		bridge_preserves_environmental_river, bridge_new_settlement_road_components,
 		bridge_reopens_existing_road_without_duplicate_growth, bridge_invalid_underlying_geography,
 		bridge_occupied_nonqualifying_neighbor_rejected,
 		rewild_expansion_reopens_completed_forest, rewild_occupied_field_creates_new_growth,
@@ -104,7 +104,7 @@ func urban_query_is_pure_and_deterministic() -> bool:
 	return true
 
 
-func bridge_preserves_completed_river() -> bool:
+func bridge_preserves_environmental_river() -> bool:
 	var registry: ContentRegistry = Fixture.content()
 	var state: RunState = Fixture.river(registry, true)
 	var river: FeatureComponentState = Fixture.component(state, Vector2i.DOWN, TYPE.RIVER)
@@ -115,9 +115,9 @@ func bridge_preserves_completed_river() -> bool:
 	var mill: int = Fixture.Previous.play(state, registry, &"tile.development.mill", Vector2i.DOWN)
 	var bridge: int = Fixture.play(state, registry, Fixture.BRIDGE, Vector2i.DOWN, &"bridge")
 	expect_equal(Fixture.component(state, Vector2i.DOWN, TYPE.RIVER), river, "Bridge retains original River component identity")
-	expect_true(lineage.completed, "Bridge does not reopen completed River")
-	expect_equal(lineage.completion_ids, records, "Bridge does not recomplete River")
-	expect_equal(lineage.scored_component_ids, scored, "Bridge retains River scoring history")
+	expect_true(not lineage.completed, "Environmental River has no completed state before or after Bridge")
+	expect_equal(lineage.completion_ids, records, "River never acquires completion records")
+	expect_equal(lineage.scored_component_ids, scored, "River has no scored component history")
 	expect_equal(state.features.tracks.values[TRACK.ECOLOGY], ecology, "Bridge awards no River score")
 	expect_equal(Fixture.Previous.development(state, Vector2i.DOWN).tile_copy_id, mill, "Existing Field-dependent Development survives Bridge")
 	expect_equal(Fixture.Previous.location(state, bridge), TileLocationState.Kind.BOARD_TRANSFORMATION, "Bridge physical copy is overlay")
@@ -163,8 +163,8 @@ func bridge_reopens_existing_road_without_duplicate_growth() -> bool:
 	expect_equal(Fixture.component(state, Vector2i.ONE, TYPE.ROAD), old, "New exit extends existing component instead of duplicating tile")
 	expect_equal(lineage.scored_component_ids, scored, "Reopening retains paid components")
 	expect_true(not lineage.completed, "Empty opposite Bridge side creates genuine Road reopening")
-	Fixture.Previous.play(state, registry, &"tile.road_end", Vector2i(-1, 1))
-	expect_equal(state.features.completions[-1].new_component_ids.size(), 2, "Only Bridge target and new endpoint provide new Road Trade")
+	Fixture.Previous.play(state, registry, &"tile.road_junction", Vector2i(-1, 1))
+	expect_equal(state.features.completions[-1].new_component_ids.size(), 1, "Only Bridge target provides new Road Trade; Junction terminal contributes zero size")
 	_valid(state, registry)
 	return true
 

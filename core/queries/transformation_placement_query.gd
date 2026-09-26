@@ -24,6 +24,10 @@ static func query(state: RunState, content: ContentRegistry, copy_id: int) -> Ar
 		for coordinate: Vector2i in state.expansion.board.sorted_coordinates():
 			for rotation: int in range(2):
 				_append(state, content, result, _occupied(state, definition, copy_id, coordinate, rotation))
+	if kind in [&"riverside_hamlet", &"woodland_river"]:
+		for coordinate: Vector2i in state.expansion.board.sorted_coordinates():
+			for rotation: int in range(4):
+				_append(state, content, result, _river_overlay(state, definition, copy_id, coordinate, rotation))
 	return result
 
 
@@ -109,6 +113,42 @@ static func _occupied(state: RunState, definition: TileDefinition, copy_id: int,
 		plan.changes.append(rewrite)
 	if not bridge:
 		change.field_after = false
+	return plan
+
+
+static func _river_overlay(state: RunState, definition: TileDefinition, copy_id: int,
+		coordinate: Vector2i, rotation: int) -> TransformationState:
+	var cell: BoardCellState = state.expansion.board.get_cell(coordinate)
+	var hamlet: bool = definition.transformation_kind == &"riverside_hamlet"
+	if cell.definition_id != (&"tile.river_run" if hamlet else &"tile.river_bend"):
+		return null
+	if not hamlet and rotation != cell.rotation:
+		return null
+	var directions: Array[int] = []
+	if hamlet:
+		# The orientation is the chosen bank direction, not a rotation of the River.
+		if rotation % 2 == cell.rotation % 2:
+			return null
+		directions.append(rotation)
+	else:
+		for direction: int in range(4):
+			if direction not in [cell.rotation, (cell.rotation + 1) % 4]:
+				directions.append(direction)
+	var plan: TransformationState = _plan(state, definition, copy_id,
+		definition.transformation_kind, rotation, cell.base_tile_copy_id)
+	var change: TransformationChange = _change(state, cell)
+	var edge: int = DomainTypes.EdgeType.SETTLEMENT if hamlet else DomainTypes.EdgeType.FOREST
+	for direction: int in directions:
+		if cell.effective_edges[direction] != DomainTypes.EdgeType.FIELD:
+			return null
+		var neighbor: BoardCellState = state.expansion.board.get_cell(
+			coordinate + BoardState.ORTHOGONAL_OFFSETS[direction])
+		if neighbor != null and neighbor.effective_edges[(direction + 2) % 4] != edge:
+			return null
+		change.after_edges[direction] = edge as DomainTypes.EdgeType
+	if not hamlet:
+		change.field_after = false
+	plan.changes.append(change)
 	return plan
 
 

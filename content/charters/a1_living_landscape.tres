@@ -9,6 +9,6 @@ display_name = "Living Landscape"
 evaluation_act = 1
 behavior_id = &"a1_living_landscape"
 forecast_text = ""
-targets = {"ecology": 20, "forest_completions": 1, "river_completions": 1, "exceed_ecology": 30}
+targets = {"ecology": 20, "forest_completions": 1, "river_interactions_created": 1, "exceed_ecology": 30}
 fulfill_rewards = Array[StringName]([&"tile_reward"])
 exceed_rewards = Array[StringName]([&"relic_offer"])

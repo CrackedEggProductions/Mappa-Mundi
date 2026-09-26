@@ -1,6 +1,7 @@
 class_name TradeLinkState
 extends RefCounted
-## Durable feature lineage endpoints, independent of physical feature adjacency.
+## Stable economic node IDs: feature lineages or physical Junction-copy hubs.
+## Endpoint field names are retained; links never imply physical Road connectivity.
 
 var from_lineage_id: int = 0
 var to_lineage_id: int = 0

@@ -6,6 +6,11 @@ extends Resource
 @export var display_name: String = ""
 @export var tile_class: DomainTypes.TileClass = DomainTypes.TileClass.EXPANSION
 @export var unlock_act: int = 1
+## Legacy/setup geography stays available to topology without entering player pools.
+@export var player_drawable: bool = true
+@export var setup_environment: bool = false
+## Terminal Road sockets connect commerce without creating physical Road components.
+@export var intersection_hub: bool = false
 @export var reward_class: DomainTypes.RewardClass = DomainTypes.RewardClass.NONE
 ## Canonical orientation in North/East/South/West order.
 @export var canonical_edges: Array[DomainTypes.EdgeType] = []

@@ -6,14 +6,16 @@ extends RefCounted
 static func validate_tile(tile: TileDefinition) -> ValidationResult:
 	if tile == null:
 		return _invalid("Transformation definition is required.")
-	if tile.transformation_kind not in [&"urban_expansion", &"bridge", &"rewilding"] \
-			or tile.definition_id != StringName("tile.transformation." + String(tile.transformation_kind)):
+	var river_overlay: bool = tile.transformation_kind in [&"riverside_hamlet", &"woodland_river"]
+	var prefix: String = "tile." if river_overlay else "tile.transformation."
+	if tile.transformation_kind not in [&"urban_expansion", &"bridge", &"rewilding", &"riverside_hamlet", &"woodland_river"] \
+			or tile.definition_id != StringName(prefix + String(tile.transformation_kind)):
 		return _invalid("Transformation definition ID and kind must match the canonical roster.", tile.definition_id)
 	var urban: bool = tile.transformation_kind == &"urban_expansion"
 	if tile.tile_class != DomainTypes.TileClass.TRANSFORMATION or tile.display_name.strip_edges().is_empty() \
-			or tile.unlock_act != (2 if urban else 3) \
-			or tile.reward_class != (DomainTypes.RewardClass.SPECIALIZED_EXPANSION if urban else DomainTypes.RewardClass.MAJOR_RARE) \
-			or tile.normal_reward_copy_count != (2 if urban else 1):
+			or tile.unlock_act != (1 if river_overlay else (2 if urban else 3)) \
+			or tile.reward_class != (DomainTypes.RewardClass.SPECIALIZED_EXPANSION if urban or river_overlay else DomainTypes.RewardClass.MAJOR_RARE) \
+			or tile.normal_reward_copy_count != (2 if urban or river_overlay else 1):
 		return _invalid("Transformation class, unlock and reward metadata must match alpha rules.", tile.definition_id)
 	if not tile.development_family_id.is_empty() or not tile.development_host_kind.is_empty() \
 			or not tile.development_stage.is_empty() or not tile.upgrade_from_definition_id.is_empty():
@@ -28,6 +30,9 @@ static func validate_tile(tile: TileDefinition) -> ValidationResult:
 		&"bridge":
 			modes = [&"occupied_square"]
 			prerequisite = &"underlying_straight_river_run"
+		&"riverside_hamlet", &"woodland_river":
+			modes = [&"occupied_square"]
+			prerequisite = &"underlying_straight_river_run" if tile.transformation_kind == &"riverside_hamlet" else &"underlying_river_bend"
 		&"rewilding":
 			modes = [&"empty_square", &"occupied_square"]
 			prerequisite = &"eligible_field"

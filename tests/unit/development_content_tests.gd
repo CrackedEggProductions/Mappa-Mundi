@@ -5,7 +5,7 @@ func tests() -> Array[Callable]:
 	return [
 		loads_phase_five_roster, housing_metadata, mill_metadata, monastery_metadata,
 		foresters_lodge_metadata, market_metadata, port_metadata, town_square_metadata,
-		abbey_metadata, grand_market_metadata, preserves_fifty_five_expansion_bag,
+		abbey_metadata, grand_market_metadata, preserves_revision_one_player_bag,
 		developments_are_edge_neutral, registry_owns_development_metadata,
 		rejects_missing_development, rejects_unknown_development,
 		rejects_wrong_family, rejects_wrong_host, rejects_wrong_unlock_act,
@@ -91,15 +91,16 @@ func grand_market_metadata() -> bool:
 	return _metadata("grand_market", "market", "settlement", 3, "market")
 
 
-func preserves_fifty_five_expansion_bag() -> bool:
+func preserves_revision_one_player_bag() -> bool:
 	var registry: ContentRegistry = ContentRegistry.new()
 	expect_true(registry.load_phase_five().is_valid, "Phase-5 profile loads")
 	var count: int = 0
 	for entry: StartingBagEntry in registry.get_config().starting_bag:
 		count += entry.count
-		expect_equal(registry.get_tile(entry.definition_id).tile_class,
-			DomainTypes.TileClass.EXPANSION, "Starting bag remains Expansion-only")
-	expect_equal(count, 55, "Content expansion never seeds copies into starting bag")
+		expect_true(registry.get_tile(entry.definition_id).player_drawable, "Only player designs enter starting bag")
+		expect_true(registry.get_tile(entry.definition_id).tile_class == DomainTypes.TileClass.EXPANSION
+			or entry.definition_id in HomesteadContentValidator.RIVER_OVERLAY_IDS, "Only two named River overlays are the initial Transformation exception")
+	expect_equal(count, 45, "Content expansion never seeds copies into starting bag")
 	return true
 
 

@@ -19,6 +19,19 @@ static func inspect(state: RunState, content: ContentRegistry, reveal_secret: bo
 		"eligible_tiles": RewardRules.tile_pool(content, ActRules.unlocked_act(state)),
 		"seed_history": seeds, "pending_refill": state.expansion.pending_refill_index,
 		"bonus_queue": state.charters.bonus_queue.duplicate(true)}
+	result["environmental_river_path"] = EnvironmentalRiverService.path(state)
+	result["river_interactions"] = RiverInteractionService.current(state)
+	result["river_interaction_history"] = RiverInteractionService.creation_history(state)
+	var hubs: Array[Dictionary] = []
+	for hub: IntersectionHubState in IntersectionHubService.rebuild(state):
+		hubs.append({"hub_id": hub.hub_id, "coordinate": hub.coordinate,
+			"road_lineage_ids": hub.road_lineage_ids.duplicate(), "neighboring_hub_ids": hub.neighboring_hub_ids.duplicate()})
+	result["intersection_hubs"] = hubs
+	var paid_contacts: Array[Dictionary] = []
+	for lineage: FeatureLineageState in state.features.lineages:
+		if lineage.feature_type == DomainTypes.FeatureType.FOREST:
+			paid_contacts.append({"lineage_id": lineage.lineage_id, "scored_river_ids": lineage.scored_river_ids.duplicate()})
+	result["forest_river_scoring_history"] = paid_contacts
 	if reveal_secret:
 		result["debug_secret_grand_id"] = String(state.charters.grand_id)
 	if state.act_transition != null:

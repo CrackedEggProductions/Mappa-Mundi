@@ -10,7 +10,7 @@ func tests() -> Array[Callable]:
 		forest_recompletion_preserves_old_scores_and_reevaluates_preservation,
 		road_recompletion_scores_new_tiles_only,
 		forest_merger_inherits_two_scored_parents, road_merger_never_repays_parents,
-		river_reopening_is_rejected_without_history_change,
+		river_geometry_never_completes_or_scores,
 		riverside_support_retains_distinct_categories,
 		woodland_river_contact_scores_once, shared_field_support_is_per_settlement,
 		monastery_fixture_completes_once, simultaneous_batch_freezes_every_peer,
@@ -132,24 +132,24 @@ func _merge_fixture(content: ContentRegistry, forest: bool) -> RunState:
 	return state
 
 
-func river_reopening_is_rejected_without_history_change() -> bool:
+func river_geometry_never_completes_or_scores() -> bool:
 	var content: ContentRegistry = Fixture.content()
 	var state: RunState = Fixture.create(content)
 	Fixture.add(state, content, &"tile.river_end", Vector2i.DOWN)
-	expect_equal(state.features.tracks.values[3], 1, "Two River tiles score floor(2/2)")
+	expect_equal(state.features.tracks.values[3], 0, "Closed environmental River does not score")
+	var river: FeatureLineageState = Fixture.lineage_at(state, Vector2i.DOWN, TYPE.RIVER)
+	expect_true(not river.completed and river.completion_ids.is_empty(), "River has no completion lifecycle")
 	var before: String = StateNormalizer.fingerprint(state)
-	var result: ValidationResult = Fixture.rewrite(state, content, Vector2i.DOWN, [EDGE.RIVER, EDGE.FIELD, EDGE.RIVER, EDGE.FIELD])
-	expect_equal(result.error_code, &"completed_river_reopening", "Completed River cannot reopen")
-	expect_equal(StateNormalizer.fingerprint(state), before, "Rejected rewrite preserves all history")
 	FeatureResolutionService.resolve(state)
-	expect_equal(StateNormalizer.fingerprint(state), before, "Completed River cannot pay again on rebuild")
+	expect_equal(StateNormalizer.fingerprint(state), before, "Repeated topology/scoring resolution remains inert")
 	return true
 
 
 func riverside_support_retains_distinct_categories() -> bool:
 	var content: ContentRegistry = Fixture.content()
 	var state: RunState = Fixture.create(content)
-	var id: int = Fixture.add(state, content, &"tile.riverside_hamlet", Vector2i.UP, 2)
+	Fixture.add(state, content, &"tile.riverside_hamlet", Vector2i.UP, 2)
+	var id: int = state.expansion.board.get_cell(Vector2i.UP).base_tile_copy_id
 	var lineage: FeatureLineageState = Fixture.lineage_at(state, Vector2i.UP, TYPE.SETTLEMENT)
 	expect_true(id in lineage.scored_field_ids and id in lineage.scored_river_ids, "One Riverside tile pays distinct Field and River categories")
 	expect_equal(state.features.tracks.values[0], 6, "Two Settlement components and two genuine support categories")
@@ -162,15 +162,18 @@ func riverside_support_retains_distinct_categories() -> bool:
 func woodland_river_contact_scores_once() -> bool:
 	var content: ContentRegistry = Fixture.content()
 	var state: RunState = Fixture.create(content)
-	var woodland: int = Fixture.add(state, content, &"tile.woodland_river", Vector2i.DOWN, 2)
-	var neighbor: int = Fixture.add(state, content, &"tile.forest_edge", Vector2i(-1, 1), 1)
+	Fixture.add(state, content, &"tile.woodland_river", Vector2i.DOWN, 2)
+	Fixture.add(state, content, &"tile.forest_edge", Vector2i(-1, 1), 1)
 	Fixture.add(state, content, &"tile.river_end", Vector2i.ONE, 3)
+	Fixture.add(state, content, &"tile.forest_edge", Vector2i(0, 2))
+	var forest: FeatureLineageState = Fixture.lineage_at(state, Vector2i.DOWN, TYPE.FOREST)
+	expect_equal(forest.scored_river_ids.size(), 3, "Own River and both connected adjacent River tiles are paid once")
+	expect_equal(state.features.tracks.values[3], 8, "Three Forest tiles plus three River contacts plus preservation")
 	var river: FeatureLineageState = Fixture.lineage_at(state, Vector2i.DOWN, TYPE.RIVER)
-	expect_equal(river.scored_forest_ids, [woodland, neighbor], "Same-tile and touching Forest counted once each")
-	expect_equal(state.features.tracks.values[3], 3, "River length floor(3/2) plus two Forest contacts")
+	expect_true(not river.completed and river.completion_ids.is_empty(), "Environmental River has no lifecycle")
 	var before: String = StateNormalizer.fingerprint(state)
 	FeatureResolutionService.resolve(state)
-	expect_equal(StateNormalizer.fingerprint(state), before, "Repeated resolution cannot farm River contact")
+	expect_equal(StateNormalizer.fingerprint(state), before, "Repeated resolution cannot farm Forest River contacts")
 	return true
 
 
@@ -323,7 +326,8 @@ func deterministic_homestead_demo() -> bool:
 			expect_equal(StateNormalizer.fingerprint(mirror), StateNormalizer.fingerprint(state), "Identical scored continuation")
 		_valid(state, content)
 	expect_equal(state.expansion.normal_placements, 12, "Twelve seeded scored placements")
-	expect_equal(seen_types.size(), 4, "Seeded run completes all four tracked feature types")
+	expect_true(not seen_types.has(TYPE.RIVER), "Seeded run never completes environmental River")
+	expect_true(not seen_types.is_empty(), "Closure-preferring seeded play completes a player-built feature")
 	print("DEMO Phase 3: 12 seeded legal placements; completed types=%s; Tracks=%s; save/load after 5; identical topology, lineage, history and scoring continuation." % [seen_types, state.features.tracks.values])
 	return true
 
@@ -334,8 +338,10 @@ func _best_intent(state: RunState, content: ContentRegistry, seen_types: Array[i
 	var current: Array[CurrentFeature] = TopologyService.rebuild(state)
 	for tile_id: int in state.expansion.hand:
 		var definition: TileDefinition = content.get_tile(PhysicalTileRules.find_copy(state, tile_id).definition_id)
-		for option: PlacementOption in PlacementQueryService.query(state.expansion.board, definition, tile_id, state.expansion.state_revision):
-			var edges: Array[DomainTypes.EdgeType] = TileRotation.edges(definition.canonical_edges, option.rotation)
+		for option: PlacementOption in PlacementQueryService.query_for_copy(state, content, tile_id):
+			var edges: Array[DomainTypes.EdgeType] = []
+			if definition.canonical_edges.size() == 4:
+				edges = TileRotation.edges(definition.canonical_edges, option.rotation)
 			var value: int = 0
 			for type: int in range(4):
 				var edge: int = FeatureState.edge_for_type(type as DomainTypes.FeatureType)
@@ -361,7 +367,7 @@ func _best_intent(state: RunState, content: ContentRegistry, seen_types: Array[i
 					value += 1 if type in seen_types else 10
 			if value > best_value:
 				best_value = value
-				best = PlaceTileCommand.new(tile_id, TileLocationState.Kind.ACTIVE_HAND, option.coordinate, option.rotation)
+				best = Fixture.PhaseTwo.command(option)
 	return best
 
 

@@ -26,6 +26,7 @@ static func copy_cell(source: BoardCellState) -> BoardCellState:
 	cell.developments = source.developments.duplicate()
 	cell.transformations = source.transformations.duplicate()
 	cell.hard_boundaries = source.hard_boundaries.duplicate()
+	cell.intersection_hub = source.intersection_hub
 	for group: TileFeatureGroup in source.feature_groups:
 		cell.feature_groups.append(group.duplicate(true) as TileFeatureGroup)
 	for relation: TileFeatureRelationship in source.relationships:
@@ -39,6 +40,8 @@ static func rewrite(cell: BoardCellState, change: TransformationChange, mode: St
 	cell.field_supports_settlement = cell.field_supports_settlement and cell.has_field_geography
 	# Existing groups persist even when a specifically authorized rewrite consumes their exits.
 	for edge: int in range(1, 5):
+		if edge == DomainTypes.EdgeType.ROAD and cell.intersection_hub:
+			continue # Terminal hub sockets never become an ordinary physical Road.
 		var group: TileFeatureGroup = null
 		for candidate: TileFeatureGroup in cell.feature_groups:
 			if candidate.edge_type == edge:
@@ -63,7 +66,7 @@ static func rewrite(cell: BoardCellState, change: TransformationChange, mode: St
 			access.to_edge_type = DomainTypes.EdgeType.SETTLEMENT
 			access.kind = TileFeatureRelationship.Kind.ROAD_SETTLEMENT_ACCESS
 			cell.relationships.append(access)
-	if mode == &"rewilding" and TopologyService._has_type(cell, DomainTypes.FeatureType.RIVER):
+	if mode in [&"rewilding", &"woodland_river"] and TopologyService._has_type(cell, DomainTypes.FeatureType.RIVER):
 		var has_touch: bool = false
 		for relation: TileFeatureRelationship in cell.relationships:
 			if relation.kind == TileFeatureRelationship.Kind.FOREST_RIVER_TOUCH:
@@ -73,6 +76,18 @@ static func rewrite(cell: BoardCellState, change: TransformationChange, mode: St
 			touch.from_edge_type = DomainTypes.EdgeType.FOREST
 			touch.to_edge_type = DomainTypes.EdgeType.RIVER
 			touch.kind = TileFeatureRelationship.Kind.FOREST_RIVER_TOUCH
+			cell.relationships.append(touch)
+	if mode == &"riverside_hamlet":
+		cell.field_supports_settlement = cell.has_field_geography
+		var has_touch: bool = false
+		for relation: TileFeatureRelationship in cell.relationships:
+			if relation.kind == TileFeatureRelationship.Kind.SETTLEMENT_RIVER_TOUCH:
+				has_touch = true
+		if not has_touch:
+			var touch: TileFeatureRelationship = TileFeatureRelationship.new()
+			touch.from_edge_type = DomainTypes.EdgeType.SETTLEMENT
+			touch.to_edge_type = DomainTypes.EdgeType.RIVER
+			touch.kind = TileFeatureRelationship.Kind.SETTLEMENT_RIVER_TOUCH
 			cell.relationships.append(touch)
 
 

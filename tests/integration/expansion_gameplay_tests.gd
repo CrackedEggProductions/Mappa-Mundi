@@ -1,8 +1,8 @@
 extends "res://tests/framework/test_suite.gd"
 
 const Factory = preload("res://tests/fixtures/phase_two_factory.gd")
-const FIELDS: Array[StringName] = [&"tile.open_fields", &"tile.open_fields", &"tile.open_fields"]
-const ROADS: Array[StringName] = [&"tile.road_end", &"tile.road_end", &"tile.road_end"]
+const OVERLAYS: Array[StringName] = [&"tile.riverside_hamlet", &"tile.riverside_hamlet", &"tile.riverside_hamlet"]
+const ROADS: Array[StringName] = [&"tile.road_junction", &"tile.road_junction", &"tile.road_junction"]
 
 
 func tests() -> Array[Callable]:
@@ -25,12 +25,10 @@ func homestead_inventory_is_exact() -> bool:
 	var content: ContentRegistry = Factory.content()
 	var state: RunState = HomesteadRunFactory.create(41, content)
 	var expected: Dictionary[StringName, int] = {
-		&"tile.open_fields": 4, &"tile.forest_edge": 3, &"tile.forest_bend": 3,
-		&"tile.forest_belt": 2, &"tile.river_end": 2, &"tile.river_run": 3,
-		&"tile.river_bend": 3, &"tile.road_end": 3, &"tile.straight_road": 4,
-		&"tile.bending_road": 4, &"tile.road_junction": 2, &"tile.hamlet_edge": 3,
-		&"tile.settlement_corner": 3, &"tile.settlement_throughway": 2,
-		&"tile.settlement_gate": 2, &"tile.riverside_hamlet": 2, &"tile.woodland_road": 2,
+		&"tile.forest_edge": 4, &"tile.forest_bend": 3, &"tile.forest_belt": 2,
+		&"tile.straight_road": 4, &"tile.bending_road": 4, &"tile.road_junction": 4,
+		&"tile.hamlet_edge": 4, &"tile.settlement_corner": 3, &"tile.settlement_throughway": 2,
+		&"tile.settlement_gate": 3, &"tile.riverside_hamlet": 2, &"tile.woodland_road": 2,
 		&"tile.woodland_river": 2, &"tile.settlement_corner_gate": 2,
 		&"tile.settlement_road_bend": 2, &"tile.settlement_road_throughway": 2,
 	}
@@ -39,13 +37,12 @@ func homestead_inventory_is_exact() -> bool:
 	for copy: TileCopyState in state.tile_copies:
 		expect_true(not identities.has(copy.tile_copy_id), "Physical copy ID is unique")
 		identities[copy.tile_copy_id] = true
-		if copy.definition_id != &"tile.founding.homestead":
+		if copy.acquisition_source == &"homestead_starting_bag":
 			actual[copy.definition_id] = actual.get(copy.definition_id, 0) + 1
-			expect_equal(content.get_tile(copy.definition_id).tile_class,
-				DomainTypes.TileClass.EXPANSION, "Starting bag contains Expansion only")
-	expect_equal(actual, expected, "Exact canonical counts of all 21 starting definitions")
-	expect_equal(state.tile_copies.size(), 56, "55 starting copies plus separate Founding copy")
-	expect_equal(state.expansion.bag.size(), 52, "Opening draw leaves 52 bag copies")
+			expect_true(content.get_tile(copy.definition_id).player_drawable, "Starting bag contains only player designs")
+	expect_equal(actual, expected, "Exact canonical counts of all 16 starting player definitions")
+	expect_equal(state.tile_copies.size(), 54, "45 player copies plus Founding and eight environmental River copies")
+	expect_equal(state.expansion.bag.size(), 42, "Opening draw leaves 42 bag copies")
 	return true
 
 
@@ -150,7 +147,7 @@ func reserve_moves_and_refills() -> bool:
 
 func occupied_reserve_rejects_swap() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.road_end")
+	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.road_junction")
 	_reject_unchanged(state, content, ReserveTileCommand.new(state.expansion.hand[0]), "Occupied Reserve rejects swap")
 	_reject_unchanged(state, content, ReserveTileCommand.new(state.expansion.reserve_id), "Reserve cannot move itself to hand")
 	return true
@@ -158,7 +155,7 @@ func occupied_reserve_rejects_swap() -> bool:
 
 func reserve_placement_preserves_hand() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.road_end")
+	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.road_junction")
 	var old_hand: Array[int] = state.expansion.hand.duplicate()
 	var old_bag: Array[int] = state.expansion.bag.duplicate()
 	var option: PlacementOption = Factory.options(state, content, state.expansion.reserve_id)[0]
@@ -190,7 +187,7 @@ func survey_removes_physical_copy() -> bool:
 
 func reserve_cannot_be_surveyed() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.road_end")
+	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.road_junction")
 	_reject_unchanged(state, content, SurveyTileCommand.new(state.expansion.reserve_id), "Committed Reserve cannot be Surveyed")
 	return true
 
@@ -222,13 +219,13 @@ func reserve_and_survey_allow_both_orders() -> bool:
 
 func dead_hand_cycles_exact_copies_once() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, FIELDS, ROADS)
+	var state: RunState = Factory.minimal(content, OVERLAYS, ROADS)
 	var expected_ids: Array[int] = state.expansion.bag.duplicate()
 	expected_ids.append_array(state.expansion.hand)
 	var snapshot: RunRNG = RunRNG.from_snapshot(state.original_seed, state.current_rng_state, state.rng.operation_count)
 	expected_ids = snapshot.shuffled_ids(expected_ids, &"dead_hand_cycle")
 	var count_before: int = state.tile_copies.size()
-	expect_true(StalemateRules.is_dead_hand(state, content), "All three Field tiles are unplayable at Founding")
+	expect_true(StalemateRules.is_dead_hand(state, content), "All three River overlays are unplayable without a River Run")
 	expect_true(RulesEngine.execute(state, content, CycleDeadHandCommand.new()).is_valid, "Free full-hand cycle")
 	expect_equal(state.expansion.hand, expected_ids.slice(0, 3), "Entire return batch shuffled once then drawn")
 	expect_equal(state.expansion.bag, expected_ids.slice(3), "Remaining shuffled bag exact")
@@ -242,7 +239,7 @@ func dead_hand_cycles_exact_copies_once() -> bool:
 func playable_hand_prevents_cycle() -> bool:
 	var content: ContentRegistry = Factory.content()
 	var state: RunState = Factory.minimal(content,
-		[&"tile.open_fields", &"tile.road_end", &"tile.open_fields"], ROADS)
+		[&"tile.riverside_hamlet", &"tile.road_junction", &"tile.riverside_hamlet"], ROADS)
 	expect_true(not StalemateRules.is_dead_hand(state, content), "One playable copy prevents dead hand")
 	_reject_unchanged(state, content, CycleDeadHandCommand.new(), "Playable hand cannot cycle voluntarily")
 	return true
@@ -250,7 +247,7 @@ func playable_hand_prevents_cycle() -> bool:
 
 func playable_reserve_does_not_prevent_cycle() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, FIELDS, ROADS, &"tile.road_end")
+	var state: RunState = Factory.minimal(content, OVERLAYS, ROADS, &"tile.road_junction")
 	var reserved_id: int = state.expansion.reserve_id
 	expect_true(not Factory.options(state, content, reserved_id).is_empty(), "Reserve is playable")
 	expect_true(RulesEngine.execute(state, content, CycleDeadHandCommand.new()).is_valid, "Playable Reserve does not block cycle")
@@ -262,7 +259,7 @@ func playable_reserve_does_not_prevent_cycle() -> bool:
 func unplayable_individual_stays() -> bool:
 	var content: ContentRegistry = Factory.content()
 	var state: RunState = Factory.minimal(content,
-		[&"tile.open_fields", &"tile.road_end", &"tile.road_end"], ROADS)
+		[&"tile.riverside_hamlet", &"tile.road_junction", &"tile.road_junction"], ROADS)
 	var unplayable_id: int = state.expansion.hand[0]
 	expect_true(Factory.options(state, content, unplayable_id).is_empty(), "Individual copy currently unplayable")
 	expect_true(RulesEngine.execute(state, content, ReserveTileCommand.new(state.expansion.hand[1])).is_valid, "Legal pre-action")
@@ -272,7 +269,7 @@ func unplayable_individual_stays() -> bool:
 
 func global_stalemate_injects_exact_emergency_set() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, FIELDS, FIELDS, &"tile.road_end")
+	var state: RunState = Factory.minimal(content, OVERLAYS, OVERLAYS, &"tile.road_junction")
 	var cursor: int = state.next_runtime_id
 	var copy_count: int = state.tile_copies.size()
 	var reserved_id: int = state.expansion.reserve_id
@@ -286,7 +283,7 @@ func global_stalemate_injects_exact_emergency_set() -> bool:
 		expect_equal(copy.acquisition_source, &"emergency_replenishment", "Emergency acquisition metadata")
 		expect_equal(copy.acquired_act, 1, "Emergency acquisition Act")
 	acquired.sort_custom(_definition_before)
-	expect_equal(acquired, [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_end"], "Canonical emergency set")
+	expect_equal(acquired, [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_junction"], "Canonical emergency set")
 	expect_equal(state.expansion.reserve_id, reserved_id, "Reserve untouched by global safeguard")
 	expect_equal(state.expansion.hand.size(), 3, "Dead hand redrawn")
 	expect_equal(state.rng.operation_count, 1, "Combined emergency and returns batch shuffled once")
@@ -296,8 +293,8 @@ func global_stalemate_injects_exact_emergency_set() -> bool:
 
 func playable_bag_prevents_global_stalemate() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, FIELDS,
-		[&"tile.open_fields", &"tile.road_end", &"tile.open_fields"])
+	var state: RunState = Factory.minimal(content, OVERLAYS,
+		[&"tile.riverside_hamlet", &"tile.road_junction", &"tile.riverside_hamlet"])
 	expect_true(StalemateRules.is_dead_hand(state, content), "Hand itself dead")
 	expect_true(not StalemateRules.is_global_stalemate(state, content), "Playable bag copy prevents global safeguard")
 	return true
@@ -320,7 +317,7 @@ func empty_bag_replenishment_is_repeatable() -> bool:
 			state.expansion.removed_ids.append(copy_id)
 			expect_equal(state.expansion.bag.size(), 2 - index, "Exactly three injected per exhausted bag")
 		drawn_definitions.sort_custom(_definition_before)
-		expect_equal(drawn_definitions, [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_end"], "Repeated canonical emergency set")
+		expect_equal(drawn_definitions, [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_junction"], "Repeated canonical emergency set")
 		expect_equal(state.next_runtime_id, cursor + 3 * (batch + 1), "New monotonic IDs each replenishment")
 		_valid(state, content)
 	expect_equal(state.rng.operation_count, 3, "One shuffle for each of three replenishments")
@@ -329,7 +326,7 @@ func empty_bag_replenishment_is_repeatable() -> bool:
 
 func reserve_proof_is_conservative() -> bool:
 	var content: ContentRegistry = Factory.content()
-	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.open_fields")
+	var state: RunState = Factory.minimal(content, ROADS, ROADS, &"tile.riverside_hamlet")
 	var before: String = StateNormalizer.fingerprint(state)
 	expect_true(Factory.options(state, content, state.expansion.reserve_id).is_empty(), "Reserve has no current placement")
 	expect_equal(ReserveProofService.assess(state, content),
@@ -350,8 +347,7 @@ func phase_two_scripted_sequence_survives_load() -> bool:
 	var surveyed_id: int = original.expansion.hand[1]
 	expect_true(RulesEngine.execute(original, content, SurveyTileCommand.new(surveyed_id)).is_valid, "Script Surveys active hand")
 	var option: PlacementOption = Factory.options(original, content, reserved_id)[0]
-	expect_true(RulesEngine.execute(original, content, PlaceTileCommand.new(reserved_id,
-		TileLocationState.Kind.RESERVE, option.coordinate, option.rotation)).is_valid, "Script places Reserve")
+	expect_true(RulesEngine.execute(original, content, Factory.command(option, TileLocationState.Kind.RESERVE)).is_valid, "Script places Reserve")
 	var loaded: RunState = null
 	var nonzero_rotation: bool = option.rotation != 0
 	for step: int in range(1, 12):
@@ -381,7 +377,7 @@ func phase_two_scripted_sequence_survives_load() -> bool:
 			expect_equal(StateNormalizer.fingerprint(loaded), StateNormalizer.fingerprint(original), "Deterministic continuation after command")
 	expect_true(nonzero_rotation, "Script exercises a rotated tile")
 	expect_equal(original.expansion.normal_placements, 12, "Twelve legal normal placements")
-	expect_equal(original.expansion.board.cells.size(), 13, "Founding plus twelve base copies")
+	expect_equal(original.expansion.board.cells.size(), 9 + 12 - _overlay_count(original), "Nine setup squares plus actual base placements, excluding overlays")
 	expect_equal(original.expansion.removed_ids, [surveyed_id], "Survey identity retained through sequence")
 	if loaded != null:
 		for index: int in range(10):
@@ -483,3 +479,10 @@ func hand_placement_refills_only_consumed_slot() -> bool:
 	expect_equal(state.expansion.board.revision, 2, "Board revision incremented once")
 	_valid(state, content)
 	return true
+
+
+func _overlay_count(state: RunState) -> int:
+	var count: int = 0
+	for cell: BoardCellState in state.expansion.board.cells.values():
+		count += cell.transformations.size()
+	return count

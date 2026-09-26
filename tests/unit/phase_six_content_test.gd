@@ -111,13 +111,14 @@ func preserves_exact_starting_bag() -> bool:
 	var count: int = 0
 	for entry: StartingBagEntry in content.get_config().starting_bag:
 		count += entry.count
-		expect_equal(content.get_tile(entry.definition_id).tile_class, DomainTypes.TileClass.EXPANSION, "Expansion-only starting copies")
-	expect_equal(count, 55, "No automatic seeding or rewarded copies")
+		expect_true(content.get_tile(entry.definition_id).tile_class == DomainTypes.TileClass.EXPANSION
+			or entry.definition_id in HomesteadContentValidator.RIVER_OVERLAY_IDS, "Only named River interactions join initial Expansions")
+	expect_equal(count, 45, "No automatic seeding or rewarded copies")
 	return true
 
 
 func preserves_emergency_composition() -> bool:
-	expect_equal(_config().emergency_definitions, [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_end"],
+	expect_equal(_config().emergency_definitions, [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_junction"],
 		"Emergency content remains the established three Expansions")
 	return true
 

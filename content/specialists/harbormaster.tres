@@ -7,4 +7,4 @@ script = ExtResource("1")
 definition_id = &"specialist.harbormaster"
 display_name = "Harbormaster"
 behavior_id = &"harbormaster"
-eligible_feature_types = Array[int]([3])
+eligible_feature_types = Array[int]([1])
