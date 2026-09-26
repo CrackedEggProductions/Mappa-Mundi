@@ -91,7 +91,7 @@ static func _validate_history(state: RunState, ids: Array[int], report: Invarian
 		var lineage: TradeNetworkLineageState = state.trade.lineage(event.lineage_id)
 		if lineage == null or event.kind not in KINDS or event.event_id <= previous \
 			or event.lineage_id >= event.event_id or event.act < 1 or event.act > state.expansion.current_act \
-			or event.placement_index < 0 or event.placement_index > state.expansion.normal_placements:
+			or event.placement_index < 0 or event.placement_index > PlacementChronology.count_for_act(state, event.act):
 			report.add(&"invalid_trade_history", "Network audit identity, chronology and type must resolve.")
 		previous = event.event_id
 		if lineage != null and not _same_set(event.parent_ids, lineage.parent_ids):

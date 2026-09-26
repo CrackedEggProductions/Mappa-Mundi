@@ -29,6 +29,10 @@ static func validate(state: RunState, content: ContentRegistry) -> InvariantRepo
 		if String(tile.acquisition_source).strip_edges().is_empty():
 			report.add(&"missing_acquisition_source", "Acquisition source must be a stable nonblank ID.", tile.tile_copy_id)
 	_validate_locations(state, ids, report)
+	if report.is_valid:
+		PhaseNineInvariantValidator.validate(state, content, report)
+	if not report.is_valid:
+		return report
 	if state.expansion != null:
 		ExpansionInvariantValidator.validate(state, content, report)
 	if state.resolution != null and not (state.relics != null and state.resolution.completion_snapshot.is_empty()) \

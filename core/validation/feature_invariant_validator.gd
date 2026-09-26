@@ -184,7 +184,7 @@ static func _validate_history(state: RunState, ids: Array[int], board_ids: Array
 			return
 		_check_id(state, event.event_id, ids, report)
 		if event.kind not in KINDS or event.act < 1 or event.act > state.expansion.current_act \
-			or event.placement_index < 0 or event.placement_index > state.expansion.normal_placements \
+			or event.placement_index < 0 or event.placement_index > PlacementChronology.count_for_act(state, event.act) \
 			or (event.source_id != 0 and PhysicalTileRules.find_copy(state, event.source_id) == null and not _specialist_source(state, event) and not _relic_source(state, event)):
 			report.add(&"invalid_history_record", "History kind, placement or source is invalid.")
 		if event.lineage_id != 0 and state.features.lineage(event.lineage_id) == null:

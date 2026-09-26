@@ -24,6 +24,10 @@ var trade: TradeState = null
 var specialists: SpecialistState = null
 var relics: RelicState = null
 var rewards: RewardState = null
+## Null only in preserved pre-Charter content profiles.
+var charters: CharterState = null
+var act_transition: ActTransitionState = null
+var final_result: RunResult = null
 var pending_choice: PendingChoice = null
 var resolution: ResolutionState = null
 

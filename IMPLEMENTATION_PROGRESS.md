@@ -1,5 +1,134 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 9 — complete; awaiting human review
+
+Verified 2026-09-27. Phase 9 implements the complete headless three-Act run.
+Implementation checkpoint: `a9c8a6ce83ce349711310b878ad8360655bd42b3`.
+No Phase 10 presentation, Phase 11 save UX, Phase 12 export work or art changes.
+
+### Phase-8 closeout
+
+Final accepted Phase-8 tip: `87adae16c7d7c73bc69a1ed40e7c622baec18d91`.
+The Masterwork ruling is committed: currently unlocked Specialized/Hybrid,
+Major/Rare and Upgrades including Abbey; no Basic or ordinary Development designs;
+three physical copies. Fresh verification passed **985 tests, zero failures,
+183 script parses without diagnostics** (`builds/verification/run-tCCWX4QG`).
+PR #6 merged normally: https://github.com/CrackedEggProductions/Mappa-Mundi/pull/6
+Merged main `3062f6355e3cb70f1aac402dce348d0b2ed6b195` contains the Phase-8 tip
+and independently passed the same baseline (`builds/verification/run-kS1bYVG3`).
+`phase-9` was created and pushed from that clean main. `alpha-art` remains unchanged
+and unmerged at `ea5858a5f57716b57d4cb01c4a967c7856463bc8`.
+
+### Canonical Charter content and evaluation
+
+The new profile validates exactly three Act-I, three Act-II and three Grand
+Charters alongside the existing 34 tiles, eight Specialists and ten Relics.
+Typed CharterProgress/ConditionProgress expose condition keys, values, targets,
+satisfaction, current-state/history sources and stable witnesses. Evaluations
+consume no RNG and mutate no board state. Exceed always requires fulfillment.
+
+| Charter | Evaluator and representative coverage |
+| --- | --- |
+| Growing Realm | Population 20/30 plus two genuine Settlement completions; Population alone fails and genuine re-completions count. |
+| Open Roads | Trade 20/30, two genuine Road completions and current full-network reach of two Settlements; Ferry and distinct reach covered. |
+| Living Landscape | Ecology 20/30 plus both Forest and River genuine completion history. |
+| Market Towns | Trade 40/55, two current Market-family Settlements and a historically completed Road lineage with current network reach of three; Grand Market and Ferry count. |
+| Growing Communities | Population 40/55 and the same current Settlement meeting size six and two Developments. |
+| Stewardship of Land | Ecology 40/55 plus current Forest and River size six. |
+| Great Metropolis | Population 70/90; one currently completed size-eight Settlement with three distinct Development families and two OTHER network Settlements; any current size-ten Settlement supplies the extra exceed witness. |
+| Merchant Republic | Trade 70/90; historically completed Road lineage in a current network of four/five Settlements, with two Market-family-or-Port Settlements; reopening and Ferry supported. |
+| Living Heritage | Ecology 60/80, Culture 40/60, current size-eight Forest and River, and genuine Monastery-family enclosure completion including Abbey. |
+
+Current-state facts use current topology. Completion counts use persistent genuine
+history, deduplicating inherited records. Upgrades use their base family.
+Ordinary Charter rewards reuse the Phase-8 serialized reward engine:
+Act I fulfilled = Tile; exceeded = Tile then Relic. Act II fulfilled = Relic then
+Tile; exceeded adds Major last. Failure adds no reward or punishment.
+
+### Selection, visibility and transitions
+
+New-run ordering is civilization setup, starting-bag shuffle, uniform Act-I Charter
+selection, opening hand. The Act-II information step selects its ordinary Charter
+then secretly selects the Grand Charter exactly once. Public queries initially
+expose only the forecast. After Act-II placement 11 and every consequence/bonus
+chain finishes, exact reveal occurs before turn input and consumes no RNG.
+Act III selects no ordinary Charter and never rerolls the Grand Charter.
+
+ActTransitionState stores each of the fourteen canonical steps and completion flags:
+outgoing Charter evaluation; ordered outgoing rewards; no-op Legendary hook;
+Act advance; capacity; fresh Survey; Relic refresh; unlock; physical seeding;
+full-bag shuffle; Charter information; counter reset; deferred refill; turn input.
+Outgoing rewards retain the outgoing pool and capacity, including nested Major
+reward chains. Act II seeds exactly 10 copies (Market, Port, Urban Expansion,
+Town Square, Abbey twice each). Act III seeds six (Bridge, Rewilding, Grand Market
+twice each). Stable IDs, incoming acquisition Act and seed provenance persist.
+Seeded tiles can become the deferred refill. Board, bag, hand, Reserve, Tracks,
+pieces, Relics, scoring history, lineages, networks and reward history persist.
+
+The generic FIFO bonus-placement hook reuses authoritative placement/consequences,
+does not increment normal counts, defers the original normal refill and outgoing
+transition, and permits placement rather than ordinary Survey/Reserve input.
+No alpha content grants bonus placements. ResumeActTransitionCommand resumes
+serialized intermediate boundaries exactly once.
+
+### Finalization and diagnostics
+
+Act III placement 26 resolves every consequence and reward, then finalizes without
+another draw or ordinary transition. RunResult stores the four uncapped Tracks,
+their sum, separate no-victory/Victory/Exemplary outcome, Grand evaluation, seed,
+historical feature-size records, Relic history, training history and Charter results.
+RUN_COMPLETE rejects gameplay mutation commands. Integer representation limits
+are checked before mutation; Track rules remain cumulative and uncapped by design.
+PhaseNineDebug.inspect exposes pure diagnostic progress, transitions, unlocks,
+seed records, counters and final statistics. Exact hidden Grand data is opt-in debug.
+
+### Verification evidence
+
+`./tests/run_tests.sh` exited 0: **1167 passed, 0 failed**; **205 GDScript files
+parsed without diagnostics**, including fresh editor import.
+Evidence: `builds/verification/run-PfEVSQnY`.
+Standalone demos also passed: 14 Phase-9, 20 Relic/reward, 42 Specialist and
+40 Transformation scenarios, all without diagnostics. The application bootstrap
+validates Phase-9 content cleanly. Logs: `builds/phase9-final-*.log`.
+The final bootstrap-only log-label correction was parsed and smoke-tested afterward.
+
+All **985 previous tests** pass. The **182 new tests** comprise:
+58 Charter, 34 state/serialization/invariants, 40 Act rules, seven engine integration,
+14 complete-run integration, and 29 transition/save integration tests.
+
+Transition saves cover all steps 2–14 for both transitions (26 whole-run snapshots),
+three inert reloads at each, actual pending Charter rewards/nested choices, and exact
+public-command continuation. Step-one state is covered by codec/unit tests.
+The complete-run save replay adds 84 save boundaries. Tests cover hidden/revealed
+Grand state, final results, exact offers, RNG/ID continuity, no duplicate seeding,
+shuffle, refresh, reward or refill, malformed saves, and atomic invalid commands.
+
+Five complete scripted runs execute **330 normal placements**: failure, Victory,
+Exemplary Victory, identical replay and save/load replay. Seed 212 naturally selects
+Living Landscape, Stewardship of Land and Living Heritage. The fixture controls
+physical tile acquisition and one initial training reward; scoring, placements,
+Charter selection/evaluation, outgoing rewards, seeding and finalization all use
+normal authoritative rules. Final placement triggers a real Ecology-70 reward
+before the tested no-refill ending. These fixtures prove integration, not balance.
+
+| Outcome | Score | Final fingerprint |
+| --- | --- | --- |
+| No victory | 82 | `ed1c9abbe4bb40ea381cee61c69368c42592d5431fcbb22fe2386fc23a09e899` |
+| Victory | 131 | `0eb56ccf1749c06ff823570eb193d12538ef82279203bc7d514d8a3a09d3af84` |
+| Exemplary Victory | 180 | `a8831c344740b862cabcf5009ca3131711b83f924280cb71fb93c9f38190dc5e` |
+
+### Human rulings and boundaries
+
+Three user rulings are implemented and recorded in Complete Alpha Rules:
+Great Metropolis fulfillment requires a CURRENTLY COMPLETED size-eight Settlement;
+Merchant Republic accepts a reopened Road with genuine completion history;
+Great Metropolis exceed may use ANY current size-ten Settlement.
+No blocking gameplay ambiguity remains.
+
+No presentation UI, save/continue UX, export work, Legendary Projects or deferred
+content was added. The bootstrap's existing loader now selects Phase-9 content.
+No art files changed. `alpha-art` is untouched. Leave `phase-9` unmerged for review.
+
 ## Phase 8 — unconditionally complete
 
 ### Phase-7 closeout and branch baseline

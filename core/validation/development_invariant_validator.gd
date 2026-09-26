@@ -59,8 +59,9 @@ static func _validate_overlay(state: RunState, content: ContentRegistry, cell: B
 		or development.host_kind != definition.development_host_kind:
 		report.add(&"invalid_development_identity", "Family, stage and host kind must match static definition.")
 	if development.act_placed < definition.unlock_act or development.act_placed > state.expansion.current_act \
-		or development.act_placed < copy.acquired_act or development.placement_index <= cell.normal_placement_index \
-		or development.placement_index > state.expansion.normal_placements:
+		or development.act_placed < copy.acquired_act or PlacementChronology.rank(state, development.tile_copy_id, development.act_placed, development.placement_index) \
+			<= PlacementChronology.rank(state, cell.base_tile_copy_id, cell.act_placed, cell.normal_placement_index) \
+		or development.placement_index > PlacementChronology.count_for_act(state, development.act_placed):
 		report.add(&"invalid_development_placement", "Overlay placement metadata must follow its base and acquisition.")
 	var event: FeatureHistoryRecord = placements.get(development.tile_copy_id)
 	if event == null or event.act != development.act_placed or event.placement_index != development.placement_index:

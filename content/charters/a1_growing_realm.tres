@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CharterDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"charter.a1_growing_realm"
+display_name = "Growing Realm"
+evaluation_act = 1
+behavior_id = &"a1_growing_realm"
+forecast_text = ""
+targets = {"population": 20, "settlement_completions": 2, "exceed_population": 30}
+fulfill_rewards = Array[StringName]([&"tile_reward"])
+exceed_rewards = Array[StringName]([&"relic_offer"])

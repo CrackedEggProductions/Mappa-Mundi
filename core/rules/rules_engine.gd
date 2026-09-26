@@ -8,7 +8,9 @@ static func execute(state: RunState, content: ContentRegistry,
 	var validation: ValidationResult = validate(state, content, command)
 	if not validation.is_valid:
 		return validation
-	if command is ResolveRelayCommand:
+	if command is ResumeActTransitionCommand:
+		ActRules.advance(state, content)
+	elif command is ResolveRelayCommand:
 		StewardRelayRules.execute_command(state, command as ResolveRelayCommand)
 		_resume_phase_eight(state, content)
 	elif RewardCommands.handles(command):
@@ -53,11 +55,21 @@ static func validate(state: RunState, content: ContentRegistry,
 	if not invariants.is_valid:
 		return ValidationResult.failure(&"invariant_failure", "Invalid authoritative state.",
 			{"invariants": invariants.describe()})
+	if state.phase == GamePhase.Type.RUN_COMPLETE:
+		return _failure(&"run_complete", "A completed run cannot accept gameplay commands.")
+	if state.phase == GamePhase.Type.BONUS_INPUT and not command is PlaceTileCommand:
+		return _failure(&"bonus_placement_only", "Bonus placements do not permit start-of-turn actions.")
 	if state.expansion != null and state.expansion.state_revision == 9223372036854775807:
 		return _failure(&"invariant_failure", "No state revision remains for this command.")
 	if state.relics != null and (state.next_runtime_id > RunIdAllocator.EXHAUSTED_CURSOR - 128 \
 			or state.rng.operation_count > RunRNG.MAX_OPERATION_COUNT - 64):
 		return _failure(&"invariant_failure", "Insufficient counters to resume Phase-8 consequences atomically.")
+	if command is ResumeActTransitionCommand:
+		if state.charters != null and state.act_transition != null \
+				and state.phase == GamePhase.Type.RESOLVING_ACT_TRANSITION \
+				and state.pending_choice == null and state.resolution == null:
+			return ValidationResult.success()
+		return _failure(&"wrong_phase", "No stable Act transition awaits continuation.")
 	if command is ResolveRelayCommand:
 		return StewardRelayRules.validate_command(state, command as ResolveRelayCommand)
 	if RewardCommands.handles(command):
@@ -66,7 +78,8 @@ static func validate(state: RunState, content: ContentRegistry,
 		return RelicHandRules.validate_command(state, content, command)
 	if _specialist_command(command):
 		return SpecialistCommands.validate_command(state, content, command)
-	if state.expansion == null or state.phase != GamePhase.Type.TURN_INPUT:
+	var bonus_input: bool = state.phase == GamePhase.Type.BONUS_INPUT
+	if state.expansion == null or (state.phase != GamePhase.Type.TURN_INPUT and not bonus_input):
 		return _failure(&"wrong_phase", "Normal turn input is not available.")
 	# Reserve capacity for the entire synchronous resolution before touching state.
 	# A required empty-bag draw and subsequent global-stalemate cycle can each
@@ -179,6 +192,10 @@ static func _validate_place(state: RunState, content: ContentRegistry,
 
 
 static func _place(state: RunState, content: ContentRegistry, command: PlaceTileCommand) -> void:
+	var bonus: bool = state.phase == GamePhase.Type.BONUS_INPUT
+	if bonus:
+		state.charters.bonus_queue.pop_front()
+		state.charters.bonus_active = true
 	var transformation: TransformationState = null
 	if command.placement_mode == DomainTypes.PlacementMode.TRANSFORMATION:
 		transformation = TransformationPlacementService.plan_for_command(state, content, command)
@@ -196,7 +213,12 @@ static func _place(state: RunState, content: ContentRegistry, command: PlaceTile
 		expansion.hand[expansion.pending_refill_index] = 0
 	else:
 		RelicHandRules.remove_reserved(state, command.tile_copy_id)
-	expansion.normal_placements += 1
+	if not bonus:
+		expansion.normal_placements += 1
+	if state.charters != null:
+		state.charters.placement_history.append({"copy_id": command.tile_copy_id,
+			"act": expansion.current_act, "normal_index": expansion.normal_placements,
+			"is_bonus": bonus})
 	if command.placement_mode == DomainTypes.PlacementMode.EXPANSION:
 		expansion.board.add_cell(BoardCellState.from_definition(
 			content.get_tile(tile.definition_id), tile.tile_copy_id, command.coordinate,
@@ -275,7 +297,9 @@ static func _resume_phase_eight(state: RunState, content: ContentRegistry) -> vo
 		assert(state.rewards.queue.is_empty(), "A reward continuation must finish or expose a choice")
 		var placement: bool = resolution.context.get("mode", "placement") == "placement"
 		state.resolution = null
-		if placement:
+		if state.act_transition != null:
+			ActRules.advance(state, content)
+		elif placement:
 			_finish_placement(state, content)
 		else:
 			state.phase = GamePhase.Type.TURN_INPUT
@@ -285,10 +309,21 @@ static func _finish_placement(state: RunState, content: ContentRegistry) -> void
 	# Later reward stages join the shared completion pipeline before this draw.
 	var expansion: ExpansionState = state.expansion
 	var config: RunConfig = content.get_config()
+	if BonusPlacementRules.finish(state, config):
+		return
 	if expansion.normal_placements == config.act_placement_limits[expansion.current_act - 1]:
 		state.phase = GamePhase.Type.RESOLVING_ACT_TRANSITION
+		if state.charters != null:
+			if expansion.current_act == 3:
+				var finalized: ValidationResult = ActRules.finalize(state, content)
+				assert(finalized.is_valid, finalized.user_message)
+			else:
+				ActRules.begin_transition(state, content)
+				ActRules.advance(state, content)
 		return # Later Acts phase owns seeding before this pending refill.
 	PhysicalTileRules.refill_pending(state, config)
+	if state.charters != null and expansion.current_act == 2 and expansion.normal_placements >= 11:
+		CharterRules.reveal_grand(state)
 	state.phase = GamePhase.Type.TURN_INPUT
 
 

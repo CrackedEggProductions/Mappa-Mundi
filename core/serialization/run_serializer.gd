@@ -72,6 +72,9 @@ static func deserialize(text: String, content: ContentRegistry) -> Deserializati
 	if data.has("relics"):
 		state.relics = PhaseEightSerializer.decode_relics(data["relics"])
 		state.rewards = PhaseEightSerializer.decode_rewards(data["rewards"])
+	for key: String in ["charters", "act_transition", "final_result"]:
+		if data.has(key):
+			state.set(key, PhaseNineSerializer.decode(data[key], StringName(key)))
 	if data.has("pending_choice"):
 		state.pending_choice = SpecialistSerializer.decode_choice(data["pending_choice"])
 	if data.has("resolution"):
@@ -121,6 +124,9 @@ static func to_envelope(state: RunState) -> Dictionary:
 		envelope["run_state"]["relics"] = PhaseEightSerializer.encode_relics(state.relics)
 	if state.rewards != null:
 		envelope["run_state"]["rewards"] = PhaseEightSerializer.encode_rewards(state.rewards)
+	for key: String in ["charters", "act_transition", "final_result"]:
+		if state.get(key) != null:
+			envelope["run_state"][key] = PhaseNineSerializer.encode(state.get(key), StringName(key))
 	if state.pending_choice != null:
 		envelope["run_state"]["pending_choice"] = SpecialistSerializer.encode_choice(state.pending_choice)
 	if state.resolution != null:
@@ -149,7 +155,7 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		run_keys.append("features")
 	if envelope["run_state"] is Dictionary and envelope["run_state"].has("trade"):
 		run_keys.append("trade")
-	for key: String in ["specialists", "pending_choice", "resolution", "relics", "rewards"]:
+	for key: String in ["specialists", "pending_choice", "resolution", "relics", "rewards", "charters", "act_transition", "final_result"]:
 		if envelope["run_state"] is Dictionary and envelope["run_state"].has(key):
 			run_keys.append(key)
 	if not _has_exact_keys(envelope["run_state"], run_keys):
@@ -162,7 +168,8 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 		or String(data["rng_operation_count"]).to_int() < 0:
 		return _invalid("ID cursor must be positive and RNG operation count nonnegative.")
 	if data.has("expansion"):
-		if not _is_bounded_integer(data["phase"], GamePhase.Type.TURN_INPUT, GamePhase.Type.PENDING_CHOICE) \
+		var maximum_phase: int = GamePhase.Type.values().max() if data.has("charters") else GamePhase.Type.PENDING_CHOICE
+		if not _is_bounded_integer(data["phase"], GamePhase.Type.TURN_INPUT, maximum_phase) \
 			or int(data["phase"]) == GamePhase.Type.RESOLVING_PLACEMENT:
 			return _invalid("Expansion saves require a stable turn, choice or deferred Act boundary.")
 		var expansion_shape: ValidationResult = ExpansionSerializer.validate_shape(data["expansion"])
@@ -198,6 +205,13 @@ static func _validate_envelope(value: Variant) -> ValidationResult:
 			var phase_eight_shape: ValidationResult = PhaseEightSerializer.validate_shape(data[key], StringName(key))
 			if not phase_eight_shape.is_valid:
 				return phase_eight_shape
+	for key: String in ["charters", "act_transition", "final_result"]:
+		if data.has(key):
+			if not data.has("rewards") or (key != "charters" and not data.has("charters")):
+				return _invalid("Phase 9 requires Charter and complete reward state.")
+			var phase_nine_shape: ValidationResult = PhaseNineSerializer.validate_shape(data[key], StringName(key))
+			if not phase_nine_shape.is_valid:
+				return phase_nine_shape
 	if not data["tile_copies"] is Array or not data["tile_locations"] is Array:
 		return _invalid("Physical tile registries must be arrays.")
 	for entry: Variant in data["tile_copies"]:

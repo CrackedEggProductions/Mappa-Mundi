@@ -49,6 +49,12 @@ const SUITE_PATHS: Array[String] = [
 	"res://tests/unit/relic_hand_tests.gd",
 	"res://tests/unit/relic_geometry_tests.gd",
 	"res://tests/integration/phase_eight_pipeline_tests.gd",
+	"res://tests/unit/charter_rules_tests.gd",
+	"res://tests/unit/phase9_state_tests.gd",
+	"res://tests/unit/act_rules_tests.gd",
+	"res://tests/integration/phase_nine_engine_tests.gd",
+	"res://tests/integration/phase_nine_full_run_tests.gd",
+	"res://tests/integration/act_transition_save_tests.gd",
 ]
 
 var _passed: int = 0

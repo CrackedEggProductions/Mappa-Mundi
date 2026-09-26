@@ -43,7 +43,7 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 
 static func _validate_assignment(state: RunState, piece: SpecialistPieceState, report: InvariantReport) -> void:
 	if piece.assigned_act < 1 or piece.assigned_act > state.expansion.current_act \
-			or piece.assigned_placement_index < 0 or piece.assigned_placement_index > state.expansion.normal_placements \
+			or piece.assigned_placement_index < 0 or piece.assigned_placement_index > PlacementChronology.count_for_act(state, piece.assigned_act) \
 			or piece.assigned_target_type not in [0, 1, 2, 3, 4]:
 		report.add(&"invalid_specialist_assignment", "Assignment timing/type is outside current run context.", piece.piece_id)
 		return
@@ -270,7 +270,7 @@ static func _validate_training_history(state: RunState, piece: SpecialistPieceSt
 		return
 	if StringName(record["role_definition_id"]) != piece.role_definition_id \
 			or record["act"] < 1 or record["act"] > state.expansion.current_act \
-			or record["placement_index"] < 0 or record["placement_index"] > state.expansion.normal_placements:
+			or record["placement_index"] < 0 or record["placement_index"] > PlacementChronology.count_for_act(state, record["act"]):
 		report.add(&"invalid_training_history", "Role and training timing must agree with authoritative piece.", piece.piece_id)
 	var found: bool = false
 	for event: Dictionary in state.specialists.history:

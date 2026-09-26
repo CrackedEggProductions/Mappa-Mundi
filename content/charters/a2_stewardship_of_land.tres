@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CharterDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/charters/charter_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+definition_id = &"charter.a2_stewardship_of_land"
+display_name = "Stewardship of Land"
+evaluation_act = 2
+behavior_id = &"a2_stewardship_of_land"
+forecast_text = ""
+targets = {"ecology": 40, "forest_size": 6, "river_size": 6, "exceed_ecology": 55}
+fulfill_rewards = Array[StringName]([&"relic_offer", &"tile_reward"])
+exceed_rewards = Array[StringName]([&"major_reward"])
