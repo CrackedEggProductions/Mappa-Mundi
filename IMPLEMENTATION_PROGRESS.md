@@ -1,5 +1,121 @@
 # Mappa Mundi — Implementation progress
 
+## Phase 10 — playable alpha; ready for human review
+
+Implementation checkpoint: `77369d147d76a52bff8f2200b669aca469ab9b29`.
+
+Verified 2026-09-27. The default project scene now provides New Run and a mouse-first
+interface for the complete three-Act engine. The earlier sections below are historical
+checkpoints; their branch/scope descriptions apply to their respective phases.
+
+### Accepted branch integration
+
+- Phase-9 tip: `79a1467020f69b9831525195b9481f2e73f18103`.
+- Fresh Phase-9 verification: **1167 passed, zero failed, 205 scripts parsed cleanly**.
+- PR #7 merged normally: https://github.com/CrackedEggProductions/Mappa-Mundi/pull/7
+- Merged gameplay main: `ec33b42fc26c0b56312196eb6f2e5dafd1b8ce41`;
+  the full gameplay suite passed again.
+- Inspected alpha-art tip: `ea5858a5f57716b57d4cb01c4a967c7856463bc8`.
+  Its branch diff contained only 984 art files and 16 Example Tiles assets.
+- Normal art merge: `ad6f4ae7474975799bddbf1c25dafdfbddc5c373`; no conflicts,
+  no gameplay changes, full gameplay suite **1167/0** after integration.
+- Main was pushed, then phase-10 was created and pushed from that clean merge.
+  No accepted source artwork was changed during presentation work.
+
+### Scene and command boundaries
+
+`presentation/scenes/bootstrap.tscn` remains the default entry and gameplay scene.
+GameController owns GameSession and submits typed commands to existing RulesEngine.
+ResolutionResult adapts validation, ordered structured audit records and Track deltas
+for presentation. Neither new session class requires scenes, textures or a display.
+No existing rules behavior was redesigned or rebalanced.
+
+GameShell uses responsive containers, a board SubViewport and scrollable side/modal
+panels. New Run accepts an optional integer seed. Mouse controls cover hand and
+Reserve selection, Store, Survey, quarter turns, exact option selection, preview,
+Confirm/Cancel, camera pan/zoom/Fit, required choices, notices and final-map viewing.
+Keyboard accelerators are optional. Stale options retain revision/signature and are
+revalidated by the engine. Input locking and double-click guards prevent duplicate
+commands. Preview, cancellation and cosmetic dismissal leave RunState unchanged.
+
+### Board and assets
+
+BoardView synchronizes disposable TileViews from authoritative cells at 192 pixels
+per signed grid coordinate. Parchment, subtle seams, exact artwork quarter turns,
+Development/Upgrade badges, Specialist markers and effective Transformation geometry
+remain readable. Occupied hosts and multiple materially different Port/Transformation
+options are individually selectable. Inspection exposes authoritative feature and
+Trade Network information without covering the board in runtime IDs.
+
+The registry caches **13 production anchors, seven existing references and 14
+mechanical fallbacks**. The exact mapping is in `presentation/assets/README.md`.
+Founding Homestead and Road End use fallbacks without changing their art status;
+Developments/Upgrades/Transformations use simple badges/thumbnails. Missing optional
+images report diagnostics and fall back. No image generation or art polish occurred.
+Review caught and fixed art drawing over badges and ambiguous same-cell Port labels;
+regression coverage protects both. Camera drag release outside the viewport is safe.
+
+### Choices, HUD and results
+
+All **11** current PendingChoice kinds have a playable presenter: Specialist assignment,
+training-piece selection, Specialist training, Tile Reward, Masterwork, Major Reward,
+Relic offer, replacement/decline, Compass, Relay and sequential Grand Survey. Frozen
+saved order, physical IDs, choice IDs and revision are preserved. Unknown types report
+a visible development failure instead of silently blocking. Required choices lock
+ordinary actions; the rules engine remains the final validator.
+
+HUD shows Acts/placements, four Tracks, Survey, Reserve, hand, Relics/capacity/uses,
+all physical Specialists and authoritative Charter progress. Early Grand information
+uses only the permitted forecast query. Reveal and transition notices describe events
+already resolved by rules; dismissing them performs no rule command. Fast feedback
+uses ordered event text, Track gains and completed-feature highlights.
+
+Results display the stored final score, outcome, Tracks, historical records, Charter
+results, Relic/training history and seed. All three outcomes are covered. The final map
+remains inspectable, results can be restored, and ordinary play stays disabled.
+
+### Verification evidence
+
+| Check | Result |
+| --- | --- |
+| Full independent gameplay suite | **1167 passed, 0 failed** |
+| Native Godot parse gate | **223 scripts, no diagnostics/warnings** |
+| Presentation suite | **86 passed, 0 failed** |
+| Board/asset tests | 20 |
+| PendingChoice tests | 27 |
+| Read-only presentation query tests | 13 |
+| Controller interaction tests | 19 |
+| Complete-run integration tests | 7 |
+| Automated graphical viewport mouse input | **11 checks, 0 failures at 1280×720** |
+
+Commands: `./tests/run_tests.sh` and `./tests/run_presentation_tests.sh` both exited 0.
+Logs: `builds/verification/run-Loqkky5F` and
+`builds/verification/presentation-MSmzImwl`. Graphical input evidence:
+`builds/p10-mouse-smoke.log`. Native graphical captures also verified the entry,
+board/preview, modal readability and overlay drawing order.
+
+Two complete **natural-bag** runs (seed 1010) used actual controller Confirm and
+choice handlers: 18 + 22 + 26 placements, transitions, Grand reveal, rewards and
+RUN_COMPLETE. No fixture tile injection or direct RunState writes. Both ended in
+no-victory with identical complete-state fingerprint:
+`c74dfd90cc86e3bc4b375ec331bbf2de9502e2250d2629053ec9ecce757e9562`.
+Victory/Exemplary results have separate valid-state controller/query coverage.
+Core tests still execute without presentation scenes. Preview, stale commands,
+cosmetic overlays and view rebuilds preserve authoritative state/RNG where required.
+
+### Human playtest and boundaries
+
+The graphical application was launched and driven with automated mouse events;
+**a human has not completed the manual playtest checklist**. Instructions and the
+21-step checklist are in `docs/PHASE_10_PLAYTEST.md`.
+
+Fallback art, compact badges and UI/animation polish remain alpha limitations.
+The ignored source-art archive loads at project runtime; Phase-12 packaging must
+explicitly include/stage the selected images. No export acceptance is claimed.
+No Save/Continue/recovery UX, Phase-11 integration, Phase-12 work, new art,
+Legendary Projects or deferred gameplay content was added. Phase-10 remains
+unmerged for human review. No known blocking presentation bug remains.
+
 ## Phase 9 — complete; awaiting human review
 
 Verified 2026-09-27. Phase 9 implements the complete headless three-Act run.
