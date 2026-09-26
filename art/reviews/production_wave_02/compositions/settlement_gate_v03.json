@@ -1,0 +1,122 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "settlement_gate",
+  "version": 3,
+  "method": "native edge-local socket mapping; bank detail retained, no architectural remapping; integer provenance",
+  "repaired_pixels": 24305,
+  "original_pixels_retained": 1548211,
+  "topology": {
+    "tile": "settlement_gate",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "Road",
+      "S": "Field",
+      "W": "Field"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "relationships": [
+      {
+        "first": "Road",
+        "second": "Settlement",
+        "kind": "access",
+        "route": "terminates"
+      }
+    ],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/settlement_gate.md"
+  },
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "Road_binary": true,
+      "Road_edge_N": true,
+      "Road_edge_E": true,
+      "Road_edge_S": true,
+      "Road_edge_W": true,
+      "Road_one_connected_component": true,
+      "Road_rotation_0": true,
+      "Road_rotation_90": true,
+      "Road_rotation_180": true,
+      "Road_rotation_270": true,
+      "Settlement_binary": true,
+      "Settlement_edge_N": true,
+      "Settlement_edge_E": true,
+      "Settlement_edge_S": true,
+      "Settlement_edge_W": true,
+      "Settlement_one_connected_component": true,
+      "Settlement_rotation_0": true,
+      "Settlement_rotation_90": true,
+      "Settlement_rotation_180": true,
+      "Settlement_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_Road_overlap": true,
+      "Field_Settlement_overlap": true,
+      "Road_Settlement_overlap": true,
+      "Road_Settlement_access": true
+    },
+    "feature_components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "contact_pixel_pairs": {
+      "Road_Settlement_access": 72
+    }
+  },
+  "masks": "art/reviews/production_wave_02/masks/settlement_gate_v03",
+  "source_suitability": "REJECT",
+  "limitation": "Known geometry and donor provenance do not establish visual acceptance.",
+  "source": "art/reviews/production_wave_02/sources/settlement_gate_v03.png",
+  "source_sha256": "92f64d2f06af6256ade321795c8960929ad29fdfaf232fee7c7be4a8f78fb93e",
+  "candidate": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v03.png",
+  "candidate_sha256": "6f815b22b7bf9bd4471ed38b9cb6072bdfb0d4278ad8cb52d9a93ba088270de0",
+  "calibration": "art/reviews/production_wave_02/calibrations/settlement_gate_v03.json",
+  "calibration_sha256": "6b6ca77923dbe2c2c6aa8554b4d2e866dec557de2f661b592e2e3f23bc40e461",
+  "provenance": "art/reviews/production_wave_02/provenance/settlement_gate_v03.npz",
+  "provenance_sha256": "5afd58f342de2ea2e4ec2c94a1191e7b76a54a24d0069ec1d1ce2e6d2c8a5b63",
+  "assessment": "art/reviews/production_wave_02/assessments/settlement_gate_v03.json",
+  "assessment_sha256": "7bf917655bdbf98800c2ad42e97ef0da08015ff9ea640c82550b4a504525dc16",
+  "repair_zone": "art/reviews/production_wave_02/repair_zones/settlement_gate_v03.png",
+  "repair_zone_sha256": "7cf52ee57520eed97ba988271e3b179bd7b087a763b47e7b95f80b4b1599d282",
+  "correction_cost": "art/reviews/production_wave_02/correction_cost/settlement_gate_v03.json",
+  "correction_cost_sha256": "7aae2d4b494b39c81dbc38c950bdd8496cfc925b4e7af9f960f3299fdd809590"
+}

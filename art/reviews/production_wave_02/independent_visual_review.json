@@ -1,0 +1,184 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "scope": "Independent final 128px-collar visual assessment; recommendations are not approval.",
+  "reviewed": [
+    "all_candidates_review.jpg",
+    "settlement_gate_comparison.png",
+    "riverside_hamlet_comparison.png",
+    "settlement_road_throughway_comparison.png"
+  ],
+  "recommendations": {
+    "settlement_gate": "v04",
+    "riverside_hamlet": "v04",
+    "settlement_road_throughway": "v04"
+  },
+  "candidates": [
+    {
+      "tile": "settlement_gate",
+      "version": 3,
+      "candidate": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v03.png",
+      "sha256": "6f815b22b7bf9bd4471ed38b9cb6072bdfb0d4278ad8cb52d9a93ba088270de0",
+      "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+      "edge_repair_visible_at_normal_review_scale": true,
+      "edge_repair_severity": "noticeable localized curvature",
+      "edge_note": "Visible mild bend in the eastmost Road collar.",
+      "conspicuous_cloned_architecture_visible": false,
+      "recognizable_object_distortion_visible": false,
+      "assessment": "The wall and gate read coherently, with believable native houses and restrained stone/terracotta. The east approach visibly dips into its final socket; no pasted masonry is apparent.",
+      "visual_verdict": {
+        "score": 88,
+        "verdict": "revise",
+        "category_match": true,
+        "differences": [
+          "Visible mild bend in the eastmost Road collar."
+        ],
+        "suggestions": [
+          "Human review of native edge seams before approval; preserve current building proportions."
+        ],
+        "reasoning": "The wall and gate read coherently, with believable native houses and restrained stone/terracotta. The east approach visibly dips into its final socket; no pasted masonry is apparent."
+      }
+    },
+    {
+      "tile": "settlement_gate",
+      "version": 4,
+      "candidate": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+      "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+      "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+      "edge_repair_visible_at_normal_review_scale": true,
+      "edge_repair_severity": "minor",
+      "edge_note": "Small course change at the east edge, not a conspicuous cloned patch.",
+      "conspicuous_cloned_architecture_visible": false,
+      "recognizable_object_distortion_visible": false,
+      "assessment": "The curved approach terminates clearly at one gate, with intact roof/tower proportions and open Field. Stronger composition than v03; slight east socket curvature remains.",
+      "visual_verdict": {
+        "score": 92,
+        "verdict": "pass",
+        "category_match": true,
+        "differences": [
+          "Small course change at the east edge, not a conspicuous cloned patch."
+        ],
+        "suggestions": [
+          "Human review of native edge seams before approval; preserve current building proportions."
+        ],
+        "reasoning": "The curved approach terminates clearly at one gate, with intact roof/tower proportions and open Field. Stronger composition than v03; slight east socket curvature remains."
+      }
+    },
+    {
+      "tile": "riverside_hamlet",
+      "version": 3,
+      "candidate": "art/generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v03.png",
+      "sha256": "996b0c08e310adb745a879a158527850975e15d68e136344562218c15e747b4a",
+      "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+      "edge_repair_visible_at_normal_review_scale": true,
+      "edge_repair_severity": "noticeable localized curvature",
+      "edge_note": "Bank bends at both edges are noticeable; no clipped buildings or copied bank blocks are apparent at normal review scale.",
+      "conspicuous_cloned_architecture_visible": false,
+      "recognizable_object_distortion_visible": false,
+      "assessment": "The continuous River and modest building frontage are much clearer than Wave 01. Sparse planting replaces the previous woodland dominance. Both outer bank collars visibly curve toward the sockets.",
+      "visual_verdict": {
+        "score": 88,
+        "verdict": "revise",
+        "category_match": true,
+        "differences": [
+          "Bank bends at both edges are noticeable; no clipped buildings or copied bank blocks are apparent at normal review scale."
+        ],
+        "suggestions": [
+          "Human review of native edge seams before approval; preserve current building proportions."
+        ],
+        "reasoning": "The continuous River and modest building frontage are much clearer than Wave 01. Sparse planting replaces the previous woodland dominance. Both outer bank collars visibly curve toward the sockets."
+      }
+    },
+    {
+      "tile": "riverside_hamlet",
+      "version": 4,
+      "candidate": "art/generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v04.png",
+      "sha256": "78ee2291831b27c961d0c78f370799aec3ee7d09fbbe3b1d395b0c6cdfdac532",
+      "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+      "edge_repair_visible_at_normal_review_scale": true,
+      "edge_repair_severity": "minor",
+      "edge_note": "Gentle outer-bank convergence remains visible on comparison; it reads as continuous bank curvature.",
+      "conspicuous_cloned_architecture_visible": false,
+      "recognizable_object_distortion_visible": false,
+      "assessment": "The clean waterside frontage, restrained trees and continuous pale-blue River communicate the intended hamlet. Buildings retain natural proportions. The bank approach is smoother than v03.",
+      "visual_verdict": {
+        "score": 92,
+        "verdict": "pass",
+        "category_match": true,
+        "differences": [
+          "Gentle outer-bank convergence remains visible on comparison; it reads as continuous bank curvature."
+        ],
+        "suggestions": [
+          "Human review of native edge seams before approval; preserve current building proportions."
+        ],
+        "reasoning": "The clean waterside frontage, restrained trees and continuous pale-blue River communicate the intended hamlet. Buildings retain natural proportions. The bank approach is smoother than v03."
+      }
+    },
+    {
+      "tile": "settlement_road_throughway",
+      "version": 3,
+      "candidate": "art/generated/candidates/production_wave_02/settlement_road_throughway/settlement_road_throughway_v03.png",
+      "sha256": "df3bd16acd2aa44353ec00498f75d4b0eebe2fee8f13b950ec30140309dc8511",
+      "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+      "edge_repair_visible_at_normal_review_scale": true,
+      "edge_repair_severity": "noticeable localized curvature",
+      "edge_note": "The west socket collar forms a visible shallow flare; no architectural relocation is apparent.",
+      "conspicuous_cloned_architecture_visible": false,
+      "recognizable_object_distortion_visible": false,
+      "assessment": "One coherent walled district surrounds the readable cross-town Road. Roofs and walls no longer show obvious pasted/clipped repeats. The west Road lip has a noticeable curved flare.",
+      "visual_verdict": {
+        "score": 89,
+        "verdict": "revise",
+        "category_match": true,
+        "differences": [
+          "The west socket collar forms a visible shallow flare; no architectural relocation is apparent."
+        ],
+        "suggestions": [
+          "Human review of native edge seams before approval; preserve current building proportions."
+        ],
+        "reasoning": "One coherent walled district surrounds the readable cross-town Road. Roofs and walls no longer show obvious pasted/clipped repeats. The west Road lip has a noticeable curved flare."
+      }
+    },
+    {
+      "tile": "settlement_road_throughway",
+      "version": 4,
+      "candidate": "art/generated/candidates/production_wave_02/settlement_road_throughway/settlement_road_throughway_v04.png",
+      "sha256": "bbf67a2f04acbfbf00bea8c48ca70102b1525154276a0211d9286bfef120bee6",
+      "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+      "edge_repair_visible_at_normal_review_scale": true,
+      "edge_repair_severity": "minor",
+      "edge_note": "Small curvature adjustment at Road endpoints remains visible, especially east, but lacks a rectangular patch boundary.",
+      "conspicuous_cloned_architecture_visible": false,
+      "recognizable_object_distortion_visible": false,
+      "assessment": "Best continuous-city reading of the pair: natural buildings frame a clear through-road with access. Mild edge curvature remains, without the repeated towers/clipped corner blocks of Wave 01.",
+      "visual_verdict": {
+        "score": 92,
+        "verdict": "pass",
+        "category_match": true,
+        "differences": [
+          "Small curvature adjustment at Road endpoints remains visible, especially east, but lacks a rectangular patch boundary."
+        ],
+        "suggestions": [
+          "Human review of native edge seams before approval; preserve current building proportions."
+        ],
+        "reasoning": "Best continuous-city reading of the pair: natural buildings frame a clear through-road with access. Mild edge curvature remains, without the repeated towers/clipped corner blocks of Wave 01."
+      }
+    }
+  ],
+  "limitations": [
+    "Visible course adjustment does not mean visible cloning; every candidate retains some edge-local curvature change.",
+    "Legacy Road/River references retain different painted width and tone; their seam mismatch is not evidence of incorrect new socket masks.",
+    "Visual review cannot prove absence of every repeated generated motif; mathematical masks do not certify semantic artwork."
+  ],
+  "overall": {
+    "score": 92,
+    "verdict": "pass",
+    "category_match": true,
+    "differences": [
+      "Minor socket approach curvature persists; legacy references vary in painted socket width."
+    ],
+    "suggestions": [
+      "Review v04 for all three designs at native seams; do not auto-promote."
+    ],
+    "reasoning": "The preferred variants remove the conspicuous architectural patchwork of Wave 01 while keeping the established parchment/sepia style. Remaining local socket curvature is visible but does not make these preferred sources visually poor."
+  }
+}

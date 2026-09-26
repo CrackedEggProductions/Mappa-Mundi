@@ -1,0 +1,15 @@
+{
+  "score": 92,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Minor edge-local course changes remain visible in preferred v04 candidates; strict correction visibility gate remains REJECT."
+  ],
+  "suggestions": [
+    "Human review of the three v04 comparison candidates; no automatic promotion."
+  ],
+  "reasoning": "Source-first generation removes conspicuous architectural patchwork; mechanical evidence passes, but numerical proof cannot waive visible-repair judgment.",
+  "active": false,
+  "completed_at": "2026-09-24T09:44:44.410926+00:00",
+  "completion_scope": "Requested six-candidate trial complete; human visual acceptance pending."
+}

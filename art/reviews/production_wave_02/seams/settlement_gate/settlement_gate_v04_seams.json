@@ -1,0 +1,479 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "template_topology": {
+    "tile": "settlement_gate",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "Road",
+      "S": "Field",
+      "W": "Field"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "relationships": [
+      {
+        "first": "Road",
+        "second": "Settlement",
+        "kind": "access",
+        "route": "terminates"
+      }
+    ],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/settlement_gate.md",
+    "validation": {
+      "valid": true,
+      "checks": {
+        "canonical_topology": true,
+        "correct_feature_identities": true,
+        "native_dimensions": true,
+        "Settlement_binary": true,
+        "Settlement_edge_N": true,
+        "Settlement_edge_E": true,
+        "Settlement_edge_S": true,
+        "Settlement_edge_W": true,
+        "Settlement_one_connected_component": true,
+        "Settlement_rotation_0": true,
+        "Settlement_rotation_90": true,
+        "Settlement_rotation_180": true,
+        "Settlement_rotation_270": true,
+        "Road_binary": true,
+        "Road_edge_N": true,
+        "Road_edge_E": true,
+        "Road_edge_S": true,
+        "Road_edge_W": true,
+        "Road_one_connected_component": true,
+        "Road_rotation_0": true,
+        "Road_rotation_90": true,
+        "Road_rotation_180": true,
+        "Road_rotation_270": true,
+        "Field_binary": true,
+        "Field_edge_N": true,
+        "Field_edge_E": true,
+        "Field_edge_S": true,
+        "Field_edge_W": true,
+        "Field_rotation_0": true,
+        "Field_rotation_90": true,
+        "Field_rotation_180": true,
+        "Field_rotation_270": true,
+        "complete_coverage": true,
+        "Field_Road_overlap": true,
+        "Field_Settlement_overlap": true,
+        "Road_Settlement_overlap": true,
+        "Road_Settlement_access": true
+      },
+      "feature_components": {
+        "Settlement": 1,
+        "Road": 1
+      },
+      "contact_pixel_pairs": {
+        "Road_Settlement_access": 219
+      }
+    }
+  },
+  "template_sha256": "4e5f3af8c69b921415325dcadc3c91800ae88471fce478b32b0cace389b3ba11",
+  "actual_masks": {
+    "Field": {
+      "path": "art/reviews/production_wave_02/masks/settlement_gate_v04/Field.png",
+      "sha256": "d3c61e53412f30e7903165d7b08266ccd485062ac05b309ae38de327c76fc1b5"
+    },
+    "Road": {
+      "path": "art/reviews/production_wave_02/masks/settlement_gate_v04/Road.png",
+      "sha256": "39d9511a6ebadf57db90717b5f4c858a9057075885bbad12d68e33fa00d922ef"
+    },
+    "Settlement": {
+      "path": "art/reviews/production_wave_02/masks/settlement_gate_v04/Settlement.png",
+      "sha256": "c1b9803af2f21032cb37c40ebd7f281a34e330a41cc46b1df893ecdb4dafe0de"
+    }
+  },
+  "repair_zone": {
+    "path": "art/reviews/production_wave_02/repair_zones/settlement_gate_v04.png",
+    "sha256": "1fb47b9ee20f8749b25cc2b29fd26355dc39c92bac09cd434a003b2a6d2126a9",
+    "percent": 2.0222369756492142
+  },
+  "debug_legend": {
+    "magenta": "replaced/transported pixels",
+    "yellow": "declared feature contacts"
+  },
+  "note": "Declared feature matching and exact pixel preservation; legacy Road/River references retain their existing sockets and require visual seam review.",
+  "sheets": [
+    {
+      "path": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_north_settlement_pair.png",
+      "sha256": "9e989bdb1940b866f1c71eb966782c4899547aae37e66708c6d931942b449fb2",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+          "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Settlement"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_east_road_pair.png",
+      "sha256": "f055ec74f35326fb6c8cee297ea2740575ad27a07a4cc4a0f3ad1f5c71e3c57f",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+          "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_south_field_pair.png",
+      "sha256": "9c89f98ccf395f86538d7ca51a48876d7ea65c66f2081d838ac7ba35c45e52df",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+          "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Field"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_west_field_pair.png",
+      "sha256": "cdbf4582f87688bd29b3592d2380b52b83b36d3d9bc769f43bfbade60bf3c6dd",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+          "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_combined_3x3.png",
+      "sha256": "5887742b8b7413aa82f39e8323e979778b610e0ba363208dd03b8118896abdbd",
+      "size": [
+        3762,
+        3762
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+          "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_04_open_fields.png",
+          "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Settlement"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Field"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            1,
+            2
+          ],
+          "feature": "Road"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            2,
+            1
+          ],
+          "feature": "Field"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_road_bend_pair.png",
+      "sha256": "b0d7fff25587f4d6aa5022b4701ac5c0ceb137f1c5b9a4dca215547fe3cafa47",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+          "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_09_bending_road.png",
+          "sha256": "223a91fd4e161b0a981decc632ba7c925fa3e27a4b446444e297fce12cb65492",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_02/seams/settlement_gate/settlement_gate_v04_settlement_throughway_pair.png",
+      "sha256": "c50828c1549f492b9881e18071931c666c04c285180548b33f09ec59fe2b36a1",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/production_anchors/settlement_throughway_anchor.png",
+          "sha256": "61e09124d2b3289b5db7cc8a7405dc1c3888f45dc0a8331990ce7f3c2c451165",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+          "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Settlement"
+        }
+      ]
+    }
+  ]
+}

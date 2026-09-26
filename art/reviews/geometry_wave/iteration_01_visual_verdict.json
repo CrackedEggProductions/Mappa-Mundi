@@ -1,0 +1,15 @@
+{
+  "score": 75,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "v01 full-edge corrections compress crowns near Forest Edge corners.",
+    "v01 opposite-region expansion stretches trees and houses excessively.",
+    "Road source sockets require modest collar repositioning."
+  ],
+  "suggestions": [
+    "Use source-scale-compatible corridor waist in v02 without changing exact outer edges.",
+    "Flag remaining corner distortion rather than approve from geometry alone."
+  ],
+  "reasoning": "Style matches, but visible warping prevents production recommendation of the first region variants."
+}

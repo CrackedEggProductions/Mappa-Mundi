@@ -1,0 +1,124 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "labels": "outside artwork",
+  "resampling": "LANCZOS thumbnails only; all separate seam PNGs remain native",
+  "items": [
+    {
+      "label": "Production anchor",
+      "source": "art/references/production_anchors/settlement_corner_anchor.png",
+      "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Mechanical / socket reference",
+      "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+      "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Canonical layered topology",
+      "source": "art/templates/production_wave_01/settlement_road_throughway/guide.png",
+      "sha256": "17b0920049cb39828ba54269ff30215be058e7693d45732056da26e10fcf5c96",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v01 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v01.png",
+      "sha256": "9839f7b29375bac0956b4a87c9a2fd80b3bded5d36e8ee5db13116257dd7c00a",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v02 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png",
+      "sha256": "a2da16ad243677ed2c1469b5eaaf6fcaa21a6df956b77b7ef08ace06ee67be27",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 actual Settlement mask",
+      "source": "art/reviews/production_wave_01/masks/settlement_road_throughway_v01/Settlement.png",
+      "sha256": "ef74655abe61d37e56e95573a6a0f22622c3b87062b2d5e225231d560d59f03c",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 actual Settlement mask",
+      "source": "art/reviews/production_wave_01/masks/settlement_road_throughway_v02/Settlement.png",
+      "sha256": "c0e51fb77f93d262d0e5ad6f20ddf116094460f199a0c0ad7922148939efbb50",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v01_combined_3x3.png",
+      "sha256": "a785eeda4aef44832ecd69e83df996b54086ecba38c526c44a34060623b68958",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v02_combined_3x3.png",
+      "sha256": "d9c90d17d64e11a6fd4c4bae1d8a96601432eb153276571afdf0644c987384b9",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    }
+  ]
+}

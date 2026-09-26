@@ -1,0 +1,84 @@
+{
+  "resampling": "none",
+  "labels": "Outside asset pixels",
+  "items": [
+    {
+      "label": "Approved reference: ref_03_hamlet_edge",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_03_hamlet_edge.png",
+      "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        88
+      ]
+    },
+    {
+      "label": "Approved reference: ref_04_open_fields",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+      "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        88
+      ]
+    },
+    {
+      "label": "Wave 1 v01: primary STYLE target",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+      "sha256": "9703e011524194ccb01730326c79cfda95043687aea28afe979f46ee6f618174",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        88
+      ]
+    },
+    {
+      "label": "Hard geometry guide (NOT art)",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/geometry_guides/settlement_corner_guide.png",
+      "sha256": "11ea4e61bb130cefe99bdb38de74f696868cc025e36712d1c8839c990c2389bb",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        1454
+      ]
+    },
+    {
+      "label": "Wave 2 v01: CANDIDATE",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/settlement_corner/settlement_corner_wave2_v01.png",
+      "sha256": "ba9414e07edb93abfe6bba3f0e9cca004ccb49184365c168e2004f63c4dc591f",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        1454
+      ]
+    },
+    {
+      "label": "Wave 2 v02: CANDIDATE",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/settlement_corner/settlement_corner_wave2_v02.png",
+      "sha256": "583b0f976c9838f4b8b561672a465a1a717b5c1eb466b310bfc54d56b69b6932",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        1454
+      ]
+    }
+  ]
+}

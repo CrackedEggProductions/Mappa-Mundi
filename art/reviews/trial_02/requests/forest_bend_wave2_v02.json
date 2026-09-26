@@ -1,0 +1,19 @@
+{
+  "id": "forest_bend_wave2_v02",
+  "family": "forest_bend",
+  "prompt": "CORNER PATCH REQUIREMENT: in the top-left and bottom-right 100x100 pixel squares the woodland occupies the exact upper-right triangle and Field the exact lower-left triangle. Draw clipped leaves and dark woodland hatching right to the northeast side of the true 45-degree divider. No light rim around the woodland, no grass strip between Forest and the North/East canvas borders. At bottom-right the Forest must touch the actual bottom-right corner, not terminate 30 or 80 pixels above it. Use case: sketch-to-render. Create ONE square 1254x1254 Mappa Mundi Forest Bend candidate. IMAGE 1 is the labeled HARD GEOMETRY contract. IMAGE 2 is its exact clean full-canvas underlay. Render IMAGE 2 with the parchment/sepia ink style of IMAGE 3 (the primary style anchor), supported by images 4 and 5. Match the supplied local Mappa Mundi reference images before any outside inspiration. Image 3 has WRONG transition endpoints: borrow its style only, NOT its region silhouette.\nGEOMETRY IS THE MAIN TASK: keep the region silhouette from image 2. Forest fills the northeast triangular half, Field the southwest half. North and East are Forest from END TO END. South and West are only Field except the single divider corner points. The feature/Field dividing boundary starts at the exact canvas TOP-LEFT PIXEL and ends at the exact BOTTOM-RIGHT PIXEL. Do not end it partway down the left or right edge, or partway along top/bottom. The full NE corner is feature, the SW corner is Field. No blank Field fringe on North/East, no feature leakage on South/West. Outer geometry rigid, interior line organic. Continuous region, not separate protrusions. Artwork must touch the outermost canvas pixels. NO perimeter frame, border line, margin, rounded corners or aged edge strip. Do not copy diagram text/labels, magenta line, or flat diagram colors.\nFill the NE region with the same dense broadleaf/conifer tree language and subtle transparent olive woodland tint as image3. The underlying woodland area reaches every point of the North and East edges. Near NW and SE, use clipped canopy fragments and fine understory that taper exactly to the corner, rather than rounded tree silhouettes leaving a Field wedge. Do not make separate tree bumps or a forest socket. Interior treeline organic; its endpoints fixed at the two actual corners.\nField has extremely faint green translucent wash, sparse sepia grass/flowers/stones matching image5. Warm antique paper remains visible everywhere; fine brown ink dominates. No opaque paint, lush scenic color, 3D or photorealism. No Road or River anywhere; no extra feature exits. Output only one unlabeled tile, no diagram elements. Candidate awaiting human review. Variant 2: same fixed silhouette and style; slightly vary interior detail only, preserving exact corner endpoints.",
+  "referenced_image_paths": [
+    "/home/rochelle/Jane/MappaMundi/art/templates/geometry_guides/forest_bend_guide.png",
+    "/home/rochelle/Jane/MappaMundi/art/templates/geometry_guides/forest_bend_underlay.png",
+    "/home/rochelle/Jane/MappaMundi/art/generated/candidates/forest_bend/forest_bend_v01.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png"
+  ],
+  "output_path": "art/generated/candidates/forest_bend/forest_bend_wave2_v02.png",
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "requested_size": [
+    1254,
+    1254
+  ],
+  "tool": "built-in image_gen; reference attachments, not API-enforced masks"
+}

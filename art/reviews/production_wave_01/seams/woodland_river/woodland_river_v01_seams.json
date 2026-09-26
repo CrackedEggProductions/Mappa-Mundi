@@ -1,0 +1,430 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "template_topology": {
+    "tile": "woodland_river",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Forest",
+      "E": "Forest",
+      "S": "River",
+      "W": "River"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Forest": 1,
+      "River": 1
+    },
+    "relationships": [
+      {
+        "first": "River",
+        "second": "Forest",
+        "kind": "touch",
+        "route": "through"
+      }
+    ],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/woodland_river.md",
+    "validation": {
+      "valid": true,
+      "checks": {
+        "canonical_topology": true,
+        "correct_feature_identities": true,
+        "native_dimensions": true,
+        "Forest_binary": true,
+        "Forest_edge_N": true,
+        "Forest_edge_E": true,
+        "Forest_edge_S": true,
+        "Forest_edge_W": true,
+        "Forest_one_connected_component": true,
+        "Forest_rotation_0": true,
+        "Forest_rotation_90": true,
+        "Forest_rotation_180": true,
+        "Forest_rotation_270": true,
+        "River_binary": true,
+        "River_edge_N": true,
+        "River_edge_E": true,
+        "River_edge_S": true,
+        "River_edge_W": true,
+        "River_one_connected_component": true,
+        "River_rotation_0": true,
+        "River_rotation_90": true,
+        "River_rotation_180": true,
+        "River_rotation_270": true,
+        "Field_binary": true,
+        "Field_edge_N": true,
+        "Field_edge_E": true,
+        "Field_edge_S": true,
+        "Field_edge_W": true,
+        "Field_rotation_0": true,
+        "Field_rotation_90": true,
+        "Field_rotation_180": true,
+        "Field_rotation_270": true,
+        "complete_coverage": true,
+        "Field_Forest_overlap": true,
+        "Field_River_overlap": true,
+        "Forest_River_overlap": true,
+        "River_Forest_touch": true
+      },
+      "feature_components": {
+        "Forest": 1,
+        "River": 1
+      },
+      "contact_pixel_pairs": {
+        "River_Forest_touch": 586
+      }
+    }
+  },
+  "template_sha256": "765c09ec3d9fbb73bc2e13f5d075d6e200b3e159f186233276b2b7a7a7f21657",
+  "actual_masks": {
+    "Field": {
+      "path": "art/reviews/production_wave_01/masks/woodland_river_v01/Field.png",
+      "sha256": "7d3196317176fe836f5e5bfb9881006eb3149bba4aee86ce69af35867d0259b7"
+    },
+    "Forest": {
+      "path": "art/reviews/production_wave_01/masks/woodland_river_v01/Forest.png",
+      "sha256": "002c5f34120647a84cf2b40f17e946f8cc3e391fca4363656934d501c1037567"
+    },
+    "River": {
+      "path": "art/reviews/production_wave_01/masks/woodland_river_v01/River.png",
+      "sha256": "2dec92c64bb74d4f1c75c2795966a3e467acd9c5e88de393fb4e2be6ec3d2096"
+    }
+  },
+  "note": "Declared feature matching and exact pixel preservation; legacy Road/River references are not certified to current sockets. Inspect visual seams.",
+  "sheets": [
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v01_north_forest_pair.png",
+      "sha256": "99f6fdfc26d0cbb38de4c574bce018deab95215200417ed960cc2062c2244c94",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+          "sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Forest"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v01_east_forest_pair.png",
+      "sha256": "108833a1564c12e19f328345a1793f37681f1cb6694120d8ab61c7d5fda50449",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+          "sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 180
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Forest"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v01_south_river_pair.png",
+      "sha256": "691a5494d8470a784c697b0a1260b420c753204e89ebcd7793f455da6f7021d3",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+          "sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "River"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v01_west_river_pair.png",
+      "sha256": "681f45130f12ebd8e144817c1f518d157c51825df1326de6b41b6364135c60e2",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+          "sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "River"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v01_combined_3x3.png",
+      "sha256": "cf4354b802f9c24824cd6769ded0adc45e6f9800ca8d9a6af8623db034ba33de",
+      "size": [
+        3762,
+        3762
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+          "sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "source": "art/references/production_anchors/forest_bend_anchor.png",
+          "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+          "rotation_clockwise": 180
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "source": "art/references/approved_style/ref_10_river_run.png",
+          "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "River"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            1,
+            2
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            2,
+            1
+          ],
+          "feature": "River"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v01_river_bend_pair.png",
+      "sha256": "f5773f16cdfc962d55d5597ce3db8cc93aca40788a476ac36e5414be88ef6e08",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+          "sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_13_river_bend.png",
+          "sha256": "60d06a079920b687d46d8f8a6280d1744dd3eb3546c4f86756f0e158b1e84b19",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "River"
+        }
+      ]
+    }
+  ]
+}

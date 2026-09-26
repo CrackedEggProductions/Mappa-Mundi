@@ -1,0 +1,14 @@
+{
+  "score": 90,
+  "verdict": "pass",
+  "category_match": true,
+  "differences": [
+    "Some source motifs remain warped at NW/SE; v01 retains compressed southeast Field decoration.",
+    "Native seams retain source-frame tone and repeated motif joins."
+  ],
+  "suggestions": [
+    "Use v02 for human comparison; inspect native corner details before approving anything.",
+    "Consider localized source-trace refinement or hand retouching after human review."
+  ],
+  "reasoning": "The deterministic compositing prototype preserves the source style and improves endpoint placement; this pass covers the prototype demonstration, not final art approval."
+}

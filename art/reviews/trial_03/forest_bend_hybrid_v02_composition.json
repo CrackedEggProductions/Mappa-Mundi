@@ -1,0 +1,26 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "source": "art/generated/candidates/forest_bend/forest_bend_wave2_v01.png",
+  "source_sha256": "e84b43dbef3f44c14b4c9d9ecece28be50af637a9a403a4ac855a117a709349f",
+  "candidate": "art/generated/candidates/hybrid_corrected/forest_bend/forest_bend_hybrid_v02.png",
+  "candidate_sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+  "size": [
+    1254,
+    1254
+  ],
+  "seed": 73,
+  "transition_width": 60,
+  "method": "continuous region-aware column transport",
+  "field_mode": "relaxed",
+  "boundary": "art/templates/hybrid_boundaries/forest_bend_hybrid_v02.json",
+  "masks": {
+    "feature": "art/templates/hybrid_masks/forest_bend_hybrid_v02_feature.png",
+    "field": "art/templates/hybrid_masks/forest_bend_hybrid_v02_field.png",
+    "transition": "art/templates/hybrid_masks/forest_bend_hybrid_v02_transition.png"
+  },
+  "provenance": "art/templates/hybrid_masks/forest_bend_hybrid_v02_provenance.png",
+  "source_coordinate_sha256": "5d44e977dd2115a76ee429f911698f338455addf127554f21919c3e0d72b9b7f",
+  "source_trace_is": "manual wall-foot/undergrowth calibration; not semantic certification",
+  "palette_changes": "none; same-column linear interpolation only",
+  "source_owner_equals_output_mask": true
+}

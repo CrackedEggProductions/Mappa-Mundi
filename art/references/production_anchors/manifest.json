@@ -1,0 +1,93 @@
+[
+  {
+    "path": "art/references/production_anchors/forest_bend_anchor.png",
+    "source": "art/generated/candidates/hybrid_corrected/forest_bend/forest_bend_hybrid_v02.png",
+    "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human instruction in geometry-family wave"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_corner_anchor.png",
+    "source": "art/generated/candidates/hybrid_corrected/settlement_corner/settlement_corner_hybrid_v02.png",
+    "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human instruction in geometry-family wave"
+  },
+  {
+    "path": "art/references/production_anchors/forest_edge_anchor.png",
+    "source": "art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v02.png",
+    "sha256": "4ba9fa02d299196d0dc55f16093bf7320f8ea3eb111b5b5505ae620e284ac762",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for production wave01"
+  },
+  {
+    "path": "art/references/production_anchors/forest_belt_anchor.png",
+    "source": "art/generated/candidates/geometry_wave/forest_belt/forest_belt_geo_v02.png",
+    "sha256": "95be949114ee2cb32250c2e5058db4f5c0838a0008905f00253e2319420c02f6",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for production wave01"
+  },
+  {
+    "path": "art/references/production_anchors/road_junction_anchor.png",
+    "source": "art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v02.png",
+    "sha256": "2574dd29cea77908e9e6894b5b2eeb6e9b2dc5866900e67f3f2f200cf4060a7c",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for production wave01"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_throughway_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/settlement_throughway/settlement_throughway_v02.png",
+    "sha256": "61e09124d2b3289b5db7cc8a7405dc1c3888f45dc0a8331990ce7f3c2c451165",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/woodland_road_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+    "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/woodland_river_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v02.png",
+    "sha256": "cf9954ee82fccd69aa495eaef9cc3613de7088dfd35682b0d65d105d9410a48f",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_corner_gate_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/settlement_corner_gate/settlement_corner_gate_v01.png",
+    "sha256": "94de2d6aa25f91f8f51dc6d7b2189a27d41f97be7e5a93cf4629a0bcf3204fe3",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_road_bend_anchor.png",
+    "source": "art/generated/candidates/production_wave_01/settlement_road_bend/settlement_road_bend_v02.png",
+    "sha256": "460fa3daca3e4ea9089dc1f05843e2ef2b43fe0907fa131459db699d97fc74d3",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 NOT FINAL",
+    "authority": "Explicit human approval for focused production wave02"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_gate_anchor.png",
+    "source": "art/generated/candidates/production_wave_02/settlement_gate/settlement_gate_v04.png",
+    "sha256": "031517d1af539e97274f1a5aa151b19615eeba4517dc9de630527154b5d52e40",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 ALPHA ACCEPTED \u2014 POLISH DEFERRED",
+    "authority": "Explicit human alpha acceptance; visual polish deferred"
+  },
+  {
+    "path": "art/references/production_anchors/riverside_hamlet_anchor.png",
+    "source": "art/generated/candidates/production_wave_02/riverside_hamlet/riverside_hamlet_v04.png",
+    "sha256": "78ee2291831b27c961d0c78f370799aec3ee7d09fbbe3b1d395b0c6cdfdac532",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 ALPHA ACCEPTED \u2014 POLISH DEFERRED",
+    "authority": "Explicit human alpha acceptance; visual polish deferred"
+  },
+  {
+    "path": "art/references/production_anchors/settlement_road_throughway_anchor.png",
+    "source": "art/generated/candidates/production_wave_02/settlement_road_throughway/settlement_road_throughway_v04.png",
+    "sha256": "bbf67a2f04acbfbf00bea8c48ca70102b1525154276a0211d9286bfef120bee6",
+    "status": "APPROVED PRODUCTION ANCHOR \u2014 ALPHA ACCEPTED \u2014 POLISH DEFERRED",
+    "authority": "Explicit human alpha acceptance; visual polish deferred"
+  }
+]

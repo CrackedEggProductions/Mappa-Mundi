@@ -1,0 +1,124 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "labels": "outside artwork",
+  "resampling": "LANCZOS thumbnails only; all separate seam PNGs remain native",
+  "items": [
+    {
+      "label": "Production anchor",
+      "source": "art/references/production_anchors/forest_bend_anchor.png",
+      "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Mechanical / socket reference",
+      "source": "art/references/approved_style/ref_10_river_run.png",
+      "sha256": "63e57b7dec75d3bc459b53d5df2da6de26e6d7f643dc25228e5e22d4b696fd30",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Canonical layered topology",
+      "source": "art/templates/production_wave_01/woodland_river/guide.png",
+      "sha256": "a8354800aaa2e963bc9bce3422e8c358e54d11be591568d4fcf0be6a891ea8e3",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v01 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+      "sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v02 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v02.png",
+      "sha256": "cf9954ee82fccd69aa495eaef9cc3613de7088dfd35682b0d65d105d9410a48f",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 actual Forest mask",
+      "source": "art/reviews/production_wave_01/masks/woodland_river_v01/Forest.png",
+      "sha256": "002c5f34120647a84cf2b40f17e946f8cc3e391fca4363656934d501c1037567",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 actual Forest mask",
+      "source": "art/reviews/production_wave_01/masks/woodland_river_v02/Forest.png",
+      "sha256": "14857e3cd2e2556adc95c2e0a5fe1912fef3badb7b531c6b98e7be3e291a8fe9",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v01_combined_3x3.png",
+      "sha256": "cf4354b802f9c24824cd6769ded0adc45e6f9800ca8d9a6af8623db034ba33de",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/woodland_river/woodland_river_v02_combined_3x3.png",
+      "sha256": "4d1c758abe89318f2652a29b0bd5fd7f0ccfd490df0d755135cb25bb9cc2765d",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    }
+  ]
+}

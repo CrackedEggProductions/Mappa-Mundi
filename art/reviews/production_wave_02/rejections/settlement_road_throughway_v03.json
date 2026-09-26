@@ -1,0 +1,12 @@
+{
+  "status": "SOURCE REJECTED \u2014 NO NEW CANDIDATE WRITTEN",
+  "tile": "settlement_road_throughway",
+  "version": 3,
+  "reasons": [
+    "source:source city edges require reconstruction; regenerate source"
+  ],
+  "correction_cost": null,
+  "geometry_validation": null,
+  "source": "art/reviews/production_wave_02/sources/settlement_road_throughway_v03.png",
+  "source_sha256": "f446b1892254d0a7e1207f0ff29b6cdf70bb785f9eeac6444e4b202daeae1c4c"
+}

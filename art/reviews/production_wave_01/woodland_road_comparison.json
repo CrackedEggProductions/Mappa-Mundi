@@ -1,0 +1,124 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "labels": "outside artwork",
+  "resampling": "LANCZOS thumbnails only; all separate seam PNGs remain native",
+  "items": [
+    {
+      "label": "Production anchor",
+      "source": "art/references/production_anchors/forest_bend_anchor.png",
+      "sha256": "c85b2b8f9c70c9f1ca47218929ff391dfaf59657563e699e93f380d8579bebb6",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Mechanical / socket reference",
+      "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+      "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Canonical layered topology",
+      "source": "art/templates/production_wave_01/woodland_road/guide.png",
+      "sha256": "3238b0e7d46c9f4b0094551bd92ec6ca86e9228fa034acd8491883ad5199f7b5",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v01 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v01.png",
+      "sha256": "293c44f00fbce7a42eac98c6b373cb9a87dfef9bfa21a733a900dd76b0a6a17c",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "Candidate v02 - awaiting review",
+      "source": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+      "sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 actual Forest mask",
+      "source": "art/reviews/production_wave_01/masks/woodland_road_v01/Forest.png",
+      "sha256": "7e43e806e6ebb3a9a086ab76d582332489be3637bc9a18b973d2c5d6f2c37d53",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 actual Forest mask",
+      "source": "art/reviews/production_wave_01/masks/woodland_road_v02/Forest.png",
+      "sha256": "441329d305706e1e604ee865a0bf83ca0cf6bed096bd101377d91ab454bafefc",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v01 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v01_combined_3x3.png",
+      "sha256": "ae76cb076aa610e9c9fa2887d2728b0270de0813af2fbd5dfe9c6bd218bae583",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    },
+    {
+      "label": "v02 native seam preview",
+      "source": "art/reviews/production_wave_01/seams/woodland_road/woodland_road_v02_combined_3x3.png",
+      "sha256": "efa50175553308d85194931f38f8f9e400f2ff99d0ffc084777f17adf827657c",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ]
+    }
+  ]
+}

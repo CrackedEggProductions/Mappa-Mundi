@@ -1,0 +1,212 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "topology": "declared feature kinds only; inspect actual artwork",
+  "legacy_socket_note": "Legacy Road references are unchanged and NOT certified to the 126px socket.",
+  "empty_cells": "transparent outside-board space, not Field tiles",
+  "sheets": [
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_edge/forest_edge_geo_v01_feature_pair.png",
+      "size": [
+        1254,
+        2508
+      ],
+      "sha256": "2af8b80147602634bb597cc7be97c7abb3e36e05ffe740431284cab4f5886b8b",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 180
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Forest"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_edge/forest_edge_geo_v01_field_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "ac5e9c08b90d72c7ba6f0089130bc9e71439811f77c67edadbffcc7a68400217",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_edge/forest_edge_geo_v01_mixed_2x2.png",
+      "size": [
+        2508,
+        2508
+      ],
+      "sha256": "13250e002976bce57f91ddc3fa2a5c1fe1d73a1fae7b2741c4831b4729869ade",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 180
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 180
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Forest"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Field"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/forest_edge/forest_edge_geo_v01_rotated_feature_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "4bc950b1ee04fbfdfb4b16e6e6fc739f5d5c1e1d62b263430d9cd029cbae25e5",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/forest_edge/forest_edge_geo_v01.png",
+          "sha256": "d6cc305943a14c69fb54f4176a60a032a1cbf975a3adb4e5b6f89c3bd21b1d57",
+          "rotation_clockwise": 270
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Forest"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    }
+  ]
+}

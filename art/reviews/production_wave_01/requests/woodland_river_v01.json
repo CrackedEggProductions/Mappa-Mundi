@@ -1,0 +1,11 @@
+{
+  "tile": "woodland_river",
+  "version": 1,
+  "name": "woodland_river_v01",
+  "prompt": "Create ONE 1254 x1254 square PNG illustration source for Mappa Mundi woodland river, version1. Candidate only. Match supplied local Mappa Mundi reference images before any outside inspiration. Input first is PRIMARY style anchor; other illustration is feature ink reference; LAST image is topology guide ONLY, never copy its text or flat colors. Follow its overall composition closely; a deterministic compositor will enforce exact boundaries later. North/East full-edge Forest NE corner, one connected forest. South/West River sockets joined as one southwest River bend. Woodland must touch river bank internally around center; distinct features, no gap of broad Field between them. No Road. North is TOP. Forest/Settlement occupy full designated side corner to corner, NOT sockets. Road ports126px inclusive564..689; River250px502..751, center626.5. Do not add features/exits. Preserve all canonical contacts and continuous routes. Illustration style: antique tan parchment, fine brown sepia penwork, medieval manuscript/cartographic tiny handdrawn buildings and trees, mostly monochrome with very faint transparent watercolor. Field faint sage, woods muted olive, water pale desaturated blue with ink ripples, roads soft ochre, city pale warm stone and sparse dusty terracotta roofs. Color must never dominate parchment. No glossy3D/full-color scenic game illustration, no text/frame/UI. Interior objects naturally proportioned: do not stretch houses, trees or towers. Keep buildings and large tree crowns set back about40px behind the feature boundary, using low shrubbery or low coherent wall along boundary so local repairs need not slice objects. No gigantic towers or repeated identical stamps. Variant1: fine restrained small-scale houses/trees and sparse field flowers. Edge shapes are guide constraints; supply organic visual material, not diagram. Output just one tile.",
+  "referenced_image_paths": [
+    "/home/rochelle/Jane/MappaMundi/art/references/production_anchors/forest_bend_anchor.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_13_river_bend.png",
+    "/home/rochelle/Jane/MappaMundi/art/templates/production_wave_01/woodland_river/guide.png"
+  ]
+}

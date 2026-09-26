@@ -1,0 +1,3 @@
+# Local Python caches; source assets and reviews remain tracked.
+__pycache__/
+*.py[cod]

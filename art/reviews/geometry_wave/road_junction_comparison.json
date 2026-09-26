@@ -1,0 +1,143 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "labels": "outside tile art",
+  "resampling": "LANCZOS thumbnails in this comparison only; native seams are unchanged",
+  "items": [
+    {
+      "label": "Production anchor / Road reference",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_11_road_junction.png",
+      "sha256": "3848d7df211cbda0a9e8af2ebcc195cb93f637278ea2ebc8bc53138cb07196a3",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        18,
+        70
+      ]
+    },
+    {
+      "label": "Canonical family template",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/production_geometry/road_three_way.png",
+      "sha256": "a5b88228870588b0e2907ac403a79ea5f9d3d1f460cd4968917142967097a8ea",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        438,
+        70
+      ]
+    },
+    {
+      "label": "v01 actual ownership mask",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/masks/road_junction_geo_v01.png",
+      "sha256": "c83e43c07b8e31a9a90777e2f61d66adfe04bf056ba4e1a15734d96eb409f360",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        858,
+        70
+      ]
+    },
+    {
+      "label": "v02 actual ownership mask",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/masks/road_junction_geo_v02.png",
+      "sha256": "51652cfdcd9925aadaee0e5b4504c11aeba810109088a90d9fe445004aea2cdb",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        18,
+        542
+      ]
+    },
+    {
+      "label": "Candidate v01 \u2014 awaiting review",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v01.png",
+      "sha256": "9ce79180f8db95ddc2a6d8e08a540338b0d39383732baad88efab6fb6a088f4a",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        438,
+        542
+      ]
+    },
+    {
+      "label": "Candidate v02 \u2014 awaiting review",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v02.png",
+      "sha256": "2574dd29cea77908e9e6894b5b2eeb6e9b2dc5866900e67f3f2f200cf4060a7c",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        858,
+        542
+      ]
+    },
+    {
+      "label": "Native seam preview 1",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/road_junction/road_junction_geo_v01_straight_pair.png",
+      "sha256": "7368cfd1e8a3cb55f8bc21909ecedbed91937e2d25ecc45172236717b640970a",
+      "native_size": [
+        2508,
+        1254
+      ],
+      "review_size": [
+        384,
+        192
+      ],
+      "review_position": [
+        18,
+        1110
+      ]
+    },
+    {
+      "label": "Native seam preview 2",
+      "source": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/road_junction/road_junction_geo_v01_three_branch_3x3.png",
+      "sha256": "26e7975792aa341e8c25b353ff50e8170fbbe6a76ec8a190113302d7b40e0d4e",
+      "native_size": [
+        3762,
+        3762
+      ],
+      "review_size": [
+        384,
+        384
+      ],
+      "review_position": [
+        438,
+        1014
+      ]
+    }
+  ]
+}

@@ -1,0 +1,435 @@
+{
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "template_topology": {
+    "tile": "settlement_road_throughway",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Settlement",
+      "E": "Road",
+      "S": "Settlement",
+      "W": "Road"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Road": 1,
+      "Settlement": 1
+    },
+    "relationships": [
+      {
+        "first": "Road",
+        "second": "Settlement",
+        "kind": "access",
+        "route": "through"
+      }
+    ],
+    "allowed_interior_overlap": [
+      [
+        "Road",
+        "Settlement"
+      ]
+    ],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/settlement_road_throughway.md",
+    "validation": {
+      "valid": true,
+      "checks": {
+        "canonical_topology": true,
+        "correct_feature_identities": true,
+        "native_dimensions": true,
+        "Settlement_binary": true,
+        "Settlement_edge_N": true,
+        "Settlement_edge_E": true,
+        "Settlement_edge_S": true,
+        "Settlement_edge_W": true,
+        "Settlement_one_connected_component": true,
+        "Settlement_rotation_0": true,
+        "Settlement_rotation_90": true,
+        "Settlement_rotation_180": true,
+        "Settlement_rotation_270": true,
+        "Road_binary": true,
+        "Road_edge_N": true,
+        "Road_edge_E": true,
+        "Road_edge_S": true,
+        "Road_edge_W": true,
+        "Road_one_connected_component": true,
+        "Road_rotation_0": true,
+        "Road_rotation_90": true,
+        "Road_rotation_180": true,
+        "Road_rotation_270": true,
+        "Field_binary": true,
+        "Field_edge_N": true,
+        "Field_edge_E": true,
+        "Field_edge_S": true,
+        "Field_edge_W": true,
+        "Field_rotation_0": true,
+        "Field_rotation_90": true,
+        "Field_rotation_180": true,
+        "Field_rotation_270": true,
+        "complete_coverage": true,
+        "Field_Road_overlap": true,
+        "Field_Settlement_overlap": true,
+        "Road_Settlement_overlap": true,
+        "Road_Settlement_access": true
+      },
+      "feature_components": {
+        "Settlement": 1,
+        "Road": 1
+      },
+      "contact_pixel_pairs": {
+        "Road_Settlement_access": 414136
+      }
+    }
+  },
+  "template_sha256": "3cb95d0a5be5a583fda35bfbc040ae92672cef1ee82348a607e576314d6e12de",
+  "actual_masks": {
+    "Settlement": {
+      "path": "art/reviews/production_wave_01/masks/settlement_road_throughway_v02/Settlement.png",
+      "sha256": "c0e51fb77f93d262d0e5ad6f20ddf116094460f199a0c0ad7922148939efbb50"
+    },
+    "Road": {
+      "path": "art/reviews/production_wave_01/masks/settlement_road_throughway_v02/Road.png",
+      "sha256": "38f61b671e4cd6c82b2c7c7a3dbbbead0ebf7e1786afaf01cc714af7e87460be"
+    },
+    "Field": {
+      "path": "art/reviews/production_wave_01/masks/settlement_road_throughway_v02/Field.png",
+      "sha256": "ebb5043c990dd86ade122e2b581626b6c62184538ba2f424758aa246a9afd3af"
+    }
+  },
+  "note": "Declared feature matching and exact pixel preservation; legacy Road/River references are not certified to current sockets. Inspect visual seams.",
+  "sheets": [
+    {
+      "path": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v02_north_settlement_pair.png",
+      "sha256": "8f632a70f228adc8e6122edc551e3797a76f9e2def8bbd127b12e456a9711eb2",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png",
+          "sha256": "a2da16ad243677ed2c1469b5eaaf6fcaa21a6df956b77b7ef08ace06ee67be27",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Settlement"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v02_east_road_pair.png",
+      "sha256": "82259720ac080223669325959939d6528f6c868d408351ec2ade367d1d96aef5",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png",
+          "sha256": "a2da16ad243677ed2c1469b5eaaf6fcaa21a6df956b77b7ef08ace06ee67be27",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v02_south_settlement_pair.png",
+      "sha256": "b4e6aebbfe4653fba47e3ffedd2f6213a616bb8972d0ef61a0fa7408cfe722a9",
+      "size": [
+        1254,
+        2508
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png",
+          "sha256": "a2da16ad243677ed2c1469b5eaaf6fcaa21a6df956b77b7ef08ace06ee67be27",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Settlement"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v02_west_road_pair.png",
+      "sha256": "7dd29273108e141f4b5e5a5d141a0181ff00c485a67c9e74969bcee59b771634",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png",
+          "sha256": "a2da16ad243677ed2c1469b5eaaf6fcaa21a6df956b77b7ef08ace06ee67be27",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v02_combined_3x3.png",
+      "sha256": "d9c90d17d64e11a6fd4c4bae1d8a96601432eb153276571afdf0644c987384b9",
+      "size": [
+        3762,
+        3762
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png",
+          "sha256": "a2da16ad243677ed2c1469b5eaaf6fcaa21a6df956b77b7ef08ace06ee67be27",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "source": "art/references/approved_mechanical/ref_05_straight_road.png",
+          "sha256": "78ddc5c05c446bcfac42c241db674f5c281f7cd931d18be439598a98911a65ad",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "source": "art/references/production_anchors/settlement_corner_anchor.png",
+          "sha256": "76170b96cc6ecab290bf50f823a0976fb88d63e0cda305557faef29a6088c055",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Settlement"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Road"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            1,
+            2
+          ],
+          "feature": "Road"
+        },
+        {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            2,
+            1
+          ],
+          "feature": "Settlement"
+        }
+      ]
+    },
+    {
+      "path": "art/reviews/production_wave_01/seams/settlement_road_throughway/settlement_road_throughway_v02_road_bend_pair.png",
+      "sha256": "a3a6c376b3f7bd89ad1628bde9061276957d4063da42899fa697e3b0256ee2ab",
+      "size": [
+        2508,
+        1254
+      ],
+      "exact_native_pixels": true,
+      "rotation": "clockwise exact PIL transpose",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "art/generated/candidates/production_wave_01/settlement_road_throughway/settlement_road_throughway_v02.png",
+          "sha256": "a2da16ad243677ed2c1469b5eaaf6fcaa21a6df956b77b7ef08ace06ee67be27",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "art/references/approved_mechanical/ref_09_bending_road.png",
+          "sha256": "223a91fd4e161b0a981decc632ba7c925fa3e27a4b446444e297fce12cb65492",
+          "rotation_clockwise": 0
+        }
+      ],
+      "outside_board_cells": [],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Road"
+        }
+      ]
+    }
+  ]
+}

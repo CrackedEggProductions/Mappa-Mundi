@@ -1,0 +1,248 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "resampling": "none",
+  "topology": "declared feature kinds only; inspect actual artwork",
+  "legacy_socket_note": "Legacy Road references are unchanged and NOT certified to the 126px socket.",
+  "empty_cells": "transparent outside-board space, not Field tiles",
+  "sheets": [
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/settlement_throughway/settlement_throughway_geo_v01_feature_strip.png",
+      "size": [
+        1254,
+        3762
+      ],
+      "sha256": "88b381796bf03069de4afa1790cd759d7fe50ea6c4f13cf8592615bf13963986",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Settlement"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            2,
+            0
+          ],
+          "feature": "Settlement"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/settlement_throughway/settlement_throughway_geo_v01_field_pair.png",
+      "size": [
+        2508,
+        1254
+      ],
+      "sha256": "a2c41e1bfa1ac46f577474876785657584483d02341bd3dba3365358577b273b",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/settlement_throughway/settlement_throughway_geo_v01_mixed_2x2.png",
+      "size": [
+        2508,
+        2508
+      ],
+      "sha256": "9ed07d9968e5f68f5f9e8c0704b669aaa5004cf6d9c5ad607ee2f0235effcd49",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 0
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Field"
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            1,
+            0
+          ],
+          "feature": "Settlement"
+        },
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Settlement"
+        },
+        {
+          "start": [
+            1,
+            0
+          ],
+          "end": [
+            1,
+            1
+          ],
+          "feature": "Field"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    },
+    {
+      "path": "/home/rochelle/Jane/MappaMundi/art/reviews/geometry_wave/seams/settlement_throughway/settlement_throughway_geo_v01_rotated_feature_strip.png",
+      "size": [
+        3762,
+        1254
+      ],
+      "sha256": "d8002e544832d2bad2d6cbe7c463c62b67e513d5795afd082e69470a956c3f01",
+      "placements": [
+        {
+          "row": 0,
+          "column": 0,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 90
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/geometry_wave/settlement_throughway/settlement_throughway_geo_v01.png",
+          "sha256": "88818247466f1cd94173fc302eb2ddd5968413f5ed8bcb2f854cc37583fbfc1d",
+          "rotation_clockwise": 90
+        }
+      ],
+      "seams": [
+        {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            0,
+            1
+          ],
+          "feature": "Settlement"
+        },
+        {
+          "start": [
+            0,
+            1
+          ],
+          "end": [
+            0,
+            2
+          ],
+          "feature": "Settlement"
+        }
+      ],
+      "exact_native_pixels": true,
+      "outside_board_cells": []
+    }
+  ]
+}

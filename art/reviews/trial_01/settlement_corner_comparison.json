@@ -1,0 +1,84 @@
+{
+  "resampling": "none",
+  "labels": "Outside asset pixels",
+  "items": [
+    {
+      "label": "STYLE REF03: Hamlet Edge",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_03_hamlet_edge.png",
+      "sha256": "38062bac634b3656437d9e80faf61a2f406031d8eac73190935c9f04d2357bea",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        88
+      ]
+    },
+    {
+      "label": "STYLE REF04: Open Fields",
+      "source": "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+      "sha256": "6887a93e2d7b68d737ab2c1e0352e08759177d0d9ad484fa507694ec023ef8c0",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        88
+      ]
+    },
+    {
+      "label": "GEOMETRY: N/E area; S/W Field",
+      "source": "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+      "sha256": "eafa4ccf9822dfaa9362a0d6766861d18dd542c0b7435c013d6f9514da567d7d",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        88
+      ]
+    },
+    {
+      "label": "CANDIDATE Settlement Corner v01",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+      "sha256": "9703e011524194ccb01730326c79cfda95043687aea28afe979f46ee6f618174",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        24,
+        1454
+      ]
+    },
+    {
+      "label": "CANDIDATE Settlement Corner v02",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/settlement_corner/settlement_corner_v02.png",
+      "sha256": "c1976d52dde4bd35b2b3852e3cfd2f1dc3fc2f5fda3a0bdf87d55e77a609821a",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        1326,
+        1454
+      ]
+    },
+    {
+      "label": "CANDIDATE Settlement Corner v03",
+      "source": "/home/rochelle/Jane/MappaMundi/art/generated/candidates/settlement_corner/settlement_corner_v03.png",
+      "sha256": "9eb1f3d3552de62c355b2cbfe260fcafe6133b3984fa811492dd59e9c2b607fd",
+      "native_size_px": [
+        1254,
+        1254
+      ],
+      "image_top_left": [
+        2628,
+        1454
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "stem": "settlement_gate_v03",
+    "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-960012d0-18a4-4b73-95e1-7adfe95e8969.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "source": "art/reviews/production_wave_02/sources/settlement_gate_v03.png",
+    "source_sha256": "92f64d2f06af6256ade321795c8960929ad29fdfaf232fee7c7be4a8f78fb93e",
+    "status": "ILLUSTRATION SOURCE \u2014 NOT FINAL"
+  },
+  {
+    "stem": "riverside_hamlet_v03",
+    "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-82b042f6-286e-485a-bd9d-12114ffbaadc.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "source": "art/reviews/production_wave_02/sources/riverside_hamlet_v03.png",
+    "source_sha256": "202d94aac2fdd41e60915541c4ab85388ea41be36cc72f60a3b9e747d73e9f74",
+    "status": "ILLUSTRATION SOURCE \u2014 NOT FINAL"
+  },
+  {
+    "stem": "settlement_road_throughway_v03",
+    "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-ae9588a9-e650-462b-b216-0e9090443864.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "source": "art/reviews/production_wave_02/sources/settlement_road_throughway_v03.png",
+    "source_sha256": "f446b1892254d0a7e1207f0ff29b6cdf70bb785f9eeac6444e4b202daeae1c4c",
+    "status": "ILLUSTRATION SOURCE \u2014 NOT FINAL"
+  },
+  {
+    "stem": "settlement_gate_v04",
+    "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-95472f19-f285-40a3-9944-8bfe86086887.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "source": "art/reviews/production_wave_02/sources/settlement_gate_v04.png",
+    "source_sha256": "38a9fa549f736d2abc5f22c4b8ba8b404894682fd884dede8e7b8bb758bf918c",
+    "status": "ILLUSTRATION SOURCE \u2014 NOT FINAL"
+  },
+  {
+    "stem": "riverside_hamlet_v04",
+    "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-9d155d4c-00a6-45dc-88b5-a5b30d38c4fa.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "source": "art/reviews/production_wave_02/sources/riverside_hamlet_v04.png",
+    "source_sha256": "a436964ea778e6922c13f14eb47243e29696441536612bf27c18abd39f2d62f4",
+    "status": "ILLUSTRATION SOURCE \u2014 NOT FINAL"
+  },
+  {
+    "stem": "settlement_road_throughway_v04",
+    "output_hint": "Generated images are saved to /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca as /home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-0caf9d9f-a427-4455-b208-400039a5a725.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "source": "art/reviews/production_wave_02/sources/settlement_road_throughway_v04.png",
+    "source_sha256": "0e486894a40b0f1d8424f8a77aa3a686f5923d38053ae986675146c63bb16e67",
+    "status": "ILLUSTRATION SOURCE \u2014 NOT FINAL"
+  }
+]

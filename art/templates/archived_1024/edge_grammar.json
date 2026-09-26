@@ -1,0 +1,58 @@
+{
+  "purpose": "Art geometry diagrams, not generated tile assets",
+  "master_size_px": [
+    1024,
+    1024
+  ],
+  "design_units": [
+    1000,
+    1000
+  ],
+  "reference_sources": "Preserve 1254px reference images at original resolution",
+  "axes": "x right, y down; North top; rotations clockwise",
+  "road": {
+    "width_fraction": 0.1,
+    "width_px": 102.4,
+    "socket_limits_px": [
+      460.8,
+      563.2
+    ]
+  },
+  "river": {
+    "width_fraction": 0.2,
+    "width_px": 204.8,
+    "socket_limits_px": [
+      409.6,
+      614.4
+    ]
+  },
+  "socket_application": "Limits are x on N/S and y on E/W; center512px",
+  "raster_convention": "Fractional pixel area coverage; exact continuous coordinates in SVG",
+  "full_area_ne": {
+    "edges": [
+      "Area",
+      "Area",
+      "Field",
+      "Field"
+    ],
+    "polygon": [
+      [
+        0,
+        0
+      ],
+      [
+        1024,
+        0
+      ],
+      [
+        1024,
+        1024
+      ]
+    ],
+    "inside": "x >= y",
+    "shared_corner": "NW/SE divider points, not extra exits"
+  },
+  "interior": "Diagonal is a topology guide; organic interior boundary permitted",
+  "edge_requirement": "Full N/E side coverage, no area spill onto S/W beyond transition point",
+  "approval": "Templates cannot certify the generated image; inspect actual pixels and seams"
+}

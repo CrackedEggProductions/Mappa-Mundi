@@ -1,0 +1,14 @@
+{
+  "score": 73,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Gate broad cloning eliminated, but duplicate gate fragments remain from overlapping source labels.",
+    "Right collar repeats source grass patches."
+  ],
+  "suggestions": [
+    "Normalize source feature overlap using same component policy as target.",
+    "Penalize reuse of identical donor blocks without scaling source content."
+  ],
+  "reasoning": "Interior architecture is preserved; remaining problems are local repair choices."
+}

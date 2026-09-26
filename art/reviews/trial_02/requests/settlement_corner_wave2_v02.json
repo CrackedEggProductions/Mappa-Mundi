@@ -1,0 +1,19 @@
+{
+  "id": "settlement_corner_wave2_v02",
+  "family": "settlement_corner",
+  "prompt": "Critical corrective instruction: the city wall footprint MUST run at a true 45-degree diagonal FROM (0,0) TO (1254,1254), not terminate at (1254,1120). In the entire bottom-right 150x150 square, the triangle above/right of the NW-SE diagonal must be city masonry and roof fragments right to the last pixel; the triangle below/left must be Field. The boundary intersects no edge except the two exact corners. Do not leave a triangular blank below the East wall. Do not use a full end-tower: let masonry continue beyond the canvas, clipped exactly at SE. Use case: sketch-to-render. Create ONE square 1254x1254 Mappa Mundi Settlement Corner candidate. IMAGE 1 is the labeled HARD GEOMETRY contract. IMAGE 2 is its exact clean full-canvas underlay. Render IMAGE 2 with the parchment/sepia ink style of IMAGE 3 (the primary style anchor), supported by images 4 and 5. Match the supplied local Mappa Mundi reference images before any outside inspiration. Image 3 has WRONG transition endpoints: borrow its style only, NOT its region silhouette.\nGEOMETRY IS THE MAIN TASK: keep the region silhouette from image 2. Settlement fills the northeast triangular half, Field the southwest half. North and East are Settlement from END TO END. South and West are only Field except the single divider corner points. The feature/Field dividing boundary starts at the exact canvas TOP-LEFT PIXEL and ends at the exact BOTTOM-RIGHT PIXEL. Do not end it partway down the left or right edge, or partway along top/bottom. The full NE corner is feature, the SW corner is Field. No blank Field fringe on North/East, no feature leakage on South/West. Outer geometry rigid, interior line organic. Continuous region, not separate protrusions. Artwork must touch the outermost canvas pixels. NO perimeter frame, border line, margin, rounded corners or aged edge strip. Do not copy diagram text/labels, magenta line, or flat diagram colors.\nFill the NE region with dense small medieval buildings in the same miniature map-symbol perspective and fine sepia weight as image3. A crenellated wall divides Settlement and Field, its OUTER FOOTPRINT ending exactly at NW and SE. Within 8% of either endpoint, taper the wall thickness and tower footprint inward into the Settlement side, rather than projecting onto the Field edge. No bulky endpoint tower displacing the transition point. No gate, road, throughway or path. Pale warm stone and faint dusty terracotta roofs, just slightly more visibly tinted than image3, still mostly ink and parchment.\nField has extremely faint green translucent wash, sparse sepia grass/flowers/stones matching image5. Warm antique paper remains visible everywhere; fine brown ink dominates. No opaque paint, lush scenic color, 3D or photorealism. No Road or River anywhere; no extra feature exits. Output only one unlabeled tile, no diagram elements. Candidate awaiting human review. Variant 2: same fixed silhouette and style; slightly vary interior detail only, preserving exact corner endpoints.",
+  "referenced_image_paths": [
+    "/home/rochelle/Jane/MappaMundi/art/templates/geometry_guides/settlement_corner_guide.png",
+    "/home/rochelle/Jane/MappaMundi/art/templates/geometry_guides/settlement_corner_underlay.png",
+    "/home/rochelle/Jane/MappaMundi/art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_03_hamlet_edge.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png"
+  ],
+  "output_path": "art/generated/candidates/settlement_corner/settlement_corner_wave2_v02.png",
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "requested_size": [
+    1254,
+    1254
+  ],
+  "tool": "built-in image_gen; reference attachments, not API-enforced masks"
+}

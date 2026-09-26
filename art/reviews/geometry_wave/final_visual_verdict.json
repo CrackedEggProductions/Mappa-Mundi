@@ -1,0 +1,16 @@
+{
+  "score": 82,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Forest v02 improves proportions but endpoint compression remains.",
+    "Both Settlement Throughway variants warp buildings and walls near corners.",
+    "Native legacy Road seams expose older socket-width and tone mismatches."
+  ],
+  "suggestions": [
+    "Human-review v02 Forest Edge, Forest Belt and Road Junction.",
+    "Use Settlement Throughway v02 only as the better revision starting point; consider object-aware wall/roof patches in a separately authorized task.",
+    "Correct legacy Road sockets in a later authorized pass before claiming set-wide seam compatibility."
+  ],
+  "reasoning": "All eight ownership masks and deterministic compositions pass. Parchment, ink and restrained tint stay faithful, but visible region warping prevents overall visual acceptance; this capped wave stops for human review."
+}

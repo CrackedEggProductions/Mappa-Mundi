@@ -1,0 +1,30 @@
+{
+  "candidate": "art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+  "source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-0a0c5848-7471-4208-a658-bbcb2ae395e0.png",
+  "actual_dimensions": [
+    1254,
+    1254
+  ],
+  "sha256": "9703e011524194ccb01730326c79cfda95043687aea28afe979f46ee6f618174",
+  "style": {
+    "result": "PASS \u2014 provisional visual assessment, not human approval",
+    "notes": "Fine sepia map ink, restrained dusty roofs and sparse Field marks; strongest Settlement style starting point.",
+    "watercolor": "Restrained and translucent; parchment and sepia ink remain dominant."
+  },
+  "mechanics": {
+    "result": "FAIL",
+    "full_edge_ownership": "FAIL",
+    "transition_endpoints": "FAIL",
+    "continuous_ne_component": "PASS",
+    "false_road_or_river_exits": "None apparent",
+    "road_river_socket_check": "N/A \u2014 neither feature is present",
+    "notes": "Settlement wall reaches West below NW and ends on East above SE, leaving a Field gap on the required Settlement edge.",
+    "method": "Visual inspection; no automated semantic edge certification."
+  },
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "seam_review": {
+    "result": "FAIL exact transition matching",
+    "notes": "Area interiors connect, but endpoints make steps at matched seams; aged borders also remain visible. Layout correctness is separate from artwork correctness.",
+    "manifest": "settlement_corner/settlement_corner_v01_seams.json"
+  }
+}

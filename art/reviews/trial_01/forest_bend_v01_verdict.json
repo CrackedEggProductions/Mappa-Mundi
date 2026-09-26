@@ -1,0 +1,14 @@
+{
+  "score": 79,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Forest forms one NE mass, but NW and SE transition endpoints leave Field wedges/fringes along required Forest edges.",
+    "Visible tile borders at seams."
+  ],
+  "suggestions": [
+    "Keep the local parchment and ink language.",
+    "Correct outer transition endpoints against the canonical mask before production approval."
+  ],
+  "reasoning": "Style is compatible, but hard mechanical requirements fail. Stop at the requested six candidates for human review."
+}

@@ -1,0 +1,15 @@
+{
+  "score": 82,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Whole-image architectural distortion is eliminated by native integer-only sampling.",
+    "Gate/Riverside/RoadThroughway collars retain obvious cut or repeated motifs; those designs have neither recommendation.",
+    "Some older Road/River references retain off-center or noncanonical widths; seam compatibility with them is not certified."
+  ],
+  "suggestions": [
+    "Human-review the five recommended designs, especially all repaired edges at native scale.",
+    "Retouch the three unrecommended designs locally in a separately authorized task; do not regenerate more variants in this wave."
+  ],
+  "reasoning": "Sixteen mechanical compositions pass and style largely matches. Exact ownership/provenance is separate from semantic reading and visible patch quality; no candidate is approved."
+}

@@ -1,0 +1,105 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "woodland_road",
+  "version": 2,
+  "source": "art/reviews/production_wave_01/sources/woodland_road_v02.png",
+  "source_sha256": "567367309eda7d1e2f9c673e4bdde0fa2e9498b06d7bfe77304b48cded5617a5",
+  "candidate": "art/generated/candidates/production_wave_01/woodland_road/woodland_road_v02.png",
+  "candidate_sha256": "bf593cfb5c41596ab0d30e5a44a59775eae894cf65130ce32a48d305336485a7",
+  "calibration": "art/reviews/production_wave_01/calibrations/woodland_road_v02.json",
+  "calibration_sha256": "0df0ef370d915aeede43d2c2457b948d185ad5b234be26c24afb749fad625a13",
+  "provenance": "art/reviews/production_wave_01/provenance/woodland_road_v02.npz",
+  "provenance_sha256": "2c706de86d74a40aa0dff240103c9b662560e4dada7e07f7b528212aede966f9",
+  "method": "native integer translation patches; no scale, warp, or interpolation",
+  "repaired_pixels": 5175,
+  "original_pixels_retained": 1567341,
+  "topology": {
+    "tile": "woodland_road",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Forest",
+      "E": "Forest",
+      "S": "Road",
+      "W": "Road"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Forest": 1,
+      "Road": 1
+    },
+    "relationships": [],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/woodland_road.md"
+  },
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "Forest_binary": true,
+      "Forest_edge_N": true,
+      "Forest_edge_E": true,
+      "Forest_edge_S": true,
+      "Forest_edge_W": true,
+      "Forest_one_connected_component": true,
+      "Forest_rotation_0": true,
+      "Forest_rotation_90": true,
+      "Forest_rotation_180": true,
+      "Forest_rotation_270": true,
+      "Road_binary": true,
+      "Road_edge_N": true,
+      "Road_edge_E": true,
+      "Road_edge_S": true,
+      "Road_edge_W": true,
+      "Road_one_connected_component": true,
+      "Road_rotation_0": true,
+      "Road_rotation_90": true,
+      "Road_rotation_180": true,
+      "Road_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_Forest_overlap": true,
+      "Field_Road_overlap": true,
+      "Forest_Road_overlap": true
+    },
+    "feature_components": {
+      "Forest": 1,
+      "Road": 1
+    },
+    "contact_pixel_pairs": {}
+  },
+  "masks": "art/reviews/production_wave_01/masks/woodland_road_v02",
+  "limitation": "Masks and trace provenance proven; source semantic tracing and patch artifacts require visual review."
+}

@@ -1,0 +1,171 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "road_junction",
+  "family": "road_three_way",
+  "seed": 73,
+  "source": "art/reviews/geometry_wave/sources/road_junction_source_v02.png",
+  "source_sha256": "4667f087318da30c1234d3206c6ba0ca2fd2b67d34bc7b284f0513a3a56c73fc",
+  "candidate": "art/generated/candidates/geometry_wave/road_junction/road_junction_geo_v02.png",
+  "candidate_sha256": "2574dd29cea77908e9e6894b5b2eeb6e9b2dc5866900e67f3f2f200cf4060a7c",
+  "calibration": {
+    "ports": {
+      "N": [
+        550,
+        677
+      ],
+      "E": [
+        535,
+        669
+      ],
+      "S": [
+        554,
+        685
+      ]
+    },
+    "collar": 240,
+    "polygon": [
+      [
+        550,
+        0
+      ],
+      [
+        677,
+        0
+      ],
+      [
+        682,
+        150
+      ],
+      [
+        695,
+        251
+      ],
+      [
+        685,
+        330
+      ],
+      [
+        676,
+        442
+      ],
+      [
+        691,
+        502
+      ],
+      [
+        721,
+        528
+      ],
+      [
+        800,
+        536
+      ],
+      [
+        1000,
+        530
+      ],
+      [
+        1253,
+        535
+      ],
+      [
+        1253,
+        669
+      ],
+      [
+        1000,
+        668
+      ],
+      [
+        800,
+        665
+      ],
+      [
+        743,
+        667
+      ],
+      [
+        708,
+        682
+      ],
+      [
+        688,
+        722
+      ],
+      [
+        685,
+        850
+      ],
+      [
+        689,
+        1060
+      ],
+      [
+        685,
+        1253
+      ],
+      [
+        554,
+        1253
+      ],
+      [
+        549,
+        1000
+      ],
+      [
+        554,
+        800
+      ],
+      [
+        547,
+        601
+      ],
+      [
+        544,
+        469
+      ],
+      [
+        556,
+        280
+      ],
+      [
+        549,
+        157
+      ]
+    ],
+    "annotation": "Manual visual source frontier; approximate interior terrain semantics, exact calibrated source ports"
+  },
+  "calibration_file": "art/reviews/geometry_wave/calibrations/road_junction_v02.json",
+  "mask": "art/reviews/geometry_wave/masks/road_junction_geo_v02.png",
+  "source_mask": "art/reviews/geometry_wave/masks/road_junction_geo_v02_source.png",
+  "provenance": "art/reviews/geometry_wave/masks/road_junction_geo_v02_provenance.png",
+  "coordinates_sha256": "832c263cade7c0ba51767d423b75ccb60364e8f873cf31c9cb922b4054dc2260",
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "square": true,
+      "mode_l": true,
+      "binary": true,
+      "edge_N": true,
+      "edge_E": true,
+      "edge_S": true,
+      "edge_W": true,
+      "one_connected_feature": true,
+      "rotation_0_roundtrip": true,
+      "rotation_0_edges": true,
+      "rotation_90_roundtrip": true,
+      "rotation_90_edges": true,
+      "rotation_180_roundtrip": true,
+      "rotation_180_edges": true,
+      "rotation_270_roundtrip": true,
+      "rotation_270_edges": true
+    },
+    "feature_components": 1
+  },
+  "size": [
+    1254,
+    1254
+  ],
+  "mechanical_scope": "Mask and source-provenance proof; human checks source-trace semantics and visible artifacts",
+  "method": "smooth socket collars"
+}

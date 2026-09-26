@@ -1,0 +1,97 @@
+{
+  "tile": "settlement_gate",
+  "seed": 41,
+  "resolution": [
+    1254,
+    1254
+  ],
+  "edges": {
+    "N": "Settlement",
+    "E": "Road",
+    "S": "Field",
+    "W": "Field"
+  },
+  "coordinate_convention": "inclusive pixel centers 0..size-1",
+  "corner_tie_rule": "full-edge feature owns shared transition pixel",
+  "components": {
+    "Road": 1,
+    "Settlement": 1
+  },
+  "relationships": [
+    {
+      "first": "Road",
+      "second": "Settlement",
+      "kind": "access",
+      "route": "terminates"
+    }
+  ],
+  "allowed_interior_overlap": [],
+  "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+  "road_socket": {
+    "width": 126,
+    "inclusive": [
+      564,
+      689
+    ],
+    "center": 626.5
+  },
+  "river_socket": {
+    "width": 250,
+    "inclusive": [
+      502,
+      751
+    ],
+    "center": 626.5
+  },
+  "rotation": "clockwise exact 90-degree transpose; no resampling",
+  "brief": "art/briefs/tiles/settlement_gate.md",
+  "validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "Settlement_binary": true,
+      "Settlement_edge_N": true,
+      "Settlement_edge_E": true,
+      "Settlement_edge_S": true,
+      "Settlement_edge_W": true,
+      "Settlement_one_connected_component": true,
+      "Settlement_rotation_0": true,
+      "Settlement_rotation_90": true,
+      "Settlement_rotation_180": true,
+      "Settlement_rotation_270": true,
+      "Road_binary": true,
+      "Road_edge_N": true,
+      "Road_edge_E": true,
+      "Road_edge_S": true,
+      "Road_edge_W": true,
+      "Road_one_connected_component": true,
+      "Road_rotation_0": true,
+      "Road_rotation_90": true,
+      "Road_rotation_180": true,
+      "Road_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_Road_overlap": true,
+      "Field_Settlement_overlap": true,
+      "Road_Settlement_overlap": true,
+      "Road_Settlement_access": true
+    },
+    "feature_components": {
+      "Settlement": 1,
+      "Road": 1
+    },
+    "contact_pixel_pairs": {
+      "Road_Settlement_access": 219
+    }
+  }
+}

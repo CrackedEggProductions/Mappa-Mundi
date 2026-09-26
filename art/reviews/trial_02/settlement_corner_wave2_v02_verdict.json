@@ -1,0 +1,14 @@
+{
+  "score": 76,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Boundary still stops on East above SE, leaving Field on the required feature edge; NW transition remains imprecise.",
+    "Endpoint steps remain in rotated seams."
+  ],
+  "suggestions": [
+    "Preserve the v01 style direction; exact corner geometry remains the correction target.",
+    "Wait for human review before any further generation."
+  ],
+  "reasoning": "Style is compatible, but a hard mechanical failure prevents acceptance. Four requested generations are complete."
+}

@@ -1,0 +1,115 @@
+{
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "tile": "woodland_river",
+  "version": 1,
+  "source": "art/reviews/production_wave_01/sources/woodland_river_v01.png",
+  "source_sha256": "de24b7ff8a295a7f0db19b7e02fb6da80490f32d5bcee54ab0b832298aca072a",
+  "candidate": "art/generated/candidates/production_wave_01/woodland_river/woodland_river_v01.png",
+  "candidate_sha256": "0bed68982832c4c32586939edd5babce5a71a22b8d199c5a3238eee4244c3b6e",
+  "calibration": "art/reviews/production_wave_01/calibrations/woodland_river_v01.json",
+  "calibration_sha256": "e803ae9bded8f8c3613eb3f070f1cf32387cc4db7a1fde4e37fd0b878dfeeb15",
+  "provenance": "art/reviews/production_wave_01/provenance/woodland_river_v01.npz",
+  "provenance_sha256": "8445b51e95d564aa8249f09d8a6aced58cbe09f840457ec161868dc2850a055a",
+  "method": "native integer translation patches; no scale, warp, or interpolation",
+  "repaired_pixels": 22292,
+  "original_pixels_retained": 1550224,
+  "topology": {
+    "tile": "woodland_river",
+    "seed": 41,
+    "resolution": [
+      1254,
+      1254
+    ],
+    "edges": {
+      "N": "Forest",
+      "E": "Forest",
+      "S": "River",
+      "W": "River"
+    },
+    "coordinate_convention": "inclusive pixel centers 0..size-1",
+    "corner_tie_rule": "full-edge feature owns shared transition pixel",
+    "components": {
+      "Forest": 1,
+      "River": 1
+    },
+    "relationships": [
+      {
+        "first": "River",
+        "second": "Forest",
+        "kind": "touch",
+        "route": "through"
+      }
+    ],
+    "allowed_interior_overlap": [],
+    "overlap_meaning": "A distinct Road street inside one connected district; never a dual-type edge or merged feature identity.",
+    "road_socket": {
+      "width": 126,
+      "inclusive": [
+        564,
+        689
+      ],
+      "center": 626.5
+    },
+    "river_socket": {
+      "width": 250,
+      "inclusive": [
+        502,
+        751
+      ],
+      "center": 626.5
+    },
+    "rotation": "clockwise exact 90-degree transpose; no resampling",
+    "brief": "art/briefs/tiles/woodland_river.md"
+  },
+  "geometry_validation": {
+    "valid": true,
+    "checks": {
+      "canonical_topology": true,
+      "correct_feature_identities": true,
+      "native_dimensions": true,
+      "Forest_binary": true,
+      "Forest_edge_N": true,
+      "Forest_edge_E": true,
+      "Forest_edge_S": true,
+      "Forest_edge_W": true,
+      "Forest_one_connected_component": true,
+      "Forest_rotation_0": true,
+      "Forest_rotation_90": true,
+      "Forest_rotation_180": true,
+      "Forest_rotation_270": true,
+      "River_binary": true,
+      "River_edge_N": true,
+      "River_edge_E": true,
+      "River_edge_S": true,
+      "River_edge_W": true,
+      "River_one_connected_component": true,
+      "River_rotation_0": true,
+      "River_rotation_90": true,
+      "River_rotation_180": true,
+      "River_rotation_270": true,
+      "Field_binary": true,
+      "Field_edge_N": true,
+      "Field_edge_E": true,
+      "Field_edge_S": true,
+      "Field_edge_W": true,
+      "Field_rotation_0": true,
+      "Field_rotation_90": true,
+      "Field_rotation_180": true,
+      "Field_rotation_270": true,
+      "complete_coverage": true,
+      "Field_Forest_overlap": true,
+      "Field_River_overlap": true,
+      "Forest_River_overlap": true,
+      "River_Forest_touch": true
+    },
+    "feature_components": {
+      "Forest": 1,
+      "River": 1
+    },
+    "contact_pixel_pairs": {
+      "River_Forest_touch": 625
+    }
+  },
+  "masks": "art/reviews/production_wave_01/masks/woodland_river_v01",
+  "limitation": "Masks and trace provenance proven; source semantic tracing and patch artifacts require visual review."
+}

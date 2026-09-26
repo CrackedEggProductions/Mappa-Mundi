@@ -1,0 +1,12 @@
+{
+  "score": 92,
+  "verdict": "pass",
+  "category_match": true,
+  "differences": [
+    "Socket widths/centers need modest deterministic correction; inspect corner ground-footprints separately from elevated ink details."
+  ],
+  "suggestions": [
+    "Preserve all buildings; adjust only quiet Road/River margins and validate provenance."
+  ],
+  "reasoning": "Composition is already close to canonical topology. No major object reconstruction is needed; this is source suitability, not candidate approval."
+}

@@ -1,0 +1,12 @@
+{
+  "score": 88,
+  "verdict": "revise",
+  "category_match": true,
+  "differences": [
+    "Architecture remains native and no stamps are introduced, but 96px socket collars create visible local bank/road bends."
+  ],
+  "suggestions": [
+    "Test 128px collar on the same six sources, preserving exact sockets and the hard architecture guard."
+  ],
+  "reasoning": "Source composition fixes the prior defects; a small transition change can reduce visible socket adjustment without more generation."
+}

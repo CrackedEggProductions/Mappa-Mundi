@@ -1,0 +1,18 @@
+{
+  "id": "settlement_corner_v01",
+  "tile": "settlement_corner",
+  "status": "CANDIDATE — AWAITING HUMAN REVIEW",
+  "output_path": "art/generated/candidates/settlement_corner/settlement_corner_v01.png",
+  "requested_dimensions": [
+    1024,
+    1024
+  ],
+  "tool": "built-in image_gen",
+  "prompt": "Use case: stylized-concept. Generate ONE Mappa Mundi square tile candidate, 1024x1024 PNG, filling the whole canvas with no labels, no margin, no frame. Match the supplied local Mappa Mundi reference images before consulting any outside visual inspiration. Input1 is ONLY a mechanical ownership diagram: its green northeast triangle is the occupied feature region and its cream southwest triangle is Field. DO NOT reproduce its flat colors. Instead render that exact area layout as antique parchment with dominant fine dark-sepia ink like the other references. North=top. The full North edge from NW to NE AND full East edge from NE to SE belong to the named area feature. The entire shared NE corner is filled continuously. South and West are Field. The interior boundary runs broadly diagonally from the exact NW corner(0,0) to exact SE corner(1024,1024), with gentle handmade irregularities in the interior. Occupied region is above/right of this diagonal, not an L-shaped thin edge band. Area reaches the outermost pixel with NO parchment border and NO blank edge gaps; clip symbols at North/East canvas boundaries to imply continuation. Except at the exact transition corner points, never leak area onto South/West. Exactly ONE connected area component. No Road, River, bridge, paths, streams or extra exits; Road/River sockets not applicable. Required contacts:none; required separations:area versus open Field. Mostly monochrome old hand-drawn medieval manuscript map, not lush illustration or3D. Warm antique parchment visibly under ALL translucent low-saturation watercolor tint. Fine ink line work remains dominant. Field: extraordinarily faint sage-green glaze, mostly parchment, sparse small sepia grass tufts/flowers/pebbles matching supplied Field reference. No scenery lines that resemble roads. No text, edge labels, icons, grid, cast shadows, heavy aged border or decorative frame. Candidate only awaiting human review. Tile: Settlement Corner. Exact N/E/S/W = Settlement/Settlement/Field/Field. Use input2 Hamlet's miniature medieval masonry, crenellations and sepia roof drawing, input3 parchment and sparse Field marks; input4 is only a secondary corner/style study and its incomplete edge coverage must NOT be copied. Replace geometry of Hamlet with the input1 northeast HALF-SQUARE urban region. Walled medieval district and connected dense small buildings fill that half right to both boundaries, with a low irregular inner wall along the NW-to-SE diagonal. No gate opening or outward path. Off-white/pale stone wash and tiny dusty terracotta roof accents, very little actual paint, no opaque white. Keep roof symbols readable and similar scale to Hamlet. No separate towns or isolated city protrusions. V01: fine low crenellated diagonal wall with small clustered gabled roofs; very faint clay accents.",
+  "referenced_image_paths": [
+    "/home/rochelle/Jane/MappaMundi/art/templates/edge_masks/ne_ownership_guide.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_03_hamlet_edge.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_04_open_fields.png",
+    "/home/rochelle/Jane/MappaMundi/art/references/approved_style/ref_07_forest_bend.png"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "candidate": "art/generated/candidates/forest_bend/forest_bend_v03.png",
+  "source": "/home/rochelle/.codex/generated_images/01a0c88e-1f23-7c22-b6db-d173a07fc2ca/exec-c44327da-4c65-4408-88b1-f2349c089eee.png",
+  "actual_dimensions": [
+    1254,
+    1254
+  ],
+  "sha256": "91deafca6b48dd7d828affb613aaa72f36650343a28d222af003d18c63db172d",
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "style": {
+    "result": "PASS \u2014 provisional visual assessment, not human approval",
+    "notes": "Compatible mixed woodland ink, pale olive wash and visible paper texture.",
+    "watercolor": "Restrained and translucent; parchment and sepia ink remain dominant."
+  },
+  "mechanics": {
+    "result": "FAIL",
+    "full_edge_ownership": "FAIL",
+    "transition_endpoints": "FAIL",
+    "continuous_ne_component": "PASS",
+    "false_road_or_river_exits": "None apparent",
+    "road_river_socket_check": "N/A \u2014 neither feature is present",
+    "notes": "Forest forms one NE mass, but NW and SE transition endpoints leave Field wedges/fringes along required Forest edges.",
+    "method": "Visual inspection; no automated semantic edge certification."
+  },
+  "seam_review": {
+    "result": "FAIL exact transition matching",
+    "notes": "Area interiors connect, but endpoints make steps at matched seams; aged borders also remain visible. Layout correctness is separate from artwork correctness.",
+    "manifest": "forest_bend/forest_bend_v03_seams.json"
+  }
+}

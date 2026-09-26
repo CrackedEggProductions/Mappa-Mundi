@@ -1,0 +1,242 @@
+{
+  "settlement_throughway": {
+    "recommendation": "v02",
+    "v01": "Natural house proportions and coherent city connection; narrow central district and minor corner patching remain.",
+    "v02": "Best Throughway revision: coherent walls and believable houses, no whole-image deformation; inspect the narrow waist and repaired endpoint pixels.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 24,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 99.78
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 24,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 99.66
+    }
+  },
+  "settlement_gate": {
+    "recommendation": "neither",
+    "v01": "Gate approach reads clearly and palette matches; repeated masonry/foliage in the east collar and an abrupt urban edge remain.",
+    "v02": "More consistent house scale and readable gate; east boundary still looks patched/cut. Better revision source, not a visual pass.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 97.73
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 97.75
+    }
+  },
+  "riverside_hamlet": {
+    "recommendation": "neither",
+    "v01": "Continuous pale-blue River and small homes, no Port machinery; bank collars show cut/repeated textures and tree-heavy north can read as Forest.",
+    "v02": "Good waterside village/continuous River, restrained color; wider water and abrupt edge repair remain, with too much tree dominance for unequivocal Settlement ownership.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 96.43
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 96.41
+    }
+  },
+  "woodland_road": {
+    "recommendation": "v02",
+    "v01": "Dense connected woodland and continuous separate Road, native tree proportions; small socket/corner patch discontinuities.",
+    "v02": "Strongest woodland/road balance, restrained olive and ochre; clear continuous route and intact trees. Minor collars and legacy-reference seam differences remain.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 36,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 99.64
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 36,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 99.67
+    }
+  },
+  "woodland_river": {
+    "recommendation": "v02",
+    "v01": "Forest meets an unmistakable River, no blocked channel; south socket repair forms a visible jog and clipped bank detail.",
+    "v02": "Better continuous bank/woodland contact and native trees; south collar still needs close review for texture/line discontinuity.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 98.58
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 99.08
+    }
+  },
+  "settlement_corner_gate": {
+    "recommendation": "v01",
+    "v01": "Clear single gate approach, continuous corner city and believable architecture; east/south corner fill and socket patching remain.",
+    "v02": "Good city scale and pale stone palette; south Road correction is more conspicuous and lower east city texture needs retouch.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 98.92
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 98.84
+    }
+  },
+  "settlement_road_bend": {
+    "recommendation": "v02",
+    "v01": "Road stays continuous west-to-south beside an access gate; natural buildings. Gate-foot trace refined; collar and lower-east patches remain.",
+    "v02": "Clear through-bend plus urban access, intact buildings, restrained color; better central join. Small south/east repair artifacts persist.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 98.97
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 98.87
+    }
+  },
+  "settlement_road_throughway": {
+    "recommendation": "neither",
+    "v01": "Road is visibly traceable across city and buildings retain scale; north/south corner fill repeats/cuts motifs and urban continuity can read as two districts.",
+    "v02": "Continuous Road and coherent urban style; top/bottom repairs are more obvious, with repeated/cut edge buildings. Needs local reconstruction before recommendation.",
+    "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+    "v01_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 98.15
+    },
+    "v02_mechanics": {
+      "geometry_pass": true,
+      "geometry_checks": 37,
+      "reconstruction_checks_passed": 17,
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "source_pixels_retained_percent": 97.0
+    }
+  }
+}

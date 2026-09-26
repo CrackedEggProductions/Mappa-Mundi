@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "resolution": [
+      1254,
+      1254
+    ],
+    "total_pixels": 1572516,
+    "transported_pixels": 103468,
+    "transported_percent": 6.579774069071475,
+    "unchanged_coordinate_pixels": 1469048,
+    "rgb_changed_pixels": 103431,
+    "rgb_changed_percent": 6.577421151835657,
+    "displacement_p95_px": 44.0,
+    "displacement_max_px": 50.0,
+    "unique_transported_donors": 97733,
+    "transported_donor_reuse_count": 5735,
+    "transported_donor_reuse_ratio": 0.05542776510611977,
+    "all_output_duplicate_donor_count": 5976,
+    "provenance_sha256": "92dbc058db4bd1f37aa51992c7874b4aa065b799638577eda3da0c54a30504fa"
+  },
+  "limits": {
+    "transported_percent": 8.0,
+    "displacement_p95_px": 80.0,
+    "displacement_max_px": 120.0,
+    "transported_donor_reuse_ratio": 0.25
+  },
+  "assessment": {
+    "major_recognizable_objects_moved": false,
+    "repeated_motifs_introduced": false,
+    "edge_repair_visible_at_review_scale": true,
+    "source_rejected_before_composition": false,
+    "notes": "The continuous River and modest building frontage are much clearer than Wave 01. Sparse planting replaces the previous woodland dominance. Both outer bank collars visibly curve toward the sockets. Bank bends at both edges are noticeable; no clipped buildings or copied bank blocks are apparent at normal review scale. Strict visibility gate remains REJECT; numerical limits pass. No automatic visual acceptance."
+  },
+  "source_suitability": "REJECT",
+  "rejection_reasons": [
+    "human:edge_repair_visible_at_review_scale"
+  ],
+  "pending_assessments": [],
+  "status": "CANDIDATE \u2014 AWAITING HUMAN REVIEW",
+  "limitation": "Provenance counts coordinates, not objects; human judgments are supplied, not image recognition."
+}

@@ -1,0 +1,39 @@
+{
+  "purpose": "Geometry control assets, not final art or style references",
+  "size_px": [
+    1254,
+    1254
+  ],
+  "continuous_canvas": [
+    0,
+    0,
+    1254,
+    1254
+  ],
+  "raster_indices": [
+    0,
+    1253
+  ],
+  "mask_rule": "white iff x >= y; black otherwise",
+  "edges": {
+    "North": "feature",
+    "East": "feature",
+    "South": "Field",
+    "West": "Field"
+  },
+  "transition_corners": {
+    "NW": [
+      0,
+      0
+    ],
+    "SE": [
+      1254,
+      1254
+    ]
+  },
+  "shared_feature_corner": "NE",
+  "shared_field_corner": "SW",
+  "corner_convention": "NW/SE are divider points, not extra Field-edge exits. Raster diagonal assigned to feature; no finite edge-length tolerance.",
+  "interior": "Organic wall/treeline allowed; exact outer endpoints and ownership mandatory.",
+  "generation": "Attach labeled guide plus clean underlay; do not reproduce labels, border, flat palette or magenta line in art."
+}
