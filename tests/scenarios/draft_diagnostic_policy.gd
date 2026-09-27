@@ -265,4 +265,3 @@ static func _less(left: Array[int], right: Array[int]) -> bool:
 		if left[index] != right[index]:
 			return left[index] < right[index]
 	return false
-

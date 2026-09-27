@@ -2,6 +2,10 @@
 
 ## Second playtest — draft cadence (current rules)
 
+Implementation: `04a1dc72f2d6134fd7f93b4d9e98f702d2df9e73`. Diagnostic evidence:
+`5320af169e1f12b1627cde0ae4002654c9e7ebd3`. Both pushed to `alpha-playtest-r1`;
+no merge into main. This handoff records the final verified branch state.
+
 The active rules version is `alpha-playtest-r1-draft-cadence`, save schema 3.
 This replaces both the 45-copy starting bag and all automatic Act-II/III seeding,
 including the previous four-Market experiment. Older active-run development saves
