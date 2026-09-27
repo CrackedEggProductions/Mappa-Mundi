@@ -6,7 +6,11 @@ rerunning the current script may change them. Act-I placement rules were unchang
 
 This is a deterministic, non-canonical policy measurement, not a human playtest or a guarantee that a new player will obtain the same results. It does not change bag counts, legal actions, scoring or gameplay RNG.
 
-Run the sample from the project root:
+The command below describes the historical invocation. The script now measures the
+18-copy core and draft system; use the [current draft-cadence report](DRAFT_CADENCE_DIAGNOSTIC.md)
+for its current output. Reproducing this older sample requires its historical checkout.
+
+Historical invocation:
 
 ```bash
 godot --headless --path . --script res://tests/scenarios/revision_completion_diagnostic.gd -- 100 1
