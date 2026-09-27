@@ -6,10 +6,10 @@ extends RefCounted
 static func inspect(state: RunState, content: ContentRegistry, reveal_secret: bool = false) -> Dictionary:
 	if state.charters == null:
 		return {}
-	var seeds: Array[Dictionary] = []
-	for event: Dictionary in state.charters.history:
-		if event.get("kind") == "act_content_seeded":
-			seeds.append(event.duplicate(true))
+	var entry_drafts: Array[Dictionary] = []
+	for event: Dictionary in state.rewards.history:
+		if event.get("kind") == "tile_draft_resolved" and event.get("details", {}).get("draft_type") == "act_entry":
+			entry_drafts.append(event.duplicate(true))
 	var result: Dictionary = {"act": state.expansion.current_act,
 		"normal_placements": state.expansion.normal_placements,
 		"completed_act_placements": state.charters.completed_act_placements.duplicate(),
@@ -17,7 +17,7 @@ static func inspect(state: RunState, content: ContentRegistry, reveal_secret: bo
 		"grand_charter": CharterRules.visible_grand(state, content),
 		"unlocked_act": ActRules.unlocked_act(state),
 		"eligible_tiles": RewardRules.tile_pool(content, ActRules.unlocked_act(state)),
-		"seed_history": seeds, "pending_refill": state.expansion.pending_refill_index,
+		"act_entry_draft_history": entry_drafts, "pending_refill": state.expansion.pending_refill_index,
 		"bonus_queue": state.charters.bonus_queue.duplicate(true)}
 	result["environmental_river_path"] = EnvironmentalRiverService.path(state)
 	result["river_interactions"] = RiverInteractionService.current(state)

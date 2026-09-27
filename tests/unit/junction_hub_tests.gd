@@ -297,7 +297,7 @@ func market_families_see_junction_network() -> bool:
 func command_completion_and_full_save_roundtrip() -> bool:
 	var content: ContentRegistry = ContentRegistry.new()
 	expect_true(content.load_phase_nine().is_valid, "Current canonical content loads")
-	var state: RunState = HomesteadRunFactory.create(6001, content)
+	var state: RunState = preload("res://tests/fixtures/phase_nine_factory.gd").started(content, 6001)
 	var fixture: Script = preload("res://tests/fixtures/phase_five_factory.gd")
 	var copy_id: int = fixture.acquire_hand(state, &"tile.road_junction")
 	var selected: PlacementOption = null

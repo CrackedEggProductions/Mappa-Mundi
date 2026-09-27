@@ -62,6 +62,12 @@ func _run() -> void:
 	if controller.session == null:
 		quit(1)
 		return
+	_check(controller.session.state.pending_choice.kind == &"tile_draft", "New Run opens the starter draft")
+	await _click(controller.choice_presenter.charter_button)
+	_check(controller.notice_active, "Starter draft opens Charter inspection by mouse")
+	await _click(controller.shell.notice_button)
+	await _click(controller.choice_presenter.option_buttons[0])
+	_check(controller.session.state.phase == GamePhase.Type.TURN_INPUT, "One mouse draft choice draws the opening hand")
 	await _click(controller.hand_buttons[0])
 	_check(controller.selected_copy_id != 0 and not controller.options.is_empty(), "Mouse hand selection queries targets")
 	await _click(controller.shell.rotate_right)

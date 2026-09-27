@@ -1,6 +1,6 @@
 # Carcassonne Roguelite — Complete Alpha Rules Specification
 
-**Status:** Canonical Alpha Playtest Revision 1 (2026-09-27); three-Act playable alpha
+**Status:** Canonical Alpha Playtest Revision 1 — Draft Cadence (2026-09-27); three-Act playable alpha
 **Purpose:** Single source of truth for implementation by local Codex  
 **Supersedes for alpha implementation:** unresolved or conflicting prototype text in the Core Design Bible, Tile Design Specification, and Relics/Specialists Prototype Specification  
 **Source basis:**
@@ -15,9 +15,15 @@
 
 This revision follows the first human Phase-10 playtest. It intentionally replaces the prior alpha's 55-tile bag, player-drawable Open Fields/Road End/pure River pieces, River completion/scoring, continuous three-arm Junction Road, River-targeted Stewards/Riverkeeper/Harbormaster, River completion milestone, and River-dependent Living Landscape/Stewardship of Land/Living Heritage conditions. The operative sections below incorporate these replacements; older versions are historical only.
 
-The world provides Field countryside and one generated River. The player builds Roads, Settlements, Forests and Developments, and interacts with that River through explicit overlays, Ports and Bridges. The starting bag has 45 copies. Road Junctions terminate physical Roads but connect Trade Networks. River never completes; its value comes from contacts and interactions.
+The world provides Field countryside and one generated River. The player builds Roads, Settlements, Forests and Developments, and interacts with that River through explicit overlays, Ports and Bridges. The current starting core bag has 18 copies; player-chosen drafts provide subsequent acquisition. Road Junctions terminate physical Roads but connect Trade Networks. River never completes; its value comes from contacts and interactions.
 
-Rules identifier: **alpha-playtest-r1**. Incompatible pre-revision active-run saves may be rejected; no migration is required. Phase 11 Save/Continue presentation and Phase 12 exports remain outside this revision.
+## Draft-cadence revision — Current acquisition rules
+
+The earlier Revision-1 45-copy bag and automatic Act-II/III seeding (including the short-lived Market ×4 adjustment) are superseded. Begin with an 18-copy core bag, choose one Starter Draft before opening draws, and receive one single-copy Tile Draft after each eligible even normal placement. Act transitions unlock content and offer one restricted Act Entry Draft; they inject no automatic copies. Track 20 is a true NONE threshold, not a Tile Reward.
+
+**Unlocking means eligibility for player choices, not guaranteed physical presence.** Drafts always add one chosen physical copy and shuffle the full bag. Normal Tile Rewards, Masterwork, Charter rewards and other acquisition effects retain their own quantities and rules.
+
+Rules identifier: **alpha-playtest-r1-draft-cadence**; save schema **3**. Incompatible pre-revision active-run saves may be rejected; no migration is required. Phase 11 Save/Continue presentation and Phase 12 exports remain outside this revision.
 
 # 0. Authority, Scope, and Interpretation
 
@@ -223,17 +229,18 @@ The Founding Tile has the normal one-Development slot and may receive any Develo
 ## RULE-SETUP-005 — Exact setup sequence
 A run is initialized in this order:
 1. Initialize run identity, recorded seed and the one RunRNG stream.
-2. Create the unbounded board and place the fixed Founding Tile at `(0,0)`.
+2. Create the unbounded board and place fixed Founding at `(0,0)`.
 3. Generate and place the environmental River spine from its South River socket.
-4. Set Population, Trade, Culture and Ecology to 0.
-5. Create 2 available generic Stewards; initialize Relic capacity 2 with no Relics.
-6. Grant 1 Act I Survey charge and an empty Reserve.
-7. Build the 45-copy Homestead player bag and randomize the entire bag.
-8. Uniformly select and reveal 1 Act I Charter.
-9. Draw the opening active hand of 3 tiles.
-10. Enter Act I TURN_INPUT at 0/18 normal placements.
+4. Initialize zero Tracks, two available Stewards, Relic capacity 2/no Relics, one Act-I Survey charge and empty Reserve.
+5. Build the **18-copy core player bag**, in deterministic definition order. Do not shuffle it yet.
+6. Uniformly select and reveal one Act-I Charter.
+7. Generate the **Starter Draft**: uniformly offer up to three distinct designs from the ten non-core Act-I designs. Persist exact options and pause before opening draws.
+8. On the player's choice, add **one physical copy** of that design to the bag and randomize the **entire bag** once.
+9. Draw the opening three hand tiles; enter Act-I TURN_INPUT at 0/18 placements.
 
-River path selection consumes RunRNG before bag shuffle and Charter selection. Pure state-container initialization may precede board creation without consuming randomness. There is no opening mulligan beyond normal dead-hand/stalemate rules.
+Setup RNG order is River-template choice → Act-I Charter selection → sorted-pool Starter Draft sampling → full bag shuffle after selection → opening draws (ordered bag pops, no fresh RNG). The player sees the Charter before making the Starter Draft choice. No initial bag shuffle occurs before that choice. A pending Starter Draft is a valid serializable setup boundary with three empty hand slots.
+
+Pure state-container initialization may precede board creation without consuming randomness. There is no opening mulligan beyond normal dead-hand/stalemate rules.
 
 ## RULE-SETUP-006 — Generated environmental River
 The Founding River component joins exactly 8 setup environmental tiles: **River Run ×5, River Bend ×2, River End ×1**. The one connected spine therefore has size **9** including Founding.
@@ -499,33 +506,29 @@ Act III Major/Rare Development Upgrade of Market. See Section 11.
 
 # 6. Homestead Starting Bag and Tile Reward Classes
 
-## RULE-BAG-001 — Starting bag classification
-The initial bag contains the listed player Expansions plus the explicit **Riverside Hamlet and Woodland River overlay exception**. No ordinary Developments, Upgrades or other Transformations enter the starting bag.
+## RULE-BAG-001 — Core bag and chosen direction
+The initial core bag contains only the ten listed Expansion designs. No Development, Upgrade or Transformation is seeded into it. The Starter Draft adds one chosen non-core Act-I design before the opening hand. Riverside Hamlet and Woodland River remain legal Act-I player overlays, but enter through choices rather than automatic starting copies.
 
-## RULE-BAG-002 — Starting bag size
-The Homestead player bag contains **45 physical tiles before the opening hand is drawn**:
+## RULE-BAG-002 — Core starting bag size
+Before the Starter Draft, the Homestead core player bag contains exactly **18 physical copies**:
 
 | Design | Copies |
 |---|---:|
-| Forest Edge | 4 |
-| Forest Bend | 3 |
-| Forest Belt | 2 |
-| Straight Road | 4 |
-| Bending Road | 4 |
-| Road Junction | 4 |
-| Hamlet Edge | 4 |
-| Settlement Corner | 3 |
-| Settlement Throughway | 2 |
-| Settlement Gate | 3 |
-| Riverside Hamlet | 2 |
-| Woodland Road | 2 |
-| Woodland River | 2 |
-| Settlement Corner Gate | 2 |
-| Settlement Road Bend | 2 |
-| Settlement Road Throughway | 2 |
-| **Total** | **45** |
+| Forest Edge | 3 |
+| Forest Bend | 1 |
+| Forest Belt | 1 |
+| Straight Road | 2 |
+| Bending Road | 2 |
+| Road Junction | 2 |
+| Hamlet Edge | 3 |
+| Settlement Corner | 1 |
+| Settlement Throughway | 1 |
+| Settlement Gate | 2 |
+| **Total** | **18** |
 
-Open Fields, Road End, River End, River Run and River Bend have zero player copies. The 8 environmental River copies and Founding Tile are separate setup board copies.
+The Starter Draft adds one chosen copy, producing **19 player copies before opening draws** and **16 remaining bag copies after the three-tile hand is drawn**. Founding and eight environmental River copies are separate board setup objects.
+
+Open Fields, Road End and pure River End/Run/Bend are excluded from all player bags, drafts, rewards and emergency pools.
 
 ## RULE-BAG-003 — Basic Expansion reward class
 Choosing one of these from a normal Tile Reward adds **3 copies**:
@@ -560,7 +563,7 @@ Bridge, Rewilding, and Grand Market are Major/Rare tile designs for normal Tile 
 
 Choosing one adds **1 copy**.
 
-Their automatic Act III transition seeding still adds 2 copies each.
+Act III unlocks these designs without automatic seeding. A Tile Draft grants one copy; Masterwork grants three; neither changes this Normal Tile Reward quantity.
 
 
 ---
@@ -669,8 +672,9 @@ If the bag empties before a Grand Survey replacement draw, normal emergency repl
 Every run uses a single recorded deterministic random seed.
 
 That seed governs all random decisions, including:
-- environmental River path selection before initial bag randomization;
-- initial bag order;
+- environmental River path selection before Charter and Starter Draft selection;
+- Starter, cadence and Act Entry Draft offers;
+- bag order after chosen draft acquisition;
 - draws;
 - dead-hand cycling;
 - bag re-randomization;
@@ -688,7 +692,7 @@ Whenever tiles are added or returned to the bag, the entire remaining bag is ran
 
 This includes:
 - Tile Reward additions;
-- Act-transition seeding;
+- a chosen Starter, cadence or Act Entry Draft copy;
 - dead-hand cycling returns;
 - emergency replenishment.
 
@@ -2130,27 +2134,19 @@ They are not spent.
 Tracks have no hard maximum. Values may exceed 100 and their full values count toward final score and relevant Charter conditions.
 
 ## RULE-TRACK-003 — Standard thresholds
-Each Track has standard one-time thresholds at:
-- **20**
-- **40**
-- **70**
-- **100**
-
-Each threshold on each Track can trigger exactly once per run.
+Each Track records one-time thresholds at **20, 40, 70 and 100**. A threshold can be crossed/recorded once per Track per run. Twenty is an explicit no-reward threshold; the other three create their listed reward.
 
 ## RULE-TRACK-004 — Threshold rewards
 For each Track:
-- **20:** Normal Tile Reward — choose 1 of up to 3 tile designs.
-- **40:** Train a Steward — choose 1 of up to 3 legal Specialists; converts to Tile Reward if no legal generic Steward can be trained.
-- **70:** Relic offer — choose 1 of up to 3 eligible Relics.
-- **100:** Major Reward offer — choose 1 of up to 3 valid Major Rewards.
+- **20: NONE.** No Tile Reward, PendingChoice, reward job, copy acquisition, bag shuffle or RNG consumption occurs because of this threshold. It may be recorded once for history/inspection.
+- **40:** Train a Steward; the existing untrainable reward fallback remains one Normal Tile Reward.
+- **70:** Relic offer.
+- **100:** Major Reward offer.
 
-There are no further standard threshold rewards beyond 100.
+There are no further standard threshold rewards beyond 100. Independently scheduled cadence drafts still occur on their placement boundary; they are not Track-20 rewards.
 
-## RULE-TRACK-005 — Every crossed threshold awards
-If one placement/effect crosses multiple thresholds, every newly crossed threshold on every Track awards separately.
-
-There is no per-placement reward cap.
+## RULE-TRACK-005 — Every crossed rewarding threshold awards
+If a placement/effect crosses multiple thresholds, all newly crossed 40/70/100 thresholds on every Track award separately. Crossing 20 records NONE only. There is no per-placement cap on genuine rewards.
 
 ## RULE-TRACK-006 — Threshold queue order
 Queued Track threshold rewards resolve in fixed Track order:
@@ -2173,6 +2169,48 @@ Realm Track gains from a current feature-completion package are accumulated thro
 - Relics.
 
 Threshold rewards wait until the complete completion package and Relic milestone processing finish.
+
+## 16.0 Single-copy Tile Drafts
+
+### RULE-DRAFT-001 — Shared offer and acquisition contract
+A Tile Draft is distinct from a Normal Tile Reward. Filter its canonical pool, sort by stable definition ID, then uniformly sample up to **three distinct designs** using RunRNG. If fewer than three exist, show all without duplicate padding. Do not weight helpfulness or exclude an unlocked design merely because it is currently unplayable.
+
+Persist the exact offer. The player chooses one; allocate **exactly one physical copy** with acquisition Act and draft-source provenance, add it to the bag, then randomize the **entire remaining bag** before any pending replacement draw. Do not apply Normal Tile Reward copy quantities or Masterwork's three-copy rule to a draft. Loading never rerolls or repeats acquisition/shuffle.
+
+### RULE-DRAFT-002 — Starter Draft
+After Act-I Charter selection and before opening hand draws, offer from exactly these ten non-core Act-I designs:
+- Riverside Hamlet;
+- Woodland Road;
+- Woodland River;
+- Settlement Corner Gate;
+- Settlement Road Bend;
+- Settlement Road Throughway;
+- Housing;
+- Mill;
+- Monastery;
+- Forester's Lodge.
+
+The ten core bag designs are excluded from this one starter pool. The choice gives the player a direction without guaranteeing any particular design.
+
+### RULE-DRAFT-003 — Cadence Draft schedule
+Award one Tile Draft after each eligible even **normal** placement:
+- Act I: 2, 4, 6, 8, 10, 12, 14, 16, **18** — nine drafts;
+- Act II: 2 through **22**, even only — eleven drafts;
+- Act III: 2 through **24**, even only — twelve drafts; **none at 26**.
+
+Bonus placements never increment cadence or create extra cadence entitlements. Finish every consequence, Specialist/Relay choice, Relic, milestone, threshold/reward chain, bonus placement and FIFO child event first. Then resolve the one due cadence draft **before ordinary hand refill**. On final Act-I/II placements it also resolves **before outgoing Charter evaluation/rewards and Act advance**, using the outgoing Act's pool.
+
+Regular cadence pools contain all unlocked player designs: **20 in Act I, 25 in Act II, 28 in Act III**. This includes core Expansions, hybrids/overlays, Developments and later eligible Upgrades/Transformations. Legacy/setup-only content stays excluded.
+
+### RULE-DRAFT-004 — Act Entry Drafts
+After advancing/unlocking and selecting the incoming Act's required Charter information, offer one restricted draft:
+- Enter Act II: Market, Port, Urban Expansion, Town Square, Abbey.
+- Enter Act III: Bridge, Rewilding, Grand Market.
+
+Resolve that choice and its one-copy/full-bag shuffle before pending outgoing-final-placement hand refill. There are **no automatic Act-II/III seed copies and no separate unconditional transition shuffle**. Unlocking only makes designs eligible for future choices. The chosen entry copy can be the pending replacement draw.
+
+### RULE-DRAFT-005 — Audit and continuation
+Persist draft type, Act, originating normal-placement index, exact offered IDs, sequence identity, chosen physical copy and offered/resolved audit state. Starter, cadence and entry choices resume their own setup/placement/transition continuations exactly once. A complete run has one Starter Draft, 32 cadence drafts and two Act Entry Drafts, independent of additional normal rewards.
 
 ## 16.1 Normal Tile Rewards
 
@@ -2491,81 +2529,40 @@ Exceed:
 
 ---
 
-# 18. Act Unlocks, Seeding, and Transition
+# 18. Act Unlocks, Entry Drafts, and Transition
 
 ## RULE-ACT-001 — Act I unlocked content
-Act I Tile Reward eligibility includes:
-- the 14 player Expansion designs plus Riverside Hamlet and Woodland River overlays listed in Section 6;
-- Housing;
-- Mill;
-- Monastery;
-- Forester's Lodge.
-
-Market and Port do not unlock until Act II even though they originated in the broader Starter 24 design set.
+The twenty Act-I player designs are the ten core Expansions, six non-core hybrids/overlays and four Developments (Housing, Mill, Monastery, Forester's Lodge). All are eligible for regular drafts and Normal Tile Rewards. Starter Draft alone excludes the core ten. Market and Port remain locked until Act II.
 
 ## RULE-ACT-002 — Act II unlocks
-At the start of Act II, unlock and keep eligible thereafter:
-- Market;
-- Port;
-- Urban Expansion;
-- Town Square;
-- Abbey.
-
-Automatically add the following physical copies to the bag:
-- Market ×4
-- Port ×2
-- Urban Expansion ×2
-- Town Square ×1
-- Abbey ×1
-
-Total automatic Act II seeding: **10 tiles**.
-
-Second-playtest adjustment: Market rises from two to four copies; Town Square and Abbey fall from two to one each. Market Towns still requires two distinct Market-family Settlements. Market placement/effects and Grand Market’s Act-III unlock are unchanged.
+At Act-II start unlock Market, Port, Urban Expansion, Town Square and Abbey; eligibility persists afterward. **Add no automatic physical copies.** Offer one Act Entry Draft restricted to these five designs. Regular unlocked player pool becomes 25 designs.
 
 ## RULE-ACT-003 — Act III unlocks
-At the start of Act III, unlock and keep eligible:
-- Bridge;
-- Rewilding;
-- Grand Market.
+At Act-III start unlock Bridge, Rewilding and Grand Market; eligibility persists. **Add no automatic physical copies.** Offer one Act Entry Draft restricted to these three designs. Regular unlocked player pool becomes 28 designs.
 
-Automatically add **2 copies each**:
-- Bridge ×2
-- Rewilding ×2
-- Grand Market ×2
+## RULE-ACT-004 — Chosen entry acquisition history
+Only the chosen Act Entry Draft design creates a copy, recorded with incoming Act and `act_entry_draft` acquisition source. Neither unlock nor draft acquisition counts as a placement or objective completion. There is no guaranteed physical presence for unchosen unlocked designs.
 
-Total automatic Act III seeding: **6 tiles**.
-
-## RULE-ACT-004 — Seeded tile acquisition history
-Act-transition seeded tiles are recorded as acquired in the Act in which they enter the bag.
-
-They do not count as placements or completed objectives.
-
-## RULE-ACT-005 — Seed before pending refill
-Newly unlocked Act-transition tiles enter and randomize into the bag **before** the pending active-hand replacement draw caused by the outgoing Act's final active-hand placement.
-
-Therefore the first draw entering a new Act can be one of the newly unlocked designs.
+## RULE-ACT-005 — Entry choice before pending refill
+Resolve the incoming Act Entry Draft, add its single chosen copy and shuffle the full remaining bag **before** any pending outgoing-final-placement active-hand refill. The selected copy can immediately be drawn. Do not automatically shuffle merely because an Act advanced.
 
 ## RULE-ACT-006 — Canonical Act transition
-After the outgoing Act's final normal placement, all bonus placements, all consequences, and the full event queue resolve. Then perform transition in this canonical order:
+After the outgoing final normal placement, finish all consequences/bonus/child-event work and its due cadence draft. Then:
+1. Evaluate outgoing Act Charter.
+2. Resolve all its ordered fulfillment/exceed rewards using outgoing eligibility/capacity.
+3. Legendary Project hook: no-op.
+4. Advance Act.
+5. Increase Relic capacity (Act II: 4; Act III: 5).
+6. Expire old Survey charges and grant one fresh charge.
+7. Refresh once-per-Act Relics.
+8. Unlock incoming Act content, without injecting copies.
+9. Select/reveal required information: entering Act II, select/reveal Act-II Charter, then secretly select Grand Charter and reveal forecast; entering Act III, preserve the previously revealed Grand Charter and consume no Charter RNG.
+10. Offer and fully resolve the restricted **Act Entry Draft**, adding one chosen copy and shuffling the full bag.
+11. Reset incoming normal-placement counter to zero.
+12. Perform pending outgoing-final-placement hand refill if needed.
+13. Enter TURN_INPUT.
 
-1. Evaluate the outgoing Act Charter.
-2. Award its fulfillment/exceed rewards as applicable.
-3. Legendary Project hook: no-op in the alpha.
-4. Advance to the next Act.
-5. Increase Relic capacity:
-   - Act II → 4 slots
-   - Act III → 5 slots
-6. Expire unused prior-Act Survey charges and grant 1 fresh Survey charge.
-7. Refresh once-per-Act Relic abilities.
-8. Unlock the new Act's tile/reward eligibility.
-9. Add the automatic new-Act seeded tiles to the bag.
-10. Randomize the bag.
-11. Reveal new Charter/Grand Charter information:
-    - entering Act II: reveal Act II Charter, secretly choose Grand Charter, reveal its forecast;
-    - entering Act III: no new ordinary Charter; exact Grand Charter was already revealed at Act II midpoint.
-12. Reset the new Act's normal-placement counter to 0.
-13. Perform the pending active-hand replacement draw from the outgoing final placement, if one is needed.
-14. Begin the next Act.
+Every choice pauses/resumes the authoritative transition safely. Ordinary Charter reward quantities/order are unchanged. No automatic 10-copy/6-copy seed batches remain.
 
 ## RULE-ACT-007 — Persistent state through transition
 Do not automatically clear/reset:
@@ -2583,6 +2580,7 @@ The only scheduled refreshes are those explicitly listed, such as Survey charge 
 
 ## RULE-ACT-008 — No final Act III refill
 After Act III normal placement 26 and its full consequence/bonus/event queue resolves:
+- do not offer a cadence draft at placement 26;
 - do not draw a replacement tile;
 - evaluate the Grand Charter;
 - calculate final score;
@@ -2605,7 +2603,7 @@ A normal turn proceeds:
 8. Resolve the completion/effect pipeline.
 9. Resolve any remaining non-completion placement effects and rewards not already resolved.
 10. Resolve the queued Realm Track thresholds.
-11. If this was the Act's final normal placement, resolve any remaining bonus chain and then perform Act transition; otherwise continue normally.
+11. Finish remaining bonus/child-event work, then resolve any due cadence draft. If this was Act I/II's final normal placement, only afterward evaluate its Charter and transition; Act III placement 26 has no draft and finalizes.
 12. If the played tile came from active hand, refill its empty slot only after all consequences/rewards/bag additions are complete.
 13. If the tile came from Reserve, no active-hand refill is needed.
 14. Begin the next turn or end the run.
@@ -2792,7 +2790,7 @@ Given the same run seed and same player decisions, all RNG-dependent choices sho
 ## RULE-INVARIANT-009 — No hidden auto-help
 The alpha reward generator does not silently weight offers toward the player's current needs.
 
-Normal Tile Reward, Relic, Charter, Grand Charter, and Specialist offer selection follow their explicit uniform/filtering rules.
+Tile Draft, Normal Tile Reward, Relic, Charter, Grand Charter, and Specialist offer selection follow their explicit uniform/filtering rules.
 
 ## RULE-INVARIANT-010 — Persistent civilization
 Act transitions never clear the board or silently reset strategic commitments.
@@ -2812,10 +2810,10 @@ The old `River Source` starter tile name is superseded by **River End**.
 River End is setup-only environment, used as the generated spine terminus; it is not a player source/endpoint tile.
 
 ## RULE-SUPER-002 — Starting bag changed
-The provisional pre-alpha and prior 55-copy bags are superseded by the **45-copy Homestead player bag** in Section 6.
+The provisional pre-alpha, prior 55-copy and initial Revision-1 45-copy bags are superseded by the **18-copy core bag plus one chosen Starter Draft** in Section 6. Automatic Act seeding and Track-20 Tile Rewards are also superseded by the draft-cadence rules.
 
 ## RULE-SUPER-003 — Market and Port cadence
-Although Market and Port appear in the broader Starter 24 source set, the alpha unlocks/seeds them at the **start of Act II**, not in the initial bag.
+Although Market and Port appear in the broader Starter 24 source set, the alpha unlocks them at the **start of Act II** for the restricted entry draft and later offers. It grants no automatic copies.
 
 ## RULE-SUPER-004 — Rewilding does not automatically destroy Settlement Developments
 Any earlier conversational/prototype interpretation that Rewilding automatically removes every Development on its target is superseded.
@@ -2865,7 +2863,7 @@ Before implementation is considered faithful to this specification, Codex should
 1. Three Acts run continuously at 18/22/26 normal placements.
 2. Founding plus 5 Runs, 2 Bends and 1 End creates one deterministic size-9 environmental River without setup scoring/events; other Founding features remain buildable.
 3. Exact edge matching works on an unbounded grid.
-4. The 45-copy Homestead player bag is exact and deterministic; legacy/setup-only pieces never enter player pools.
+4. The 18-copy core bag, ten-design Starter Draft and setup RNG order are exact; legacy/setup-only pieces never enter player pools.
 5. Hand, Reserve, Survey, dead-hand cycle, bag exhaustion, and emergency fallback all work.
 6. Road, Settlement, Forest and Monastery-family completion are detected; River never completes or scores. Junctions terminate separate Roads without physical Road components.
 7. Scoring histories prevent base-score farming after reopening/merging.
@@ -2873,23 +2871,24 @@ Before implementation is considered faithful to this specification, Codex should
 9. Rewilding can start, reopen, merge, and transform Forest geography legally.
 10. Bridge can transform straight River Runs, rewrite legal flanking Field edges, and merge/reopen Roads.
 11. Trade Network topology propagates through Settlement hubs, Junction hubs (including hub-to-hub links) and Ferry Rights while physical Roads remain distinct.
-12. The expanded Road/Settlement connector family appears in the starting bag at the correct counts.
+12. Non-core Road/Settlement connectors appear in the Starter and regular draft pools; only the ten core designs receive automatic starting copies.
 13. Developments can be placed on already-completed features and resolve only their own immediate trigger.
 14. Upgrades replace their base Development and immediately resolve if their condition is already satisfied.
 15. Stewards/Specialists obey locality, commitment, merge legality, completion return, and training rules.
 16. The reduced 10-Relic alpha pool obeys tier eligibility, capacity, replacement, and acquisition history.
-17. Realm Track thresholds award once per Track at 20/40/70/100 and resolve deterministically.
+17. Track 20 records NONE without rewards/RNG; 40/70/100 award once in deterministic order.
 18. Relic milestones fire only on genuine relevant completions and only once per milestone.
 19. Act I/II Charters and Grand Charter selection/evaluation behave exactly as specified.
 20. Act II midpoint Grand Charter reveal happens after normal placement 11 and its full consequence queue.
-21. Act-transition tile seeding happens before the pending hand refill.
+21. There is no automatic Act seeding; restricted entry drafts follow Charter information and resolve before pending refill.
 22. Event processing uses shared snapshots, batches, deferred child events, and FIFO queues.
 23. Bonus placement chains resolve before Act transition and do not increment normal placement counts.
 24. End of Act III performs no replacement draw and produces final score + Charter result.
 25. Replaying the same seed with the same decisions reproduces River layout and later RNG outcomes.
 26. River overlays preserve environmental topology, produce current/history interaction queries and obey occupied-bank legality.
 27. Forest River-contact base history, revised Specialists/Charters and River Stewardship milestone follow the revised rules.
-28. Save/load restores environment/hubs/interactions without regeneration, extra RNG, events or scoring.
+28. Save/load restores environment/hubs/interactions and all three draft continuations without regeneration, rerolls, duplicate copies/shuffles or scoring.
+29. Cadence awards exactly 9/11/12 drafts at the listed normal placements, after all consequences and before refill/outgoing Charter; Act III 26 grants none.
 
 ---
 

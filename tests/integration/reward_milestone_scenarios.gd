@@ -102,15 +102,15 @@ func real_completion_milestone(type: int) -> bool:
 
 func settlement_milestone_before_threshold() -> bool:
 	var registry: ContentRegistry = F.content()
-	var state: RunState = _chain(registry, TYPE.SETTLEMENT, 7)
-	_close(state, registry, TYPE.SETTLEMENT, 7)
-	expect_true(state.features.tracks.values[DomainTypes.TrackType.POPULATION] >= 20, "Real Settlement base/support scoring crosses Population 20")
+	var state: RunState = _chain(registry, TYPE.SETTLEMENT, 13)
+	_close(state, registry, TYPE.SETTLEMENT, 13)
+	expect_true(state.features.tracks.values[DomainTypes.TrackType.POPULATION] >= 40, "Real Settlement base/support scoring crosses Population 40")
 	expect_equal(state.pending_choice.kind, &"relic_offer", "Milestone acquisition precedes crossed threshold")
 	expect_true(state.rewards.threshold_flags.is_empty(), "Threshold queue has not interrupted milestone reward")
 	assert(RulesEngine.execute(state, registry, ResolveRewardCommand.new(state.pending_choice.choice_id, 0)).is_valid)
-	expect_equal(state.pending_choice.kind, &"tile_reward", "Only after Relic acquisition does Population-20 offer begin")
+	expect_equal(state.pending_choice.kind, &"training_piece", "Only after Relic acquisition does Population-40 training begin")
 	expect_equal(RelicRules.equipped(state).size(), 1, "Milestone Relic is active for later rewards")
-	expect_true(state.rewards.threshold_flags.has("0:20"), "Crossed threshold now marked once")
+	expect_true(state.rewards.threshold_flags.has("0:40"), "Crossed threshold now marked once")
 	_resolve_rewards(state, registry)
 	return true
 

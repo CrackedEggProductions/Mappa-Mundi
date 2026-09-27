@@ -320,7 +320,7 @@ func ferry_roundtrip_preserves_graph_and_rng() -> bool:
 func generated_river_ferry_commands_and_roundtrip() -> bool:
 	var registry: ContentRegistry = ContentRegistry.new()
 	assert(registry.load_phase_nine().is_valid)
-	var state: RunState = HomesteadRunFactory.create(1, registry)
+	var state: RunState = preload("res://tests/fixtures/phase_nine_factory.gd").started(registry, 1)
 	var original_path: Array[Dictionary] = EnvironmentalRiverService.path(state)
 	# Seed 1 has straight Runs at (0,1) and (4,3). Both east banks are empty.
 	_generated_play(state, registry, &"tile.riverside_hamlet", Vector2i(0, 1), 1)

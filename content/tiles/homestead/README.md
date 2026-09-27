@@ -28,14 +28,20 @@ Riverside Hamlet and Woodland River are Act-I player Transformation overlays,
 not empty-square Expansions. They target a straight River Run and River Bend
 respectively, preserve River and add explicit Settlement/Forest contact. They
 retain Specialized/Hybrid reward class (two copies) and Masterwork eligibility.
-They are the only Transformation-style exception in the starting bag.
+They enter through Starter/regular drafts and rewards, not automatic core copies.
 
 The manifest and starting-bag entries are ordered by stable definition ID.
-`homestead_run_config.tres` contains the canonical **45 player copies**:
-Forest Edge 4, Forest Bend 3, Forest Belt 2; Straight Road 4, Bending Road 4,
-Road Junction 4; Hamlet Edge 4, Settlement Corner 3, Settlement Throughway 2,
-Settlement Gate 3; Riverside Hamlet 2, Woodland Road 2, Woodland River 2,
-Settlement Corner Gate 2, Settlement Road Bend 2, Settlement Road Throughway 2.
+`homestead_run_config.tres` contains the canonical **18 core copies**:
+Forest Edge 3, Forest Bend 1, Forest Belt 1; Straight Road 2, Bending Road 2,
+Road Junction 2; Hamlet Edge 3, Settlement Corner 1, Settlement Throughway 1,
+Settlement Gate 2. No other design starts in the core.
+
+The full run offers a Starter Draft from Riverside Hamlet, Woodland Road, Woodland
+River, Settlement Corner Gate, Settlement Road Bend, Settlement Road Throughway,
+Housing, Mill, Monastery and Forester's Lodge. It grants one selected copy and
+shuffles before opening draws. Regular draft pools contain 20/25/28 unlocked player
+designs. Act entry unlocks five/three designs and offers one restricted single-copy
+draft; no automatic Act-seed batch exists. Normal Tile Reward quantities are unchanged.
 Founding and eight environmental River copies are additional board setup pieces.
 The emergency player set is Hamlet Edge, Road Junction and Forest Edge.
 

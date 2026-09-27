@@ -17,6 +17,7 @@ func tests() -> Array[Callable]:
 		stripped_charter_state_rejected, orphan_active_bonus_rejected,
 		malformed_selection_identity_rejected, malformed_progress_result_rejected,
 		malformed_transition_progress_rejected, malformed_prior_audit_rejected,
+		malformed_draft_audit_rejected, malformed_draft_act_fields_rejected,
 		active_aggregate_score_overflow_rejected, representable_aggregate_score_boundary]
 
 
@@ -27,7 +28,7 @@ func _content() -> ContentRegistry:
 
 
 func _state(content: ContentRegistry) -> RunState:
-	return HomesteadRunFactory.create(909, content)
+	return preload("res://tests/fixtures/phase_nine_factory.gd").started(content, 909)
 
 
 func _reject(state: RunState, content: ContentRegistry) -> void:
@@ -130,8 +131,8 @@ func wrong_charter_id_type_rejected() -> bool:
 
 func malformed_transition_shape_rejected() -> bool:
 	var value: Dictionary = SpecialistValueCodec.decode(PhaseNineSerializer.encode(ActTransitionState.new(), &"act_transition"))
-	value["seeded_copy_ids"] = ["1"]
-	expect_true(not PhaseNineSerializer.validate_shape(SpecialistValueCodec.encode(value), &"act_transition").is_valid, "Physical IDs must be exact integers")
+	value["entry_draft_resolved"] = 1
+	expect_true(not PhaseNineSerializer.validate_shape(SpecialistValueCodec.encode(value), &"act_transition").is_valid, "Draft-resolution progress must be an explicit boolean")
 	return true
 
 
@@ -373,4 +374,30 @@ func representable_aggregate_score_boundary() -> bool:
 	state.features.tracks.values[3] = 2
 	PhaseNineInvariantValidator._validate_track_total(state, report)
 	expect_true(not report.is_valid, "One additional point is rejected without overflowing the sum")
+	return true
+
+
+func malformed_draft_audit_rejected() -> bool:
+	var content: ContentRegistry = _content()
+	for field: String in ["details", "kind", "act", "source_id"]:
+		for leaf: Variant in _malformed_leaves():
+			if (field == "details" and leaf is Dictionary) or (field in ["act", "source_id"] and leaf is int):
+				continue
+			var state: RunState = _state(content)
+			state.rewards.history.back()[field] = leaf
+			_reject(state, content)
+	return true
+
+
+func malformed_draft_act_fields_rejected() -> bool:
+	var content: ContentRegistry = _content()
+	for field: String in ["draft_type", "act", "placement_index", "tile_copy_id"]:
+		for leaf: Variant in _malformed_leaves():
+			if field != "draft_type" and leaf is int:
+				continue
+			var state: RunState = _state(content)
+			var details: Dictionary = state.rewards.history.back()["details"]
+			details["draft_type"] = "act_entry"
+			details[field] = leaf
+			_reject(state, content)
 	return true

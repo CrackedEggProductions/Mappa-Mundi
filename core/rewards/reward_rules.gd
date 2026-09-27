@@ -3,7 +3,7 @@ extends RefCounted
 ## One serializable queue for milestones, thresholds and nested reward chains.
 
 const THRESHOLDS: Array[int] = [20, 40, 70, 100]
-const THRESHOLD_KINDS: Array[StringName] = [&"tile_reward", &"training_reward", &"relic_offer", &"major_reward"]
+const THRESHOLD_KINDS: Array[StringName] = RunConfig.DEFAULT_THRESHOLD_REWARD_KINDS
 const MILESTONE_TYPES: Array[int] = [1, 0, 2, 3]
 const MILESTONE_NAMES: Array[StringName] = [&"settlement", &"road", &"forest", &"river"]
 const MAJOR_OPTIONS: Array[StringName] = [&"grand_survey", &"masterwork", &"recruit_steward", &"relic_cache"]
@@ -58,6 +58,8 @@ static func queue_thresholds(state: RunState, source_id: int = 0) -> void:
 				continue
 			state.rewards.threshold_flags.append(key)
 			record(state, &"track_threshold_crossed", {"track": track, "threshold": threshold}, source_id)
+			if THRESHOLD_KINDS[index] == &"none":
+				continue # Crossing audit only: no reward job, offer, RNG, shuffle or refill.
 			var job: Dictionary = {"kind": String(THRESHOLD_KINDS[index]), "source_id": source_id,
 				"eligibility_act": state.expansion.current_act, "track": track, "threshold": threshold}
 			state.rewards.queue.append(job)

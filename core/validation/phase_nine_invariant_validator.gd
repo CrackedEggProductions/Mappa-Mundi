@@ -3,8 +3,8 @@ extends RefCounted
 ## Validate snapshots at real turn/choice/transition boundaries without resuming.
 
 const STEP_FLAGS: Dictionary = {"advanced": 4, "capacity_refreshed": 5,
-	"survey_refreshed": 6, "relics_refreshed": 7, "unlocked": 8, "seeded": 9,
-	"shuffled": 10, "information_selected": 11, "counter_reset": 12, "refill_done": 13}
+	"survey_refreshed": 6, "relics_refreshed": 7, "unlocked": 8, "information_selected": 9,
+	"entry_draft_resolved": 10, "counter_reset": 11, "refill_done": 12}
 const RESULTS: Array[StringName] = [&"failed", &"fulfilled", &"exceeded"]
 
 
@@ -17,6 +17,9 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 	if state.expansion == null or state.features == null or state.specialists == null \
 			or state.trade == null or state.relics == null or state.rewards == null:
 		report.add(&"missing_phase_nine_state", "Charters require the complete gameplay profile.")
+		return
+	_validate_prior_audit_shapes(state, report)
+	if not report.is_valid:
 		return
 	_validate_track_total(state, report)
 	if not report.is_valid:
@@ -37,6 +40,22 @@ static func validate(state: RunState, content: ContentRegistry, report: Invarian
 		_validate_transition_audit(state, report)
 	if report.is_valid:
 		_validate_evaluations(state, content, report)
+
+
+static func _validate_prior_audit_shapes(state: RunState, report: InvariantReport) -> void:
+	# Phase 9 queries these audits before the full Phase-8 validator runs.
+	for event: Dictionary in state.relics.history + state.rewards.history:
+		if not event.get("event_id") is int or not event.get("source_id") is int \
+				or not (event.get("kind") is String or event.get("kind") is StringName) \
+				or not event.get("act") is int or not event.get("details") is Dictionary:
+			report.add(&"invalid_relic_reward_audit", "Act queries require typed reward and Relic audit records.")
+			return
+		if event["kind"] == "tile_draft_resolved":
+			var details: Dictionary = event["details"]
+			if not details.get("draft_type") is String or not details.get("act") is int \
+					or not details.get("placement_index") is int or not details.get("tile_copy_id") is int:
+				report.add(&"invalid_tile_draft", "Act-entry audit fields must be typed before continuation queries.")
+				return
 
 
 static func _validate_track_total(state: RunState, report: InvariantReport) -> void:
@@ -148,7 +167,7 @@ static func _validate_selection(state: RunState, content: ContentRegistry, repor
 static func _validate_transition(state: RunState, limits: Array[int], report: InvariantReport) -> void:
 	var t: ActTransitionState = state.act_transition
 	if t.outgoing_act not in [1, 2] or t.incoming_act != t.outgoing_act + 1 \
-			or t.step < 1 or t.step > 14 or t.transition_id <= 0 or t.transition_id >= state.next_runtime_id:
+			or t.step < 1 or t.step > ActRules.STEP_KEYS.size() or t.transition_id <= 0 or t.transition_id >= state.next_runtime_id:
 		report.add(&"invalid_act_transition", "Transition requires a stable source and canonical outgoing/incoming Acts.")
 		return
 	if state.phase not in [GamePhase.Type.RESOLVING_ACT_TRANSITION, GamePhase.Type.PENDING_CHOICE] \
@@ -177,14 +196,12 @@ static func _validate_transition(state: RunState, limits: Array[int], report: In
 	if t.pending_hand_refill < -1 or t.pending_hand_refill >= state.expansion.hand.size() \
 			or state.expansion.pending_refill_index != (-1 if t.refill_done else t.pending_hand_refill):
 		report.add(&"transition_refill_mismatch", "Outgoing final hand refill must remain explicit until the last transition step.")
-	var expected_seed_count: int = 10 if t.incoming_act == 2 else 6
-	if t.seeded_copy_ids.size() != (expected_seed_count if t.seeded else 0) \
-			or not FeatureInvariantValidator._unique_positive(t.seeded_copy_ids):
-		report.add(&"invalid_transition_seeding", "Automatic seeding records exactly one set of new physical copies.")
-	for id: int in t.seeded_copy_ids:
-		var copy: TileCopyState = PhysicalTileRules.find_copy(state, id)
-		if copy == null or copy.acquired_act != t.incoming_act:
-			report.add(&"invalid_seed_copy", "Seeded identities must resolve in the incoming Act.")
+	if t.entry_draft_resolved and not TileDraftService.completed(state, &"act_entry", t.incoming_act):
+		report.add(&"missing_entry_draft", "Completed entry-draft step requires its acquisition and shuffle audit.")
+	if state.pending_choice != null and state.pending_choice.kind == &"tile_draft":
+		var context: Dictionary = state.pending_choice.context
+		if t.step != 10 or context.get("draft_type") != "act_entry" or context.get("act") != t.incoming_act:
+			report.add(&"invalid_transition_draft", "Only the current incoming Act entry draft may pause transition step ten.")
 
 
 static func _validate_result(state: RunState, content: ContentRegistry, report: InvariantReport) -> void:
@@ -251,7 +268,6 @@ static func _validate_history(state: RunState, content: ContentRegistry, report:
 	if state.pending_choice != null:
 		ids.append(state.pending_choice.choice_id)
 	var selected: Dictionary = {}
-	var seeded_acts: Array[int] = []
 	for event: Dictionary in state.charters.history:
 		if not event.get("event_id") is int or not event.get("kind") is String \
 				or not event.get("act") is int or event["act"] < 1 or event["act"] > state.expansion.current_act:
@@ -270,17 +286,7 @@ static func _validate_history(state: RunState, content: ContentRegistry, report:
 			var key: String = "%s:%s" % [event["kind"], id]
 			selected[key] = selected.get(key, 0) + 1
 		elif event["kind"] == "act_content_seeded":
-			var details: Variant = event.get("details")
-			if not details is Dictionary or not details.get("act") is int \
-					or not PhaseNineSerializer._array_of(details.get("copy_ids"), TYPE_INT):
-				report.add(&"invalid_seed_history", "Seeding audit must retain incoming Act and exact physical copies.")
-				continue
-			var act: int = details["act"]
-			if act not in [2, 3] or act != event["act"] or act in seeded_acts \
-					or details["copy_ids"].size() != (10 if act == 2 else 6):
-				report.add(&"duplicate_seed_history", "Exactly one canonical seed batch may enter each later Act.")
-			seeded_acts.append(act)
-			_validate_seed_batch(state, details, content.get_config(), report)
+			report.add(&"superseded_automatic_seeding", "Act-entry drafts replace automatic tile seeding.")
 	for pair: Array in [["charter_selected", state.charters.act_one_id], ["charter_selected", state.charters.act_two_id],
 			["grand_charter_selected", state.charters.grand_id], ["grand_charter_forecast_revealed", state.charters.grand_id]]:
 		if not String(pair[1]).is_empty() and selected.get("%s:%s" % pair, 0) != 1:
@@ -288,38 +294,39 @@ static func _validate_history(state: RunState, content: ContentRegistry, report:
 	var reveal_count: int = selected.get("grand_charter_exact_revealed:%s" % state.charters.grand_id, 0)
 	if reveal_count != (1 if state.charters.exact_revealed else 0):
 		report.add(&"grand_reveal_history_mismatch", "Exact reveal must agree with its one-time audit.")
+	_validate_entry_drafts(state, content, report)
+
+
+static func _validate_entry_drafts(state: RunState, content: ContentRegistry, report: InvariantReport) -> void:
+	var resolved_acts: Array[int] = []
+	for event: Dictionary in state.rewards.history:
+		if event.get("kind") != "tile_draft_resolved":
+			continue
+		var details: Dictionary = event.get("details", {})
+		if details.get("draft_type") != "act_entry":
+			continue
+		var act: int = details["act"]
+		if act not in [2, 3] or act in resolved_acts:
+			report.add(&"duplicate_entry_draft", "Exactly one Act-entry draft may resolve per incoming Act.")
+			continue
+		resolved_acts.append(act)
+		var copy: TileCopyState = PhysicalTileRules.find_copy(state, details["tile_copy_id"])
+		if copy == null or copy.acquired_act != act or copy.acquisition_source != &"act_entry_draft" \
+				or copy.definition_id not in content.get_config().entry_draft_pool(act) \
+				or String(copy.definition_id) != details.get("definition_id") or details.get("quantity") != 1:
+			report.add(&"invalid_entry_draft_copy", "Entry draft acquires one canonical unlocked physical copy in the incoming Act.")
+	for copy: TileCopyState in state.tile_copies:
+		if copy != null and copy.acquisition_source == &"act_transition_seed":
+			report.add(&"superseded_seed_copy", "Automatic Act seed copies do not exist in draft-cadence runs.")
 	for act: int in [2, 3]:
 		var required: bool = state.expansion.current_act >= act
 		if state.act_transition != null and state.act_transition.incoming_act == act:
-			required = state.act_transition.seeded
-		if (act in seeded_acts) != required:
-			report.add(&"missing_seed_audit", "Each reached incoming Act must retain exactly its canonical seeded batch.")
-
-
-static func _validate_seed_batch(state: RunState, data: Dictionary, config: RunConfig, report: InvariantReport) -> void:
-	var act: int = data["act"]
-	if act not in [2, 3]:
-		return
-	var expected: Array[StringName] = ActRules.seed_definitions(act, config)
-	if data.get("definition_ids") != expected:
-		report.add(&"invalid_seed_definitions", "Seed batch must preserve the canonical incoming-Act design list.")
-	var counts: Dictionary = {}
-	var ids: Array[int] = []
-	for id: int in data["copy_ids"]:
-		var copy: TileCopyState = PhysicalTileRules.find_copy(state, id)
-		if copy == null or id in ids or copy.acquired_act != act \
-				or copy.acquisition_source != &"act_transition_seed" or copy.definition_id not in expected:
-			report.add(&"invalid_seed_identity", "Seed copies require unique identity, canonical design, incoming Act and acquisition source.")
-			continue
-		ids.append(id)
-		counts[copy.definition_id] = counts.get(copy.definition_id, 0) + 1
-	for entry: StartingBagEntry in config.seeds_for_act(act):
-		if counts.get(entry.definition_id, 0) != entry.count:
-			report.add(&"invalid_seed_quantity", "Automatic seeding must match the configured physical-copy quantities.")
-	for copy: TileCopyState in state.tile_copies:
-		if copy != null and copy.acquired_act == act and copy.acquisition_source == &"act_transition_seed" \
-				and copy.tile_copy_id not in ids:
-			report.add(&"unaudited_seed_copy", "Every transition seed copy must belong to its single recorded batch.")
+			required = state.act_transition.entry_draft_resolved
+			# A resolved draft may be serialized before its transition cursor advances.
+			if state.act_transition.step == 10:
+				required = TileDraftService.completed(state, &"act_entry", act)
+		if (act in resolved_acts) != required:
+			report.add(&"missing_entry_draft_audit", "Each entered Act retains exactly its resolved entry draft.")
 
 
 static func _validate_transition_audit(state: RunState, report: InvariantReport) -> void:
@@ -357,15 +364,15 @@ static func _validate_transition_audit(state: RunState, report: InvariantReport)
 			return
 		elif event["kind"] == "act_transition_step":
 			var step: Variant = details.get("step")
-			if not step is int or step != steps[id] + 1 or step > 14 \
+			if not step is int or step != steps[id] + 1 or step > ActRules.STEP_KEYS.size() \
 					or details.get("step_key") != String(ActRules.STEP_KEYS[step - 1]) \
 					or details.get("outgoing_act") != starts[id]["outgoing_act"] \
 					or details.get("incoming_act") != starts[id]["incoming_act"]:
 				report.add(&"invalid_transition_step_audit", "Canonical transition operations occur exactly once in listed order.")
 				return
 			steps[id] = step
-		elif steps[id] != 14 or id in finished or event["act"] != starts[id]["incoming_act"]:
-			report.add(&"premature_act_started", "Incoming turn input follows all fourteen transition steps exactly once.")
+		elif steps[id] != ActRules.STEP_KEYS.size() or id in finished or event["act"] != starts[id]["incoming_act"]:
+			report.add(&"premature_act_started", "Incoming turn input follows all canonical transition steps exactly once.")
 		else:
 			finished.append(id)
 	for id: int in starts:
@@ -381,6 +388,15 @@ static func _validate_transition_audit(state: RunState, report: InvariantReport)
 static func validate_hand_boundary(state: RunState, report: InvariantReport) -> void:
 	var expansion: ExpansionState = state.expansion
 	var c: CharterState = state.charters
+	if state.pending_choice != null and state.pending_choice.kind == &"tile_draft" \
+			and state.pending_choice.context.get("draft_type") == "starter":
+		if state.phase != GamePhase.Type.PENDING_CHOICE or expansion.current_act != 1 \
+				or expansion.normal_placements != 0 or not c.placement_history.is_empty() \
+				or expansion.hand != [0, 0, 0] or expansion.pending_refill_index != -1 \
+				or c.deferred_refill_index != -1 or not expansion.inspected_ids.is_empty() \
+				or state.act_transition != null:
+			report.add(&"invalid_starter_draft_hand", "Starter draft pauses before any opening-hand draw or placement.")
+		return
 	var expected_empty: Array[int] = []
 	for index: int in [expansion.pending_refill_index, c.deferred_refill_index]:
 		if index < -1 or index >= expansion.hand.size() or (index >= 0 and index in expected_empty):

@@ -3,7 +3,7 @@ extends RefCounted
 ## Generated environment, overlays, scoring and all 66 placements use actual rules.
 ## This is a reproducible integration fixture, not a claim of naturally optimized play.
 
-const RUN_SEED: int = 25
+const RUN_SEED: int = 22
 const Previous = preload("res://tests/fixtures/phase_eight_factory.gd")
 const Acquisition = preload("res://tests/fixtures/phase_five_factory.gd")
 const Intent = preload("res://tests/fixtures/phase_six_factory.gd")
@@ -16,13 +16,24 @@ static func content() -> ContentRegistry:
 	return registry
 
 
+static func started(registry: ContentRegistry, seed_value: int = RUN_SEED) -> RunState:
+	var state: RunState = HomesteadRunFactory.create(seed_value, registry)
+	if state.pending_choice != null and state.pending_choice.kind == &"tile_draft":
+		var accepted: ValidationResult = RulesEngine.execute(state, registry,
+			ResolveTileDraftCommand.new(state.pending_choice.choice_id, 0))
+		assert(accepted.is_valid, accepted.user_message + str(accepted.debug_details))
+	assert(state.phase == GamePhase.Type.TURN_INPUT, "Starter selection must finish setup through its real command")
+	return state
+
+
 static func scripted(registry: ContentRegistry, seed_value: int, outcome: int = 0,
 		reload_boundaries: bool = false, stop_after_act: int = 3) -> Dictionary:
 	var state: RunState = HomesteadRunFactory.create(seed_value, registry)
-	train_naturalist(state, registry)
 	var trace: Dictionary = {"commands": [], "choices": [], "turns": [],
 		"act_counts": [0, 0, 0], "round_trips": 0, "transition_entries": [],
 		"midpoint_pending": [], "saved_choices": [], "initial_charter": state.charters.act_one_id}
+	state = drain(state, registry, trace, reload_boundaries)
+	train_naturalist(state, registry)
 	for act: int in range(1, stop_after_act + 1):
 		var recipe: Array[Dictionary] = placements(act, outcome, state)
 		for index: int in range(recipe.size()):
@@ -65,7 +76,7 @@ static func drain(state: RunState, registry: ContentRegistry, trace: Dictionary,
 		guard += 1
 		assert(guard < 100, "A consequence queue must make bounded progress")
 		var choice: PendingChoice = state.pending_choice
-		trace["choices"].append({"kind": choice.kind, "options": choice.options.duplicate(true),
+		trace["choices"].append({"kind": choice.kind, "options": choice.options.duplicate(true), "context": choice.context.duplicate(true),
 			"act": state.expansion.current_act, "placement": state.expansion.normal_placements,
 			"grand_revealed": state.charters.exact_revealed, "rng_operations": state.rng.operation_count,
 			"in_transition": state.act_transition != null, "capacity": state.relics.capacity})
@@ -76,6 +87,7 @@ static func drain(state: RunState, registry: ContentRegistry, trace: Dictionary,
 				var snapshot: SerializationResult = RunSerializer.serialize(state, registry)
 				assert(snapshot.validation.is_valid, str(snapshot.validation.debug_details))
 				trace["saved_choices"].append({"kind": choice.kind, "act": state.expansion.current_act,
+					"outgoing_act": state.act_transition.outgoing_act,
 					"step": state.act_transition.step, "json": snapshot.json_text})
 			state = round_trip(state, registry)
 			trace["round_trips"] += 1
@@ -88,6 +100,8 @@ static func drain(state: RunState, registry: ContentRegistry, trace: Dictionary,
 static func choice_command(state: RunState) -> PlayerCommand:
 	var choice: PendingChoice = state.pending_choice
 	match choice.kind:
+		&"tile_draft":
+			return ResolveTileDraftCommand.new(choice.choice_id, 0)
 		&"specialist_assignment":
 			return _assignment_command(state)
 		&"specialist_training":

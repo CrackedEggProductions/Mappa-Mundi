@@ -13,7 +13,7 @@ func tests() -> Array[Callable]:
 	var result: Array[Callable] = [real_outgoing_choice_coverage]
 	for act: int in [1, 2]:
 		result.append(nested_choices_resume_once.bind(act))
-		for step: int in range(2, 15):
+		for step: int in range(2, 14):
 			result.append(stable_checkpoint_resume_once.bind(act, step))
 	return result
 
@@ -26,7 +26,7 @@ func _prepare() -> void:
 	for act: int in [1, 2]:
 		var initial: String = ""
 		for saved: Dictionary in _trace["saved_choices"]:
-			if int(saved["act"]) == act:
+			if int(saved["outgoing_act"]) == act:
 				initial = saved["json"]
 				break
 		assert(not initial.is_empty(), "Fixture must pause in each outgoing Charter reward")
@@ -63,7 +63,10 @@ func _load(json: String) -> RunState:
 
 func _execute_choice_only(state: RunState) -> void:
 	var command: PlayerCommand = F.choice_command(state)
-	if RewardCommands.handles(command):
+	if command is ResolveTileDraftCommand:
+		assert(TileDraftService.validate_command(state, _content, command).is_valid)
+		TileDraftService.execute_command(state, command)
+	elif RewardCommands.handles(command):
 		assert(RewardCommands.validate_command(state, _content, command).is_valid)
 		RewardCommands.execute_command(state, _content, command)
 	elif RelicHandRules.handles(command):
@@ -105,13 +108,13 @@ func stable_checkpoint_resume_once(act: int, step: int) -> bool:
 		expect_equal(StateNormalizer.fingerprint(state), fingerprint, "Repeated load preserves complete authoritative state")
 		expect_equal(state.current_rng_state, rng, "Load consumes no random draw")
 		expect_equal(state.rng.operation_count, operations, "Load performs no shuffle or offer selection")
-		expect_equal(state.next_runtime_id, ids, "Load allocates no seed, event, or reward copy")
-	if step <= 13:
-		expect_equal(state.expansion.hand[state.act_transition.pending_hand_refill], 0, "Pending outgoing hand slot stays empty until step thirteen")
+		expect_equal(state.next_runtime_id, ids, "Load allocates no draft, event, or reward copy")
+	if step <= 12:
+		expect_equal(state.expansion.hand[state.act_transition.pending_hand_refill], 0, "Pending outgoing hand slot stays empty until step twelve")
 	_finish_public(state)
 	expect_equal(state.phase, GamePhase.Type.TURN_INPUT, "Public continuation enters next Act input")
 	expect_equal(state.expansion.current_act, act + 1, "Act advances exactly once")
-	expect_equal(_semantic_fingerprint(state), _expected[act], "Every resume boundary gives identical histories, seeds, shuffle, choices and refill")
+	expect_equal(_semantic_fingerprint(state), _expected[act], "Every resume boundary gives identical histories, drafts, shuffle, choices and refill")
 	var ended: String = StateNormalizer.fingerprint(state)
 	expect_true(not RulesEngine.execute(state, _content, ResumeActTransitionCommand.new()).is_valid, "Completed transition cannot resume again")
 	expect_equal(StateNormalizer.fingerprint(state), ended, "Rejected repeated resume has zero side effects")
@@ -122,12 +125,12 @@ func real_outgoing_choice_coverage() -> bool:
 	_prepare()
 	var by_act: Dictionary = {1: [], 2: []}
 	for saved: Dictionary in _trace["saved_choices"]:
-		by_act[int(saved["act"])].append(String(saved["kind"]))
+		by_act[int(saved["outgoing_act"])].append(String(saved["kind"]))
 	expect_true(by_act[1].has("tile_reward"), "Real Act I fulfillment pauses for its Tile Reward")
 	expect_true(by_act[2].has("relic_offer"), "Real Act II fulfillment pauses for its Relic")
 	expect_true(by_act[2].has("tile_reward"), "Real Act II resolves its ordered Tile Reward")
 	expect_true(by_act[2].has("major_reward"), "Real Act II exceed pauses for its Major Reward")
-	expect_equal(_checkpoints.size(), 26, "Both Acts supply each actual step-two-through-fourteen snapshot")
+	expect_equal(_checkpoints.size(), 24, "Both Acts supply each actual step-two-through-thirteen snapshot")
 	return true
 
 
@@ -135,7 +138,7 @@ func nested_choices_resume_once(act: int) -> bool:
 	_prepare()
 	var examined: int = 0
 	for saved: Dictionary in _trace["saved_choices"]:
-		if int(saved["act"]) != act:
+		if int(saved["outgoing_act"]) != act:
 			continue
 		examined += 1
 		var state: RunState = _load(saved["json"])
@@ -146,9 +149,13 @@ func nested_choices_resume_once(act: int) -> bool:
 		expect_equal(StateNormalizer.fingerprint(state), fingerprint, "Nested reward load does not replay prior rewards")
 		expect_equal(state.pending_choice.choice_id, choice_id, "Choice identity remains exact")
 		expect_equal(state.pending_choice.options, options, "Exact offered IDs and order never reroll")
-		expect_equal(state.expansion.current_act, act, "Outgoing choice still has outgoing Act")
-		expect_equal(state.relics.capacity, 2 if act == 1 else 4, "Outgoing choice retains old capacity")
+		if state.pending_choice.kind == &"tile_draft":
+			expect_equal(state.expansion.current_act, act + 1, "Entry draft uses incoming Act")
+			expect_equal(state.relics.capacity, 4 if act == 1 else 5, "Entry draft follows capacity refresh")
+		else:
+			expect_equal(state.expansion.current_act, act, "Outgoing reward still has outgoing Act")
+			expect_equal(state.relics.capacity, 2 if act == 1 else 4, "Outgoing reward retains old capacity")
 		_finish_public(state)
-		expect_equal(_semantic_fingerprint(state), _expected[act], "Resuming any nested choice converges without duplicate rewards or seeds")
+		expect_equal(_semantic_fingerprint(state), _expected[act], "Resuming any nested choice converges without duplicate rewards or draft copies")
 	expect_true(examined > 0, "At least one actual nested boundary was exercised")
 	return true

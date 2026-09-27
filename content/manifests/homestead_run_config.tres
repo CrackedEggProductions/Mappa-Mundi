@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="RunConfig" load_steps=27 format=3]
+[gd_resource type="Resource" script_class="RunConfig" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://content/manifests/run_config.gd" id="1_config"]
 [ext_resource type="Script" path="res://content/manifests/starting_bag_entry.gd" id="2_entry"]
@@ -6,132 +6,66 @@
 [sub_resource type="Resource" id="Bag_bending_road"]
 script = ExtResource("2_entry")
 definition_id = &"tile.bending_road"
-count = 4
+count = 2
 
 [sub_resource type="Resource" id="Bag_forest_belt"]
 script = ExtResource("2_entry")
 definition_id = &"tile.forest_belt"
-count = 2
+count = 1
 
 [sub_resource type="Resource" id="Bag_forest_bend"]
 script = ExtResource("2_entry")
 definition_id = &"tile.forest_bend"
-count = 3
+count = 1
 
 [sub_resource type="Resource" id="Bag_forest_edge"]
 script = ExtResource("2_entry")
 definition_id = &"tile.forest_edge"
-count = 4
+count = 3
 
 [sub_resource type="Resource" id="Bag_hamlet_edge"]
 script = ExtResource("2_entry")
 definition_id = &"tile.hamlet_edge"
-count = 4
-
-[sub_resource type="Resource" id="Bag_riverside_hamlet"]
-script = ExtResource("2_entry")
-definition_id = &"tile.riverside_hamlet"
-count = 2
+count = 3
 
 [sub_resource type="Resource" id="Bag_road_junction"]
 script = ExtResource("2_entry")
 definition_id = &"tile.road_junction"
-count = 4
+count = 2
 
 [sub_resource type="Resource" id="Bag_settlement_corner"]
 script = ExtResource("2_entry")
 definition_id = &"tile.settlement_corner"
-count = 3
-
-[sub_resource type="Resource" id="Bag_settlement_corner_gate"]
-script = ExtResource("2_entry")
-definition_id = &"tile.settlement_corner_gate"
-count = 2
+count = 1
 
 [sub_resource type="Resource" id="Bag_settlement_gate"]
 script = ExtResource("2_entry")
 definition_id = &"tile.settlement_gate"
-count = 3
-
-[sub_resource type="Resource" id="Bag_settlement_road_bend"]
-script = ExtResource("2_entry")
-definition_id = &"tile.settlement_road_bend"
-count = 2
-
-[sub_resource type="Resource" id="Bag_settlement_road_throughway"]
-script = ExtResource("2_entry")
-definition_id = &"tile.settlement_road_throughway"
 count = 2
 
 [sub_resource type="Resource" id="Bag_settlement_throughway"]
 script = ExtResource("2_entry")
 definition_id = &"tile.settlement_throughway"
-count = 2
+count = 1
 
 [sub_resource type="Resource" id="Bag_straight_road"]
 script = ExtResource("2_entry")
 definition_id = &"tile.straight_road"
-count = 4
-
-[sub_resource type="Resource" id="Bag_woodland_river"]
-script = ExtResource("2_entry")
-definition_id = &"tile.woodland_river"
-count = 2
-
-[sub_resource type="Resource" id="Bag_woodland_road"]
-script = ExtResource("2_entry")
-definition_id = &"tile.woodland_road"
-count = 2
-
-[sub_resource type="Resource" id="Seed_Market"]
-script = ExtResource("2_entry")
-definition_id = &"tile.development.market"
-count = 4
-
-[sub_resource type="Resource" id="Seed_Port"]
-script = ExtResource("2_entry")
-definition_id = &"tile.development.port"
-count = 2
-
-[sub_resource type="Resource" id="Seed_Urban"]
-script = ExtResource("2_entry")
-definition_id = &"tile.transformation.urban_expansion"
-count = 2
-
-[sub_resource type="Resource" id="Seed_TownSquare"]
-script = ExtResource("2_entry")
-definition_id = &"tile.development.town_square"
-count = 1
-
-[sub_resource type="Resource" id="Seed_Abbey"]
-script = ExtResource("2_entry")
-definition_id = &"tile.development.abbey"
-count = 1
-
-[sub_resource type="Resource" id="Seed_Bridge"]
-script = ExtResource("2_entry")
-definition_id = &"tile.transformation.bridge"
-count = 2
-
-[sub_resource type="Resource" id="Seed_Rewilding"]
-script = ExtResource("2_entry")
-definition_id = &"tile.transformation.rewilding"
-count = 2
-
-[sub_resource type="Resource" id="Seed_GrandMarket"]
-script = ExtResource("2_entry")
-definition_id = &"tile.development.grand_market"
 count = 2
 
 [resource]
 script = ExtResource("1_config")
-config_id = &"config.alpha_homestead_playtest_r1"
+config_id = &"config.alpha_homestead_draft_cadence"
 act_placement_limits = Array[int]([18, 22, 26])
 track_thresholds = Array[int]([20, 40, 70, 100])
-starting_bag = Array[ExtResource("2_entry")]([SubResource("Bag_bending_road"), SubResource("Bag_forest_belt"), SubResource("Bag_forest_bend"), SubResource("Bag_forest_edge"), SubResource("Bag_hamlet_edge"), SubResource("Bag_riverside_hamlet"), SubResource("Bag_road_junction"), SubResource("Bag_settlement_corner"), SubResource("Bag_settlement_corner_gate"), SubResource("Bag_settlement_gate"), SubResource("Bag_settlement_road_bend"), SubResource("Bag_settlement_road_throughway"), SubResource("Bag_settlement_throughway"), SubResource("Bag_straight_road"), SubResource("Bag_woodland_river"), SubResource("Bag_woodland_road")])
+track_threshold_reward_kinds = Array[StringName]([&"none", &"training_reward", &"relic_offer", &"major_reward"])
+starting_bag = Array[ExtResource("2_entry")]([SubResource("Bag_bending_road"), SubResource("Bag_forest_belt"), SubResource("Bag_forest_bend"), SubResource("Bag_forest_edge"), SubResource("Bag_hamlet_edge"), SubResource("Bag_road_junction"), SubResource("Bag_settlement_corner"), SubResource("Bag_settlement_gate"), SubResource("Bag_settlement_throughway"), SubResource("Bag_straight_road")])
 hand_capacity = 3
 reserve_capacity = 1
 initial_survey_charges = 1
 emergency_definitions = Array[StringName]([&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_junction"])
-act_two_seeds = Array[ExtResource("2_entry")]([SubResource("Seed_Market"), SubResource("Seed_Port"), SubResource("Seed_Urban"), SubResource("Seed_TownSquare"), SubResource("Seed_Abbey")])
-act_three_seeds = Array[ExtResource("2_entry")]([SubResource("Seed_Bridge"), SubResource("Seed_Rewilding"), SubResource("Seed_GrandMarket")])
+draft_interval = 2
+starter_draft_pool = Array[StringName]([&"tile.riverside_hamlet", &"tile.woodland_road", &"tile.woodland_river", &"tile.settlement_corner_gate", &"tile.settlement_road_bend", &"tile.settlement_road_throughway", &"tile.development.housing", &"tile.development.mill", &"tile.development.monastery", &"tile.development.foresters_lodge"])
+act_one_draft_pool = Array[StringName]([&"tile.bending_road", &"tile.development.foresters_lodge", &"tile.development.housing", &"tile.development.mill", &"tile.development.monastery", &"tile.forest_belt", &"tile.forest_bend", &"tile.forest_edge", &"tile.hamlet_edge", &"tile.riverside_hamlet", &"tile.road_junction", &"tile.settlement_corner", &"tile.settlement_corner_gate", &"tile.settlement_gate", &"tile.settlement_road_bend", &"tile.settlement_road_throughway", &"tile.settlement_throughway", &"tile.straight_road", &"tile.woodland_river", &"tile.woodland_road"])
+act_two_unlocks = Array[StringName]([&"tile.development.market", &"tile.development.port", &"tile.transformation.urban_expansion", &"tile.development.town_square", &"tile.development.abbey"])
+act_three_unlocks = Array[StringName]([&"tile.transformation.bridge", &"tile.transformation.rewilding", &"tile.development.grand_market"])

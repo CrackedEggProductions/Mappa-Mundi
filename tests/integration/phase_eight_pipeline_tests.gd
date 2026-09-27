@@ -177,13 +177,18 @@ func completion_relic_children_follow_returns() -> bool:
 func reward_chain_before_hand_refill() -> bool:
 	var registry: ContentRegistry = F.content()
 	var state: RunState = F.create(registry)
+	F.equip(state, registry, &"relic.the_long_road")
+	for piece: SpecialistPieceState in state.specialists.pieces:
+		assert(RulesEngine.execute(state, registry, RequestSpecialistTrainingCommand.new(piece.piece_id)).is_valid)
+		assert(RulesEngine.execute(state, registry, ResolveSpecialistTrainingCommand.new(
+			state.pending_choice.choice_id, StringName(state.pending_choice.options[0]["role_definition_id"]))).is_valid)
 	for x: int in range(1, 20):
 		F.play(state, registry, &"tile.straight_road", Vector2i(x, 0), 1)
 		F.decline_assignment(state, registry)
 	F.play(state, registry, &"tile.road_junction", Vector2i(20, 0), 2)
 	F.decline_assignment(state, registry)
-	expect_true(state.pending_choice != null, "Crossed Trade 20 produces a reward")
-	expect_equal(state.pending_choice.kind, &"tile_reward", "First threshold is a Tile Reward")
+	expect_true(state.pending_choice != null, "Long Road base scoring crosses Trade 40")
+	expect_equal(state.pending_choice.kind, &"tile_reward", "No generic pieces remain, so Trade-40 training falls back to a real Tile Reward")
 	var slot: int = state.expansion.pending_refill_index
 	expect_true(slot >= 0 and state.expansion.hand[slot] == 0, "Ordinary refill waits behind the reward")
 	var loaded: RunState = F.load_copy(state, registry)

@@ -67,9 +67,9 @@ func setup_inventory_and_provenance() -> bool:
 		elif copy.acquisition_source == EnvironmentalRiverService.SOURCE:
 			environment_ids.append(copy.tile_copy_id)
 			expect_equal(copy.acquired_act, 1, "Environment is Act-I age")
-	expect_equal(player_ids.size(), 45, "Exact physical player inventory before play")
+	expect_equal(player_ids.size(), 18, "Exact core physical inventory before starter choice")
 	expect_equal(environment_ids.size(), 8, "Separate setup acquisitions")
-	expect_equal(state.expansion.bag.size(), 42, "Only three player tiles drawn")
+	expect_equal(state.expansion.bag.size(), 18, "Core inventory awaits starter choice before opening draw")
 	for copy_id: int in environment_ids:
 		expect_true(copy_id not in player_ids and copy_id not in state.expansion.hand and copy_id not in state.expansion.bag,
 			"Environmental identities never consume player inventory")
@@ -83,7 +83,7 @@ func setup_does_not_play_or_score() -> bool:
 	expect_true(state.features.completions.is_empty(), "No completion event")
 	expect_equal(state.features.tracks.values, [0, 0, 0, 0], "No setup score")
 	expect_true(state.rewards.milestone_flags.is_empty() and state.rewards.threshold_flags.is_empty(), "No setup rewards")
-	expect_true(state.pending_choice == null and state.resolution == null, "No setup assignment or reward choices")
+	expect_true(state.pending_choice != null and state.pending_choice.kind == &"tile_draft" and state.resolution == null, "Only required Starter Draft is pending, never an environmental completion reward")
 	return true
 
 
@@ -109,17 +109,20 @@ func setup_rng_order_is_explicit() -> bool:
 	var state: RunState = _new(92)
 	var expected: RunRNG = RunRNG.new(92)
 	var template_index: int = expected.select_index(24, &"environmental_river_path")
-	var ordered_ids: Array[int] = []
-	for copy: TileCopyState in state.tile_copies:
-		if copy.acquisition_source == &"homestead_starting_bag":
-			ordered_ids.append(copy.tile_copy_id)
-	var shuffled: Array[int] = expected.shuffled_ids(ordered_ids, &"starting_bag_shuffle")
 	var charters: Array[StringName] = [&"charter.a1_growing_realm", &"charter.a1_living_landscape", &"charter.a1_open_roads"]
 	expected.choose_definition_id(charters, &"act_charter_selection")
-	expect_equal(state.rng.operation_count, 3, "Exactly River selection, bag shuffle, Charter selection")
-	expect_equal(state.current_rng_state, expected.current_state, "Exact RNG order preserved")
-	expect_equal(state.expansion.hand, shuffled.slice(0, 3), "Opening draw follows Charter and consumes no RNG")
-	expect_equal(EnvironmentalRiverService.path(state)[0]["rotation"], EnvironmentalRiverService.templates()[template_index][0]["rotation"], "Selected River precedes shuffle")
+	var pool: Array[StringName] = TileDraftService.pool(_content(), &"starter", 1)
+	pool.sort_custom(func(left: StringName, right: StringName) -> bool: return String(left) < String(right))
+	var offered: Array[Dictionary] = []
+	for index: int in range(3):
+		var id: StringName = expected.choose_definition_id(pool, &"tile_draft_offer")
+		offered.append({"definition_id": String(id)})
+		pool.erase(id)
+	expect_equal(state.rng.operation_count, 5, "River selection, Charter selection, then three distinct Starter options")
+	expect_equal(state.current_rng_state, expected.current_state, "Exact setup RNG order preserved")
+	expect_equal(state.pending_choice.options, offered, "Persisted Starter options match the canonical RNG stream")
+	expect_equal(state.expansion.hand, [0, 0, 0], "Opening draw waits for Starter selection and full bag shuffle")
+	expect_equal(EnvironmentalRiverService.path(state)[0]["rotation"], EnvironmentalRiverService.templates()[template_index][0]["rotation"], "River is selected before Charter and Starter offer")
 	return true
 
 
@@ -155,7 +158,7 @@ func old_versions_are_rejected() -> bool:
 func player_pools_exclude_environment() -> bool:
 	var content: ContentRegistry = _content()
 	var act_one: Array[StringName] = RewardRules.tile_pool(content, 1)
-	expect_equal(act_one.size(), 20, "Sixteen player starting designs plus four ordinary Act-I Developments")
+	expect_equal(act_one.size(), 20, "Ten core designs, six hybrids and four ordinary Act-I Developments")
 	for entry: StartingBagEntry in content.get_config().starting_bag:
 		expect_true(entry.definition_id in act_one, "Every starting player design is reward eligible")
 	for id: StringName in [&"tile.development.housing", &"tile.development.mill", &"tile.development.monastery", &"tile.development.foresters_lodge"]:

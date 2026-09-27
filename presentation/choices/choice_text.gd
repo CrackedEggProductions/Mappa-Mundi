@@ -33,6 +33,32 @@ static func description(id: StringName) -> String:
 	return String(DESCRIPTIONS.get(id, ""))
 
 
+static func tile_help(tile: TileDefinition) -> String:
+	if tile.intersection_hub:
+		return "Roads terminate at its three sockets; Trade continues through the intersection."
+	match tile.transformation_kind:
+		&"riverside_hamlet":
+			return "Add a Settlement bank to an existing straight River Run. Preserve the River."
+		&"woodland_river":
+			return "Add Forest to both Field banks of an existing River Bend. Preserve the River."
+		&"bridge":
+			return "Add a perpendicular Road across an existing straight River Run."
+		&"rewilding":
+			return "Grow Forest through an eligible Field placement or occupied Field rewrite."
+		&"urban_expansion":
+			return "Grow a Settlement with the authoritative neighboring boundary rewrites."
+	if tile.tile_class in [DomainTypes.TileClass.DEVELOPMENT, DomainTypes.TileClass.UPGRADE]:
+		return "%s · %s host" % [String(tile.development_stage).replace("_", " ").capitalize(),
+			String(tile.development_host_kind).capitalize()]
+	const EDGES: Array[String] = ["Field", "Forest", "River", "Road", "Settlement"]
+	var parts: Array[String] = []
+	for edge: int in range(EDGES.size()):
+		var count: int = tile.canonical_edges.count(edge)
+		if count > 0:
+			parts.append("%s ×%d" % [EDGES[edge], count])
+	return "Edges: " + " · ".join(parts)
+
+
 static func role_name(state: RunState, content: ContentRegistry, piece_id: int) -> String:
 	if state.specialists == null:
 		return "Steward"

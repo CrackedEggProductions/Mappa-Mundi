@@ -53,6 +53,7 @@ func ensure_ui() -> void:
 	shell.modal_layer.add_child(choice_presenter)
 	choice_presenter.hide()
 	choice_presenter.command_requested.connect(submit)
+	choice_presenter.inspect_charter_requested.connect(show_charter)
 	hand_buttons = shell.hand_buttons
 	confirm_button = shell.confirm_button
 	cancel_button = shell.cancel_button
@@ -282,10 +283,14 @@ func _sync() -> void:
 	shell.act_label.text = "Mappa Mundi  ·  Act %d  ·  %d placed / %d remaining" % [
 		state.expansion.current_act, state.expansion.normal_placements,
 		content.get_config().act_placement_limits[state.expansion.current_act - 1] - state.expansion.normal_placements]
+	if state.act_transition != null and state.act_transition.advanced:
+		shell.act_label.text = "Mappa Mundi  ·  Entering Act %d" % state.act_transition.incoming_act
 	shell.tracks_label.text = "Population %d   Trade %d   Culture %d   Ecology %d" % state.features.tracks.values
 	shell.side_label.text = "Relics\n" + PresentationQueries.relics_text(state, content) \
 		+ "\n\nStewards & Specialists\n" + PresentationQueries.specialists_text(state, content) \
 		+ "\n\nSurvey charges: %d\nBag: %d tiles" % [state.expansion.survey_charges, state.expansion.bag.size()]
+	var next_draft: int = TileDraftService.next_draft_placement(state, content.get_config())
+	shell.side_label.text += "\n" + ("Next Tile Draft: after placement %d" % next_draft if next_draft > 0 else "No more Tile Drafts this Act")
 	shell.charter_button.tooltip_text = PresentationQueries.charter_text(state, content)
 	var objective: Dictionary = CharterRules.visible_grand(state, content) if state.expansion.current_act == 3 else CharterRules.visible_ordinary(state, content)
 	var progress: Dictionary = objective.get("progress", {})
@@ -416,7 +421,18 @@ func fit_board() -> void:
 
 
 func show_charter() -> void:
-	if session == null or session.state.pending_choice != null:
+	if session == null:
+		return
+	if session.state.pending_choice != null:
+		# This is an inspection of the already selected objective. The required
+		# choice remains untouched and returns with its exact persisted options.
+		notice_active = true
+		choice_presenter.hide()
+		shell.notice_panel.show()
+		shell.modal_layer.show()
+		shell.notice_text.text = PresentationQueries.charter_text(session.state, session.content)
+		shell.notice_button.text = "Back to choice"
+		_refresh_selection()
 		return
 	_notices.append(PresentationQueries.charter_text(session.state, session.content))
 	_show_next_notice()
@@ -441,6 +457,12 @@ func dismiss_notice() -> void:
 		show_final_map()
 		return
 	notice_active = false
+	if session != null and session.state.pending_choice != null:
+		shell.notice_panel.hide()
+		choice_presenter.show()
+		shell.modal_layer.show()
+		_refresh_selection()
+		return
 	_show_next_notice()
 	_refresh_selection()
 
@@ -475,6 +497,17 @@ func _play_cues(report: ResolutionResult) -> void:
 	board.highlighted_coordinates.clear()
 	for cue: Dictionary in report.cues:
 		var kind: String = String(cue.get("kind", ""))
+		var details: Dictionary = cue.get("details", {})
+		if kind == "tile_draft_resolved":
+			var tile: TileDefinition = session.content.get_tile(StringName(details.get("definition_id", "")))
+			if tile != null:
+				texts.append("%s added to the bag." % tile.display_name)
+			continue
+		if kind == "track_threshold_crossed":
+			var config: RunConfig = session.content.get_config()
+			var threshold_index: int = config.track_thresholds.find(int(details.get("threshold", -1)))
+			if threshold_index >= 0 and config.track_threshold_reward_kinds[threshold_index] == &"none":
+				continue
 		if "completed" in kind or "triggered" in kind or "returned" in kind or "threshold" in kind or "milestone" in kind or "reward_offered" in kind:
 			var caption: String = kind.replace("_", " ").capitalize()
 			if not texts.has(caption):

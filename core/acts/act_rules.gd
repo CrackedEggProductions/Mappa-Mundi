@@ -4,14 +4,15 @@ extends RefCounted
 
 const STEP_KEYS: Array[StringName] = [&"evaluate_charter", &"charter_rewards",
 	&"legendary_noop", &"advance_act", &"relic_capacity", &"survey_refresh",
-	&"relic_refresh", &"unlock_content", &"seed_content", &"shuffle_bag",
-	&"charter_information", &"reset_counter", &"pending_refill", &"turn_input"]
+	&"relic_refresh", &"unlock_content", &"charter_information", &"act_entry_draft",
+	&"reset_counter", &"pending_refill", &"turn_input"]
 
 
 static func ready(state: RunState, content: ContentRegistry) -> bool:
 	return state.charters != null and state.expansion != null and state.pending_choice == null \
 		and state.resolution == null and state.rewards.queue.is_empty() \
 		and state.charters.bonus_queue.is_empty() and not state.charters.bonus_active \
+		and not TileDraftService.cadence_due(state, content.get_config()) \
 		and state.expansion.normal_placements == content.get_config().act_placement_limits[state.expansion.current_act - 1]
 
 
@@ -81,26 +82,6 @@ static func _rewards(state: RunState, content: ContentRegistry, transition: ActT
 			state.charters.evaluations[index] = transition.charter_result.duplicate(true)
 	state.phase = GamePhase.Type.RESOLVING_ACT_TRANSITION
 	return true
-
-
-static func seed_definitions(act: int, config: RunConfig) -> Array[StringName]:
-	var result: Array[StringName] = []
-	for entry: StartingBagEntry in config.seeds_for_act(act):
-		result.append(entry.definition_id)
-	return result
-
-
-static func _seed(state: RunState, transition: ActTransitionState, config: RunConfig) -> void:
-	var definitions: Array[StringName] = seed_definitions(transition.incoming_act, config)
-	for entry: StartingBagEntry in config.seeds_for_act(transition.incoming_act):
-		for copy_index: int in range(entry.count):
-			var copy_id: int = PhysicalTileRules.acquire(state, entry.definition_id, &"act_transition_seed", TileLocationState.Kind.BAG)
-			state.expansion.bag.append(copy_id)
-			transition.seeded_copy_ids.append(copy_id)
-	transition.seeded = true
-	_record(state, &"act_content_seeded", {"transition_id": transition.transition_id,
-		"act": transition.incoming_act, "copy_ids": transition.seeded_copy_ids.duplicate(),
-		"definition_ids": definitions})
 
 
 static func _record(state: RunState, kind: StringName, details: Dictionary) -> void:
@@ -224,29 +205,31 @@ static func advance_one(state: RunState, content: ContentRegistry) -> Validation
 		8:
 			transition.unlocked = true
 		9:
-			_seed(state, transition, content.get_config())
-		10:
-			state.expansion.bag = state.rng.shuffled_ids(state.expansion.bag, &"act_transition_bag_shuffle")
-			transition.shuffled = true
-		11:
 			if transition.incoming_act == 2:
 				CharterRules.select_ordinary(state, content, 2)
 				CharterRules.select_grand(state, content)
 			transition.information_selected = true
-		12:
+		10:
+			if not TileDraftService.completed(state, &"act_entry", transition.incoming_act):
+				if not TileDraftService.begin(state, content, &"act_entry"):
+					return ValidationResult.failure(&"act_entry_draft_unavailable", "Incoming Act requires its restricted entry draft.")
+				return ValidationResult.success()
+			# The draft command already acquired one copy and randomized the full bag.
+			transition.entry_draft_resolved = true
+		11:
 			state.expansion.normal_placements = 0
 			transition.counter_reset = true
-		13:
+		12:
 			PhysicalTileRules.refill_pending(state, content.get_config())
 			transition.refill_done = true
-		14:
+		13:
 			state.phase = GamePhase.Type.TURN_INPUT
 		_:
 			return ValidationResult.failure(&"invalid_act_step", "Unknown Act transition step.")
 	_record(state, &"act_transition_step", {"transition_id": transition.transition_id,
 		"outgoing_act": transition.outgoing_act, "incoming_act": transition.incoming_act,
 		"step": transition.step, "step_key": String(STEP_KEYS[transition.step - 1])})
-	if transition.step == 14:
+	if transition.step == STEP_KEYS.size():
 		_record(state, &"act_started", {"act": transition.incoming_act, "transition_id": transition.transition_id})
 		state.act_transition = null
 	else:

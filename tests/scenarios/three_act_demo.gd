@@ -36,7 +36,7 @@ func _run() -> void:
 			" evaluations=", state.charters.evaluations.size(), " training pieces=", state.specialists.pieces.size())
 		var inspection: Dictionary = PhaseNineDebug.inspect(state, Fixture.content(), true)
 		print("ACT INSPECTOR: unlocked=", inspection["unlocked_act"],
-			" seed batches=", inspection["seed_history"].size(),
+			" Act-entry drafts=", inspection["act_entry_draft_history"].size(),
 			" eligible designs=", inspection["eligible_tiles"].size(),
 			" progress=", inspection["grand_charter"].get("progress", {}))
 	for failure: String in suite.failures:
@@ -49,7 +49,7 @@ func _run() -> void:
 func _find_seed() -> void:
 	var registry: ContentRegistry = Fixture.content()
 	for seed_value: int in range(1, 4001):
-		var initial: RunState = HomesteadRunFactory.create(seed_value, registry)
+		var initial: RunState = Fixture.started(registry, seed_value)
 		if not _safe_fixture_environment(initial):
 			continue
 		if initial.charters.act_one_id != &"charter.a1_living_landscape":

@@ -190,6 +190,10 @@ static func _validate_rewards(state: RunState, report: InvariantReport) -> void:
 		if job.has("track") and (not job["track"] is int or not job["threshold"] is int \
 				or job["track"] not in [0, 1, 2, 3] or job["threshold"] not in [20, 40, 70, 100]):
 			report.add(&"invalid_threshold_job", "Queued threshold context must identify a canonical threshold.")
+		elif job.has("track"):
+			var expected_kind: StringName = RewardRules.THRESHOLD_KINDS[RewardRules.THRESHOLDS.find(int(job["threshold"]))]
+			if expected_kind == &"none" or StringName(job["kind"]) != expected_kind:
+				report.add(&"invalid_threshold_job", "The 20-point crossing has no reward job; later thresholds retain their canonical reward kinds.")
 	_validate_reward_flags(state, report)
 
 
@@ -345,7 +349,7 @@ static func _validate_frozen_batch(state: RunState, records: Array[FeatureComple
 
 static func _validate_choice(state: RunState, content: ContentRegistry, report: InvariantReport) -> void:
 	var choice: PendingChoice = state.pending_choice
-	if choice == null or choice.kind in [&"specialist_assignment", &"specialist_training"]:
+	if choice == null or choice.kind in [&"specialist_assignment", &"specialist_training", &"tile_draft"]:
 		return
 	if state.resolution == null or state.phase != GamePhase.Type.PENDING_CHOICE:
 		report.add(&"missing_phase_eight_choice_context", "Relic/reward choices require their continuation.")

@@ -1,6 +1,6 @@
 class_name ActTransitionState
 extends RefCounted
-## Step is the NEXT canonical operation (1..14), never replayed after load.
+## Step is the NEXT canonical operation (1..13), never replayed after load.
 
 var transition_id: int = 0
 var outgoing_act: int = 1
@@ -17,9 +17,7 @@ var capacity_refreshed: bool = false
 var survey_refreshed: bool = false
 var relics_refreshed: bool = false
 var unlocked: bool = false
-var seeded: bool = false
-var shuffled: bool = false
+var entry_draft_resolved: bool = false
 var information_selected: bool = false
 var counter_reset: bool = false
 var refill_done: bool = false
-var seeded_copy_ids: Array[int] = []

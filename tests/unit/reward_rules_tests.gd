@@ -76,7 +76,7 @@ func threshold_order() -> bool:
 	var actual: Array[String] = []
 	for job: Dictionary in state.rewards.queue:
 		actual.append("%d:%d" % [job.track, job.threshold])
-	expect_equal(actual, ["0:20", "0:40", "0:70", "0:100", "1:20", "1:40", "1:70", "1:100", "2:20", "2:40", "2:70", "3:20", "3:40"], "Track order precedes threshold order, no cap")
+	expect_equal(actual, ["0:40", "0:70", "0:100", "1:40", "1:70", "1:100", "2:40", "2:70", "3:40"], "Track order precedes threshold order, no cap")
 	return true
 
 

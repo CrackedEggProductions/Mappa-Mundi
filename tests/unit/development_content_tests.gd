@@ -98,9 +98,8 @@ func preserves_revision_one_player_bag() -> bool:
 	for entry: StartingBagEntry in registry.get_config().starting_bag:
 		count += entry.count
 		expect_true(registry.get_tile(entry.definition_id).player_drawable, "Only player designs enter starting bag")
-		expect_true(registry.get_tile(entry.definition_id).tile_class == DomainTypes.TileClass.EXPANSION
-			or entry.definition_id in HomesteadContentValidator.RIVER_OVERLAY_IDS, "Only two named River overlays are the initial Transformation exception")
-	expect_equal(count, 45, "Content expansion never seeds copies into starting bag")
+		expect_true(registry.get_tile(entry.definition_id).tile_class == DomainTypes.TileClass.EXPANSION, "Only core Expansions are automatic; overlays enter through drafts")
+	expect_equal(count, 18, "Content expansion never seeds copies into starting bag")
 	return true
 
 

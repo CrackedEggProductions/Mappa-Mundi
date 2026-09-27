@@ -50,6 +50,8 @@ static func validate(state: RunState, content: ContentRegistry) -> InvariantRepo
 		SpecialistInvariantValidator.validate(state, content, report)
 	if report.is_valid:
 		PhaseEightInvariantValidator.validate(state, content, report)
+	if report.is_valid:
+		TileDraftInvariantValidator.validate(state, content, report)
 	return report
 
 

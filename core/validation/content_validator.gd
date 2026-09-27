@@ -47,9 +47,9 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 		var charter_result: ValidationResult = CharterContentValidator.validate(manifest.charters)
 		if not charter_result.is_valid:
 			return charter_result
-		var seeds_result: ValidationResult = _validate_seeds(manifest, config)
-		if not seeds_result.is_valid:
-			return seeds_result
+		var drafts_result: ValidationResult = _validate_draft_pools(manifest, config)
+		if not drafts_result.is_valid:
+			return drafts_result
 	var config_result: ValidationResult = _validate_config(config)
 	if not config_result.is_valid:
 		return config_result
@@ -132,23 +132,24 @@ static func validate_development(tile: TileDefinition) -> ValidationResult:
 	return ValidationResult.success()
 
 
-static func _validate_seeds(manifest: ContentManifest, config: RunConfig) -> ValidationResult:
-	for act: int in [2, 3]:
-		var seen: Array[StringName] = []
-		var total: int = 0
-		for entry: StartingBagEntry in config.seeds_for_act(act):
-			if entry == null or entry.count <= 0 or entry.definition_id in seen:
-				return _invalid(&"invalid_act_seed", "Act seeds require distinct designs and positive copy quantities.")
-			seen.append(entry.definition_id)
-			var eligible: bool = false
-			for tile: TileDefinition in manifest.tiles:
-				if tile != null and tile.definition_id == entry.definition_id:
-					eligible = tile.player_drawable and tile.unlock_act == act
-			if not eligible:
-				return _invalid(&"invalid_act_seed", "Seeded content must be player content unlocked in the incoming Act.")
-			total += entry.count
-		if total != (10 if act == 2 else 6):
-			return _invalid(&"invalid_act_seed_total", "Act II seeds ten copies; Act III seeds six.")
+static func _validate_draft_pools(manifest: ContentManifest, config: RunConfig) -> ValidationResult:
+	var shape: ValidationResult = HomesteadContentValidator.validate_draft_config(config)
+	if not shape.is_valid:
+		return shape
+	for act: int in [1, 2, 3]:
+		var eligible: Array[StringName] = []
+		var newly_unlocked: Array[StringName] = []
+		for tile: TileDefinition in manifest.tiles:
+			if tile == null or not tile.player_drawable or tile.reward_class == DomainTypes.RewardClass.NONE:
+				continue
+			if tile.unlock_act <= act:
+				eligible.append(tile.definition_id)
+			if tile.unlock_act == act:
+				newly_unlocked.append(tile.definition_id)
+		if not HomesteadContentValidator._same_pool(config.draft_pool(act), eligible):
+			return _invalid(&"invalid_draft_pool", "Regular draft pools must contain every currently unlocked player-acquirable design exactly once.")
+		if act > 1 and not HomesteadContentValidator._same_pool(config.entry_draft_pool(act), newly_unlocked):
+			return _invalid(&"invalid_entry_draft_pool", "Act-entry drafts contain only newly unlocked player designs.")
 	return ValidationResult.success()
 
 
@@ -160,8 +161,8 @@ static func _validate_config(config: RunConfig) -> ValidationResult:
 	for limit: int in config.act_placement_limits:
 		if limit <= 0:
 			return _invalid(&"invalid_act_limits", "Act placement limits must be positive.")
-	if config.track_thresholds.size() != 4:
-		return _invalid(&"invalid_thresholds", "Configure exactly four Track thresholds.")
+	if config.track_thresholds != [20, 40, 70, 100] or config.track_threshold_reward_kinds != RunConfig.DEFAULT_THRESHOLD_REWARD_KINDS:
+		return _invalid(&"invalid_thresholds", "Threshold rewards are NONE at 20, training at 40, Relic at 70 and Major Reward at 100.")
 	var previous_threshold: int = 0
 	for threshold: int in config.track_thresholds:
 		if threshold <= previous_threshold:

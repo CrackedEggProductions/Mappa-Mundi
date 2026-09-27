@@ -30,8 +30,8 @@ func save_envelope_uses_explicit_json_primitives() -> bool:
 	expect_true(saved.validation.is_valid, saved.validation.user_message)
 	expect_true(saved.json_text.contains("\n\t"), "Human-readable indentation")
 	var envelope: Dictionary = JSON.parse_string(saved.json_text)
-	expect_equal(envelope["save_schema_version"], 2.0, "Schema header")
-	expect_equal(envelope["game_rules_version"], "alpha-playtest-r1", "Rules header")
+	expect_equal(envelope["save_schema_version"], 3.0, "Schema header")
+	expect_equal(envelope["game_rules_version"], "alpha-playtest-r1-draft-cadence", "Rules header")
 	expect_equal(envelope["implementation_spec_version"], 1.0, "Implementation header")
 	expect_equal(envelope["godot_version"], BuildVersions.godot_version(), "Engine build header")
 	var data: Dictionary = envelope["run_state"]
@@ -139,7 +139,7 @@ func rejects_missing_and_unknown_fields() -> bool:
 
 func rejects_incompatible_versions() -> bool:
 	var changes: Dictionary = {
-		"save_schema_version": 3, "game_rules_version": "alpha-future",
+		"save_schema_version": 4, "game_rules_version": "alpha-future",
 		"implementation_spec_version": 2, "godot_version": "unverified-engine",
 	}
 	for key: String in changes:

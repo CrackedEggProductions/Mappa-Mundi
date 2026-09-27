@@ -26,7 +26,7 @@ func _cell(state: RunState, content: ContentRegistry, at: Vector2i,
 
 func founding_view() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var board: BoardView = BoardView.new()
 	board.sync(state, content, TileArtRegistry.new())
 	expect_equal(board.tiles.size(), 9, "Founding and eight environmental River squares are visible")
@@ -38,7 +38,7 @@ func founding_view() -> bool:
 
 func negative_coordinates() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	_cell(state, content, Vector2i(-2, -3))
 	var board: BoardView = BoardView.new()
 	board.sync(state, content, TileArtRegistry.new())
@@ -49,7 +49,7 @@ func negative_coordinates() -> bool:
 
 func exact_rotation() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	_cell(state, content, Vector2i(1, 0), &"tile.forest_edge", 3)
 	var tile: TileView = TileView.new()
 	tile.configure(state, content, Vector2i(1, 0), TileArtRegistry.new())
@@ -68,7 +68,7 @@ func source_correction() -> bool:
 
 func _badge_case(stage: StringName, expected: String) -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var development: DevelopmentState = DevelopmentState.new()
 	development.stage = stage
 	state.expansion.board.get_cell(Vector2i.ZERO).developments.append(development)
@@ -89,7 +89,7 @@ func upgrade_badge() -> bool:
 
 func transformed_geometry() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var cell: BoardCellState = _cell(state, content, Vector2i(1, 0), &"tile.forest_edge")
 	cell.geometry_revision = 1
 	cell.effective_edges = [DomainTypes.EdgeType.FOREST, DomainTypes.EdgeType.FOREST, DomainTypes.EdgeType.FOREST, DomainTypes.EdgeType.FOREST]
@@ -103,7 +103,7 @@ func transformed_geometry() -> bool:
 
 func specialist_marker() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var piece: SpecialistPieceState = state.specialists.pieces[0]
 	piece.status = SpecialistPieceState.Status.ASSIGNED
 	piece.assigned_target_type = state.features.components[0].feature_type
@@ -117,7 +117,7 @@ func specialist_marker() -> bool:
 
 func view_rebuild_is_pure() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var before: String = StateNormalizer.fingerprint(state)
 	var board: BoardView = BoardView.new()
 	board.sync(state, content, TileArtRegistry.new())
@@ -140,7 +140,7 @@ func authoritative_targets() -> bool:
 
 func expansion_preview_is_pure() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var before: String = StateNormalizer.fingerprint(state)
 	var options: Array[PlacementOption] = PlacementQueryService.query_for_copy(state, content, state.expansion.hand[0])
 	expect_true(not options.is_empty(), "Fixture offers legal options")
@@ -157,7 +157,7 @@ func expansion_preview_is_pure() -> bool:
 
 func development_preview_is_pure() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var id: int = PhysicalTileRules.acquire(state, &"tile.development.housing", &"test", TileLocationState.Kind.BAG)
 	var before: String = StateNormalizer.fingerprint(state)
 	var option: PlacementOption = PlacementOption.new()
@@ -173,7 +173,7 @@ func development_preview_is_pure() -> bool:
 
 func transformation_preview() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var id: int = PhysicalTileRules.acquire(state, &"tile.transformation.bridge", &"test", TileLocationState.Kind.BAG)
 	var before: String = StateNormalizer.fingerprint(state)
 	var option: PlacementOption = PlacementOption.new()
@@ -194,7 +194,7 @@ func transformation_preview() -> bool:
 
 func camera_fit() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	_cell(state, content, Vector2i(-2, -3))
 	var board: BoardView = BoardView.new()
 	board.sync(state, content, TileArtRegistry.new())
@@ -240,7 +240,7 @@ func fallback_thumbnail() -> bool:
 
 func artwork_stays_behind_badges() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	var cell: BoardCellState = _cell(state, content, Vector2i(1, 0), &"tile.settlement_corner")
 	var housing: DevelopmentState = DevelopmentState.new()
 	housing.stage = &"housing"
@@ -257,7 +257,7 @@ func artwork_stays_behind_badges() -> bool:
 
 func long_board_fits() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10, content)
+	var state: RunState = _new_run(content)
 	for x: int in range(1, 67):
 		_cell(state, content, Vector2i(x, 0))
 	var board: BoardView = BoardView.new()
@@ -291,3 +291,10 @@ func released_pan_does_not_stick() -> bool:
 	expect_equal(board.camera.position, Vector2.ZERO, "Lost external release cannot leave camera dragging")
 	board.free()
 	return true
+
+
+func _new_run(content: ContentRegistry) -> RunState:
+	var state: RunState = HomesteadRunFactory.create(10, content)
+	assert(state.pending_choice != null and state.pending_choice.kind == &"tile_draft")
+	assert(RulesEngine.execute(state, content, ResolveTileDraftCommand.new(state.pending_choice.choice_id, 0)).is_valid)
+	return state

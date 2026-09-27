@@ -1,13 +1,19 @@
-# Alpha Playtest Revision 1 — Second human playtest
+# Alpha Playtest Revision 1 — Draft Cadence playtest
 
 This is a core-loop revision after Phase 10, not Phase 11. Start a **new run**:
-pre-revision saves are intentionally incompatible with rules `alpha-playtest-r1`
-and schema 2. No Save/Continue or export work is part of this revision.
+pre-revision saves are intentionally incompatible with rules `alpha-playtest-r1-draft-cadence`
+and schema 3. No Save/Continue or export work is part of this revision.
 
 ## What changed
 
-- Player starting bag: 45 copies. Open Fields, Road End and pure River pieces no
-  longer appear in hands or rewards. Field geography remains important.
+- The core bag has 18 copies across ten ordinary Expansion designs. Choose one
+  non-core Act-I Starter Draft before opening draws. Every draft adds one physical
+  copy and shuffles the bag; Normal Tile Rewards keep their usual quantities.
+- Cadence drafts occur after even normal placements: Act I 2–18, Act II 2–22,
+  Act III 2–24. Act entry unlocks content and offers one restricted draft; no
+  automatic seed batches remain. Track 20 gives no reward.
+- Open Fields, Road End and pure River pieces never appear in hands/rewards.
+  Field geography remains important.
 - The world starts with Founding plus five River Runs, two River Bends and one
   River End: one connected nine-tile River. River itself never completes/scores.
 - Junctions terminate separate Roads while connecting their Trade Networks.
@@ -31,15 +37,16 @@ Launch with `godot --path .` from the project root. Record seed, window size,
 Act reached and any confusing tile/choice before reporting a problem.
 
 1. Start a New Run. Confirm Founding and the complete River are visible. Use Fit
-   Board, pan and zoom; inspect River tiles as existing environment.
+   Board, pan and zoom; inspect River tiles as existing environment. Before choosing
+   the Starter Draft, verify the hand is empty; afterward it has three tiles.
 2. Read the Act-I Charter. Verify normal body/progress text is dark and readable
    on parchment. Check Grand forecast and exact requirements later too.
 3. Play all 18 Act-I placements. Record Road, Settlement and Forest completions.
    Does at least one feature usually complete? Where did closure feel blocked?
 4. Try a Road Junction as an endpoint. Do separate Roads and Trade continuation
    make sense? Are Roads easier to plan without Road End?
-5. Observe hand quality without Open Fields. Does the 45-copy bag retain useful
-   variety, or are too many choices interchangeable/unplayable?
+5. Observe the smaller core and drafts. Does each single-copy choice meaningfully
+   shape the bag? Are ordinary Developments available without being guaranteed?
 6. Select Riverside Hamlet. Preview different legal banks on an occupied Run;
    cancel, then confirm. Is the preserved River and added Settlement readable?
 7. Select Woodland River. Preview/confirm on an occupied Bend. Are its two Forest
@@ -50,18 +57,48 @@ Act reached and any confusing tile/choice before reporting a problem.
    River relationships and Trade reach. Verify River never announces completion.
 10. Assess the revised nature Charters. Do interaction counts feel achievable
     while still demanding deliberate choices?
-11. Finish later Acts if practical; inspect results and final map. Report River
-    size as geography, not a player completion achievement.
+11. Check an even-placement draft appears after all other consequences and before
+    replacement draw. At Act I placement 18 and Act II placement 22, resolve it
+    before the outgoing Charter rewards. Bonus placements grant no extra drafts.
+12. At each Act entry, inspect the restricted new-design offer. Confirm the chosen
+    tile is one physical copy and may become the pending hand replacement. There
+    should be no automatic batch of new tiles or extra transition shuffle.
+13. Cross Track 20: no Tile Reward/modal should appear for that crossing. Training
+    at 40, Relic at 70, Major Reward at 100 and Charter rewards remain unchanged.
+14. Finish later Acts if practical; inspect results and final map. Report River
+    size as geography, not a player completion achievement. Act III placement 26
+    should resolve its consequences then end without a cadence draft or hand refill.
 
 Record whether the generated River makes the opening more interesting or
 obstructs too much build space. Compare a few seeds before drawing conclusions.
 Also report modal/input failures, unreadable text and any interaction whose
 mechanical result differs from its preview.
 
+## Draft-cadence feedback
+
+Record a short answer and a concrete example where possible. Compare more than
+one seed before judging variety.
+
+1. Does the 18-copy core feel dependable or repetitive?
+2. Does the Starter Draft give the run a useful direction?
+3. Is a draft every two placements welcome, or does it interrupt play too often?
+4. Can you read the three options and make a choice quickly?
+5. Do different draft choices make runs develop differently?
+6. Can you respond to the current map through draft choices?
+7. Can you choose useful closure/endpoint tools when features need finishing?
+8. Does tile supply ever feel starved? Record when emergency replenishment appears.
+9. Does the bag become bloated with tiles you no longer want to draw?
+10. Can you access newly unlocked designs reliably enough without automatic seeding?
+11. When Market Towns is selected, is Market-family access sufficient to pursue it?
+12. Does the Act Entry Draft make entering a new Act feel meaningful?
+13. Does removing the Track-20 reward leave a noticeable gap in early progression?
+14. Do multi-copy Normal Tile Rewards still feel special beside single-copy drafts?
+
 ## Completion-density diagnostic
 
 The automated Act-I diagnostic is **not human play** and does not establish game
-balance. It samples at least 100 deterministic seeds with a closure-preferring
+balance. Each report must name its rules version: earlier 45-copy results do not
+measure the current 18-copy/draft system. It samples at least 100 deterministic seeds with a closure-preferring
 heuristic: immediate genuine completion first, then fewer unresolved exits,
 then fewer newly introduced exits, with deterministic tie-breaking. Choices use
 a documented deterministic policy. Report percentage with at least one

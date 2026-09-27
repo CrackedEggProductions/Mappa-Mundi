@@ -1,7 +1,7 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Alpha Playtest Revision 1**, after Phase 10.
+GDScript**. Current implementation: **Alpha Playtest Revision 1 — Draft Cadence**, after Phase 10.
 Launch New Run to play all three Acts with the mouse. The authoritative engine also
 runs all 66 placements, rewards, transitions and final results headlessly. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
@@ -10,14 +10,26 @@ plugins, or external services are required.
 
 This is a core-loop revision after the first human Phase-10 playtest, not Phase 11.
 The canonical Complete Rules and Implementation Specification have been rewritten
-for rules version `alpha-playtest-r1`, save schema **2**. Older active-run development
+for rules version `alpha-playtest-r1-draft-cadence`, save schema **3**. Older active-run development
 saves are rejected; no migration or player-facing Save/Continue UX is included.
 
-New Run places Founding plus an eight-tile environmental River before shuffling the
-**45-copy player bag** and selecting the Act-I Charter. The River has five Runs, two
-Bends and one End, selected from 24 valid templates with one RunRNG choice. The saved
-board is authoritative; loading never regenerates it. Pure River pieces, Open Fields
-and Road End are excluded from player inventory/reward/rescue pools.
+New Run places Founding plus an eight-tile environmental River, builds an unshuffled
+**18-copy core bag**, selects the Act-I Charter, then offers a **Starter Draft** from
+ten non-core Act-I designs. Choose one: that physical copy enters the bag, the whole
+bag shuffles, and the opening hand draws. The River has five Runs, two Bends and one
+End, selected from 24 valid templates with one RunRNG choice. Loading restores the
+saved board and exact draft offer. Pure River pieces, Open Fields and Road End never
+enter player inventory/reward/rescue pools.
+
+Each eligible even normal placement grants one Tile Draft after all consequences
+and before hand refill: nine in Act I, eleven in Act II and twelve in Act III (none
+at placement 26). Choose one of up to three distinct unlocked designs; receive one
+physical copy and shuffle the remaining bag. Normal Tile Rewards retain their
+existing quantities. Track 20 now awards nothing; 40/70/100 are unchanged.
+
+Act transitions unlock their five/three new designs and offer one restricted Act
+Entry Draft after Charter information, before pending refill. There are no automatic
+seed batches. Unlocking makes a design eligible for choices, not guaranteed inventory.
 
 Road Junctions terminate separate physical Roads while connecting Trade Networks.
 Their three Road sockets create no Road component, length or tile-scoring credit.
@@ -37,9 +49,9 @@ and Grand Charter panels use dark ink through the correct RichTextLabel theme pr
 
 See [the revision playtest checklist](docs/ALPHA_PLAYTEST_R1.md). The diagnostic script
 `tests/scenarios/revision_completion_diagnostic.gd` measures a documented deterministic
-closure heuristic. The [100-seed report](docs/PLAYTEST_REVISION_1_DIAGNOSTIC.md) records
-100% with at least one Act-I completion, median 6 and mean 5.72; these are not human
-completion rates. Phase-specific
+closure heuristic. The [Draft Cadence diagnostic](docs/DRAFT_CADENCE_DIAGNOSTIC.md)
+records the current 100-seed Act-I and Market Towns samples. The [earlier report](docs/PLAYTEST_REVISION_1_DIAGNOSTIC.md)
+is historical evidence from the 45-copy bag. No automated rate represents human play. Phase-specific
 sections below retain earlier architectural milestones; the revised canonical rules
 supersede their old balance/lifecycle descriptions.
 
@@ -66,7 +78,8 @@ godot --editor --path .
 godot --path .
 ```
 
-The default scene opens New Run with an optional integer seed. Select a hand tile,
+The default scene opens New Run with an optional integer seed. Choose the Starter
+Draft to receive the opening hand, then select a hand tile,
 choose a highlighted target or exact option, then Confirm. Rotate and Cancel remain
 local previews. Store sends a hand tile to Reserve; Survey spends a charge. Required
 choices appear in a blocking panel. Every decision has a visible mouse control.
@@ -182,7 +195,7 @@ The current Phase-9 profile adds the exact ten Relics and nine Charters; central
 domain services own all behavior. Earlier profiles remain regression fixtures.
 
 The separate `homestead_content_manifest.tres` and `homestead_run_config.tres`
-retain the legacy 22-design catalogue, with 16 player designs in the exact 45-copy
+retain the legacy 22-design catalogue, with ten core designs in the exact 18-copy
 starting bag, eight setup-only River copies beside Founding, and the revised emergency set. Load this profile with
 `ContentRegistry.load_homestead()`. The original minimal profile remains available
 for Phase-0 regressions; the bootstrap loads the complete Phase-9 content profile with Revision-1 rules. Both profiles reject
@@ -196,6 +209,11 @@ Canonical base orientations and explicit internal relationships are documented i
 var content: ContentRegistry = ContentRegistry.new()
 assert(content.load_phase_nine().is_valid)
 var state: RunState = HomesteadRunFactory.create(12345, content)
+# Scripted example picks the first saved option; the UI waits for the player.
+var starter: ResolveTileDraftCommand = ResolveTileDraftCommand.new(
+    state.pending_choice.choice_id, 0, state.expansion.state_revision
+)
+assert(RulesEngine.execute(state, content, starter).is_valid)
 var copy_id: int = state.expansion.hand[0]
 var options: Array[PlacementOption] = PlacementQueryService.query_for_copy(
     state, content, copy_id
@@ -205,6 +223,19 @@ if not options.is_empty():
     var intent: PlaceTileCommand = PlaceTileCommand.new(
         copy_id, TileLocationState.Kind.ACTIVE_HAND, option.coordinate, option.rotation
     )
+    # Preserve the exact query intent, including occupied-target overlays/Developments.
+    intent.placement_mode = option.placement_mode
+    intent.expected_board_revision = option.board_revision
+    intent.expected_state_revision = option.state_revision
+    intent.expected_signature = option.signature
+    intent.host_lineage_id = option.host_lineage_id
+    intent.river_lineage_id = option.river_lineage_id
+    intent.target_development_copy_id = option.target_development_copy_id
+    intent.enclosure_id = option.enclosure_id
+    intent.boundary_direction = option.boundary_direction
+    intent.transformation_mode = option.transformation_mode
+    intent.target_base_copy_id = option.target_base_copy_id
+    intent.transformation_signature = option.transformation_signature
     assert(RulesEngine.execute(state, content, intent).is_valid)
 ```
 
@@ -223,7 +254,7 @@ never plays a command or draws a tile. Schema 1 retains the original foundation
 variant alongside the initialized Expansion variant; unknown fields still fail.
 
 Earlier profiles stop at the deferred Act boundary. The Phase-9 profile resolves
-outgoing Charter rewards, transitions and seeding before the pending hand refill. Reserve-impossibility assessment conservatively returns
+cadence drafts, outgoing Charter rewards, transitions and entry drafts before pending hand refill. Reserve-impossibility assessment conservatively returns
 `NOT_PROVABLY_IMPOSSIBLE`; later systems must expand proof before any automatic removal.
 
 See [implementation progress](IMPLEMENTATION_PROGRESS.md) for verification and
@@ -345,10 +376,9 @@ exact logs, genealogy and anti-farming evidence.
 
 Load `ContentRegistry.load_phase_five()` to expose the 22 existing Expansion
 designs and nine Development/Upgrade designs. `load_homestead()` preserves the
-historical 22-design catalogue. Both now use the revised 45-copy player bag,
-including the two explicit Act-I River overlay exceptions.
-Development acquisition is currently controlled by scenario helpers; rewards,
-automatic seeding and Act transitions remain deferred.
+historical 22-design catalogue. Both use the current 18-copy core. These earlier
+profiles isolate Development acquisition through scenario helpers; the full profile
+adds drafts, rewards and Act transitions.
 
 `PlacementQueryService.query_for_copy(state, content, copy_id)` dispatches by the
 physical copy's class. Pass the selected option's mode, coordinate, rotation,
@@ -399,9 +429,9 @@ was merged into main at `8d0074df5bda0e03edb49d077fd07b0af8d1b0f2`.
 ## Headless Transformations
 
 Load `ContentRegistry.load_phase_six()` for the 34-design profile. The initial
-Homestead bag now contains exactly 45 player copies, including River overlays; controlled scenarios acquire
-Urban Expansion (Act II), Bridge and Rewilding (Act III) directly. There are no
-reward offers, automatic seeding or Act transitions.
+Homestead core contains exactly 18 player copies; controlled scenarios acquire
+River overlays, Urban Expansion (Act II), Bridge and Rewilding (Act III) directly.
+This historical profile isolates Transformations from full-profile drafts/rewards/transitions.
 
 `PlacementQueryService.query_for_copy(state, content, copy_id)` returns complete
 Transformation intents. Copy the option's ordinary identity/revision fields plus
@@ -499,7 +529,8 @@ returns, then optional Relay assignments, frozen Relic effects, Relic milestones
 and finally Realm Track thresholds. Only after every reward chain resolves does
 the pending hand slot draw. Milestones use Settlement/Road/Forest/River order;
 thresholds use Population/Trade/Culture/Ecology order, lower threshold first.
-20/40/70/100 yield Tile Reward/training/Relic/Major Reward respectively.
+20/40/70/100 yield NONE/training/Relic/Major Reward respectively. After all
+consequences, any due cadence draft resolves before the ordinary refill or Act transition.
 
 Tile offers use sorted unlocked content, without a board-playability filter.
 Normal quantities are 3 Basic, 2 Specialized/Hybrid, 2 ordinary Development/Act-II
@@ -560,14 +591,16 @@ selects its ordinary Charter and then the Grand Charter once. Until all conseque
 of normal placement 11 finish, the Grand query exposes only its forecast. Exact
 reveal uses no RNG and waits through assignment, rewards and bonus chains.
 
-`ActRules` persists the fourteen canonical transition steps in `ActTransitionState`.
+`ActRules` persists thirteen canonical transition steps in `ActTransitionState`.
 Outgoing rewards use the outgoing Act pool and capacity. Only afterward do Act,
-capacity, Survey and Relic refresh, unlocks, seeding, shuffle, information selection,
-counter reset and refill occur. Act II adds Market/Port/Urban Expansion/Town Square/
-Abbey in quantities 4/2/2/1/1 respectively (10 copies); Act III adds Bridge/Rewilding/Grand Market twice each
-(6 copies). All are physical identities with incoming-Act acquisition provenance.
-A saved transition can resume through `ResumeActTransitionCommand` without replaying
-completed steps. Normal reward commands resume pending transition rewards.
+capacity, Survey and Relic refresh, unlocks, Charter information, the restricted Act
+Entry Draft, counter reset and refill occur. Act II unlocks Market, Port, Urban
+Expansion, Town Square and Abbey; Act III unlocks Bridge, Rewilding and Grand Market.
+Each entry draft grants exactly one chosen physical copy and shuffles the bag.
+No automatic seed copies or unconditional transition shuffle remain. A saved
+transition resumes through `ResumeActTransitionCommand` or its pending choice
+without repeating completed steps. Outgoing placement-18/22 cadence drafts resolve
+before Charter evaluation; Act-III placement 26 grants no cadence draft or refill.
 
 The generic `BonusPlacementRules.enqueue()` effect hook retains FIFO bonus work.
 Bonus input permits placement only, reuses the full consequence pipeline, and does
@@ -588,7 +621,7 @@ genuine completion history even after reopening. These rulings are recorded in
 the canonical Complete Alpha Rules.
 
 `PhaseNineDebug.inspect(state, content)` exposes read-only Charter progress,
-transition state, unlock pool, seed records, counters and final statistics. Its
+transition state, unlock pool, draft history, counters and final statistics. Its
 optional `reveal_secret=true` flag is explicitly for debug inspection; ordinary
 visibility queries never expose unrevealed exact Grand requirements.
 
@@ -626,8 +659,8 @@ Upgrade and Transformation designs have generated thumbnails/badges. The source
 archive is unchanged. [Exact mappings](presentation/assets/README.md) include source
 orientation corrections. No image generation or seam-polish work occurred.
 
-`PendingChoicePresenter` supports all eleven current kinds, including training-piece
-selection and sequential Grand Survey. Buttons preserve saved order, IDs and state
+`PendingChoicePresenter` supports all twelve current kinds, including single-copy Tile Drafts,
+training-piece selection and sequential Grand Survey. Buttons preserve saved order, IDs and state
 revision. A stale choice/preview is rejected by the engine and the view resynchronizes.
 Required choices block normal input; mouse double clicks cannot accept a fresh next
 offer accidentally. Assignment and Relay expose only persisted legal targets.

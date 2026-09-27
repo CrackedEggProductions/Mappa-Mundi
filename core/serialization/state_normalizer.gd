@@ -65,10 +65,10 @@ static func _normalize_features(data: Dictionary) -> void:
 		for key: String in ["parent_ids", "member_ids", "scored_component_ids", "scored_field_ids", "scored_river_ids", "scored_forest_ids", "scored_settlement_ids", "completion_ids"]:
 			lineage[key].sort_custom(_decimal_id_before)
 	for enclosure: Dictionary in data["enclosures"]:
-		enclosure["completed_stages"].sort()
+		enclosure["completed_stages"].sort_custom(_name_before)
 		enclosure["completion_ids"].sort_custom(_decimal_id_before)
 	for record: Dictionary in data["completions"]:
-		record["development_families"].sort()
+		record["development_families"].sort_custom(_name_before)
 		for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids", "network_road_ids", "network_settlement_ids", "new_settlement_ids"]:
 			record[key].sort_custom(_decimal_id_before)
 	for event: Dictionary in data["history"]:
@@ -84,3 +84,8 @@ static func _normalize_trade(data: Dictionary) -> void:
 		for record: Dictionary in data[key]:
 			for set_key: String in ["parent_ids", "road_lineage_ids", "settlement_lineage_ids", "junction_hub_ids"]:
 				record[set_key].sort_custom(_decimal_id_before)
+
+
+static func _name_before(left: Variant, right: Variant) -> bool:
+	# StringName ordering follows interned identities, which vary across processes.
+	return String(left) < String(right)

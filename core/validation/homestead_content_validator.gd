@@ -1,6 +1,6 @@
 class_name HomesteadContentValidator
 extends RefCounted
-## Revision-1 catalogue: 16 player designs, legacy/setup references and Founding.
+## Draft-cadence catalogue: ten core starting designs plus selectable growth pools.
 
 const FOUNDING_ID: StringName = &"tile.founding.homestead"
 const EXPANSION_IDS: Array[StringName] = [
@@ -23,6 +23,21 @@ const SETUP_RIVER_IDS: Array[StringName] = [&"tile.river_end", &"tile.river_run"
 const NON_PLAYER_IDS: Array[StringName] = [FOUNDING_ID, &"tile.open_fields", &"tile.road_end",
 	&"tile.river_end", &"tile.river_run", &"tile.river_bend"]
 
+const CORE_COUNTS: Dictionary = {
+	&"tile.forest_edge": 3, &"tile.forest_bend": 1, &"tile.forest_belt": 1,
+	&"tile.straight_road": 2, &"tile.bending_road": 2, &"tile.road_junction": 2,
+	&"tile.hamlet_edge": 3, &"tile.settlement_corner": 1,
+	&"tile.settlement_throughway": 1, &"tile.settlement_gate": 2,
+}
+const STARTER_DRAFT_IDS: Array[StringName] = [
+	&"tile.riverside_hamlet", &"tile.woodland_road", &"tile.woodland_river",
+	&"tile.settlement_corner_gate", &"tile.settlement_road_bend", &"tile.settlement_road_throughway",
+	&"tile.development.housing", &"tile.development.mill", &"tile.development.monastery", &"tile.development.foresters_lodge",
+]
+const ACT_TWO_UNLOCKS: Array[StringName] = [&"tile.development.market", &"tile.development.port",
+	&"tile.transformation.urban_expansion", &"tile.development.town_square", &"tile.development.abbey"]
+const ACT_THREE_UNLOCKS: Array[StringName] = [&"tile.transformation.bridge", &"tile.transformation.rewilding", &"tile.development.grand_market"]
+
 
 static func validate_roster_and_config(ids: Array[StringName], config: RunConfig) -> ValidationResult:
 	if ids.size() != EXPANSION_IDS.size() + 1 or FOUNDING_ID not in ids:
@@ -32,21 +47,21 @@ static func validate_roster_and_config(ids: Array[StringName], config: RunConfig
 			return _invalid("Missing Homestead catalogue definition.", definition_id)
 	if config.hand_capacity != 3 or config.reserve_capacity != 1 or config.initial_survey_charges != 1:
 		return _invalid("Homestead requires a three-tile hand, one Reserve slot and one initial Survey.")
-	if config.starting_bag.size() != 16:
-		return _invalid("Revision 1 requires exactly 16 starting player designs.")
+	if config.starting_bag.size() != 10:
+		return _invalid("Draft cadence requires exactly ten core starting designs.")
 	var bag_ids: Array[StringName] = []
 	var total_copies: int = 0
 	for entry: StartingBagEntry in config.starting_bag:
 		if entry == null or entry.count <= 0:
 			return _invalid("Starting bag entries must be present with positive copy counts.")
-		if entry.definition_id not in EXPANSION_IDS or entry.definition_id in NON_PLAYER_IDS or entry.definition_id in bag_ids:
+		if entry.definition_id not in CORE_COUNTS or entry.definition_id in bag_ids:
 			return _invalid("Starting bag definitions must resolve uniquely to player designs.", entry.definition_id)
 		if entry.count != _canonical_starting_count(entry.definition_id):
 			return _invalid("Starting bag copy count differs from RULE-BAG-002.", entry.definition_id)
 		bag_ids.append(entry.definition_id)
 		total_copies += entry.count
-	if total_copies != 45:
-		return _invalid("The Homestead starting bag must contain exactly 45 physical copies.")
+	if total_copies != 18:
+		return _invalid("The Homestead starting bag must contain exactly 18 physical core copies.")
 	var emergency_ids: Array[StringName] = config.emergency_definitions.duplicate()
 	emergency_ids.sort_custom(func(left: StringName, right: StringName) -> bool:
 		return String(left) < String(right)
@@ -54,15 +69,34 @@ static func validate_roster_and_config(ids: Array[StringName], config: RunConfig
 	var expected_emergency: Array[StringName] = [&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_junction"]
 	if emergency_ids != expected_emergency:
 		return _invalid("Emergency replenishment must contain Forest Edge, Hamlet Edge and Road Junction once each.")
-	return ValidationResult.success()
+	return validate_draft_config(config)
 
 
 static func _canonical_starting_count(definition_id: StringName) -> int:
-	# Validation contract only. Gameplay allocates exclusively from RunConfig data.
-	match definition_id:
-		&"tile.forest_edge", &"tile.straight_road", &"tile.bending_road", &"tile.road_junction", &"tile.hamlet_edge": return 4
-		&"tile.forest_bend", &"tile.settlement_corner", &"tile.settlement_gate": return 3
-	return 2
+	# Validation contract only; runtime acquisition reads RunConfig.
+	return int(CORE_COUNTS.get(definition_id, 0))
+
+
+static func validate_draft_config(config: RunConfig) -> ValidationResult:
+	var act_one: Array[StringName] = STARTER_DRAFT_IDS.duplicate()
+	for id: StringName in CORE_COUNTS:
+		act_one.append(id)
+	if config.draft_interval != 2:
+		return _invalid("A regular Tile Draft occurs after every two normal placements.")
+	if not _same_pool(config.starter_draft_pool, STARTER_DRAFT_IDS) \
+			or not _same_pool(config.act_one_draft_pool, act_one) \
+			or not _same_pool(config.act_two_unlocks, ACT_TWO_UNLOCKS) \
+			or not _same_pool(config.act_three_unlocks, ACT_THREE_UNLOCKS):
+		return _invalid("Starter, regular and Act-entry draft pools must match the canonical distinct designs.")
+	return ValidationResult.success()
+
+
+static func _same_pool(actual: Array[StringName], expected: Array[StringName]) -> bool:
+	var left: Array[StringName] = actual.duplicate()
+	var right: Array[StringName] = expected.duplicate()
+	left.sort()
+	right.sort()
+	return left == right
 
 
 static func validate_tile(tile: TileDefinition) -> ValidationResult:

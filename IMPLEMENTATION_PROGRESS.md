@@ -1,8 +1,118 @@
 # Mappa Mundi — Implementation progress
 
-## Second playtest — Act-II Market availability
+## Second playtest — draft cadence (current rules)
 
-The Act-II seed distribution is now **Market ×4, Port ×2, Urban Expansion ×2,
+The active rules version is `alpha-playtest-r1-draft-cadence`, save schema 3.
+This replaces both the 45-copy starting bag and all automatic Act-II/III seeding,
+including the previous four-Market experiment. Older active-run development saves
+are rejected explicitly; no migration or Phase-11 Save/Continue UI was added.
+
+The fixed core has 18 copies across ten designs: Forest Edge ×3, Forest Bend ×1,
+Forest Belt ×1, Straight Road ×2, Bending Road ×2, Road Junction ×2, Hamlet Edge ×3,
+Settlement Corner ×1, Settlement Throughway ×1 and Settlement Gate ×2.
+
+Canonical setup now consumes RNG for the environmental path, Act-I Charter and
+three distinct Starter Draft options, then pauses before drawing any hand tile.
+The chosen directional design creates one physical copy; one full-bag shuffle
+precedes the opening draw from 19 copies. There is no initial core shuffle.
+
+`TileDraftService` uses configured sorted pools and persisted `tile_draft` choices.
+`ResolveTileDraftCommand` validates the exact offer before acquiring one copy and
+shuffling the bag. Draft offers and acquisitions are recorded in reward history,
+with starter/cadence/act-entry sources, sequence, Act, placement and physical ID.
+Normal Tile Rewards retain their larger existing class quantities.
+
+Cadence drafts follow every second normal placement: nine in Act I, eleven in
+Act II and twelve in Act III. Act III placement 26 has no draft. All consequences,
+reward chains and bonus placements finish first; the draft precedes refill and,
+on Act I/II's final placement, outgoing Charter evaluation. Reserve placements
+count normally; bonus placements do not advance cadence.
+
+Act transitions retain outgoing rewards and refresh ordering, then unlock content,
+reveal the required Charter information and pause at an Entry Draft. Act II offers
+three of its five new designs; Act III offers all three new designs. The single
+chosen copy is shuffled before the placement counter resets and the pending hand
+refills. No automatic transition copies are created. Regular draft pools grow
+from 20 to 25 to 28 designs. Unlocking a tile means it can enter the player's
+choices; it does not mean every run automatically contains it.
+
+Track 20 records a crossing but has reward `NONE`: no queued job, choice, copy or
+RNG. Track 40/70/100 remain training/Relic/Major rewards. Market Towns and Market
+placement are unchanged; no Market guarantee, helpfulness weighting, Specialist,
+Relic, scoring or victory redesign was added.
+
+The presentation has one-click draft cards, Starter Charter inspection, Entry Draft
+explanations, a next-draft HUD indication and acquisition feedback. Core rules
+remain headless. The branch remains `alpha-playtest-r1`, unmerged.
+
+Baseline before editing: `bfbd476a6917397262251d380066966c5ff756cd`, clean;
+1,243 gameplay tests, 95 presentation tests and 232 scripts passed with no failures
+or parser diagnostics.
+
+The verification work exposed one existing fingerprint-only defect: sorting
+`StringName` enclosure stages/Development families could follow process-specific
+intern identities. `StateNormalizer` now compares their text explicitly. A 64-name
+regression covers this; before/after authoritative JSON envelopes match exactly.
+No scoring, topology, acquisition or RNG behavior changed as part of this fix.
+
+The non-canonical 100-seed Act-I closure sample achieved 100% with at least one
+completion, median 7 and mean 6.48 (Road 257, Settlement 238, Forest 151,
+Monastery-family 2). It produced 59 unordered Starter triples and 100 acquired
+design/count profiles. Of 1,000 draft choices, 204 repeated a previously chosen
+design. These are automated heuristic results, not human-play evidence.
+The full current diagnostic policy, Market-access sample and inventory snapshots
+are in [the draft-cadence report](docs/DRAFT_CADENCE_DIAGNOSTIC.md).
+
+Final verification on 2026-09-27:
+
+- `./tests/run_tests.sh`: **1296 passed, 0 failed; 240 scripts parsed without
+  diagnostics**, exit 0 (`builds/verification/run-Gf2VxiBN`).
+- `./tests/run_presentation_tests.sh`: **108 passed, 0 failed**, exit 0
+  (`builds/verification/presentation-7SgSEzV9`). Both wrappers reject engine errors
+  and warnings. Net increases from baseline: 53 gameplay and 13 presentation tests.
+- Five complete scripted runs cover no victory, Victory, Exemplary Victory,
+  deterministic replay and save/load replay. Each resolves 66 normal placements
+  and all 35 drafts through commands. Two natural-bag controller runs resolve the
+  same decisions through visible choice buttons and match exactly.
+- Three additional natural diagnostic runs finish all 66 placements/35 drafts;
+  their independent replays match. The 100-seed Act-I sample and 30 naturally
+  selected Market Towns cases were independently replayed without changed offers,
+  acquisition outcomes or inventory checkpoints.
+- Automated graphical mouse smoke: 15 checks passed at 1280×720, including
+  Starter Draft, Charter inspection, returning to the same offer, and choosing.
+  This was automated input; no new human manual playtest was performed.
+- Save/load covers Starter, cadence, both entry drafts, outgoing Charter reward
+  chains, stable transition steps, reveal and completed results. No offer rerolls,
+  duplicate copies, replayed shuffles or duplicate refills occur.
+
+Current scripted seed-22 fingerprints:
+
+- No victory: `7c23799622dca9fd54db3610f0b853a79ad334044721e607600b7bcff7d87315`
+- Victory and save/load replay: `d514178bbf23ebb4bae864268b5c0c767944101b89331e2c90d7d34c9b29328b`
+- Exemplary Victory: `7a0522e3b48861e71d191544fa606ee8a29d4396d28ff5039abdc9dce1f92115`
+- Natural controller seed 1010 and replay: `65ecf013a5bb4de1ef1c28e417d7c822c7fd67392154c2b425cf1d1887033c43`
+
+Market access remains a human-review concern: of 30 naturally selected Market
+Towns runs (107 seeds screened), 70% saw Market at entry, 93.33% acquired one by
+Act-II end and 73.33% acquired two. Conditional median first/second acquisition
+was entry/placement 8. Eight runs failed to acquire two; acquisition does not prove
+that two distinct legal host Settlements can receive them before evaluation.
+No guarantee, weighting or Charter adjustment was added.
+
+Superseded tests now assert the 18-copy core, setup paused at Starter choice,
+one-copy entry acquisition instead of 10/6 automatic seeds, and no reward at 20.
+Existing completion/topology/Market/Charter/Relic/Specialist expectations remain.
+There is no unresolved gameplay ambiguity or known blocking presentation defect.
+No Phase 11/12 work, new art, deferred content or unrelated balance change was made.
+Next step: another human playtest using `docs/ALPHA_PLAYTEST_R1.md`.
+
+All subsequent sections are historical implementation checkpoints. Their old bag,
+seeding, threshold and fingerprint values are superseded by this section and the
+current canonical specifications.
+
+## Superseded experiment — Act-II Market availability
+
+This historical checkpoint used **Market ×4, Port ×2, Urban Expansion ×2,
 Town Square ×1, Abbey ×1: exactly 10 physical copies**. This replaces the previous
 2/2/2/2/2 distribution. Market Towns still requires two distinct current Market-family
 Settlements, Trade 40+ and its historical-Road/current-network condition. Market

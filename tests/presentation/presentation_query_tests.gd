@@ -18,7 +18,7 @@ func _content() -> ContentRegistry:
 
 func ordinary_charter_progress() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	var text: String = Queries.charter_text(state, content)
 	expect_true(text.contains(content.get_charter(state.charters.act_one_id).display_name), "Selected Charter shown")
 	expect_true(text.contains("Fulfill:") and text.contains("Exceed"), "Both condition groups shown")
@@ -34,7 +34,7 @@ func _act_two(state: RunState, content: ContentRegistry) -> void:
 
 func grand_forecast_is_secret() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	_act_two(state, content)
 	var text: String = Queries.charter_text(state, content)
 	var definition: CharterDefinition = content.get_charter(state.charters.grand_id)
@@ -47,7 +47,7 @@ func grand_forecast_is_secret() -> bool:
 
 func exact_grand_visible() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	_act_two(state, content)
 	CharterRules.reveal_grand(state)
 	state.expansion.current_act = 3
@@ -59,7 +59,7 @@ func exact_grand_visible() -> bool:
 
 func available_specialists() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	var text: String = Queries.specialists_text(state, content)
 	expect_equal(text.count("AVAILABLE"), 2, "Both starting physical pieces shown")
 	expect_true(text.contains("piece 1") and text.contains("piece 2"), "Friendly physical-piece labels")
@@ -68,7 +68,7 @@ func available_specialists() -> bool:
 
 func relic_slots_and_effects() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	expect_equal(Queries.relics_text(state, content).count("empty"), 2, "Two empty slots shown")
 	var relic: RelicInstanceState = RelicInstanceState.new()
 	relic.definition_id = &"relic.boundary_stones"
@@ -84,7 +84,7 @@ func relic_slots_and_effects() -> bool:
 
 func tile_inspection() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	var text: String = Queries.inspect_tile(state, content, Vector2i.ZERO)
 	expect_true(text.contains("(0, 0)") and text.contains("placed Act 1"), "Coordinate and Act displayed")
 	expect_true(text.contains("N:") and text.contains("Trade Network"), "Effective geography and queried reach displayed")
@@ -95,7 +95,7 @@ func tile_inspection() -> bool:
 
 func _results(outcome: StringName, expected: String) -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	state.final_result = RunResult.new()
 	state.final_result.victory_result = outcome
 	state.final_result.score = 987
@@ -129,23 +129,23 @@ func results_exemplary() -> bool:
 
 func transition_summary() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	state.expansion.current_act = 2
 	state.relics.capacity = 4
 	state.charters.evaluations.append({"evaluation_act": 1, "charter_id": "charter.a1_growing_realm", "overall_state": "fulfilled"})
 	var text: String = Queries.transition_text(state, content, 1)
 	expect_true(text.contains("Act 1 completed") and text.contains("Entering Act 2"), "Transition summary uses current state")
-	expect_true(text.contains("Abbey") and text.contains("Relic capacity 4"), "Canonical incoming seed definitions and capacity")
-	for quantity: String in ["Market ×4", "Port ×2", "Urban Expansion ×2", "Town Square ×1", "Abbey ×1"]:
-		expect_true(text.contains(quantity), "Transition displays configured quantity: " + quantity)
-	expect_true(not text.contains("two each"), "No obsolete equal-quantity summary")
+	expect_true(text.contains("Abbey") and text.contains("Relic capacity 4"), "Canonical incoming draft possibilities and capacity")
+	for name: String in ["Market", "Port", "Urban Expansion", "Town Square", "Abbey"]:
+		expect_true(text.contains(name), "Transition displays new draft possibility: " + name)
+	expect_true(not text.contains("seeded") and not text.contains("×"), "No automatic-copy package wording")
 	expect_true(text.contains("Fulfilled"), "Frozen outgoing result shown")
 	return true
 
 
 func queries_are_inert() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	var fingerprint: String = StateNormalizer.fingerprint(state)
 	var rng_operations: int = state.rng.operation_count
 	for iteration: int in range(3):
@@ -162,7 +162,7 @@ func queries_are_inert() -> bool:
 
 func assigned_specialist_target() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	var feature: CurrentFeature = TopologyService.rebuild(state)[0]
 	var piece: SpecialistPieceState = state.specialists.pieces[0]
 	piece.status = SpecialistPieceState.Status.ASSIGNED
@@ -176,7 +176,7 @@ func assigned_specialist_target() -> bool:
 
 func development_and_transformation_inspection() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(212, content)
+	var state: RunState = _new_run(content)
 	var cell: BoardCellState = state.expansion.board.get_cell(Vector2i.ZERO)
 	var development: DevelopmentState = DevelopmentState.new()
 	development.stage = &"abbey"
@@ -191,3 +191,10 @@ func development_and_transformation_inspection() -> bool:
 	expect_true(text.contains("Transformation: Bridge"), "Transformation history shown")
 	expect_true(text.contains("N: Forest"), "Effective edge state outranks original art")
 	return true
+
+
+func _new_run(content: ContentRegistry) -> RunState:
+	var state: RunState = HomesteadRunFactory.create(212, content)
+	assert(state.pending_choice != null and state.pending_choice.kind == &"tile_draft")
+	assert(RulesEngine.execute(state, content, ResolveTileDraftCommand.new(state.pending_choice.choice_id, 0)).is_valid)
+	return state

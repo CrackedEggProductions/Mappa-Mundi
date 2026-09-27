@@ -62,9 +62,8 @@ func accepts_known_good_minimal_content() -> bool:
 func accepts_tuned_positive_config_values() -> bool:
 	var config: RunConfig = _config()
 	config.act_placement_limits.assign([10, 15, 20])
-	config.track_thresholds.assign([5, 10, 15, 20])
 	var result: ValidationResult = ContentValidator.validate(_manifest(), config)
-	expect_true(result.is_valid, "Alpha balance values remain tunable")
+	expect_true(result.is_valid, "Positive placement limits remain tunable; canonical threshold mapping stays fixed")
 	return true
 
 

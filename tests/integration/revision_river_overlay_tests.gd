@@ -27,7 +27,7 @@ func _content() -> ContentRegistry:
 
 
 func _new(content: ContentRegistry) -> RunState:
-	return HomesteadRunFactory.create(123, content)
+	return preload("res://tests/fixtures/phase_nine_factory.gd").started(content, 123)
 
 
 func _options(state: RunState, content: ContentRegistry, id: StringName) -> Array[PlacementOption]:
@@ -43,7 +43,9 @@ func _commit(state: RunState, content: ContentRegistry, option: PlacementOption)
 		assert(guard < 30)
 		var choice: PendingChoice = state.pending_choice
 		var command: PlayerCommand
-		if choice.kind == &"specialist_assignment":
+		if choice.kind == &"tile_draft":
+			command = ResolveTileDraftCommand.new(choice.choice_id, 0)
+		elif choice.kind == &"specialist_assignment":
 			command = ResolveSpecialistAssignmentCommand.new(choice.choice_id, 0, -1, 0, true)
 		elif choice.kind == &"specialist_relay":
 			command = ResolveRelayCommand.new(choice.choice_id)

@@ -1,12 +1,12 @@
 class_name HomesteadRunFactory
 extends RefCounted
-## Setup RNG order: environmental path, starting bag shuffle, Charter selection, hand draw.
+## Setup RNG: environment, Charter, Starter offer; chosen copy, full shuffle, hand draw.
 
 
 static func create(seed_value: int, content: ContentRegistry) -> RunState:
 	assert(content.is_loaded(), "Load the validated Homestead content before setup.")
 	var config: RunConfig = content.get_config()
-	assert(config.starting_bag.size() == 16, "Homestead needs the complete starting manifest.")
+	assert(config.starting_bag.size() == 10, "Homestead needs the fixed ten-design core.")
 	var state: RunState = RunState.new(seed_value)
 	state.expansion = ExpansionState.new()
 	state.expansion.survey_charges = config.initial_survey_charges
@@ -35,15 +35,25 @@ static func create(seed_value: int, content: ContentRegistry) -> RunState:
 			state.expansion.bag.append(PhysicalTileRules.acquire(
 				state, entry.definition_id, &"homestead_starting_bag", TileLocationState.Kind.BAG
 			))
-	state.expansion.bag = state.rng.shuffled_ids(state.expansion.bag, &"starting_bag_shuffle")
 	if phase_nine:
 		CharterRules.select_ordinary(state, content, 1)
-	for index: int in range(config.hand_capacity):
-		state.expansion.hand.append(PhysicalTileRules.draw(state, config))
-	state.phase = GamePhase.Type.TURN_INPUT
-	StalemateRules.cycle_if_dead(state, content)
+		state.expansion.hand.assign([0, 0, 0])
+		TileDraftService.begin(state, content, &"starter")
+	else:
+		# Isolated earlier-phase manifests have no Charter/directional draft content.
+		state.expansion.bag = state.rng.shuffled_ids(state.expansion.bag, &"starting_bag_shuffle")
+		state.expansion.hand.resize(config.hand_capacity)
+		finish_opening_hand(state, content)
+		StalemateRules.cycle_if_dead(state, content)
 	InvariantValidator.assert_valid(state, content)
 	return state
+
+
+static func finish_opening_hand(state: RunState, content: ContentRegistry) -> void:
+	for index: int in range(content.get_config().hand_capacity):
+		assert(state.expansion.hand[index] == 0)
+		state.expansion.hand[index] = PhysicalTileRules.draw(state, content.get_config())
+	state.phase = GamePhase.Type.TURN_INPUT
 
 
 static func _entry_before(left: StartingBagEntry, right: StartingBagEntry) -> bool:

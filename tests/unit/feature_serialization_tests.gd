@@ -18,7 +18,7 @@ func tests() -> Array[Callable]:
 		rejects_topology_revision_mismatch, rejects_fake_network_history,
 		rejects_invalid_enclosure_host, rejects_replayed_completion,
 		loaded_reopened_feature_scores_only_new_growth, rejects_nonriver_contact_history,
-		rejects_nonriver_completion_contact, forest_river_contact_roundtrip, rejects_river_reopening_history]
+		rejects_nonriver_completion_contact, forest_river_contact_roundtrip, rejects_river_reopening_history, normalization_sorts_names_lexically]
 
 
 func phase_three_round_trip_preserves_history_and_topology() -> bool:
@@ -320,4 +320,25 @@ func rejects_river_reopening_history() -> bool:
 	var loaded: DeserializationResult = RunSerializer.deserialize(JSON.stringify(RunSerializer.to_envelope(state)), content)
 	expect_true(not loaded.validation.is_valid and loaded.state == null, "Even internally coordinated River reopening history is obsolete")
 	expect_true(str(loaded.validation.debug_details).contains("river_lifecycle_history_forbidden"), "Explicit environmental lifecycle invariant reports the corruption")
+	return true
+
+
+func normalization_sorts_names_lexically() -> bool:
+	# Allocate many names in a deliberately nonlexical order to exercise distinct
+	# intern identities regardless of earlier test/script loading order.
+	var stages: Array[StringName] = []
+	var expected: Array[StringName] = []
+	for index: int in range(64):
+		stages.append(StringName("normalization_stage_%02d" % ((index * 17) % 64)))
+		expected.append(StringName("normalization_stage_%02d" % index))
+	var families: Array[StringName] = stages.duplicate()
+	var completion: Dictionary = {"development_families": families}
+	for key: String in ["component_ids", "new_component_ids", "field_support_ids", "river_support_ids", "forest_contact_ids", "new_field_ids", "new_river_ids", "new_forest_ids", "network_road_ids", "network_settlement_ids", "new_settlement_ids"]:
+		completion[key] = []
+	var features: Dictionary = {"components": [], "lineages": [], "history": [],
+		"enclosures": [{"enclosure_id": "1", "completed_stages": stages, "completion_ids": []}],
+		"completions": [completion]}
+	StateNormalizer._normalize_features(features)
+	expect_equal(features.enclosures[0].completed_stages, expected, "Enclosure stage names normalize lexically regardless of StringName identity")
+	expect_equal(features.completions[0].development_families, expected, "Development family names normalize lexically regardless of StringName identity")
 	return true

@@ -9,7 +9,7 @@ var _runs: Dictionary = {}
 func tests() -> Array[Callable]:
 	return [completed_failure, completed_victory, completed_exemplary,
 		deterministic_full_replay, every_boundary_round_trip_replay,
-		midpoint_waits_for_real_assignment, exact_seeding_across_full_run,
+		midpoint_waits_for_real_assignment, exact_drafts_across_full_run,
 		final_rewards_before_no_refill, completed_run_rejects_commands,
 		genuine_completion_history, completed_result_round_trip,
 		persistent_civilization, final_statistics, full_charter_reward_chains]
@@ -21,6 +21,12 @@ func _run(outcome: int = 0, restore: bool = false) -> Dictionary:
 		_runs[key] = F.scripted(F.content(), RUN_SEED, outcome, restore)
 		print("FULL SCRIPTED RUN: outcome=", outcome, " restored=", restore,
 			" fingerprint=", _runs[key]["fingerprint"])
+		var dump_prefix: String = OS.get_environment("MAPPA_TEST_RUN_DUMP_PREFIX")
+		if not dump_prefix.is_empty():
+			var output: FileAccess = FileAccess.open(dump_prefix + "-%d-%s.json" % [outcome, str(restore)], FileAccess.WRITE)
+			assert(output != null)
+			output.store_string(JSON.stringify(RunSerializer.to_envelope(_runs[key]["state"]), "\t", true))
+			output.close()
 	return _runs[key]
 
 
@@ -67,7 +73,7 @@ func every_boundary_round_trip_replay() -> bool:
 	var restored: Dictionary = _run(1, true)
 	expect_true(restored["round_trips"] > 66, "Saves cover all stable turns plus actual PendingChoices")
 	expect_equal(restored["choices"], original["choices"], "Reload does not reroll saved choices")
-	expect_equal(restored["turns"], original["turns"], "Reload duplicates no seeding, reward, shuffle, refresh or refill")
+	expect_equal(restored["turns"], original["turns"], "Reload duplicates no draft, reward, shuffle, refresh or refill")
 	expect_equal(restored["fingerprint"], original["fingerprint"], "Repeated save/load is side-effect-free through complete run")
 	return true
 
@@ -94,21 +100,28 @@ func midpoint_waits_for_real_assignment() -> bool:
 	return true
 
 
-func exact_seeding_across_full_run() -> bool:
-	var state: RunState = _run()["state"]
-	var seeded: Dictionary = {}
+func exact_drafts_across_full_run() -> bool:
+	var run: Dictionary = _run()
+	var state: RunState = run["state"]
+	var counts: Dictionary = {"starter": 0, "cadence": 0, "act_entry": 0}
+	var by_act: Array[int] = [0, 0, 0]
+	var ids: Array[int] = []
+	for event: Dictionary in state.rewards.history:
+		if event.get("kind") != "tile_draft_resolved":
+			continue
+		var details: Dictionary = event["details"]
+		counts[details.draft_type] += 1
+		expect_equal(details.quantity, 1, "Every draft grants exactly one physical copy")
+		expect_true(not ids.has(int(details.tile_copy_id)), "Every draft acquisition has a distinct identity")
+		ids.append(int(details.tile_copy_id))
+		if details.draft_type == "cadence":
+			by_act[int(details.act) - 1] += 1
+			expect_true(int(details.placement_index) % 2 == 0, "Cadence follows even normal placements")
+			expect_true(not (int(details.act) == 3 and int(details.placement_index) == 26), "No final Act-III draft")
+	expect_equal(counts, {"starter": 1, "cadence": 32, "act_entry": 2}, "Full run resolves all thirty-five drafts")
+	expect_equal(by_act, [9, 11, 12], "Cadence counts respect each Act boundary")
 	for copy: TileCopyState in state.tile_copies:
-		if String(copy.acquisition_source).begins_with("act_transition"):
-			var key: String = "%d:%s" % [copy.acquired_act, copy.definition_id]
-			seeded[key] = int(seeded.get(key, 0)) + 1
-	var expected: Dictionary = {}
-	for id: String in ["market", "port", "town_square", "abbey"]:
-		expected["2:tile.development." + id] = {"market": 4, "port": 2, "town_square": 1, "abbey": 1}[id]
-	expected["2:tile.transformation.urban_expansion"] = 2
-	expected["3:tile.transformation.bridge"] = 2
-	expected["3:tile.transformation.rewilding"] = 2
-	expected["3:tile.development.grand_market"] = 2
-	expect_equal(seeded, expected, "Exactly ten Act-II and six Act-III identified seed copies survive full run")
+		expect_true(not String(copy.acquisition_source).begins_with("act_transition"), "Automatic Act seed bundles are removed")
 	return true
 
 
@@ -222,6 +235,6 @@ func full_charter_reward_chains() -> bool:
 	expect_equal(second["rewards_generated"], [&"relic_offer", &"tile_reward", &"major_reward"], "Act-II exceeded reward order retained")
 	expect_true(not first["rewards_resolved"].is_empty() and not second["rewards_resolved"].is_empty(), "Both transitions persist their real resolved reward chains")
 	for choice: Dictionary in run["choices"]:
-		if choice["in_transition"]:
+		if choice["in_transition"] and choice["kind"] != &"tile_draft":
 			expect_equal(choice["capacity"], 2 if choice["act"] == 1 else 4, "Outgoing Charter choices use outgoing Relic capacity")
 	return true

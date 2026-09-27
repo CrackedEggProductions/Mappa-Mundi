@@ -10,9 +10,9 @@
 
 # Alpha Playtest Revision 1 engineering change record
 
-The first human Phase-10 playtest requires a gameplay revision before Phase 11. This specification now replaces its old 55-copy bag, player River construction/completion, continuous Junction Road and River-contact scoring ownership assumptions. Core command, snapshot, lineage, reward, determinism and presentation boundaries remain authoritative.
+The first human Phase-10 playtest requires a gameplay revision before Phase 11. This specification now replaces its old 55-copy bag, player River construction/completion, continuous Junction Road and River-contact scoring ownership assumptions. Core command, snapshot, lineage, reward, determinism and presentation boundaries remain authoritative. The Draft Cadence follow-up replaces the initial Revision-1 45-copy bag with an 18-copy core plus single-copy drafts, removes automatic Act seeding, and makes Track 20 NONE. Unlocking permits choices; it never guarantees physical presence.
 
-Runtime rules version is **alpha-playtest-r1**, save schema **2**. Reject incompatible pre-revision development saves clearly; do not add a migration framework. Phase 11 Save/Continue UX and Phase 12 exports remain future work.
+Runtime rules version is **alpha-playtest-r1-draft-cadence**, save schema **3**. Reject incompatible pre-revision development saves clearly; do not add a migration framework. Phase 11 Save/Continue UX and Phase 12 exports remain future work.
 
 # 0. Authority, Purpose, and Scope
 
@@ -337,7 +337,7 @@ Not every field applies to every tile class.
 
 The Founding Tile is a static definition but is not a normal bag-eligible reward design. River End/Run/Bend remain static definitions marked setup-only environment and not player drawable. Open Fields and Road End retain legacy IDs/art but are neither player drawable nor setup environment.
 
-Riverside Hamlet and Woodland River are Act-I Transformation-style overlays with Specialized/Hybrid reward quantity 2 and Masterwork eligibility. They are the explicit exception to the otherwise Expansion-only starting bag. Player-pool filtering consults authoritative metadata before unlock filtering/sorting; immediate board playability does not filter rewards.
+Riverside Hamlet and Woodland River are Act-I Transformation-style overlays with Specialized/Hybrid reward quantity 2 and Masterwork eligibility. They enter through Starter/regular drafts or rewards; the initial 18-copy core contains only ten ordinary Expansion designs. Player-pool filtering consults authoritative metadata before unlock filtering/sorting; immediate board playability does not filter rewards.
 
 ## 4.3 Stable human-readable definition IDs
 
@@ -382,7 +382,7 @@ Store tunable values in data/configuration:
 - Act lengths;
 - Track thresholds;
 - starting bag copy counts;
-- transition seeding quantities (`RunConfig.act_two_seeds` / `act_three_seeds`, ordered design/count entries);
+- Starter/regular/Act Entry draft eligibility and cadence; no automatic Act-seed quantities;
 - scoring numbers;
 - Charter targets;
 - reward copy quantities;
@@ -434,7 +434,9 @@ At minimum validate:
 - Act eligibility is valid;
 - reward classes are valid;
 - required Charter/Relic/Specialist definitions exist;
-- Homestead starting-bag counts total exactly 45 and match the canonical rules;
+- Homestead core-bag counts total exactly 18 across ten canonical designs;
+- Starter Draft has exactly ten non-core Act-I designs; regular draft pools contain 20/25/28 unlocked player designs and entry pools contain the five/three new designs respectively;
+- no automatic Act-seed copies or Track-20 reward can be generated;
 - legacy/setup-only definitions cannot enter player bags, reward/Masterwork offers or emergency sets;
 - required River Run/Bend/End setup definitions exist;
 - Riverside Hamlet/Woodland River have overlay behaviors, Act-I unlock and Specialized/Hybrid reward classification;
@@ -706,7 +708,7 @@ The fixed composition is five River Runs, two River Bends and one final River En
 
 Use one RunRNG selection (`environmental_river_path`) among 24 deterministically ordered prevalidated templates: seven continuation positions contain five Runs and two separated Bends; neither Bend is at the first/last continuation position. Turn directions vary. Append the End. Validate unique coordinates, matching River sockets, no self-intersection/Founding collision and exact counts. Serialize the actual board; loading never invokes the generator.
 
-Gameplay RNG order is River-template choice → full 45-copy player-bag shuffle → Act-I Charter selection → opening hand draws. Domain containers may initialize earlier without gameplay randomness. Setup topology initialization emits no completion/scoring/Specialist/reward events.
+Gameplay RNG order is River-template choice → Act-I Charter selection → Starter Draft offer sampling → selected-copy acquisition/full-bag shuffle → opening hand draws (non-random pops). Build the 18-copy core without an initial shuffle; while the Starter Draft is pending, all three hand slots remain empty. Its selected copy gives 19 copies before the opening draw. Domain containers may initialize earlier without gameplay randomness. Setup topology initialization emits no completion/scoring/Specialist/reward events.
 
 ## 9.7 Intersection Hub identity
 `BoardCellState.intersection_hub` persists the definition's explicit hub flag. `IntersectionHubService` derives `IntersectionHubState` from board/features: stable `hub_id` equal to the existing base tile-copy ID, coordinate, socket directions, attached Road lineage IDs and neighboring hub IDs. No scene IDs or extra Road components are allocated.
@@ -1412,8 +1414,8 @@ No gameplay class may independently call uncontrolled random helpers.
 
 The one stream governs all canonical randomness, including:
 
-- environmental River path/template selection before initial bag shuffle;
-- starting bag shuffle;
+- environmental River path/template selection before Charter and Starter Draft selection;
+- draft offer selection and full-bag shuffle after each selected draft copy;
 - draws;
 - bag re-randomization;
 - dead-hand cycling;
@@ -1452,9 +1454,11 @@ Do not assume an engine upgrade preserves RNG implementation behavior without ve
 Development builds should optionally record an incrementing RNG-operation counter and concise reason, e.g.:
 
 ```text
-RNG 0001 starting_bag_shuffle
+RNG 0001 environmental_river_path
 RNG 0002 act_1_charter_selection
-RNG 0003 opening_draw
+RNG 0003 tile_draft_offer
+... selected Starter copy acquired, then full-bag shuffle ...
+Opening draws pop saved bag order and consume no RNG.
 ```
 
 This log is diagnostic; it need not be player-facing.
@@ -1479,7 +1483,7 @@ The engine owns pending hand-refill state and performs it at the canonical point
 
 On the final normal placement of Act I/II, retain a pending refill marker if the tile came from active hand.
 
-The Act-transition service must seed/unlock/randomize the new Act content **before** performing that pending replacement draw.
+The Act-transition service must unlock content, select/reveal Charter information, then resolve the restricted Act Entry Draft and its selected-copy full-bag shuffle **before** that pending replacement draw. There is no automatic seeding or unconditional transition shuffle.
 
 ## 24.4 No Act III final refill
 
@@ -1648,7 +1652,21 @@ Doing so would consume RNG again and could change the run.
 
 When one reward creates another reward/choice, resume through the serialized ResolutionState and canonical queue rather than nesting UI dialogs as gameplay control flow.
 
-## 27.4 Charter reward order
+## 27.4 Tile Drafts and the 20-point NONE threshold
+
+`TileDraftService` owns Starter, cadence and Act Entry drafts. `ResolveTileDraftCommand` validates the saved option, allocates one physical copy with acquisition Act/source, then shuffles the entire remaining bag using RunRNG. Normal Tile Reward quantities and Masterwork's three copies remain separate contracts.
+
+Persist `PendingChoice.kind = tile_draft`, exact ordered `[{definition_id}]` options and context `{draft_type, act, placement_index, draft_sequence}`. Sources are `starter_draft`, `cadence_draft` and `act_entry_draft`. Structured offered/resolved entries use `state.rewards.history`; do not create a parallel reward queue or a second authoritative draft state object. The choice has no reward ResolutionState; its subtype resumes setup, placement or Act transition. Invalid choices mutate nothing and consume no RNG.
+
+Starter offers only the ten non-core Act-I hybrids/Developments after Charter selection and before opening draws. Regular drafts use the whole unlocked player pool (20/25/28 designs), including currently unplayable designs. Cadence fires once after each even normal placement: Act I 2–18, Act II 2–22, Act III 2–24. Resolve all completion/reward/bonus/child consequences first, then draft, then pending refill or outgoing Charter evaluation. No Act-III placement-26 draft exists. Bonus placements never create cadence entitlements.
+
+At Act entry, restrict the offer to the five newly unlocked Act-II or three Act-III designs. Resolve after incoming Charter information and before pending hand refill. Acquiring the one chosen copy is the only entry-draft bag shuffle. Unlocking itself grants no physical copies.
+
+For every draft, filter, sort, sample up to three distinct definitions uniformly with RunRNG, then persist the exact offer. Save/load never rerolls, reacquires, reshuffles or repeats a continuation. A complete run has one Starter, 32 cadence and two Act Entry drafts.
+
+Track 20 remains a one-time crossing with reward type NONE: no reward job, PendingChoice, RNG use, copy or bag shuffle. Track 40 training (including its Normal Tile Reward fallback), 70 Relic and 100 Major Reward remain unchanged.
+
+## 27.5 Charter reward order
 
 Represent Charter rewards as ordered reward steps matching the canonical rules.
 
@@ -1724,15 +1742,7 @@ Implement Act transition as an explicit resumable pipeline, not a pile of scene 
 
 The transition must preserve exact canonical ordering.
 
-Recommended `ActTransitionState` fields:
-
-```text
-outgoing_act
-incoming_act
-current_transition_step
-pending_charter_reward_index
-pending_hand_refill
-```
+`ActTransitionState` persists `transition_id`, outgoing/incoming Acts, `step` (the next operation, 1–13), Charter result, ordered rewards/reward index/history start, pending hand-refill slot, and explicit exactly-once flags: rewards queued, advanced, capacity/Survey/Relic refreshed, unlocked, information selected, entry draft resolved, counter reset and refill done.
 
 Canonical transition implementation order:
 
@@ -1745,15 +1755,16 @@ Canonical transition implementation order:
 6. expire/grant Survey charge
 7. refresh once-per-Act Relics
 8. unlock new Act content
-9. seed new Act tiles into bag (Act II: Market ×4, Port ×2, Urban Expansion ×2, Town Square ×1, Abbey ×1; total 10; Act III remains Bridge/Rewilding/Grand Market ×2 each)
-10. randomize bag
-11. reveal/select required Charter information
-12. reset placement counter
-13. perform pending final-placement hand refill
-14. enter TURN_INPUT
+9. reveal/select required Charter information
+10. offer and resolve one restricted Act Entry Draft
+11. reset placement counter
+12. perform pending final-placement hand refill
+13. enter TURN_INPUT
 ```
 
-Any reward choice can pause transition through `PENDING_CHOICE`, save safely, and later resume at the exact step.
+Act II unlocks Market, Port, Urban Expansion, Town Square and Abbey. Act III unlocks Bridge, Rewilding and Grand Market. Each entry draft chooses one of up to three sampled newly unlocked designs and grants one physical copy. All earlier automatic seed batches, including Market ×4, are superseded. Neither unlock nor advance performs a separate bag shuffle.
+
+Any Charter reward or entry draft pauses through `PENDING_CHOICE`, saves safely and resumes at its exact step. The outgoing cadence draft resolves before this pipeline begins. Incoming capacity and refreshed Survey/Relic state apply at entry draft time; outgoing Charter rewards retain the outgoing Act pool/capacity.
 
 Do not clear strategic state that the canonical rules say persists.
 
@@ -1921,8 +1932,8 @@ Top level should include at minimum:
 
 ```json
 {
-  "save_schema_version": 2,
-  "game_rules_version": "alpha-playtest-r1",
+  "save_schema_version": 3,
+  "game_rules_version": "alpha-playtest-r1-draft-cadence",
   "implementation_spec_version": 1,
   "godot_version": "...",
   "run_state": { }
@@ -1945,7 +1956,7 @@ Encode Godot-specific types explicitly, e.g.:
 
 Do not silently load an incompatible rules-version save and hope for the best.
 
-Early alpha saves are not guaranteed to survive incompatible development revisions. Revision 1 requires schema 2 and rules `alpha-playtest-r1`; older incompatible runs are rejected clearly rather than regenerated or migrated.
+Early alpha saves are not guaranteed to survive incompatible development revisions. Draft Cadence requires schema 3 and rules `alpha-playtest-r1-draft-cadence`; older incompatible runs are rejected clearly rather than regenerated or migrated.
 
 ## 32.4 Save RNG state
 
@@ -2170,7 +2181,7 @@ Build explicit board-state scenarios for:
 - multiple simultaneous threshold crossings;
 - multiple Relic milestone ordering;
 - outgoing Charter rewards before Act advance;
-- Act-transition seeding before pending refill;
+- Starter/cadence/Act Entry draft persistence and selected-copy shuffle before pending refill;
 - Act II midpoint Grand Charter reveal;
 - final Act III no-refill ending.
 
@@ -2312,8 +2323,8 @@ Maintain explicit constants/build metadata for:
 
 ```text
 IMPLEMENTATION_SPEC_VERSION = 1
-SAVE_SCHEMA_VERSION = 2
-GAME_RULES_VERSION = "alpha-playtest-r1"
+SAVE_SCHEMA_VERSION = 3
+GAME_RULES_VERSION = "alpha-playtest-r1-draft-cadence"
 ```
 
 Expose these in development diagnostics and save headers.
@@ -2366,7 +2377,7 @@ Implement:
 - exact edge matching;
 - placement query service;
 - basic `PlaceTileCommand`;
-- 45-copy Homestead player bag and setup-only River environment;
+- 18-copy Homestead core, single-copy drafts and setup-only River environment;
 - active hand;
 - Reserve;
 - Survey;
@@ -2473,7 +2484,7 @@ Implement:
 - all 3 Grand Charters;
 - forecast/exact reveal;
 - Act transitions;
-- Act II/III automatic seeding;
+- Act II/III unlocks and restricted entry drafts (automatic seeding superseded);
 - final Act III no-refill behavior;
 - final score/result.
 

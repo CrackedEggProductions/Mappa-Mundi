@@ -8,7 +8,16 @@ static func execute(state: RunState, content: ContentRegistry,
 	var validation: ValidationResult = validate(state, content, command)
 	if not validation.is_valid:
 		return validation
-	if command is ResumeActTransitionCommand:
+	if command is ResolveTileDraftCommand:
+		var subtype: StringName = TileDraftService.execute_command(state, command as ResolveTileDraftCommand)
+		match subtype:
+			&"starter":
+				HomesteadRunFactory.finish_opening_hand(state, content)
+			&"cadence":
+				_finish_placement(state, content)
+			&"act_entry":
+				ActRules.advance(state, content)
+	elif command is ResumeActTransitionCommand:
 		ActRules.advance(state, content)
 	elif command is ResolveRelayCommand:
 		StewardRelayRules.execute_command(state, command as ResolveRelayCommand)
@@ -70,6 +79,8 @@ static func validate(state: RunState, content: ContentRegistry,
 				and state.pending_choice == null and state.resolution == null:
 			return ValidationResult.success()
 		return _failure(&"wrong_phase", "No stable Act transition awaits continuation.")
+	if command is ResolveTileDraftCommand:
+		return TileDraftService.validate_command(state, content, command as ResolveTileDraftCommand)
 	if command is ResolveRelayCommand:
 		return StewardRelayRules.validate_command(state, command as ResolveRelayCommand)
 	if RewardCommands.handles(command):
@@ -313,6 +324,9 @@ static func _finish_placement(state: RunState, content: ContentRegistry) -> void
 	var config: RunConfig = content.get_config()
 	if BonusPlacementRules.finish(state, config):
 		return
+	if TileDraftService.cadence_due(state, config):
+		TileDraftService.begin(state, content, &"cadence", state.expansion.normal_placements)
+		return
 	if expansion.normal_placements == config.act_placement_limits[expansion.current_act - 1]:
 		state.phase = GamePhase.Type.RESOLVING_ACT_TRANSITION
 		if state.charters != null:
@@ -322,7 +336,7 @@ static func _finish_placement(state: RunState, content: ContentRegistry) -> void
 			else:
 				ActRules.begin_transition(state, content)
 				ActRules.advance(state, content)
-		return # Later Acts phase owns seeding before this pending refill.
+		return # Entry Draft acquisition precedes the pending transition refill.
 	PhysicalTileRules.refill_pending(state, config)
 	if state.charters != null and expansion.current_act == 2 and expansion.normal_placements >= 11:
 		CharterRules.reveal_grand(state)

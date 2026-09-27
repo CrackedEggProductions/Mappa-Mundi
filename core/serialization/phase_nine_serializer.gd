@@ -1,6 +1,6 @@
 class_name PhaseNineSerializer
 extends RefCounted
-## Lossless direct snapshots only. Decoding never selects, seeds, or resumes work.
+## Lossless direct snapshots only. Decoding never selects, drafts, or resumes work.
 
 const CHARTER_NAMES: Array[String] = ["act_one_id", "act_two_id", "grand_id"]
 const CHARTER_INTS: Array[String] = ["exact_revealed_act", "exact_revealed_index", "deferred_refill_index"]
@@ -9,7 +9,7 @@ const CHARTER_ARRAYS: Array[String] = ["evaluations", "history", "placement_hist
 const TRANSITION_INTS: Array[String] = ["transition_id", "outgoing_act", "incoming_act", "step",
 	"pending_charter_reward_index", "reward_history_start", "pending_hand_refill"]
 const TRANSITION_BOOLS: Array[String] = ["rewards_queued", "advanced", "capacity_refreshed",
-	"survey_refreshed", "relics_refreshed", "unlocked", "seeded", "shuffled",
+	"survey_refreshed", "relics_refreshed", "unlocked", "entry_draft_resolved",
 	"information_selected", "counter_reset", "refill_done"]
 const RESULT_NAMES: Array[String] = ["grand_charter_id", "grand_charter_result", "victory_result"]
 
@@ -22,7 +22,7 @@ static func keys(kind: StringName) -> Array[String]:
 			result.append("completed_act_placements")
 		&"act_transition":
 			result.append_array(TRANSITION_INTS + TRANSITION_BOOLS)
-			result.append_array(["charter_result", "rewards", "seeded_copy_ids"])
+			result.append_array(["charter_result", "rewards"])
 		&"final_result":
 			result.append_array(RESULT_NAMES)
 			result.append_array(["score", "tracks", "statistics"])
@@ -68,8 +68,7 @@ static func validate_shape(value: Variant, kind: StringName) -> ValidationResult
 					return _invalid()
 		&"act_transition":
 			if not _types(data, TRANSITION_INTS, TYPE_INT) or not _types(data, TRANSITION_BOOLS, TYPE_BOOL) \
-					or not data["charter_result"] is Dictionary or not _array_of(data["rewards"], TYPE_STRING_NAME) \
-					or not _array_of(data["seeded_copy_ids"], TYPE_INT):
+					or not data["charter_result"] is Dictionary or not _array_of(data["rewards"], TYPE_STRING_NAME):
 				return _invalid()
 		&"final_result":
 			if not _types(data, RESULT_NAMES, TYPE_STRING_NAME) or not data["score"] is int \

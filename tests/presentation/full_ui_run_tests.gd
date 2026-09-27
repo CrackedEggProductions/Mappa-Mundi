@@ -17,15 +17,16 @@ static func play(seed_value: int = 1010) -> Dictionary:
 	var tree: SceneTree = Engine.get_main_loop() as SceneTree
 	tree.root.add_child(controller)
 	controller.start_run(seed_value)
+	var choices: Array[StringName] = []
+	var errors: Array[String] = []
+	_drain(controller, choices, errors)
 	var opening_cells: int = controller.session.state.expansion.board.cells.size()
 	var opening_copies: Dictionary = {}
 	for copy: TileCopyState in controller.session.state.tile_copies:
-		if copy.acquisition_source == &"homestead_starting_bag":
+		if copy.tile_copy_id in controller.session.state.expansion.bag or copy.tile_copy_id in controller.session.state.expansion.hand:
 			opening_copies[copy.definition_id] = int(opening_copies.get(copy.definition_id, 0)) + 1
 	var counts: Array[int] = [0, 0, 0]
 	var turns: Array[Dictionary] = []
-	var choices: Array[StringName] = []
-	var errors: Array[String] = []
 	var transitions: Array[int] = []
 	var cycles: int = 0
 	var guard: int = 0
@@ -137,6 +138,7 @@ func exact_limits_and_real_transitions() -> bool:
 	var trace: Dictionary = _run()
 	expect_equal(trace.counts, [18, 22, 26], "All sixty-six placements use actual confirm controls")
 	expect_equal(trace.transitions, [2, 3], "Both actual transitions execute exactly once")
+	expect_equal(trace.choices.count(&"tile_draft"), 35, "All starter, cadence and entry drafts resolve through visible choice buttons")
 	expect_equal(trace.state.charters.evaluations.size(), 3, "Two outgoing Charters and final Grand evaluate")
 	return true
 
@@ -206,7 +208,7 @@ func revised_opening_environment() -> bool:
 	var count: int = 0
 	for value: int in trace.opening_copies.values():
 		count += value
-	expect_equal(count, 45, "Controller starts the revised forty-five-copy player inventory")
+	expect_equal(count, 19, "Controller resolves starter choice into eighteen core copies plus one chosen copy")
 	for forbidden: StringName in [&"tile.open_fields", &"tile.road_end", &"tile.river_end", &"tile.river_run", &"tile.river_bend"]:
 		expect_true(not trace.opening_copies.has(forbidden), "Removed/setup design is absent from initial player copies: " + String(forbidden))
 	return true

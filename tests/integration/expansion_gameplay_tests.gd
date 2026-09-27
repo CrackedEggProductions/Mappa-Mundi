@@ -24,13 +24,11 @@ func tests() -> Array[Callable]:
 func homestead_inventory_is_exact() -> bool:
 	var content: ContentRegistry = Factory.content()
 	var state: RunState = HomesteadRunFactory.create(41, content)
-	var expected: Dictionary[StringName, int] = {
-		&"tile.forest_edge": 4, &"tile.forest_bend": 3, &"tile.forest_belt": 2,
-		&"tile.straight_road": 4, &"tile.bending_road": 4, &"tile.road_junction": 4,
-		&"tile.hamlet_edge": 4, &"tile.settlement_corner": 3, &"tile.settlement_throughway": 2,
-		&"tile.settlement_gate": 3, &"tile.riverside_hamlet": 2, &"tile.woodland_road": 2,
-		&"tile.woodland_river": 2, &"tile.settlement_corner_gate": 2,
-		&"tile.settlement_road_bend": 2, &"tile.settlement_road_throughway": 2,
+	var expected: Dictionary = {
+		&"tile.forest_edge": 3, &"tile.forest_bend": 1, &"tile.forest_belt": 1,
+		&"tile.straight_road": 2, &"tile.bending_road": 2, &"tile.road_junction": 2,
+		&"tile.hamlet_edge": 3, &"tile.settlement_corner": 1,
+		&"tile.settlement_throughway": 1, &"tile.settlement_gate": 2,
 	}
 	var actual: Dictionary[StringName, int] = {}
 	var identities: Dictionary[int, bool] = {}
@@ -40,9 +38,9 @@ func homestead_inventory_is_exact() -> bool:
 		if copy.acquisition_source == &"homestead_starting_bag":
 			actual[copy.definition_id] = actual.get(copy.definition_id, 0) + 1
 			expect_true(content.get_tile(copy.definition_id).player_drawable, "Starting bag contains only player designs")
-	expect_equal(actual, expected, "Exact canonical counts of all 16 starting player definitions")
-	expect_equal(state.tile_copies.size(), 54, "45 player copies plus Founding and eight environmental River copies")
-	expect_equal(state.expansion.bag.size(), 42, "Opening draw leaves 42 bag copies")
+	expect_equal(actual, expected, "Exact canonical counts of all ten core player definitions")
+	expect_equal(state.tile_copies.size(), 27, "18 core player copies plus Founding and eight environmental River copies")
+	expect_equal(state.expansion.bag.size(), 15, "Isolated earlier-phase opening draw leaves 15 core copies")
 	return true
 
 

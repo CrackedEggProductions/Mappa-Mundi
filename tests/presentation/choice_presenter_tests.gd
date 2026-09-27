@@ -35,8 +35,10 @@ func _choice(state: RunState, kind: StringName) -> PendingChoice:
 			choice.context = {"piece_id": piece_id}
 		&"training_piece":
 			choice.options = [{"piece_id": piece_id}]
-		&"tile_reward", &"masterwork":
+		&"tile_reward", &"masterwork", &"tile_draft":
 			choice.options = [{"definition_id": "tile.woodland_road"}, {"definition_id": "tile.forest_edge"}]
+			if kind == &"tile_draft":
+				choice.context = {"draft_type": "cadence", "act": 1, "placement_index": 2, "draft_sequence": 1}
 		&"major_reward":
 			choice.options = [{"major_id": "relic_cache"}, {"major_id": "grand_survey"}]
 		&"relic_offer":
@@ -56,7 +58,7 @@ func _choice(state: RunState, kind: StringName) -> PendingChoice:
 
 func exact_choice_kind(kind: StringName) -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	var choice: PendingChoice = _choice(state, kind)
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
 	presenter.sync(state, content)
@@ -67,6 +69,9 @@ func exact_choice_kind(kind: StringName) -> bool:
 		expect_equal(command.get("choice_id"), choice.choice_id, "Command captures choice identity")
 		expect_equal(command.get("expected_state_revision"), state.expansion.state_revision, "Command captures displayed revision")
 		match kind:
+			&"tile_draft":
+				expect_true(command is ResolveTileDraftCommand, "Draft uses its authoritative typed command")
+				expect_equal(command.get("option_index"), index, "Persisted draft option order is untouched")
 			&"specialist_assignment":
 				expect_true(command is ResolveSpecialistAssignmentCommand, "Assignment uses typed intent")
 				expect_equal(command.get("target_id"), choice.options[index]["target_id"], "Exact authoritative target")
@@ -92,7 +97,7 @@ func exact_choice_kind(kind: StringName) -> bool:
 
 func no_choice_hidden() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
 	presenter.sync(state, content)
 	expect_true(not presenter.visible and presenter.option_buttons.is_empty(), "Ordinary turn has no choice panel")
@@ -102,7 +107,7 @@ func no_choice_hidden() -> bool:
 
 func rendering_is_read_only() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	var requested: ValidationResult = RulesEngine.execute(state, content, RequestSpecialistTrainingCommand.new(state.specialists.pieces[0].piece_id))
 	expect_true(requested.is_valid, "Real training offer created")
 	var before: String = StateNormalizer.fingerprint(state)
@@ -116,7 +121,7 @@ func rendering_is_read_only() -> bool:
 
 func _decline(kind: StringName) -> PlayerCommand:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_choice(state, kind)
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
 	presenter.sync(state, content)
@@ -151,7 +156,7 @@ func grand_finish() -> bool:
 
 func commands_capture_revision() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_choice(state, &"grand_survey")
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
 	presenter.sync(state, content)
@@ -168,7 +173,7 @@ func commands_capture_revision() -> bool:
 
 func old_buttons_do_not_answer_new_choice() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_choice(state, &"major_reward")
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
 	var sent: Array[PlayerCommand] = []
@@ -188,7 +193,7 @@ func old_buttons_do_not_answer_new_choice() -> bool:
 
 func double_press_emits_once() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_choice(state, &"major_reward")
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
 	var sent: Array[PlayerCommand] = []
@@ -204,7 +209,7 @@ func double_press_emits_once() -> bool:
 
 func unknown_kind_visible_error() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_choice(state, &"unknown_future_choice")
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
 	var reported: Array[StringName] = []
@@ -219,7 +224,7 @@ func unknown_kind_visible_error() -> bool:
 
 func training_context() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_choice(state, &"specialist_training")
 	var piece: SpecialistPieceState = state.specialists.pieces[0]
 	var feature: CurrentFeature = TopologyService.rebuild(state)[0]
@@ -247,7 +252,7 @@ func relic_descriptions_complete() -> bool:
 
 func real_training_command() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	var piece: SpecialistPieceState = state.specialists.pieces[0]
 	expect_true(RulesEngine.execute(state, content, RequestSpecialistTrainingCommand.new(piece.piece_id)).is_valid, "Training offer starts")
 	var expected: StringName = StringName(state.pending_choice.options[0]["role_definition_id"])
@@ -263,7 +268,7 @@ func real_training_command() -> bool:
 
 func real_compass_command() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	expect_true(RelicRules.acquire(state, content, &"relic.surveyors_compass").is_valid, "Fixture equips Compass")
 	expect_true(RulesEngine.execute(state, content, SurveyTileCommand.new(state.expansion.hand[0])).is_valid, "Normal Survey opens Compass")
 	var expected: int = state.pending_choice.options[0]["tile_copy_id"]
@@ -285,7 +290,7 @@ func _reward_context(state: RunState) -> void:
 
 func real_reward_command() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_reward_context(state)
 	RewardRules.enqueue(state, &"tile_reward")
 	RewardRules.advance(state, content)
@@ -303,7 +308,7 @@ func real_reward_command() -> bool:
 
 func real_grand_survey_sequence() -> bool:
 	var content: ContentRegistry = _content()
-	var state: RunState = HomesteadRunFactory.create(10010, content)
+	var state: RunState = _new_run(content)
 	_reward_context(state)
 	RelicHandRules.begin_grand_survey(state, content)
 	var presenter: PendingChoicePresenter = PendingChoicePresenter.new()
@@ -321,3 +326,10 @@ func real_grand_survey_sequence() -> bool:
 	expect_equal(state.expansion.survey_charges, 2, "One current-Act charge awarded by rules")
 	presenter.free()
 	return true
+
+
+func _new_run(content: ContentRegistry) -> RunState:
+	var state: RunState = HomesteadRunFactory.create(10010, content)
+	assert(state.pending_choice != null and state.pending_choice.kind == &"tile_draft")
+	assert(RulesEngine.execute(state, content, ResolveTileDraftCommand.new(state.pending_choice.choice_id, 0)).is_valid)
+	return state

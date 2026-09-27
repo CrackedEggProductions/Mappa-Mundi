@@ -4,10 +4,11 @@ extends PanelContainer
 
 signal command_requested(command: PlayerCommand)
 signal unhandled_choice(kind: StringName)
+signal inspect_charter_requested
 
 const KINDS: Array[StringName] = [&"specialist_assignment", &"specialist_training",
 	&"training_piece", &"tile_reward", &"masterwork", &"major_reward", &"relic_offer",
-	&"relic_replacement", &"compass", &"specialist_relay", &"grand_survey"]
+	&"relic_replacement", &"compass", &"specialist_relay", &"grand_survey", &"tile_draft"]
 const TITLES: Dictionary = {
 	&"specialist_assignment": "Assign one Steward or Specialist",
 	&"specialist_training": "Train this Steward permanently",
@@ -23,6 +24,7 @@ var decline_button: Button
 var title_label: Label
 var context_label: Label
 var error_label: Label
+var charter_button: Button
 var choice_id: int = 0
 var choice_kind: StringName = &""
 var state_revision: int = -1
@@ -54,6 +56,11 @@ func _ensure_controls() -> void:
 	context_label = Label.new()
 	context_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_body.add_child(context_label)
+	charter_button = Button.new()
+	charter_button.text = "Inspect Charter"
+	charter_button.tooltip_text = "Read the current objective, then return to these same draft options."
+	charter_button.pressed.connect(func() -> void: inspect_charter_requested.emit())
+	_body.add_child(charter_button)
 	var scroll: ScrollContainer = ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(0, 260)
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -95,6 +102,10 @@ func sync(state: RunState, content: ContentRegistry) -> void:
 	choice_kind = choice.kind
 	state_revision = state.expansion.state_revision
 	title_label.text = String(TITLES.get(choice_kind, "Unsupported required choice"))
+	if choice_kind == &"tile_draft":
+		const DRAFT_TITLES: Dictionary = {"starter": "Choose Your First Addition", "cadence": "Tile Draft", "act_entry": "New possibilities"}
+		title_label.text = String(DRAFT_TITLES.get(String(choice.context.get("draft_type", "cadence")), "Tile Draft"))
+	charter_button.visible = choice_kind == &"tile_draft"
 	context_label.text = _context_text(state, content, choice)
 	if not KINDS.has(choice_kind):
 		error_label.text = "Development error: no presenter for required choice ‘%s’. Please report this; the run is paused safely." % String(choice_kind)
@@ -126,6 +137,8 @@ func decline_command() -> PlayerCommand:
 
 func _make_command(kind: StringName, option: Dictionary, index: int) -> PlayerCommand:
 	match kind:
+		&"tile_draft":
+			return ResolveTileDraftCommand.new(choice_id, index)
 		&"specialist_assignment":
 			return ResolveSpecialistAssignmentCommand.new(choice_id, int(option["piece_id"]), int(option["target_type"]), int(option["target_id"]))
 		&"specialist_training":
@@ -181,7 +194,7 @@ func _submit(command: PlayerCommand, generation: int) -> void:
 
 
 func _tile_id(state: RunState, option: Dictionary) -> StringName:
-	if choice_kind in [&"tile_reward", &"masterwork"]:
+	if choice_kind in [&"tile_reward", &"masterwork", &"tile_draft"]:
 		return StringName(option["definition_id"])
 	var copy_id: int = int(option.get("tile_copy_id", 0))
 	if copy_id > 0:
@@ -204,6 +217,9 @@ func _option_text(state: RunState, content: ContentRegistry, option: Dictionary)
 		if choice_kind in [&"tile_reward", &"masterwork"]:
 			var count: int = 3 if choice_kind == &"masterwork" else RewardRules.copy_quantity(tile)
 			detail += " · %d copies" % count
+		elif choice_kind == &"tile_draft":
+			detail += " · 1 copy added to the bag"
+			detail += "\n" + ChoiceText.tile_help(tile)
 		elif choice_kind == &"grand_survey":
 			detail += " · remove permanently and replace"
 		return tile.display_name + "\n" + detail
@@ -231,6 +247,13 @@ func _option_text(state: RunState, content: ContentRegistry, option: Dictionary)
 
 func _context_text(state: RunState, content: ContentRegistry, choice: PendingChoice) -> String:
 	match choice.kind:
+		&"tile_draft":
+			var text: String = "Choose one design. One physical copy joins the bag, then the bag shuffles."
+			if choice.context.get("draft_type") == "starter":
+				text += " Your opening hand is drawn afterward. Inspect your Charter before choosing."
+			elif choice.context.get("draft_type") == "act_entry":
+				text += " These are newly unlocked possibilities for this Act."
+			return text
 		&"specialist_assignment":
 			return "Choose one piece and one local unfinished feature, or decline."
 		&"specialist_training":

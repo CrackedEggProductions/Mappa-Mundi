@@ -88,21 +88,19 @@ func exact_starting_bag_counts() -> bool:
 	# Independent expected counts in the documented deterministic ID order.
 	var ids: Array[StringName] = [
 		&"tile.bending_road", &"tile.forest_belt", &"tile.forest_bend", &"tile.forest_edge",
-		&"tile.hamlet_edge", &"tile.riverside_hamlet", &"tile.road_junction",
-		&"tile.settlement_corner", &"tile.settlement_corner_gate", &"tile.settlement_gate",
-		&"tile.settlement_road_bend", &"tile.settlement_road_throughway", &"tile.settlement_throughway",
-		&"tile.straight_road", &"tile.woodland_river", &"tile.woodland_road",
+		&"tile.hamlet_edge", &"tile.road_junction", &"tile.settlement_corner",
+		&"tile.settlement_gate", &"tile.settlement_throughway", &"tile.straight_road",
 	]
-	var counts: Array[int] = [4,2,3,4,4,2,4,3,2,3,2,2,2,4,2,2]
+	var counts: Array[int] = [2, 1, 1, 3, 3, 2, 1, 2, 1, 2]
 	var config: RunConfig = _config()
 	var total: int = 0
-	expect_equal(config.starting_bag.size(), 16, "Exactly 16 starting player designs")
+	expect_equal(config.starting_bag.size(), 10, "Exactly ten starting core designs")
 	for index: int in range(config.starting_bag.size()):
 		var entry: StartingBagEntry = config.starting_bag[index]
 		expect_equal(entry.definition_id, ids[index], "Starting bag stable definition order")
 		expect_equal(entry.count, counts[index], "Canonical count for %s" % entry.definition_id)
 		total += entry.count
-	expect_equal(total, 45, "Exactly 45 starting physical copies")
+	expect_equal(total, 18, "Exactly eighteen starting physical copies")
 	return true
 
 
@@ -277,5 +275,5 @@ func registry_owns_nested_content() -> bool:
 	var fresh: TileDefinition = registry.get_tile(&"tile.settlement_gate")
 	expect_true(not fresh.feature_groups[0].directions.is_empty(), "Group mutation cannot change registry content")
 	expect_equal(fresh.relationships[0].from_edge_type, DomainTypes.EdgeType.ROAD, "Relationship data is owned")
-	expect_equal(registry.get_config().starting_bag[0].count, 4, "Bag entries are owned")
+	expect_equal(registry.get_config().starting_bag[0].count, 2, "Bag entries are owned")
 	return true

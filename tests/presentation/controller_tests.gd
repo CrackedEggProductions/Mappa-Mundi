@@ -26,6 +26,8 @@ func _controller() -> GameController:
 	var controller: GameController = GameController.new()
 	(Engine.get_main_loop() as SceneTree).root.add_child(controller)
 	controller.start_run(1010)
+	assert(controller.session.state.pending_choice.kind == &"tile_draft")
+	controller.choice_presenter.option_buttons[0].pressed.emit()
 	return controller
 
 
