@@ -1,6 +1,57 @@
 # Mappa Mundi — Implementation progress
 
-## Alpha Playtest Revision 1 — verification and review handoff
+## Second playtest — Act-II Market availability
+
+The Act-II seed distribution is now **Market ×4, Port ×2, Urban Expansion ×2,
+Town Square ×1, Abbey ×1: exactly 10 physical copies**. This replaces the previous
+2/2/2/2/2 distribution. Market Towns still requires two distinct current Market-family
+Settlements, Trade 40+ and its historical-Road/current-network condition. Market
+placement, occupied-host immediate effects, Mixed-Use legality and Grand Market's
+Act-III unlock are unchanged. Act III still seeds its three designs twice each.
+
+Ordered design/count entries now live in `RunConfig.act_two_seeds` and
+`act_three_seeds`, configured in `homestead_run_config.tres`. The transition,
+seed-history invariant and presentation summary consume this single definition.
+Copy identity/provenance and the separate full-bag shuffle before pending refill
+retain their existing implementation. No unrelated balancing or Phase 11 work.
+
+Optional non-canonical draw diagnostic: exact sampling without replacement, with
+four Markets and 22 accessible draws, gives the following conditional probabilities:
+
+| Bag at Act-II seeding/shuffle | At least one Market | At least two |
+| --- | ---: | ---: |
+| 35 copies | 98.634% | 86.618% |
+| 45 copies | 94.057% | 67.907% |
+| 55 copies | 88.002% | 52.808% |
+
+The 35-copy case assumes 45 initial player copies, 18 Act-I active-hand placements,
+two retained hand tiles and ten new seeds, with no reward additions, Survey, Reserve
+or cycling. Its 22 draws include the incoming transition refill and 21 Act-II refills;
+the final Act-II refill belongs to Act III. The old two-Market case gives 86.891%
+for at least one and 38.824% for both. Compute exactly with `math.comb`:
+`P(0)=C(N-M,22)/C(N,22)`, `P(1)=M*C(N-M,21)/C(N,22)`.
+These are draw-access estimates, not placement or Charter-success probabilities.
+Real rewards and player actions change the bag and sampling process.
+
+Updated seed-25 scripted full-run fingerprints:
+
+- No victory: `5b8eda81c351a271b9f8f5085f2a583d90b0746ecdec04bc7999de9260f5fb4c`
+- Victory: `3f660fb67f2efd1136735c75fd7ae551ff72652bca2e1fbd35407a4b41f616df`
+- Exemplary: `4a395f248aa89af6ff3d74a064c7b213aaed96c9c3dc09d11e892d9dc49df105`
+
+Verified 2026-09-27: `./tests/run_tests.sh` exited zero with **1243 passed, 0 failed**
+and **232 scripts parsed without diagnostics** (`builds/verification/run-NEIzkuWc`).
+`./tests/run_presentation_tests.sh` exited zero with **95 passed, 0 failed**
+(`builds/verification/presentation-s6HYn4ol`). Both wrappers reject Godot errors/warnings.
+Five complete scripted runs retain all outcomes, deterministic replay and save/load
+replay; the restored Victory fingerprint matches the fresh Victory above.
+Two complete natural-bag controller runs retain [18,22,26] placement counts and share
+fingerprint `eb576b5429eb83f7282b110b3bbd6aeae3a49060e840cc7d2b71efa333e1c232`.
+Tests verify exact seed quantities/identity/provenance, full-bag shuffle, seed-before-refill,
+Market/Grand Market unlocks, malformed seed configuration, transition text and the
+unchanged requirement for two distinct Market-family Settlements.
+
+## Alpha Playtest Revision 1 — first revision checkpoint (superseded seeding/fingerprints)
 
 Implementation commits: `15caab4` (canonical gameplay/content/tests) and `9fa20f6`
 (presentation/readability/tests). Final documentation follows on the same branch.
@@ -309,7 +360,8 @@ Act advance; capacity; fresh Survey; Relic refresh; unlock; physical seeding;
 full-bag shuffle; Charter information; counter reset; deferred refill; turn input.
 Outgoing rewards retain the outgoing pool and capacity, including nested Major
 reward chains. Act II seeds exactly 10 copies (Market, Port, Urban Expansion,
-Town Square, Abbey twice each). Act III seeds six (Bridge, Rewilding, Grand Market
+Town Square, Abbey in quantities 4/2/2/1/1 respectively, revised after the second
+human playtest). Act III seeds six (Bridge, Rewilding, Grand Market
 twice each). Stable IDs, incoming acquisition Act and seed provenance persist.
 Seeded tiles can become the deferred refill. Board, bag, hand, Reserve, Tracks,
 pieces, Relics, scoring history, lineages, networks and reward history persist.

@@ -19,6 +19,8 @@ func _run(outcome: int = 0, restore: bool = false) -> Dictionary:
 	var key: String = "%d:%s" % [outcome, str(restore)]
 	if not _runs.has(key):
 		_runs[key] = F.scripted(F.content(), RUN_SEED, outcome, restore)
+		print("FULL SCRIPTED RUN: outcome=", outcome, " restored=", restore,
+			" fingerprint=", _runs[key]["fingerprint"])
 	return _runs[key]
 
 
@@ -101,7 +103,7 @@ func exact_seeding_across_full_run() -> bool:
 			seeded[key] = int(seeded.get(key, 0)) + 1
 	var expected: Dictionary = {}
 	for id: String in ["market", "port", "town_square", "abbey"]:
-		expected["2:tile.development." + id] = 2
+		expected["2:tile.development." + id] = {"market": 4, "port": 2, "town_square": 1, "abbey": 1}[id]
 	expected["2:tile.transformation.urban_expansion"] = 2
 	expected["3:tile.transformation.bridge"] = 2
 	expected["3:tile.transformation.rewilding"] = 2

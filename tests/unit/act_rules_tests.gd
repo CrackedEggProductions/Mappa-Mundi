@@ -16,6 +16,8 @@ func tests() -> Array[Callable]:
 	result.append(act_two_exceeded_rewards)
 	result.append(act_two_outgoing_capacity)
 	result.append(final_score_overflow_atomic)
+	result.append(seed_shuffle_and_unlocks)
+	result.append(seed_configuration_validation)
 	for act: int in [2, 3]:
 		result.append(seed_identity_counts.bind(act))
 	for step: int in range(1, 15):
@@ -166,7 +168,15 @@ func seed_identity_counts(incoming: int) -> bool:
 	expect_equal(copies.size(), 10 if incoming == 2 else 6, "Exact automatic seed total")
 	expect_equal(state.tile_copies.size(), previous + copies.size(), "Every seed is a physical copy")
 	expect_equal(state.rng.operation_count, before_rng, "Seeding waits for separate shuffle step")
-	for definition: StringName in ActRules.seed_definitions(incoming):
+	var expected: Dictionary = {&"tile.development.market": 4, &"tile.development.port": 2,
+		&"tile.transformation.urban_expansion": 2, &"tile.development.town_square": 1,
+		&"tile.development.abbey": 1} if incoming == 2 else {
+		&"tile.transformation.bridge": 2, &"tile.transformation.rewilding": 2, &"tile.development.grand_market": 2}
+	var unique_ids: Dictionary = {}
+	for id: int in copies:
+		unique_ids[id] = true
+	expect_equal(unique_ids.size(), copies.size(), "Every seeded physical ID is unique")
+	for definition: StringName in expected:
 		var count: int = 0
 		for id: int in copies:
 			var tile: TileCopyState = PhysicalTileRules.find_copy(state, id)
@@ -175,7 +185,41 @@ func seed_identity_counts(incoming: int) -> bool:
 			expect_true(state.expansion.bag.has(id), "Seeded copy enters bag")
 			if tile.definition_id == definition:
 				count += 1
-		expect_equal(count, 2, "Exactly two of each canonical seeded design")
+		expect_equal(count, expected[definition], "Exact canonical quantity for " + String(definition))
+	return true
+
+
+func seed_configuration_validation() -> bool:
+	var content: ContentRegistry = _content()
+	var manifest: ContentManifest = load("res://content/manifests/phase_9_content_manifest.tres") as ContentManifest
+	for malformed: int in range(4):
+		var config: RunConfig = content.get_config().duplicate(true) as RunConfig
+		match malformed:
+			0: config.act_two_seeds[0].count = 0
+			1: config.act_two_seeds[0].count = 3
+			2: config.act_two_seeds[0].definition_id = &"tile.development.grand_market"
+			3: config.act_two_seeds[0].definition_id = config.act_two_seeds[1].definition_id
+		expect_true(not ContentValidator.validate(manifest, config).is_valid,
+			"Reject missing/invalid quantities, premature Grand Market and duplicate designs")
+	return true
+
+
+func seed_shuffle_and_unlocks() -> bool:
+	var content: ContentRegistry = _content()
+	var state: RunState = _state(content)
+	_hole(state)
+	_through(state, content, 9)
+	var before: Array[int] = state.expansion.bag.duplicate()
+	var replay: RunRNG = RunRNG.from_snapshot(state.original_seed, state.current_rng_state, state.rng.operation_count)
+	var expected: Array[int] = replay.shuffled_ids(before, &"act_transition_bag_shuffle")
+	assert(ActRules.advance_one(state, content).is_valid)
+	expect_equal(state.expansion.bag, expected, "Full bag including old and seeded copies uses canonical shuffle")
+	expect_true(state.expansion.bag != before, "Fixture shuffle changes bag order")
+	expect_equal(state.expansion.hand[0], 0, "Shuffle precedes pending hand refill")
+	for act: int in [1, 2, 3]:
+		var pool: Array[StringName] = RewardRules.tile_pool(content, act)
+		expect_equal(pool.has(&"tile.development.market"), act >= 2, "Market rewards unlock in Act II")
+		expect_equal(pool.has(&"tile.development.grand_market"), act >= 3, "Grand Market rewards wait for Act III")
 	return true
 
 

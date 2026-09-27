@@ -280,7 +280,7 @@ static func _validate_history(state: RunState, content: ContentRegistry, report:
 					or details["copy_ids"].size() != (10 if act == 2 else 6):
 				report.add(&"duplicate_seed_history", "Exactly one canonical seed batch may enter each later Act.")
 			seeded_acts.append(act)
-			_validate_seed_batch(state, details, report)
+			_validate_seed_batch(state, details, content.get_config(), report)
 	for pair: Array in [["charter_selected", state.charters.act_one_id], ["charter_selected", state.charters.act_two_id],
 			["grand_charter_selected", state.charters.grand_id], ["grand_charter_forecast_revealed", state.charters.grand_id]]:
 		if not String(pair[1]).is_empty() and selected.get("%s:%s" % pair, 0) != 1:
@@ -296,11 +296,11 @@ static func _validate_history(state: RunState, content: ContentRegistry, report:
 			report.add(&"missing_seed_audit", "Each reached incoming Act must retain exactly its canonical seeded batch.")
 
 
-static func _validate_seed_batch(state: RunState, data: Dictionary, report: InvariantReport) -> void:
+static func _validate_seed_batch(state: RunState, data: Dictionary, config: RunConfig, report: InvariantReport) -> void:
 	var act: int = data["act"]
 	if act not in [2, 3]:
 		return
-	var expected: Array[StringName] = ActRules.seed_definitions(act)
+	var expected: Array[StringName] = ActRules.seed_definitions(act, config)
 	if data.get("definition_ids") != expected:
 		report.add(&"invalid_seed_definitions", "Seed batch must preserve the canonical incoming-Act design list.")
 	var counts: Dictionary = {}
@@ -313,9 +313,9 @@ static func _validate_seed_batch(state: RunState, data: Dictionary, report: Inva
 			continue
 		ids.append(id)
 		counts[copy.definition_id] = counts.get(copy.definition_id, 0) + 1
-	for definition: StringName in expected:
-		if counts.get(definition, 0) != 2:
-			report.add(&"invalid_seed_quantity", "Automatic seeding grants exactly two physical copies per design.")
+	for entry: StartingBagEntry in config.seeds_for_act(act):
+		if counts.get(entry.definition_id, 0) != entry.count:
+			report.add(&"invalid_seed_quantity", "Automatic seeding must match the configured physical-copy quantities.")
 	for copy: TileCopyState in state.tile_copies:
 		if copy != null and copy.acquired_act == act and copy.acquisition_source == &"act_transition_seed" \
 				and copy.tile_copy_id not in ids:

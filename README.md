@@ -564,7 +564,7 @@ reveal uses no RNG and waits through assignment, rewards and bonus chains.
 Outgoing rewards use the outgoing Act pool and capacity. Only afterward do Act,
 capacity, Survey and Relic refresh, unlocks, seeding, shuffle, information selection,
 counter reset and refill occur. Act II adds Market/Port/Urban Expansion/Town Square/
-Abbey twice each (10 copies); Act III adds Bridge/Rewilding/Grand Market twice each
+Abbey in quantities 4/2/2/1/1 respectively (10 copies); Act III adds Bridge/Rewilding/Grand Market twice each
 (6 copies). All are physical identities with incoming-Act acquisition provenance.
 A saved transition can resume through `ResumeActTransitionCommand` without replaying
 completed steps. Normal reward commands resume pending transition rewards.

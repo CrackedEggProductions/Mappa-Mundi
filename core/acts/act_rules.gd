@@ -6,10 +6,6 @@ const STEP_KEYS: Array[StringName] = [&"evaluate_charter", &"charter_rewards",
 	&"legendary_noop", &"advance_act", &"relic_capacity", &"survey_refresh",
 	&"relic_refresh", &"unlock_content", &"seed_content", &"shuffle_bag",
 	&"charter_information", &"reset_counter", &"pending_refill", &"turn_input"]
-const ACT_TWO_SEEDS: Array[StringName] = [&"tile.development.market", &"tile.development.port",
-	&"tile.transformation.urban_expansion", &"tile.development.town_square", &"tile.development.abbey"]
-const ACT_THREE_SEEDS: Array[StringName] = [&"tile.transformation.bridge",
-	&"tile.transformation.rewilding", &"tile.development.grand_market"]
 
 
 static func ready(state: RunState, content: ContentRegistry) -> bool:
@@ -87,15 +83,18 @@ static func _rewards(state: RunState, content: ContentRegistry, transition: ActT
 	return true
 
 
-static func seed_definitions(act: int) -> Array[StringName]:
-	return ACT_TWO_SEEDS.duplicate() if act == 2 else (ACT_THREE_SEEDS.duplicate() if act == 3 else [])
+static func seed_definitions(act: int, config: RunConfig) -> Array[StringName]:
+	var result: Array[StringName] = []
+	for entry: StartingBagEntry in config.seeds_for_act(act):
+		result.append(entry.definition_id)
+	return result
 
 
-static func _seed(state: RunState, transition: ActTransitionState) -> void:
-	var definitions: Array[StringName] = seed_definitions(transition.incoming_act)
-	for id: StringName in definitions:
-		for copy_index: int in range(2):
-			var copy_id: int = PhysicalTileRules.acquire(state, id, &"act_transition_seed", TileLocationState.Kind.BAG)
+static func _seed(state: RunState, transition: ActTransitionState, config: RunConfig) -> void:
+	var definitions: Array[StringName] = seed_definitions(transition.incoming_act, config)
+	for entry: StartingBagEntry in config.seeds_for_act(transition.incoming_act):
+		for copy_index: int in range(entry.count):
+			var copy_id: int = PhysicalTileRules.acquire(state, entry.definition_id, &"act_transition_seed", TileLocationState.Kind.BAG)
 			state.expansion.bag.append(copy_id)
 			transition.seeded_copy_ids.append(copy_id)
 	transition.seeded = true
@@ -225,7 +224,7 @@ static func advance_one(state: RunState, content: ContentRegistry) -> Validation
 		8:
 			transition.unlocked = true
 		9:
-			_seed(state, transition)
+			_seed(state, transition, content.get_config())
 		10:
 			state.expansion.bag = state.rng.shuffled_ids(state.expansion.bag, &"act_transition_bag_shuffle")
 			transition.shuffled = true

@@ -2511,14 +2511,16 @@ At the start of Act II, unlock and keep eligible thereafter:
 - Town Square;
 - Abbey.
 
-Automatically add **2 copies each** to the bag:
-- Market ×2
+Automatically add the following physical copies to the bag:
+- Market ×4
 - Port ×2
 - Urban Expansion ×2
-- Town Square ×2
-- Abbey ×2
+- Town Square ×1
+- Abbey ×1
 
 Total automatic Act II seeding: **10 tiles**.
+
+Second-playtest adjustment: Market rises from two to four copies; Town Square and Abbey fall from two to one each. Market Towns still requires two distinct Market-family Settlements. Market placement/effects and Grand Market’s Act-III unlock are unchanged.
 
 ## RULE-ACT-003 — Act III unlocks
 At the start of Act III, unlock and keep eligible:
@@ -2902,4 +2904,3 @@ The core implementation principle is:
 > **Current board state determines what is true now; persistent lineage/history determines what has already scored or been accomplished.**
 
 That distinction is the foundation for reopening, merging, Transformations, Trade Network growth, and anti-farming behavior throughout the alpha.
-

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="RunConfig" load_steps=19 format=3]
+[gd_resource type="Resource" script_class="RunConfig" load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://content/manifests/run_config.gd" id="1_config"]
 [ext_resource type="Script" path="res://content/manifests/starting_bag_entry.gd" id="2_entry"]
@@ -83,6 +83,46 @@ script = ExtResource("2_entry")
 definition_id = &"tile.woodland_road"
 count = 2
 
+[sub_resource type="Resource" id="Seed_Market"]
+script = ExtResource("2_entry")
+definition_id = &"tile.development.market"
+count = 4
+
+[sub_resource type="Resource" id="Seed_Port"]
+script = ExtResource("2_entry")
+definition_id = &"tile.development.port"
+count = 2
+
+[sub_resource type="Resource" id="Seed_Urban"]
+script = ExtResource("2_entry")
+definition_id = &"tile.transformation.urban_expansion"
+count = 2
+
+[sub_resource type="Resource" id="Seed_TownSquare"]
+script = ExtResource("2_entry")
+definition_id = &"tile.development.town_square"
+count = 1
+
+[sub_resource type="Resource" id="Seed_Abbey"]
+script = ExtResource("2_entry")
+definition_id = &"tile.development.abbey"
+count = 1
+
+[sub_resource type="Resource" id="Seed_Bridge"]
+script = ExtResource("2_entry")
+definition_id = &"tile.transformation.bridge"
+count = 2
+
+[sub_resource type="Resource" id="Seed_Rewilding"]
+script = ExtResource("2_entry")
+definition_id = &"tile.transformation.rewilding"
+count = 2
+
+[sub_resource type="Resource" id="Seed_GrandMarket"]
+script = ExtResource("2_entry")
+definition_id = &"tile.development.grand_market"
+count = 2
+
 [resource]
 script = ExtResource("1_config")
 config_id = &"config.alpha_homestead_playtest_r1"
@@ -93,3 +133,5 @@ hand_capacity = 3
 reserve_capacity = 1
 initial_survey_charges = 1
 emergency_definitions = Array[StringName]([&"tile.forest_edge", &"tile.hamlet_edge", &"tile.road_junction"])
+act_two_seeds = Array[ExtResource("2_entry")]([SubResource("Seed_Market"), SubResource("Seed_Port"), SubResource("Seed_Urban"), SubResource("Seed_TownSquare"), SubResource("Seed_Abbey")])
+act_three_seeds = Array[ExtResource("2_entry")]([SubResource("Seed_Bridge"), SubResource("Seed_Rewilding"), SubResource("Seed_GrandMarket")])

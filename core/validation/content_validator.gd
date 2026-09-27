@@ -47,6 +47,9 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 		var charter_result: ValidationResult = CharterContentValidator.validate(manifest.charters)
 		if not charter_result.is_valid:
 			return charter_result
+		var seeds_result: ValidationResult = _validate_seeds(manifest, config)
+		if not seeds_result.is_valid:
+			return seeds_result
 	var config_result: ValidationResult = _validate_config(config)
 	if not config_result.is_valid:
 		return config_result
@@ -126,6 +129,26 @@ static func validate_development(tile: TileDefinition) -> ValidationResult:
 	if not tile.placement_behavior_id.is_empty() or not tile.effect_behavior_id.is_empty() \
 			or not tile.tags.is_empty():
 		return _invalid(&"unregistered_behavior", "Development content cannot register additional rules.", tile.definition_id)
+	return ValidationResult.success()
+
+
+static func _validate_seeds(manifest: ContentManifest, config: RunConfig) -> ValidationResult:
+	for act: int in [2, 3]:
+		var seen: Array[StringName] = []
+		var total: int = 0
+		for entry: StartingBagEntry in config.seeds_for_act(act):
+			if entry == null or entry.count <= 0 or entry.definition_id in seen:
+				return _invalid(&"invalid_act_seed", "Act seeds require distinct designs and positive copy quantities.")
+			seen.append(entry.definition_id)
+			var eligible: bool = false
+			for tile: TileDefinition in manifest.tiles:
+				if tile != null and tile.definition_id == entry.definition_id:
+					eligible = tile.player_drawable and tile.unlock_act == act
+			if not eligible:
+				return _invalid(&"invalid_act_seed", "Seeded content must be player content unlocked in the incoming Act.")
+			total += entry.count
+		if total != (10 if act == 2 else 6):
+			return _invalid(&"invalid_act_seed_total", "Act II seeds ten copies; Act III seeds six.")
 	return ValidationResult.success()
 
 

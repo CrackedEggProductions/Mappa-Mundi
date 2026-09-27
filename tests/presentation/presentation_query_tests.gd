@@ -136,6 +136,9 @@ func transition_summary() -> bool:
 	var text: String = Queries.transition_text(state, content, 1)
 	expect_true(text.contains("Act 1 completed") and text.contains("Entering Act 2"), "Transition summary uses current state")
 	expect_true(text.contains("Abbey") and text.contains("Relic capacity 4"), "Canonical incoming seed definitions and capacity")
+	for quantity: String in ["Market ×4", "Port ×2", "Urban Expansion ×2", "Town Square ×1", "Abbey ×1"]:
+		expect_true(text.contains(quantity), "Transition displays configured quantity: " + quantity)
+	expect_true(not text.contains("two each"), "No obsolete equal-quantity summary")
 	expect_true(text.contains("Fulfilled"), "Frozen outgoing result shown")
 	return true
 

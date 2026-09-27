@@ -382,7 +382,7 @@ Store tunable values in data/configuration:
 - Act lengths;
 - Track thresholds;
 - starting bag copy counts;
-- transition seeding quantities;
+- transition seeding quantities (`RunConfig.act_two_seeds` / `act_three_seeds`, ordered design/count entries);
 - scoring numbers;
 - Charter targets;
 - reward copy quantities;
@@ -1745,7 +1745,7 @@ Canonical transition implementation order:
 6. expire/grant Survey charge
 7. refresh once-per-Act Relics
 8. unlock new Act content
-9. seed new Act tiles into bag
+9. seed new Act tiles into bag (Act II: Market ×4, Port ×2, Urban Expansion ×2, Town Square ×1, Abbey ×1; total 10; Act III remains Bridge/Rewilding/Grand Market ×2 each)
 10. randomize bag
 11. reveal/select required Charter information
 12. reset placement counter

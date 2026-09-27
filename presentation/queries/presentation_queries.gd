@@ -214,11 +214,11 @@ static func transition_text(state: RunState, content: ContentRegistry, outgoing_
 	for index: int in range(TRACK_NAMES.size()):
 		lines.append("%s: %d" % [TRACK_NAMES[index], state.features.tracks.values[index]])
 	var names: Array[String] = []
-	for id: StringName in ActRules.seed_definitions(state.expansion.current_act):
-		var definition: TileDefinition = content.get_tile(id)
-		names.append(definition.display_name if definition != null else "Tile")
+	for entry: StartingBagEntry in content.get_config().seeds_for_act(state.expansion.current_act):
+		var definition: TileDefinition = content.get_tile(entry.definition_id)
+		names.append("%s ×%d" % [definition.display_name if definition != null else "Tile", entry.count])
 	if not names.is_empty():
-		lines.append("Newly unlocked and seeded (two each): " + ", ".join(names))
+		lines.append("Newly unlocked and seeded: " + ", ".join(names))
 	return "\n".join(lines)
 
 

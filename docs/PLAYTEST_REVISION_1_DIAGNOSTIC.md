@@ -1,5 +1,9 @@
 # Alpha Playtest Revision 1: completion diagnostic
 
+Historical sample checkpoint: `52f6a65`, before the second-playtest Act-II Market
+seeding adjustment. Recorded end-of-transition fingerprints belong to that version;
+rerunning the current script may change them. Act-I placement rules were unchanged.
+
 This is a deterministic, non-canonical policy measurement, not a human playtest or a guarantee that a new player will obtain the same results. It does not change bag counts, legal actions, scoring or gameplay RNG.
 
 Run the sample from the project root:
