@@ -1,6 +1,82 @@
 # Mappa Mundi — Implementation progress
 
-## Second playtest — draft cadence (current rules)
+## Current checkpoint — Monastery, Upgrade drafts and tabletop UI
+
+Verified 2026-10-01 on `alpha-playtest-r1`; branch remains unmerged. Starting HEAD
+was `351a6dd39d111c7180f2a0f73a0921a241e438aa`, with 1,296 gameplay tests,
+108 presentation tests and 240 clean scripts before editing. The supplied mockup
+was the only untracked user asset; it is now tracked at
+`art/references/ui/ui_mockup_alpha.png`.
+
+Current rules: **alpha-playtest-r1-usability**, save schema **3** (unchanged shape).
+The exact core remains 18 unique physical copies: Forest Edge ×3, Forest Bend ×1,
+Forest Belt ×1, Straight Road ×2, Bending Road ×2, Road Junction ×2, Hamlet Edge ×3,
+Settlement Corner ×1, Settlement Gate ×2 and Monastery ×1. Settlement Throughway
+has no fixed copy but stays unlocked/draftable/reward eligible. Monastery remains
+in the unchanged Starter pool and later acquisition pools. Starter adds copy 19.
+
+New Tile Draft offers require an actual non-upgraded Monastery **on board or in
+bag** for Abbey, and an actual Market there for Grand Market. Hand, Reserve,
+removed/history and upgraded bases do not qualify. Filtering happens once before
+sampling; existing offers survive inventory changes and save/load. Act-II entry
+filters Abbey before sampling; Act-III entry can show only Bridge/Rewilding without
+padding. Normal Tile Rewards, Masterwork and placement legality are unchanged.
+No helpfulness weighting, Market guarantee or other balance edit was introduced.
+
+The UI now uses a dark tabletop, compact parchment Act/Track/Charter cards, floating
+Relic and Steward/camera controls, a prominent Reserve/Hand/actions tray, an overlay
+Charter and a seven-second dismissible consequence card. All queries and commands
+retain the authoritative engine boundary. Shared `AlphaTheme` replaces scattered
+primary styling; hidden legacy text fields are retained only for compatibility.
+The approved mockup's wood grain/heraldry are approximated with flat StyleBoxes,
+existing artwork and short labels. No new art or source-art modification occurred.
+See [UI architecture](docs/ALPHA_UI_USABILITY.md) and the updated
+[human checklist](docs/ALPHA_PLAYTEST_R1.md).
+
+Verification (all commands exited 0):
+
+- `./tests/run_tests.sh`: **1,316 passed, 0 failed; 245 GDScript files parsed without
+  diagnostics**. Log: `builds/verification/run-CeVOnLnG/`.
+- `./tests/run_presentation_tests.sh`: **128 passed, 0 failed**, no engine warnings
+  or script diagnostics. Log: `builds/verification/presentation-UWSo78Ta/`.
+- 20 new gameplay checks cover the core and both Upgrade prerequisite matrices;
+  20 new presentation checks cover HUD/progress, secrecy, popout, controls, selected
+  cards, compact pieces, one-click drafts and transient feedback.
+- Five scripted three-Act executions cover no-victory, Victory, Exemplary,
+  deterministic replay and save/load replay. Every saved input boundary resumes.
+- Two natural-bag controller runs reach RUN_COMPLETE through all 66 placements,
+  drafts and rewards with matching fingerprints.
+- Automated graphical mouse/input smoke: **25 checks, 0 failures** at each of
+  **1280×720** and **1920×1080**. Includes Starter choice, Charter inspection,
+  selection/rotation/preview/cancel/confirm, Reserve, Survey, Fit/zoom and feedback.
+  These were actual graphical launches with injected input, not human manual play.
+- Additional graphical capture/layout review passed at **2560×1080**; the board
+  uses 2,536×688 pixels and the hand remains readable.
+- Review captures: `docs/reports/ui_usability/`; reproducible scripts and local
+  capture paths are documented in the UI specification. The closed Charter leaves
+  full board width; opening overlays rather than reserving a column.
+
+Final fingerprints:
+
+| Run | SHA-256 |
+| --- | --- |
+| No victory | `7079d2ba337a625d69e821c80b51efcd93ec4367e3d226affe6afc772913590e` |
+| Victory / save-load replay | `1259b69fadd3dda9a27ee3d964443838e857c1ea23142c126badb8309d8c42ff` |
+| Exemplary | `55ed9a71578258a6eba1052eea1c273713af820bdfba63d348dda3396e3c0cf6` |
+| Natural controller / replay, seed 1010 | `e22dd16c41c05e110fdfbf43af44b92c3a3ac6ba2728ae2f6f59a19c44942bef` |
+
+Only obsolete core/Expansion-only and old Charter-notice wording assertions changed;
+unaffected regression expectations remain intact. Early historical content profiles
+use an explicitly named legacy fixture config because they contain no Developments.
+Parser/core verification is clean. Graphical startup reports an unavailable NVIDIA
+DRI driver before successfully using Intel Mesa; no Godot script error occurs.
+No manual hour-long comfort test was performed. Flat framing, abbreviated piece
+markers, existing missing-art fallbacks and modest animations remain deliberate
+alpha limitations. No blocking gameplay ambiguity is known. Phase 11, Phase 12,
+new art, unrelated gameplay redesign and automatic merging remain outside scope.
+The next action is a human playtest; older checkpoints below are historical.
+
+## Historical checkpoint — draft cadence before usability pass
 
 Implementation: `04a1dc72f2d6134fd7f93b4d9e98f702d2df9e73`. Diagnostic evidence:
 `5320af169e1f12b1627cde0ae4002654c9e7ebd3`. Both pushed to `alpha-playtest-r1`;

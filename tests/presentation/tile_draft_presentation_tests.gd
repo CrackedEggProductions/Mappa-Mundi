@@ -159,7 +159,7 @@ func entry_draft_hud_starts_at_two() -> bool:
 	state.act_transition.advanced = true
 	state.pending_choice.context["draft_type"] = "act_entry"
 	controller._sync()
-	expect_equal(controller.shell.act_label.text, "Mappa Mundi  ·  Entering Act 2", "Transition does not label outgoing placements as incoming play")
+	expect_equal(controller.shell.act_label.text, "Entering Act II", "Transition does not label outgoing placements as incoming play")
 	expect_true(controller.shell.side_label.text.contains("Next Tile Draft: after placement 2"), "Authoritative transition-aware query starts the new cadence at two")
 	controller.free()
 	return true

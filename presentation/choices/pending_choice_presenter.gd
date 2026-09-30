@@ -31,7 +31,7 @@ var state_revision: int = -1
 var _commands: Array[PlayerCommand] = []
 var _decline: PlayerCommand
 var _body: VBoxContainer
-var _options_box: VBoxContainer
+var _options_box: GridContainer
 var _generation: int = 0
 var _submitted: bool = false
 var _art: TileArtRegistry = TileArtRegistry.new()
@@ -66,9 +66,10 @@ func _ensure_controls() -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_body.add_child(scroll)
-	_options_box = VBoxContainer.new()
+	_options_box = GridContainer.new()
 	_options_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_options_box.add_theme_constant_override("separation", 8)
+	_options_box.add_theme_constant_override("h_separation", 12)
+	_options_box.add_theme_constant_override("v_separation", 8)
 	scroll.add_child(_options_box)
 	error_label = Label.new()
 	error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -100,6 +101,8 @@ func sync(state: RunState, content: ContentRegistry) -> void:
 	var choice: PendingChoice = state.pending_choice
 	choice_id = choice.choice_id
 	choice_kind = choice.kind
+	_options_box.columns = 3 if choice_kind == &"tile_draft" else 1
+	custom_minimum_size = Vector2(960, 570) if choice_kind == &"tile_draft" else Vector2(900, 600)
 	state_revision = state.expansion.state_revision
 	title_label.text = String(TITLES.get(choice_kind, "Unsupported required choice"))
 	if choice_kind == &"tile_draft":
@@ -155,6 +158,23 @@ func _make_command(kind: StringName, option: Dictionary, index: int) -> PlayerCo
 
 func _add_option(state: RunState, content: ContentRegistry, option: Dictionary,
 		command: PlayerCommand, index: int) -> void:
+	if choice_kind == &"tile_draft":
+		var card: Button = Button.new()
+		card.text = _option_text(state, content, option)
+		card.icon = _art.thumbnail(StringName(option["definition_id"]), content)
+		card.expand_icon = true
+		card.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+		card.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		card.add_theme_constant_override("icon_max_width", 140)
+		card.custom_minimum_size = Vector2(285, 290)
+		card.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		card.tooltip_text = card.text
+		card.set_meta("option_index", index)
+		card.pressed.connect(_submit.bind(command, _generation))
+		_options_box.add_child(card)
+		option_buttons.append(card)
+		return
 	var row: HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)
 	_options_box.add_child(row)

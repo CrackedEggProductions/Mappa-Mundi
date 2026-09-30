@@ -53,7 +53,9 @@ func _find_button(node: Node, text: String) -> Button:
 
 
 func _run() -> void:
-	root.size = Vector2i(1280, 720)
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	root.content_scale_size = Vector2i.ZERO
+	root.size = Vector2i(int(args[0]), int(args[1])) if args.size() >= 2 else Vector2i(1280, 720)
 	controller = GameController.new()
 	root.add_child(controller)
 	await _frames()
@@ -65,7 +67,7 @@ func _run() -> void:
 	_check(controller.session.state.pending_choice.kind == &"tile_draft", "New Run opens the starter draft")
 	await _click(controller.choice_presenter.charter_button)
 	_check(controller.notice_active, "Starter draft opens Charter inspection by mouse")
-	await _click(controller.shell.notice_button)
+	await _click(controller.charter_popout.close_button)
 	await _click(controller.choice_presenter.option_buttons[0])
 	_check(controller.session.state.phase == GamePhase.Type.TURN_INPUT, "One mouse draft choice draws the opening hand")
 	await _click(controller.hand_buttons[0])
@@ -85,10 +87,12 @@ func _run() -> void:
 	if controller.session.state.pending_choice != null:
 		await _click(controller.choice_presenter.decline_button)
 		_check(controller.session.state.pending_choice == null, "Mouse decline resolves optional assignment")
+	var board_rect: Rect2 = controller.shell.board_container.get_global_rect()
 	await _click(controller.shell.charter_button)
-	_check(controller.notice_active, "Mouse opens authoritative Charter details")
-	await _click(controller.shell.notice_button)
-	_check(not controller.notice_active, "Mouse dismisses cosmetic Charter panel")
+	_check(controller.shell.board_container.get_global_rect() == board_rect, "Charter opening does not reserve board width")
+	_check(controller.charter_popout.visible, "Mouse opens authoritative Charter details")
+	await _click(controller.charter_popout.close_button)
+	_check(not controller.charter_popout.visible, "Mouse dismisses cosmetic Charter panel")
 	await _click(controller.hand_buttons[0])
 	await _click(controller.shell.reserve_actions[0])
 	_check(controller.session.state.expansion.reserve_id != 0, "Mouse Reserve stores a physical tile")
@@ -101,5 +105,18 @@ func _run() -> void:
 	_check(controller.board.camera.zoom != zoom_before, "Mouse wheel zooms board camera")
 	await _click(controller.shell.fit_button)
 	_check(controller.board.camera.zoom.x > 0, "Mouse Fit Board remains available")
-	print("MOUSE EVENT RESULT: %d checks, %d failures at 1280x720" % [checks, failures.size()])
+	var zoom: float = controller.board.camera.zoom.x
+	await _click(controller.shell.zoom_in_button)
+	_check(controller.board.camera.zoom.x > zoom, "Visible Zoom+ button")
+	await _click(controller.shell.zoom_out_button)
+	_check(is_equal_approx(controller.board.camera.zoom.x, zoom), "Visible Zoom− button")
+	_check(controller.shell.relic_header.is_visible_in_tree() and controller.shell.steward_header.is_visible_in_tree(), "Compact Relic and Steward panels visible")
+	_check(controller.shell.toast_panel.visible, "Recent meaningful action has event feedback")
+	var viewport_rect: Rect2 = Rect2(Vector2.ZERO, Vector2(root.size))
+	for control: Control in [controller.shell.charter_button, controller.confirm_button, controller.hand_buttons[2], controller.shell.survey_button]:
+		_check(viewport_rect.encloses(control.get_global_rect()), "Essential control fits responsive viewport")
+	_check(controller.shell.board_container.size.x >= root.size.x - 30, "Closed Charter leaves full central width")
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png("res://builds/ui-usability-%dx%d-mouse-smoke.png" % [root.size.x, root.size.y])
+	print("MOUSE EVENT RESULT: %d checks, %d failures at %dx%d" % [checks, failures.size(), root.size.x, root.size.y])
 	quit(0 if failures.is_empty() else 1)

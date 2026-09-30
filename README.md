@@ -1,7 +1,7 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Alpha Playtest Revision 1 — Draft Cadence**, after Phase 10.
+GDScript**. Current implementation: **Alpha Playtest Revision 1 — Usability**, after Phase 10.
 Launch New Run to play all three Acts with the mouse. The authoritative engine also
 runs all 66 placements, rewards, transitions and final results headlessly. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
@@ -10,12 +10,12 @@ plugins, or external services are required.
 
 This is a core-loop revision after the first human Phase-10 playtest, not Phase 11.
 The canonical Complete Rules and Implementation Specification have been rewritten
-for rules version `alpha-playtest-r1-draft-cadence`, save schema **3**. Older active-run development
+for rules version `alpha-playtest-r1-usability`, save schema **3**. Older active-run development
 saves are rejected; no migration or player-facing Save/Continue UX is included.
 
 New Run places Founding plus an eight-tile environmental River, builds an unshuffled
-**18-copy core bag**, selects the Act-I Charter, then offers a **Starter Draft** from
-ten non-core Act-I designs. Choose one: that physical copy enters the bag, the whole
+**18-copy core bag (including one guaranteed Monastery)**, selects the Act-I Charter, then offers a **Starter Draft** from
+ten directional Act-I designs. Choose one: that physical copy enters the bag, the whole
 bag shuffles, and the opening hand draws. The River has five Runs, two Bends and one
 End, selected from 24 valid templates with one RunRNG choice. Loading restores the
 saved board and exact draft offer. Pure River pieces, Open Fields and Road End never
@@ -26,6 +26,8 @@ and before hand refill: nine in Act I, eleven in Act II and twelve in Act III (n
 at placement 26). Choose one of up to three distinct unlocked designs; receive one
 physical copy and shuffle the remaining bag. Normal Tile Rewards retain their
 existing quantities. Track 20 now awards nothing; 40/70/100 are unchanged.
+
+Tile Drafts offer Abbey only when an actual non-upgraded Monastery is on the board or in the bag, and Grand Market only with an actual non-upgraded Market there. Hand/Reserve/history do not count. Normal Tile Rewards and Upgrade placement rules are unchanged. Settlement Throughway remains unlocked and draftable, but its fixed starting copy is replaced by Monastery.
 
 Act transitions unlock their five/three new designs and offer one restricted Act
 Entry Draft after Charter information, before pending refill. There are no automatic
@@ -89,6 +91,16 @@ shortcuts: 1/2/3 select, Q/E rotate, Enter confirms, Escape cancels, F fits, F11
 toggles fullscreen. The window is resizable; layout targets 1920×1080 and remains
 usable at 1280×720. [Playtest checklist](docs/PHASE_10_PLAYTEST.md) describes the
 full run and current limitations. Save & Quit/Continue UX remains Phase 11.
+
+## Tabletop UI
+
+The board sits on a dark-brown workspace with compact Act/Track/Charter cards above,
+Relic and Steward controls over the corners, and Reserve/Hand/actions in one bottom
+tray. Click Charter to open a right-side overlay; closing it reserves no empty
+sidebar. Hover or click compact pieces for details. The selected tile has a gold
+frame, Confirm is green, and consequence cards dismiss automatically or by click.
+The layout resizes directly at 1280×720, 1920×1080 and wider desktop sizes.
+See [UI structure and deliberate alpha limitations](docs/ALPHA_UI_USABILITY.md).
 
 ## Tests
 
@@ -194,9 +206,10 @@ The preserved Phase-7 profile registers exactly eight passive Specialist definit
 The current Phase-9 profile adds the exact ten Relics and nine Charters; centralized
 domain services own all behavior. Earlier profiles remain regression fixtures.
 
-The separate `homestead_content_manifest.tres` and `homestead_run_config.tres`
-retain the legacy 22-design catalogue, with ten core designs in the exact 18-copy
-starting bag, eight setup-only River copies beside Founding, and the revised emergency set. Load this profile with
+The isolated `homestead_content_manifest.tres` and `legacy_expansion_run_config.tres`
+retain the legacy 22-design Expansion-only test catalogue and its historical core.
+The playable profile uses `homestead_run_config.tres`, including the guaranteed Monastery.
+Both retain eight setup-only River copies beside Founding and the revised emergency set. Load the legacy profile with
 `ContentRegistry.load_homestead()`. The original minimal profile remains available
 for Phase-0 regressions; the bootstrap loads the complete Phase-9 content profile with Revision-1 rules. Both profiles reject
 unsupported content.

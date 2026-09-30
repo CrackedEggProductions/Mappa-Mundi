@@ -9,6 +9,7 @@ var session: GameSession
 var shell: GameShell
 var board: BoardView
 var assets: TileArtRegistry
+var charter_popout: CharterPopout
 var choice_presenter: PendingChoicePresenter
 var hand_buttons: Array[Button] = []
 var confirm_button: Button
@@ -44,6 +45,13 @@ func ensure_ui() -> void:
 	shell = GameShell.new()
 	add_child(shell)
 	shell.build()
+	charter_popout = CharterPopout.new()
+	shell.charter_layer.add_child(charter_popout)
+	charter_popout.set_anchors_and_offsets_preset(Control.PRESET_RIGHT_WIDE)
+	charter_popout.offset_left = -360
+	charter_popout.offset_right = -2
+	charter_popout.hide()
+	charter_popout.close_requested.connect(close_charter)
 	board = BoardView.new()
 	shell.board_viewport.add_child(board)
 	board.coordinate_clicked.connect(choose_coordinate)
@@ -65,6 +73,8 @@ func ensure_ui() -> void:
 	shell.survey_button.pressed.connect(survey_selected)
 	shell.cycle_button.pressed.connect(cycle_dead_hand)
 	shell.fit_button.pressed.connect(fit_board)
+	shell.zoom_in_button.pressed.connect(zoom_board.bind(1.12))
+	shell.zoom_out_button.pressed.connect(zoom_board.bind(1.0 / 1.12))
 	shell.charter_button.pressed.connect(show_charter)
 	shell.results_button.pressed.connect(show_results)
 	shell.new_run_button.pressed.connect(func() -> void:
@@ -134,6 +144,9 @@ func attach_session(value: GameSession) -> void:
 	_entry.hide()
 	shell.show()
 	_notices.clear()
+	charter_popout.hide()
+	shell.inspection_panel.hide()
+	shell.dismiss_feedback()
 	notice_active = false
 	results_active = false
 	_clear_selection()
@@ -189,6 +202,8 @@ func choose_coordinate(coordinate: Vector2i) -> void:
 		select_option(fallback)
 	else:
 		_inspect_coordinate(coordinate)
+		if session.state.expansion.board.cells.has(coordinate):
+			shell.show_inspection(shell.inspection_label.text)
 
 
 func rotate_selection(delta: int) -> void:
@@ -265,7 +280,7 @@ func submit(command: PlayerCommand) -> ValidationResult:
 	if report.validation.is_valid:
 		_play_cues(report)
 	else:
-		shell.feedback_label.text = report.validation.user_message
+		shell.show_feedback(report.validation.user_message)
 	command_finished.emit(report)
 	return report.validation
 
@@ -280,35 +295,42 @@ func _sync() -> void:
 	var state: RunState = session.state
 	var content: ContentRegistry = session.content
 	board.sync(state, content, assets)
-	shell.act_label.text = "Mappa Mundi  ·  Act %d  ·  %d placed / %d remaining" % [
-		state.expansion.current_act, state.expansion.normal_placements,
-		content.get_config().act_placement_limits[state.expansion.current_act - 1] - state.expansion.normal_placements]
-	if state.act_transition != null and state.act_transition.advanced:
-		shell.act_label.text = "Mappa Mundi  ·  Entering Act %d" % state.act_transition.incoming_act
-	shell.tracks_label.text = "Population %d   Trade %d   Culture %d   Ecology %d" % state.features.tracks.values
-	shell.side_label.text = "Relics\n" + PresentationQueries.relics_text(state, content) \
-		+ "\n\nStewards & Specialists\n" + PresentationQueries.specialists_text(state, content) \
-		+ "\n\nSurvey charges: %d\nBag: %d tiles" % [state.expansion.survey_charges, state.expansion.bag.size()]
-	var next_draft: int = TileDraftService.next_draft_placement(state, content.get_config())
-	shell.side_label.text += "\n" + ("Next Tile Draft: after placement %d" % next_draft if next_draft > 0 else "No more Tile Drafts this Act")
-	shell.charter_button.tooltip_text = PresentationQueries.charter_text(state, content)
-	var objective: Dictionary = CharterRules.visible_grand(state, content) if state.expansion.current_act == 3 else CharterRules.visible_ordinary(state, content)
-	var progress: Dictionary = objective.get("progress", {})
-	var progress_status: String = String(progress.get("overall_state", "failed"))
-	shell.charter_summary.text = String(objective.get("display_name", "Charter")) + " · " + ("Incomplete" if progress_status == "failed" else progress_status.capitalize()) + " · Open Charter for conditions and progress"
-	shell.charter_summary.tooltip_text = shell.charter_button.tooltip_text
+	var hud: Dictionary = PresentationQueries.hud_model(state, content)
+	shell.act_label.text = ("Entering Act " if hud.incoming else "Act ") + ["I", "II", "III"][hud.act - 1]
+	shell.act_placements_label.text = "%d / %d placements" % [hud.used, hud.limit]
+	shell.act_progress.max_value = hud.limit
+	shell.act_progress.value = hud.used
+	for index: int in range(4):
+		var track: Dictionary = hud.tracks[index]
+		shell.track_value_labels[index].text = str(track.value)
+		shell.track_bars[index].max_value = track.next_threshold if track.next_threshold > 0 else maxi(100, track.value)
+		shell.track_bars[index].value = track.value
+		shell.track_reward_labels[index].text = "%d · %s" % [track.next_threshold, track.next_reward] if track.next_threshold > 0 else "Rewards complete"
+	shell.charter_summary.text = hud.charter_name
+	shell.charter_conditions_label.text = "%d / %d conditions" % [hud.satisfied, hud.conditions]
+	shell.next_draft_label.text = "Draft in %d placement%s" % [hud.draft_distance, "" if hud.draft_distance == 1 else "s"] if hud.next_draft > 0 else "No more drafts this Act"
+	shell.side_label.text = "Next Tile Draft: after placement %d" % hud.next_draft if hud.next_draft > 0 else "No more Tile Drafts this Act"
+	shell.charter_button.tooltip_text = "Read conditions, progress and rewards"
+	shell.survey_button.text = "Survey · %d" % state.expansion.survey_charges
+	shell.bag_label.text = "Bag\n%d" % state.expansion.bag.size()
+	shell.hand_header.text = "Your Hand (%d tiles)" % (3 - state.expansion.hand.count(0))
+	_sync_pieces()
+	if charter_popout.visible:
+		charter_popout.sync(state, content)
 	for index: int in range(3):
 		var copy_id: int = state.expansion.hand[index]
 		hand_buttons[index].text = "%d · %s" % [index + 1, _tile_name(copy_id)]
 		hand_buttons[index].icon = _thumbnail(copy_id)
-		hand_buttons[index].tooltip_text = _tile_name(copy_id)
+		hand_buttons[index].tooltip_text = _tile_help(copy_id)
 	var reserve_ids: Array[int] = [state.expansion.reserve_id, state.expansion.reserve_extra_id]
+	shell.reserve_header.text = "Reserve (%d/%d)" % [2 - reserve_ids.count(0), RelicHandRules.reserve_capacity(state)]
 	for index: int in range(2):
 		var available_slot: bool = index < RelicHandRules.reserve_capacity(state)
 		shell.reserve_buttons[index].visible = available_slot
 		shell.reserve_actions[index].visible = available_slot
 		shell.reserve_buttons[index].text = _tile_name(reserve_ids[index])
-		shell.reserve_buttons[index].tooltip_text = _tile_name(reserve_ids[index])
+		shell.reserve_buttons[index].tooltip_text = _tile_help(reserve_ids[index])
+		shell.reserve_buttons[index].icon = _thumbnail(reserve_ids[index])
 		shell.reserve_actions[index].tooltip_text = "Commit the selected hand tile to this Reserve slot; immediately draw a replacement."
 	shell.results_button.visible = state.phase == GamePhase.Type.RUN_COMPLETE
 	shell.new_run_button.visible = state.phase == GamePhase.Type.RUN_COMPLETE
@@ -340,12 +362,15 @@ func _refresh_selection() -> void:
 	shell.rotate_right.disabled = shell.rotate_left.disabled
 	for index: int in range(3):
 		hand_buttons[index].disabled = not active or session.state.expansion.hand[index] == 0
+		AlphaTheme.selected(hand_buttons[index], selected_copy_id != 0 and selected_copy_id == session.state.expansion.hand[index])
 	var reserve_ids: Array[int] = [session.state.expansion.reserve_id, session.state.expansion.reserve_extra_id]
 	for index: int in range(2):
 		shell.reserve_buttons[index].disabled = not active or reserve_ids[index] == 0
+		AlphaTheme.selected(shell.reserve_buttons[index], selected_copy_id != 0 and selected_copy_id == reserve_ids[index])
 		shell.reserve_actions[index].disabled = not active or not session.validate(ReserveTileCommand.new(selected_copy_id, index)).is_valid
 	shell.survey_button.disabled = not active or not session.validate(SurveyTileCommand.new(selected_copy_id)).is_valid
 	shell.cycle_button.disabled = not active or not session.validate(CycleDeadHandCommand.new()).is_valid
+	shell.cycle_button.visible = not shell.cycle_button.disabled
 	shell.option_menu.clear()
 	_menu_indices.clear()
 	for index: int in range(options.size()):
@@ -358,12 +383,12 @@ func _refresh_selection() -> void:
 			shell.option_menu.select(_menu_indices.size() - 1)
 	shell.option_menu.disabled = not active or options.is_empty()
 	if selected_copy_id == 0:
-		shell.selection_label.text = "Select a hand or Reserve tile, choose a target, then Confirm."
+		shell.selection_label.text = "Choose a hand or Reserve tile"
 	elif options.is_empty():
 		shell.selection_label.text = _tile_name(selected_copy_id) + " — no legal placement now. Try another tile, Reserve or Survey."
 	else:
 		shell.selection_label.text = _tile_name(selected_copy_id) + " · " + str(options.size()) + " legal options" \
-			+ (" · Preview: " + _option_text(preview) if preview != null else " · Choose a highlighted target or option below.")
+			+ (" · Preview: " + _option_text(preview) if preview != null else " · Choose a highlighted target")
 	shell.selection_label.tooltip_text = shell.selection_label.text
 	shell.option_menu.tooltip_text = _option_text(preview) if preview != null else "Choose an exact location, rotation and mode."
 
@@ -413,29 +438,46 @@ func _thumbnail(copy_id: int) -> Texture2D:
 func _inspect_coordinate(coordinate: Vector2i) -> void:
 	if session != null and session.state.expansion.board.cells.has(coordinate):
 		shell.inspection_label.text = PresentationQueries.inspect_tile(session.state, session.content, coordinate)
+		shell.board_container.tooltip_text = shell.inspection_label.text
 
 
 func fit_board() -> void:
 	if board != null:
-		board.fit_board(Vector2(shell.board_viewport.size))
+		var available: Vector2 = Vector2(shell.board_viewport.size)
+		var covered: float = charter_popout.size.x if charter_popout.visible else 0.0
+		available.x -= covered
+		board.fit_board(available)
+		board.camera.position.x += covered * 0.5 / board.camera.zoom.x
+
+
+func zoom_board(factor: float) -> void:
+	if board != null:
+		board.camera.zoom = Vector2.ONE * clampf(board.camera.zoom.x * factor, BoardView.MIN_ZOOM, 3.5)
 
 
 func show_charter() -> void:
 	if session == null:
 		return
+	if charter_popout.visible:
+		close_charter()
+		return
+	charter_popout.sync(session.state, session.content)
+	charter_popout.show()
+	shell.notice_text.text = PresentationQueries.charter_text(session.state, session.content)
 	if session.state.pending_choice != null:
-		# This is an inspection of the already selected objective. The required
-		# choice remains untouched and returns with its exact persisted options.
 		notice_active = true
 		choice_presenter.hide()
-		shell.notice_panel.show()
+		shell.modal_layer.hide()
+	_refresh_selection()
+
+
+func close_charter() -> void:
+	charter_popout.hide()
+	if notice_active and session != null and session.state.pending_choice != null:
+		notice_active = false
+		shell.notice_panel.hide()
+		choice_presenter.show()
 		shell.modal_layer.show()
-		shell.notice_text.text = PresentationQueries.charter_text(session.state, session.content)
-		shell.notice_button.text = "Back to choice"
-		_refresh_selection()
-		return
-	_notices.append(PresentationQueries.charter_text(session.state, session.content))
-	_show_next_notice()
 	_refresh_selection()
 
 
@@ -453,6 +495,9 @@ func _show_next_notice() -> void:
 
 
 func dismiss_notice() -> void:
+	if charter_popout.visible:
+		close_charter()
+		return
 	if results_active:
 		show_final_map()
 		return
@@ -490,6 +535,7 @@ func show_final_map() -> void:
 
 func _play_cues(report: ResolutionResult) -> void:
 	var texts: Array[String] = []
+	var completions: Array[String] = []
 	var names: Array[String] = ["Population", "Trade", "Culture", "Ecology"]
 	for index: int in range(4):
 		if report.track_deltas[index] != 0:
@@ -498,6 +544,11 @@ func _play_cues(report: ResolutionResult) -> void:
 	for cue: Dictionary in report.cues:
 		var kind: String = String(cue.get("kind", ""))
 		var details: Dictionary = cue.get("details", {})
+		if "completed" in kind:
+			var lineage: FeatureLineageState = session.state.features.lineage(int(cue.get("lineage_id", 0)))
+			var title: String = (ChoiceText.feature_name(lineage.feature_type) if lineage != null else "Enclosure") + " completed!"
+			if not completions.has(title):
+				completions.append(title)
 		if kind == "tile_draft_resolved":
 			var tile: TileDefinition = session.content.get_tile(StringName(details.get("definition_id", "")))
 			if tile != null:
@@ -508,7 +559,7 @@ func _play_cues(report: ResolutionResult) -> void:
 			var threshold_index: int = config.track_thresholds.find(int(details.get("threshold", -1)))
 			if threshold_index >= 0 and config.track_threshold_reward_kinds[threshold_index] == &"none":
 				continue
-		if "completed" in kind or "triggered" in kind or "returned" in kind or "threshold" in kind or "milestone" in kind or "reward_offered" in kind:
+		if "triggered" in kind or "returned" in kind or "threshold" in kind or "milestone" in kind or "reward_offered" in kind:
 			var caption: String = kind.replace("_", " ").capitalize()
 			if not texts.has(caption):
 				texts.append(caption)
@@ -517,8 +568,9 @@ func _play_cues(report: ResolutionResult) -> void:
 				if component.lineage_id == int(cue.get("lineage_id", 0)):
 					board.highlighted_coordinates.append(component.coordinate)
 	board.queue_redraw()
-	shell.feedback_label.text = " · ".join(texts) if not texts.is_empty() else "Action resolved."
-	shell.feedback_label.tooltip_text = "\n".join(texts)
+	texts = completions + texts
+	if not texts.is_empty():
+		shell.show_feedback("\n".join(texts.slice(0, 4)), "\n".join(texts))
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -531,6 +583,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		get_window().mode = Window.MODE_WINDOWED if get_window().mode == Window.MODE_FULLSCREEN else Window.MODE_FULLSCREEN
 	elif session != null and key_event.keycode == KEY_F:
 		fit_board()
+	elif key_event.keycode == KEY_ESCAPE and charter_popout.visible:
+		close_charter()
 	elif _input_available():
 		match key_event.keycode:
 			KEY_1, KEY_2, KEY_3: _select_hand(key_event.keycode - KEY_1)
@@ -544,3 +598,58 @@ func _input(event: InputEvent) -> void:
 	# A physical double click must not select a newly-rendered subsequent offer.
 	if event is InputEventMouseButton and (event as InputEventMouseButton).double_click:
 		get_viewport().set_input_as_handled()
+
+
+func _tile_help(copy_id: int) -> String:
+	var copy: TileCopyState = PhysicalTileRules.find_copy(session.state, copy_id)
+	if copy == null:
+		return "Empty slot"
+	var definition: TileDefinition = session.content.get_tile(copy.definition_id)
+	return definition.display_name + "\n" + ChoiceText.tile_help(definition)
+
+
+func _sync_pieces() -> void:
+	var state: RunState = session.state
+	var equipped_count: int = 0
+	for slot: int in range(shell.relic_slot_buttons.size()):
+		var button: Button = shell.relic_slot_buttons[slot]
+		button.visible = state.relics != null and slot < state.relics.capacity
+		button.text = "+"
+		button.tooltip_text = "Empty Relic slot"
+		if state.relics == null:
+			continue
+		for relic: RelicInstanceState in state.relics.instances:
+			if relic.equipped_slot != slot:
+				continue
+			equipped_count += 1
+			var definition: RelicDefinition = session.content.get_relic(relic.definition_id)
+			var words: PackedStringArray = definition.display_name.split(" ")
+			var initials: String = ""
+			for word: String in words:
+				initials += word.left(1)
+			button.text = initials.left(3)
+			button.tooltip_text = definition.display_name + "\n" + ChoiceText.description(relic.definition_id)
+			if relic.once_per_act:
+				button.tooltip_text += "\n%d use(s) remaining this Act" % relic.uses_remaining
+	var capacity: int = state.relics.capacity if state.relics != null else 0
+	shell.relic_header.text = "Relics (%d/%d)" % [equipped_count, capacity]
+	var available: int = 0
+	var total: int = state.specialists.pieces.size() if state.specialists != null else 0
+	for index: int in range(shell.steward_slot_buttons.size()):
+		var button: Button = shell.steward_slot_buttons[index]
+		button.visible = index < total
+		if index >= total:
+			continue
+		var piece: SpecialistPieceState = state.specialists.pieces[index]
+		var is_available: bool = piece.status == SpecialistPieceState.Status.AVAILABLE
+		available += int(is_available)
+		var role: String = "Steward" if piece.role_definition_id.is_empty() else session.content.get_specialist(piece.role_definition_id).display_name
+		button.text = role.left(2) + ("○" if is_available else "●")
+		button.theme_type_variation = &"Button" if is_available else &"WoodButton"
+		button.tooltip_text = role + ("\nAvailable" if is_available else "\nAssigned: " + ChoiceText.target_label(state, piece.assigned_target_type, piece.assigned_target_id))
+		if not is_available:
+			for component: FeatureComponentState in state.features.components:
+				if component.lineage_id == piece.assigned_target_id:
+					button.tooltip_text += "\nAt (%d, %d)" % [component.coordinate.x, component.coordinate.y]
+					break
+	shell.steward_header.text = "Stewards (%d/%d)" % [available, total]

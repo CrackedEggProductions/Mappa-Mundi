@@ -149,7 +149,7 @@ func _draw() -> void:
 			continue
 		drawn[option.coordinate] = true
 		var target: Rect2 = Rect2(Vector2(option.coordinate) * TILE_SIZE - Vector2.ONE * TILE_SIZE * 0.5, Vector2.ONE * TILE_SIZE)
-		draw_rect(target, Color(0.40, 0.47, 0.29, 0.14))
-		draw_rect(target.grow(-2), Color("66784a"), false, 2.0)
+		draw_rect(target, Color(0.78, 0.61, 0.26, 0.18))
+		draw_rect(target.grow(-2), Color("c69a43"), false, 2.0)
 	for coordinate: Vector2i in highlighted_coordinates:
 		draw_rect(Rect2(Vector2(coordinate) * TILE_SIZE - Vector2.ONE * TILE_SIZE * 0.5, Vector2.ONE * TILE_SIZE).grow(-3), Color("c69a43"), false, 4.0)

@@ -235,3 +235,35 @@ static func _relic_name(content: ContentRegistry, id: StringName) -> String:
 
 static func _result_name(result: String) -> String:
 	return result.capitalize()
+
+
+static func hud_model(state: RunState, content: ContentRegistry) -> Dictionary:
+	var act: int = state.expansion.current_act
+	var used: int = state.expansion.normal_placements
+	var incoming: bool = state.act_transition != null and state.act_transition.advanced and not state.act_transition.counter_reset
+	if incoming:
+		used = 0
+	var config: RunConfig = content.get_config()
+	var tracks: Array[Dictionary] = []
+	for index: int in range(4):
+		var next: int = 0
+		var reward: String = "All rewards earned"
+		for threshold: int in range(config.track_thresholds.size()):
+			var kind: StringName = config.track_threshold_reward_kinds[threshold]
+			if kind != &"none" and config.track_thresholds[threshold] > state.features.tracks.values[index]:
+				next = config.track_thresholds[threshold]
+				reward = String({&"training_reward": "Train", &"relic_offer": "Relic", &"major_reward": "Major"}.get(kind, "Reward"))
+				break
+		tracks.append({"value": state.features.tracks.values[index], "next_threshold": next, "next_reward": reward})
+	var objective: Dictionary = CharterRules.visible_grand(state, content) if act == 3 else CharterRules.visible_ordinary(state, content)
+	var count: int = 0
+	var satisfied: int = 0
+	for condition: Dictionary in objective.get("progress", {}).get("conditions", []):
+		if not bool(condition.get("exceed", false)):
+			count += 1
+			satisfied += int(bool(condition.get("satisfied", false)))
+	var next_draft: int = TileDraftService.next_draft_placement(state, config)
+	return {"act": act, "incoming": incoming, "used": used, "limit": config.act_placement_limits[act - 1],
+		"tracks": tracks, "charter_name": objective.get("display_name", "Charter"),
+		"satisfied": satisfied, "conditions": count, "next_draft": next_draft,
+		"draft_distance": maxi(0, next_draft - used)}

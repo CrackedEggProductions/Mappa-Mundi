@@ -1,13 +1,13 @@
 # Alpha Playtest Revision 1 — Draft Cadence playtest
 
 This is a core-loop revision after Phase 10, not Phase 11. Start a **new run**:
-pre-revision saves are intentionally incompatible with rules `alpha-playtest-r1-draft-cadence`
+pre-revision saves are intentionally incompatible with rules `alpha-playtest-r1-usability`
 and schema 3. No Save/Continue or export work is part of this revision.
 
 ## What changed
 
-- The core bag has 18 copies across ten ordinary Expansion designs. Choose one
-  non-core Act-I Starter Draft before opening draws. Every draft adds one physical
+- The core bag has 18 copies across nine Expansion designs plus Monastery. Choose one
+  directional Act-I Starter Draft before opening draws. Every draft adds one physical
   copy and shuffles the bag; Normal Tile Rewards keep their usual quantities.
 - Cadence drafts occur after even normal placements: Act I 2–18, Act II 2–22,
   Act III 2–24. Act entry unlocks content and offers one restricted draft; no
@@ -46,7 +46,7 @@ Act reached and any confusing tile/choice before reporting a problem.
 4. Try a Road Junction as an endpoint. Do separate Roads and Trade continuation
    make sense? Are Roads easier to plan without Road End?
 5. Observe the smaller core and drafts. Does each single-copy choice meaningfully
-   shape the bag? Are ordinary Developments available without being guaranteed?
+   shape the bag? Does the guaranteed Monastery help Culture without making later choices predictable?
 6. Select Riverside Hamlet. Preview different legal banks on an occupied Run;
    cancel, then confirm. Is the preserved River and added Settlement readable?
 7. Select Woodland River. Preview/confirm on an occupied Bend. Are its two Forest
@@ -108,3 +108,27 @@ Suggested health indicators are ≥80% of runs with a completion and median ≥2
 They are observations, not canonical invariants and not permission to change the
 specified bag or rules. Record actual measured results in the implementation
 report; do not treat this checklist as evidence of a completed human playtest.
+
+## Usability pass — 2026-10-01
+
+Use the compact top cards to find Act/placements, all four Tracks, Charter condition
+count and the next draft. Toggle the right-side Charter overlay; verify it reserves
+no empty space when closed and the current map remains available. Inspect each
+Relic/Steward through its compact slot. Select a tile and check the gold frame;
+rotate, preview, Cancel and Confirm. Use Reserve, Survey, Fit and both zoom buttons.
+Check event cards are readable and easy to dismiss. Repeat at 1280×720 and a larger
+window, including a crowded late-run board and long tile names.
+
+- Can you comfortably read and use this interface for an hour?
+- Does the map remain the main focus while the hand is easy to scan?
+- Can you tell which action is available now without reading a long status block?
+- Does the Charter popout explain current and historical requirements clearly?
+- Are one-click draft decisions fast enough? Can you inspect the Starter Charter?
+- Does the fixed Monastery feel useful? Settlement Throughway should still appear
+  in ordinary drafts and rewards, and Monastery may still be drafted again.
+- Observe Abbey eligibility with Monastery in bag, then only hand/Reserve, then
+  board. Repeat Grand Market with Market. Only board/bag qualifies for a **new draft**;
+  existing offers and Normal Tile Rewards are unaffected.
+
+No human hour-long test has been performed by the implementation agent. Automated
+mouse smoke and screenshots are verification aids, not a replacement for this playtest.
