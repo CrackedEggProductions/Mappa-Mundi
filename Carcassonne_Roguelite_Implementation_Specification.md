@@ -12,7 +12,7 @@
 
 The first human Phase-10 playtest requires a gameplay revision before Phase 11. This specification now replaces its old 55-copy bag, player River construction/completion, continuous Junction Road and River-contact scoring ownership assumptions. Core command, snapshot, lineage, reward, determinism and presentation boundaries remain authoritative. The Draft Cadence follow-up replaces the initial Revision-1 45-copy bag with an 18-copy core plus single-copy drafts, removes automatic Act seeding, and makes Track 20 NONE. Unlocking permits choices; it never guarantees physical presence.
 
-Runtime rules version is **alpha-playtest-r1-draft-cadence**, save schema **3**. Reject incompatible pre-revision development saves clearly; do not add a migration framework. Phase 11 Save/Continue UX and Phase 12 exports remain future work.
+Runtime rules version is **alpha-playtest-r1-usability**, save schema **3**. Reject incompatible pre-revision development saves clearly; do not add a migration framework. Phase 11 Save/Continue UX and Phase 12 exports remain future work.
 
 # 0. Authority, Purpose, and Scope
 
@@ -337,7 +337,7 @@ Not every field applies to every tile class.
 
 The Founding Tile is a static definition but is not a normal bag-eligible reward design. River End/Run/Bend remain static definitions marked setup-only environment and not player drawable. Open Fields and Road End retain legacy IDs/art but are neither player drawable nor setup environment.
 
-Riverside Hamlet and Woodland River are Act-I Transformation-style overlays with Specialized/Hybrid reward quantity 2 and Masterwork eligibility. They enter through Starter/regular drafts or rewards; the initial 18-copy core contains only ten ordinary Expansion designs. Player-pool filtering consults authoritative metadata before unlock filtering/sorting; immediate board playability does not filter rewards.
+Riverside Hamlet and Woodland River are Act-I Transformation-style overlays with Specialized/Hybrid reward quantity 2 and Masterwork eligibility. They enter through Starter/regular drafts or rewards; the initial 18-copy core contains nine Expansion designs plus one Monastery Development. Player-pool filtering consults authoritative metadata before unlock filtering/sorting; immediate board playability does not filter rewards.
 
 ## 4.3 Stable human-readable definition IDs
 
@@ -435,7 +435,7 @@ At minimum validate:
 - reward classes are valid;
 - required Charter/Relic/Specialist definitions exist;
 - Homestead core-bag counts total exactly 18 across ten canonical designs;
-- Starter Draft has exactly ten non-core Act-I designs; regular draft pools contain 20/25/28 unlocked player designs and entry pools contain the five/three new designs respectively;
+- Starter Draft has exactly ten directional Act-I designs; regular draft pools contain 20/25/28 unlocked player designs and entry pools contain the five/three new designs respectively;
 - no automatic Act-seed copies or Track-20 reward can be generated;
 - legacy/setup-only definitions cannot enter player bags, reward/Masterwork offers or emergency sets;
 - required River Run/Bend/End setup definitions exist;
@@ -1658,11 +1658,13 @@ When one reward creates another reward/choice, resume through the serialized Res
 
 Persist `PendingChoice.kind = tile_draft`, exact ordered `[{definition_id}]` options and context `{draft_type, act, placement_index, draft_sequence}`. Sources are `starter_draft`, `cadence_draft` and `act_entry_draft`. Structured offered/resolved entries use `state.rewards.history`; do not create a parallel reward queue or a second authoritative draft state object. The choice has no reward ResolutionState; its subtype resumes setup, placement or Act transition. Invalid choices mutate nothing and consume no RNG.
 
-Starter offers only the ten non-core Act-I hybrids/Developments after Charter selection and before opening draws. Regular drafts use the whole unlocked player pool (20/25/28 designs), including currently unplayable designs. Cadence fires once after each even normal placement: Act I 2–18, Act II 2–22, Act III 2–24. Resolve all completion/reward/bonus/child consequences first, then draft, then pending refill or outgoing Charter evaluation. No Act-III placement-26 draft exists. Bonus placements never create cadence entitlements.
+Starter offers only the ten directional Act-I hybrids/Developments after Charter selection and before opening draws. Regular drafts use the whole unlocked player pool (20/25/28 designs), including currently unplayable designs. Cadence fires once after each even normal placement: Act I 2–18, Act II 2–22, Act III 2–24. Resolve all completion/reward/bonus/child consequences first, then draft, then pending refill or outgoing Charter evaluation. No Act-III placement-26 draft exists. Bonus placements never create cadence entitlements.
 
 At Act entry, restrict the offer to the five newly unlocked Act-II or three Act-III designs. Resolve after incoming Charter information and before pending hand refill. Acquiring the one chosen copy is the only entry-draft bag shuffle. Unlocking itself grants no physical copies.
 
-For every draft, filter, sort, sample up to three distinct definitions uniformly with RunRNG, then persist the exact offer. Save/load never rerolls, reacquires, reshuffles or repeats a continuation. A complete run has one Starter, 32 cadence and two Act Entry drafts.
+For every draft, apply static unlock/player-pool filtering, then the current board-or-bag Upgrade prerequisites, sort, sample up to three distinct definitions uniformly with RunRNG, then persist the exact offer. Save/load never rerolls, reacquires, reshuffles or repeats a continuation. A complete run has one Starter, 32 cadence and two Act Entry drafts.
+
+`TileDraftService.eligible_pool` applies Abbey→Monastery and Grand Market→Market prerequisites only during offer generation. Scan current bag copy IDs and current board Development objects by actual physical definition and stage; exclude hand, Reserve, historical/replaced copies and upgraded stages. Keep `pool` static for persisted-offer validation: saved options/history must never be re-filtered from later inventory. Act-III entry may persist exactly Bridge/Rewilding when Grand Market was excluded. No new serialized field is needed; rules identifier changes while schema remains 3. Early isolated Expansion-only test profiles use an explicitly named legacy fixture configuration; the playable Phase-9 profile uses the guaranteed Monastery core.
 
 Track 20 remains a one-time crossing with reward type NONE: no reward job, PendingChoice, RNG use, copy or bag shuffle. Track 40 training (including its Normal Tile Reward fallback), 70 Relic and 100 Major Reward remain unchanged.
 
@@ -1826,7 +1828,7 @@ Suggested shortcuts include:
 
 ## 30.5 Main HUD
 
-Use a board-centered fixed desktop HUD.
+Use the responsive tabletop HUD described in [Alpha UI Usability](docs/ALPHA_UI_USABILITY.md), referenced to `art/references/ui/ui_mockup_alpha.png`.
 
 Always-visible core information:
 
@@ -1847,9 +1849,9 @@ Recommended arrangement:
 
 ```text
 Top:    Act / placements / Tracks / Charter
-Side:   Relics / Specialists / Survey / Reserve
+Overlay: Compact Relics / Stewards / camera controls; toggleable Charter details
 Center: Board
-Bottom: Active hand + contextual tile controls
+Bottom: Reserve / active hand / Survey, Bag and contextual placement controls
 ```
 
 ## 30.6 Inspection rather than map clutter
@@ -1933,7 +1935,7 @@ Top level should include at minimum:
 ```json
 {
   "save_schema_version": 3,
-  "game_rules_version": "alpha-playtest-r1-draft-cadence",
+  "game_rules_version": "alpha-playtest-r1-usability",
   "implementation_spec_version": 1,
   "godot_version": "...",
   "run_state": { }
@@ -1956,7 +1958,7 @@ Encode Godot-specific types explicitly, e.g.:
 
 Do not silently load an incompatible rules-version save and hope for the best.
 
-Early alpha saves are not guaranteed to survive incompatible development revisions. Draft Cadence requires schema 3 and rules `alpha-playtest-r1-draft-cadence`; older incompatible runs are rejected clearly rather than regenerated or migrated.
+Early alpha saves are not guaranteed to survive incompatible development revisions. Draft Cadence requires schema 3 and rules `alpha-playtest-r1-usability`; older incompatible runs are rejected clearly rather than regenerated or migrated.
 
 ## 32.4 Save RNG state
 
@@ -2324,7 +2326,7 @@ Maintain explicit constants/build metadata for:
 ```text
 IMPLEMENTATION_SPEC_VERSION = 1
 SAVE_SCHEMA_VERSION = 3
-GAME_RULES_VERSION = "alpha-playtest-r1-draft-cadence"
+GAME_RULES_VERSION = "alpha-playtest-r1-usability"
 ```
 
 Expose these in development diagnostics and save headers.

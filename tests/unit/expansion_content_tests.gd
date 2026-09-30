@@ -23,7 +23,7 @@ func _manifest() -> ContentManifest:
 
 
 func _config() -> RunConfig:
-	return (load(ContentRegistry.HOMESTEAD_CONFIG_PATH) as RunConfig).duplicate(true) as RunConfig
+	return (load(ContentRegistry.LEGACY_EXPANSION_CONFIG_PATH) as RunConfig).duplicate(true) as RunConfig
 
 
 func _tile(manifest: ContentManifest, definition_id: StringName) -> TileDefinition:

@@ -111,7 +111,7 @@ func preserves_exact_starting_bag() -> bool:
 	var count: int = 0
 	for entry: StartingBagEntry in content.get_config().starting_bag:
 		count += entry.count
-		expect_true(content.get_tile(entry.definition_id).tile_class == DomainTypes.TileClass.EXPANSION, "Only core Expansions enter the automatic inventory")
+		expect_true((content.get_tile(entry.definition_id).tile_class == DomainTypes.TileClass.EXPANSION or entry.definition_id == &"tile.development.monastery"), "Only core Expansions and the guaranteed Monastery enter automatic inventory")
 	expect_equal(count, 18, "No automatic seeding or rewarded copies")
 	return true
 

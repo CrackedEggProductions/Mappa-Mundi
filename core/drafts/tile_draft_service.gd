@@ -40,6 +40,31 @@ static func completed(state: RunState, subtype: StringName, act: int, placement_
 	return false
 
 
+static func eligible_pool(state: RunState, content: ContentRegistry, subtype: StringName, act: int) -> Array[StringName]:
+	# Strict acquisition prerequisites, evaluated only when generating an offer.
+	# The static pool remains the validation boundary for saved offers/history.
+	var candidates: Array[StringName] = pool(content, subtype, act)
+	for upgrade: StringName in [&"tile.development.abbey", &"tile.development.grand_market"]:
+		var prerequisite: StringName = &"tile.development.monastery" if upgrade == &"tile.development.abbey" else &"tile.development.market"
+		if not has_board_or_bag_copy(state, prerequisite):
+			candidates.erase(upgrade)
+	return candidates
+
+
+static func has_board_or_bag_copy(state: RunState, definition_id: StringName) -> bool:
+	for copy_id: int in state.expansion.bag:
+		var copy: TileCopyState = PhysicalTileRules.find_copy(state, copy_id)
+		if copy != null and copy.definition_id == definition_id:
+			return true
+	for coordinate: Vector2i in state.expansion.board.sorted_coordinates():
+		for development: DevelopmentState in state.expansion.board.get_cell(coordinate).developments:
+			var copy: TileCopyState = PhysicalTileRules.find_copy(state, development.tile_copy_id)
+			if copy != null and copy.definition_id == definition_id \
+					and development.stage == StringName(String(definition_id).trim_prefix("tile.development.")):
+				return true
+	return false
+
+
 static func next_draft_placement(state: RunState, config: RunConfig) -> int:
 	if state.charters == null or state.phase == GamePhase.Type.RUN_COMPLETE:
 		return 0
@@ -69,7 +94,7 @@ static func begin(state: RunState, content: ContentRegistry, subtype: StringName
 	if completed(state, subtype, act, placement_index):
 		return false
 	assert(state.pending_choice == null and state.resolution == null and state.rewards.queue.is_empty())
-	var candidates: Array[StringName] = pool(content, subtype, act)
+	var candidates: Array[StringName] = eligible_pool(state, content, subtype, act)
 	assert(not candidates.is_empty(), "Validated draft content must provide a choice.")
 	var sequence: int = 1
 	for event: Dictionary in state.rewards.history:

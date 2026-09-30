@@ -58,6 +58,7 @@ const SUITE_PATHS: Array[String] = [
 	"res://tests/unit/environment_revision_tests.gd",
 	"res://tests/unit/draft_content_tests.gd",
 	"res://tests/unit/tile_draft_tests.gd",
+	"res://tests/unit/upgrade_draft_tests.gd",
 	"res://tests/unit/junction_hub_tests.gd",
 	"res://tests/integration/revision_river_overlay_tests.gd",
 ]

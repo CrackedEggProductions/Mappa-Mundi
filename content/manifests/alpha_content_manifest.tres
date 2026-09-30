@@ -9,5 +9,5 @@
 script = ExtResource("1_manifest")
 manifest_id = &"manifest.alpha_phase_0"
 implementation_phase = 0
-game_rules_version = "alpha-playtest-r1-draft-cadence"
+game_rules_version = "alpha-playtest-r1-usability"
 tiles = Array[ExtResource("2_type")]([ExtResource("3_road"), ExtResource("4_fields")])

@@ -39,7 +39,7 @@ func core_bag_has_exact_eighteen_copies() -> bool:
 	expect_equal(total, 18, "Exactly eighteen core copies before starter choices")
 	expect_equal(actual, {&"tile.forest_edge": 3, &"tile.forest_bend": 1, &"tile.forest_belt": 1,
 		&"tile.straight_road": 2, &"tile.bending_road": 2, &"tile.road_junction": 2,
-		&"tile.hamlet_edge": 3, &"tile.settlement_corner": 1, &"tile.settlement_throughway": 1,
+		&"tile.hamlet_edge": 3, &"tile.settlement_corner": 1, &"tile.development.monastery": 1,
 		&"tile.settlement_gate": 2}, "Exact requested core composition")
 	return true
 
@@ -49,7 +49,7 @@ func starter_pool_is_distinct_noncore_content() -> bool:
 	expect_equal(config.starter_draft_pool.size(), 10, "Six hybrids and four ordinary Developments")
 	var seen: Array[StringName] = []
 	for id: StringName in config.starter_draft_pool:
-		expect_true(id not in seen and id not in HomesteadContentValidator.CORE_COUNTS, "Starter choices are distinct noncore designs")
+		expect_true(id not in seen, "Starter choices remain distinct, including the guaranteed Monastery")
 		seen.append(id)
 	expect_true(HomesteadContentValidator._same_pool(config.starter_draft_pool, [
 		&"tile.riverside_hamlet", &"tile.woodland_road", &"tile.woodland_river", &"tile.settlement_corner_gate",

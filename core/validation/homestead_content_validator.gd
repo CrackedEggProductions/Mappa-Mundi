@@ -27,7 +27,7 @@ const CORE_COUNTS: Dictionary = {
 	&"tile.forest_edge": 3, &"tile.forest_bend": 1, &"tile.forest_belt": 1,
 	&"tile.straight_road": 2, &"tile.bending_road": 2, &"tile.road_junction": 2,
 	&"tile.hamlet_edge": 3, &"tile.settlement_corner": 1,
-	&"tile.settlement_throughway": 1, &"tile.settlement_gate": 2,
+	&"tile.development.monastery": 1, &"tile.settlement_gate": 2,
 }
 const STARTER_DRAFT_IDS: Array[StringName] = [
 	&"tile.riverside_hamlet", &"tile.woodland_road", &"tile.woodland_river",
@@ -39,7 +39,11 @@ const ACT_TWO_UNLOCKS: Array[StringName] = [&"tile.development.market", &"tile.d
 const ACT_THREE_UNLOCKS: Array[StringName] = [&"tile.transformation.bridge", &"tile.transformation.rewilding", &"tile.development.grand_market"]
 
 
-static func validate_roster_and_config(ids: Array[StringName], config: RunConfig) -> ValidationResult:
+static func validate_roster_and_config(ids: Array[StringName], config: RunConfig, legacy_expansions: bool = false) -> ValidationResult:
+	var expected_counts: Dictionary = CORE_COUNTS.duplicate()
+	if legacy_expansions:
+		expected_counts.erase(&"tile.development.monastery")
+		expected_counts[&"tile.settlement_throughway"] = 1
 	if ids.size() != EXPANSION_IDS.size() + 1 or FOUNDING_ID not in ids:
 		return _invalid("Homestead requires all 21 catalogue designs and the Founding Tile.")
 	for definition_id: StringName in EXPANSION_IDS:
@@ -54,9 +58,9 @@ static func validate_roster_and_config(ids: Array[StringName], config: RunConfig
 	for entry: StartingBagEntry in config.starting_bag:
 		if entry == null or entry.count <= 0:
 			return _invalid("Starting bag entries must be present with positive copy counts.")
-		if entry.definition_id not in CORE_COUNTS or entry.definition_id in bag_ids:
+		if entry.definition_id not in expected_counts or entry.definition_id in bag_ids:
 			return _invalid("Starting bag definitions must resolve uniquely to player designs.", entry.definition_id)
-		if entry.count != _canonical_starting_count(entry.definition_id):
+		if entry.count != int(expected_counts.get(entry.definition_id, 0)):
 			return _invalid("Starting bag copy count differs from RULE-BAG-002.", entry.definition_id)
 		bag_ids.append(entry.definition_id)
 		total_copies += entry.count
@@ -80,7 +84,9 @@ static func _canonical_starting_count(definition_id: StringName) -> int:
 static func validate_draft_config(config: RunConfig) -> ValidationResult:
 	var act_one: Array[StringName] = STARTER_DRAFT_IDS.duplicate()
 	for id: StringName in CORE_COUNTS:
-		act_one.append(id)
+		if id not in act_one:
+			act_one.append(id)
+	act_one.append(&"tile.settlement_throughway")
 	if config.draft_interval != 2:
 		return _invalid("A regular Tile Draft occurs after every two normal placements.")
 	if not _same_pool(config.starter_draft_pool, STARTER_DRAFT_IDS) \

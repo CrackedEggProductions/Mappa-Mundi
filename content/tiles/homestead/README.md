@@ -33,7 +33,7 @@ They enter through Starter/regular drafts and rewards, not automatic core copies
 The manifest and starting-bag entries are ordered by stable definition ID.
 `homestead_run_config.tres` contains the canonical **18 core copies**:
 Forest Edge 3, Forest Bend 1, Forest Belt 1; Straight Road 2, Bending Road 2,
-Road Junction 2; Hamlet Edge 3, Settlement Corner 1, Settlement Throughway 1,
+Road Junction 2; Hamlet Edge 3, Settlement Corner 1, Monastery 1,
 Settlement Gate 2. No other design starts in the core.
 
 The full run offers a Starter Draft from Riverside Hamlet, Woodland Road, Woodland
@@ -49,3 +49,7 @@ Cross-feature access/touch metadata remains distinct from physical connectivity.
 Founding has Road–Settlement access. Overlay effects declare same-tile River
 contact authoritatively. Art remains presentation-owned; it cannot change these
 mechanical facts.
+
+Settlement Throughway stays in unlocked draft/reward pools. Abbey and Grand Market
+Tile Draft offers require an actual non-upgraded base Development on board or in
+bag; hand/Reserve/history do not count. Normal Tile Rewards are unaffected.

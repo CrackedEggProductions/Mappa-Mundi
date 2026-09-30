@@ -87,7 +87,7 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 		if not tile_result.is_valid:
 			return tile_result
 	if manifest.implementation_phase == 2:
-		return HomesteadContentValidator.validate_roster_and_config(seen_ids, config)
+		return HomesteadContentValidator.validate_roster_and_config(seen_ids, config, true)
 	if manifest.implementation_phase in [5, 6, 7, 8, 9]:
 		for stage: StringName in DEVELOPMENT_ROSTER:
 			if StringName("tile.development." + String(stage)) not in seen_ids:

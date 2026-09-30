@@ -98,7 +98,10 @@ static func _options_valid(value: Variant, content: ContentRegistry, context: Di
 	if not value is Array:
 		return false
 	var pool: Array[StringName] = TileDraftService.pool(content, StringName(context["draft_type"]), context["act"])
-	if value.size() != mini(3, pool.size()):
+	# Act-III entry may have excluded Grand Market at generation. Never infer
+	# historical prerequisite eligibility from today's inventory after loading.
+	var filtered_entry: bool = context["draft_type"] == "act_entry" and context["act"] == 3
+	if value.size() != mini(3, pool.size()) and not (filtered_entry and value.size() == 2):
 		return false
 	var seen: Array[StringName] = []
 	for option: Variant in value:
@@ -109,6 +112,8 @@ static func _options_valid(value: Variant, content: ContentRegistry, context: Di
 		if id not in pool or id in seen:
 			return false
 		seen.append(id)
+	if filtered_entry and value.size() == 2 and (not seen.has(&"tile.transformation.bridge") or not seen.has(&"tile.transformation.rewilding")):
+		return false
 	return true
 
 

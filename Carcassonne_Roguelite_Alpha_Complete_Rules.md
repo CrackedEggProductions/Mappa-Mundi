@@ -1,6 +1,6 @@
 # Carcassonne Roguelite — Complete Alpha Rules Specification
 
-**Status:** Canonical Alpha Playtest Revision 1 — Draft Cadence (2026-09-27); three-Act playable alpha
+**Status:** Canonical Alpha Playtest Revision 1 — Usability (2026-10-01); three-Act playable alpha
 **Purpose:** Single source of truth for implementation by local Codex  
 **Supersedes for alpha implementation:** unresolved or conflicting prototype text in the Core Design Bible, Tile Design Specification, and Relics/Specialists Prototype Specification  
 **Source basis:**
@@ -23,7 +23,9 @@ The earlier Revision-1 45-copy bag and automatic Act-II/III seeding (including t
 
 **Unlocking means eligibility for player choices, not guaranteed physical presence.** Drafts always add one chosen physical copy and shuffle the full bag. Normal Tile Rewards, Masterwork, Charter rewards and other acquisition effects retain their own quantities and rules.
 
-Rules identifier: **alpha-playtest-r1-draft-cadence**; save schema **3**. Incompatible pre-revision active-run saves may be rejected; no migration is required. Phase 11 Save/Continue presentation and Phase 12 exports remain outside this revision.
+The 2026-10-01 usability playtest replaces the fixed Settlement Throughway copy with Monastery and adds only the two Tile-Draft Upgrade prerequisites in RULE-DRAFT-006. All other draft cadence and gameplay rules remain unchanged.
+
+Rules identifier: **alpha-playtest-r1-usability**; save schema **3**. Incompatible pre-revision active-run saves may be rejected; no migration is required. Phase 11 Save/Continue presentation and Phase 12 exports remain outside this revision.
 
 # 0. Authority, Scope, and Interpretation
 
@@ -234,7 +236,7 @@ A run is initialized in this order:
 4. Initialize zero Tracks, two available Stewards, Relic capacity 2/no Relics, one Act-I Survey charge and empty Reserve.
 5. Build the **18-copy core player bag**, in deterministic definition order. Do not shuffle it yet.
 6. Uniformly select and reveal one Act-I Charter.
-7. Generate the **Starter Draft**: uniformly offer up to three distinct designs from the ten non-core Act-I designs. Persist exact options and pause before opening draws.
+7. Generate the **Starter Draft**: uniformly offer up to three distinct designs from the ten directional Act-I designs. Persist exact options and pause before opening draws.
 8. On the player's choice, add **one physical copy** of that design to the bag and randomize the **entire bag** once.
 9. Draw the opening three hand tiles; enter Act-I TURN_INPUT at 0/18 placements.
 
@@ -507,7 +509,7 @@ Act III Major/Rare Development Upgrade of Market. See Section 11.
 # 6. Homestead Starting Bag and Tile Reward Classes
 
 ## RULE-BAG-001 — Core bag and chosen direction
-The initial core bag contains only the ten listed Expansion designs. No Development, Upgrade or Transformation is seeded into it. The Starter Draft adds one chosen non-core Act-I design before the opening hand. Riverside Hamlet and Woodland River remain legal Act-I player overlays, but enter through choices rather than automatic starting copies.
+The initial core bag contains nine Expansion designs plus one guaranteed Monastery Development. Settlement Throughway remains unlocked and draft/reward eligible, but has no fixed starting copy. No other Development, Upgrade or Transformation is seeded into it. The Starter Draft adds one chosen directional Act-I design before the opening hand. Riverside Hamlet and Woodland River remain legal Act-I player overlays, but enter through choices rather than automatic starting copies.
 
 ## RULE-BAG-002 — Core starting bag size
 Before the Starter Draft, the Homestead core player bag contains exactly **18 physical copies**:
@@ -522,7 +524,7 @@ Before the Starter Draft, the Homestead core player bag contains exactly **18 ph
 | Road Junction | 2 |
 | Hamlet Edge | 3 |
 | Settlement Corner | 1 |
-| Settlement Throughway | 1 |
+| Monastery | 1 |
 | Settlement Gate | 2 |
 | **Total** | **18** |
 
@@ -2173,12 +2175,12 @@ Threshold rewards wait until the complete completion package and Relic milestone
 ## 16.0 Single-copy Tile Drafts
 
 ### RULE-DRAFT-001 — Shared offer and acquisition contract
-A Tile Draft is distinct from a Normal Tile Reward. Filter its canonical pool, sort by stable definition ID, then uniformly sample up to **three distinct designs** using RunRNG. If fewer than three exist, show all without duplicate padding. Do not weight helpfulness or exclude an unlocked design merely because it is currently unplayable.
+A Tile Draft is distinct from a Normal Tile Reward. Filter its canonical pool, sort by stable definition ID, then uniformly sample up to **three distinct designs** using RunRNG. If fewer than three exist, show all without duplicate padding. Do not weight helpfulness or generally exclude an unlocked design merely because it is currently unplayable. Apply only the explicit Upgrade prerequisites in RULE-DRAFT-006 before sampling.
 
 Persist the exact offer. The player chooses one; allocate **exactly one physical copy** with acquisition Act and draft-source provenance, add it to the bag, then randomize the **entire remaining bag** before any pending replacement draw. Do not apply Normal Tile Reward copy quantities or Masterwork's three-copy rule to a draft. Loading never rerolls or repeats acquisition/shuffle.
 
 ### RULE-DRAFT-002 — Starter Draft
-After Act-I Charter selection and before opening hand draws, offer from exactly these ten non-core Act-I designs:
+After Act-I Charter selection and before opening hand draws, offer from exactly these ten directional Act-I designs:
 - Riverside Hamlet;
 - Woodland Road;
 - Woodland River;
@@ -2190,7 +2192,7 @@ After Act-I Charter selection and before opening hand draws, offer from exactly 
 - Monastery;
 - Forester's Lodge.
 
-The ten core bag designs are excluded from this one starter pool. The choice gives the player a direction without guaranteeing any particular design.
+This exact directional pool is unchanged by the guaranteed starting Monastery. Monastery remains eligible here and in later drafts/rewards; owning it does not exhaust it. The choice gives a direction without guaranteeing any particular offered design.
 
 ### RULE-DRAFT-003 — Cadence Draft schedule
 Award one Tile Draft after each eligible even **normal** placement:
@@ -2200,7 +2202,7 @@ Award one Tile Draft after each eligible even **normal** placement:
 
 Bonus placements never increment cadence or create extra cadence entitlements. Finish every consequence, Specialist/Relay choice, Relic, milestone, threshold/reward chain, bonus placement and FIFO child event first. Then resolve the one due cadence draft **before ordinary hand refill**. On final Act-I/II placements it also resolves **before outgoing Charter evaluation/rewards and Act advance**, using the outgoing Act's pool.
 
-Regular cadence pools contain all unlocked player designs: **20 in Act I, 25 in Act II, 28 in Act III**. This includes core Expansions, hybrids/overlays, Developments and later eligible Upgrades/Transformations. Legacy/setup-only content stays excluded.
+Regular cadence pools start from all unlocked player designs: **20 in Act I, 25 in Act II, 28 in Act III**, before the strict Upgrade prerequisites below. This includes core Expansions, hybrids/overlays, Developments and later eligible Upgrades/Transformations. Legacy/setup-only content stays excluded.
 
 ### RULE-DRAFT-004 — Act Entry Drafts
 After advancing/unlocking and selecting the incoming Act's required Charter information, offer one restricted draft:
@@ -2211,6 +2213,16 @@ Resolve that choice and its one-copy/full-bag shuffle before pending outgoing-fi
 
 ### RULE-DRAFT-005 — Audit and continuation
 Persist draft type, Act, originating normal-placement index, exact offered IDs, sequence identity, chosen physical copy and offered/resolved audit state. Starter, cadence and entry choices resume their own setup/placement/transition continuations exactly once. A complete run has one Starter Draft, 32 cadence drafts and two Act Entry Drafts, independent of additional normal rewards.
+
+### RULE-DRAFT-006 — Current Upgrade prerequisites (2026-10-01)
+For every new Tile Draft offer, including cadence and Act Entry drafts:
+- Abbey requires at least one current **non-upgraded Monastery physical copy on the board or in the bag**.
+- Grand Market requires at least one current **non-upgraded Market physical copy on the board or in the bag**.
+- Copies only in active hand or Reserve do **not** qualify. Removed copies, historical records, Abbey and Grand Market do not qualify as their base designs.
+- Reevaluate only at offer generation. Drawing the only bag prerequisite removes eligibility for later offers; placing it restores eligibility; upgrading the last board prerequisite removes it again.
+- Persisted offers are never re-filtered on load or choice resolution.
+- An Act-III Entry Draft without a qualifying Market offers only Bridge and Rewilding. Do not pad with older designs. Act-II entry filters Abbey before selecting up to three from its newly unlocked pool.
+These are strict prerequisites, not weighting or a general helpfulness system. Normal Tile Rewards, Masterwork, Charter rewards and Upgrade placement rules are unchanged.
 
 ## 16.1 Normal Tile Rewards
 
@@ -2532,7 +2544,7 @@ Exceed:
 # 18. Act Unlocks, Entry Drafts, and Transition
 
 ## RULE-ACT-001 — Act I unlocked content
-The twenty Act-I player designs are the ten core Expansions, six non-core hybrids/overlays and four Developments (Housing, Mill, Monastery, Forester's Lodge). All are eligible for regular drafts and Normal Tile Rewards. Starter Draft alone excludes the core ten. Market and Port remain locked until Act II.
+The twenty Act-I player designs comprise sixteen Expansion/hybrid/overlay designs and four Developments (Housing, Mill, Monastery, Forester's Lodge). All remain eligible for regular drafts and Normal Tile Rewards. The fixed core has nine Expansion designs and Monastery; Settlement Throughway remains choice-acquired. The Starter Draft uses its explicitly listed ten designs, including Monastery. Market and Port remain locked until Act II.
 
 ## RULE-ACT-002 — Act II unlocks
 At Act-II start unlock Market, Port, Urban Expansion, Town Square and Abbey; eligibility persists afterward. **Add no automatic physical copies.** Offer one Act Entry Draft restricted to these five designs. Regular unlocked player pool becomes 25 designs.

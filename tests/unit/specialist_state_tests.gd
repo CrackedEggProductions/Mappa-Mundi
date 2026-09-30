@@ -103,7 +103,7 @@ func prior_profiles_preserved() -> bool:
 	var content: ContentRegistry = ContentRegistry.new()
 	for profile: String in [ContentRegistry.ALPHA_MANIFEST_PATH, ContentRegistry.HOMESTEAD_MANIFEST_PATH,
 		ContentRegistry.PHASE_FIVE_MANIFEST_PATH, ContentRegistry.PHASE_SIX_MANIFEST_PATH]:
-		var config: String = ContentRegistry.ALPHA_CONFIG_PATH if profile == ContentRegistry.ALPHA_MANIFEST_PATH else ContentRegistry.HOMESTEAD_CONFIG_PATH
+		var config: String = ContentRegistry.ALPHA_CONFIG_PATH if profile == ContentRegistry.ALPHA_MANIFEST_PATH else (ContentRegistry.LEGACY_EXPANSION_CONFIG_PATH if profile == ContentRegistry.HOMESTEAD_MANIFEST_PATH else ContentRegistry.HOMESTEAD_CONFIG_PATH)
 		expect_true(content.load_content(profile, config).is_valid, "Historical fixture profile still loads")
 		expect_true(content.get_specialist_ids().is_empty(), "Legacy fixtures remain explicitly pre-Specialist")
 	return true

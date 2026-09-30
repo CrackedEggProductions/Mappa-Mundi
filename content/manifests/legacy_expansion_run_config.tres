@@ -43,9 +43,9 @@ script = ExtResource("2_entry")
 definition_id = &"tile.settlement_gate"
 count = 2
 
-[sub_resource type="Resource" id="Bag_monastery"]
+[sub_resource type="Resource" id="Bag_settlement_throughway"]
 script = ExtResource("2_entry")
-definition_id = &"tile.development.monastery"
+definition_id = &"tile.settlement_throughway"
 count = 1
 
 [sub_resource type="Resource" id="Bag_straight_road"]
@@ -55,11 +55,11 @@ count = 2
 
 [resource]
 script = ExtResource("1_config")
-config_id = &"config.alpha_homestead_draft_cadence"
+config_id = &"config.legacy_expansion_fixture"
 act_placement_limits = Array[int]([18, 22, 26])
 track_thresholds = Array[int]([20, 40, 70, 100])
 track_threshold_reward_kinds = Array[StringName]([&"none", &"training_reward", &"relic_offer", &"major_reward"])
-starting_bag = Array[ExtResource("2_entry")]([SubResource("Bag_bending_road"), SubResource("Bag_forest_belt"), SubResource("Bag_forest_bend"), SubResource("Bag_forest_edge"), SubResource("Bag_hamlet_edge"), SubResource("Bag_road_junction"), SubResource("Bag_settlement_corner"), SubResource("Bag_settlement_gate"), SubResource("Bag_monastery"), SubResource("Bag_straight_road")])
+starting_bag = Array[ExtResource("2_entry")]([SubResource("Bag_bending_road"), SubResource("Bag_forest_belt"), SubResource("Bag_forest_bend"), SubResource("Bag_forest_edge"), SubResource("Bag_hamlet_edge"), SubResource("Bag_road_junction"), SubResource("Bag_settlement_corner"), SubResource("Bag_settlement_gate"), SubResource("Bag_settlement_throughway"), SubResource("Bag_straight_road")])
 hand_capacity = 3
 reserve_capacity = 1
 initial_survey_charges = 1
