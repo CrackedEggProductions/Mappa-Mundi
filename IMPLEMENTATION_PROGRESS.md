@@ -1,6 +1,52 @@
 # Mappa Mundi — Implementation progress
 
-## Current checkpoint — overlay contrast and required-choice inspection
+## Current checkpoint — generic Steward assignment visibility
+
+2026-10-01 narrow bugfix on unmerged `alpha-playtest-r1`, starting at
+`30399c5e9f4411291432f45e189e84624e66a704`. The cancelled task left no tracked or
+untracked changes; nothing was reverted or discarded. Clean baseline:
+**1,316 gameplay / 137 presentation / 247 clean script parses**, zero failures
+(`run-9LjI1iL7`, `presentation-L6UkZ9h7`).
+
+Human reproduction: seed 1, Starter choice 0, naturally drawn Hamlet Edge at
+`(1,1)`, rotation 0. Starting generic Stewards **32 and 33** are AVAILABLE.
+Settlement lineage **58** has one open exit, is directly affected and unoccupied.
+Both legal piece/target options survive generation, persistence and presenter
+mapping. They disappeared visually: the grid's direct HBox rows did not request
+horizontal expansion, so wrapped buttons measured **20×902 pixels**. The second
+row was below the visible scroll area. This was not an empty authoritative offer.
+
+The shared option row now requests horizontal expansion. Both Steward controls
+measure **848×58**, retain their exact commands and coexist with Decline. No
+legality is inferred by UI. Existing authoritative zero-option suppression stays
+unchanged; immediate completion, occupied features and unavailable pieces still
+skip the optional choice. No core/content/rules-version/save-schema edits.
+
+Added **11 gameplay regressions** and **5 presentation regressions**, including
+actual opening assignment/Decline, both physical identities, pending save/load,
+unchanged query RNG, mixed generic/trained eligibility, genuine completion and
+zero-option cases. Seed 2 also plays the guaranteed starting Monastery copy 36
+at `(-4,2)` and offers both generics to unfinished enclosure 57; trained roles
+remain excluded. Existing Road/Forest/Monastery/Abbey, eight-role, locality,
+Development/Transformation and merge tests remain part of the complete suite.
+The presentation runner now awaits tests that inspect actual settled layout,
+rather than counting button objects without checking visible bounds.
+
+Verification: **1,327 gameplay passed, 0 failed** (`steward-final-XNTC4Tqv`),
+including all three outcomes, deterministic replay and every-boundary save/load.
+Full-run fingerprints match the accepted baseline. Both natural controller runs
+complete all 66 placements with matching fingerprints. **142 presentation passed, 0 failed**
+(`presentation-hbG2V4ZC`); **250 scripts parsed cleanly** (`run-JjdSpYab`, with
+an additional clean parse after the final Monastery test). Actual graphical
+injected-mouse smoke passed **32 checks at each of 1280×720 and 1920×1080**:
+New Run → Starter → Hamlet → confirm → visible Steward options → Assign/Decline.
+Assign produces Stewards (1/2); Decline retains (2/2); both resume and refill.
+No human manual-play claim. Captures: `docs/reports/ui_usability/steward-*.png`.
+Reproduce graphically with `godot --path . --script
+res://tests/scenarios/steward_mouse_smoke.gd -- 1280 720 <unique-capture-suffix>`.
+No new art, balance/scoring/Draft/Charter changes, Phase 11/12 work or merge.
+
+## Previous checkpoint — overlay contrast and required-choice inspection
 
 2026-10-01 narrow UI bugfix on `alpha-playtest-r1`, starting from
 `dece60a1484ebe8acd5ad5d5040f926abf87947a`. Pre-edit baseline was clean:

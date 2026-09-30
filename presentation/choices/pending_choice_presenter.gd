@@ -177,6 +177,9 @@ func _add_option(state: RunState, content: ContentRegistry, option: Dictionary,
 		option_buttons.append(card)
 		return
 	var row: HBoxContainer = HBoxContainer.new()
+	# Grid columns expand only when their direct children request the space.
+	# Wrapped text otherwise collapses to padding width (notably generic Stewards).
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 10)
 	_options_box.add_child(row)
 	var tile_id: StringName = _tile_id(state, option)

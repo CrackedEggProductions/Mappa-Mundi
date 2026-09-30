@@ -11,6 +11,7 @@ const SUITES: Array[String] = [
 	"res://tests/presentation/tile_draft_presentation_tests.gd",
 	"res://tests/presentation/usability_tests.gd",
 	"res://tests/presentation/overlay_regression_tests.gd",
+	"res://tests/presentation/generic_steward_presenter_tests.gd",
 ]
 
 
@@ -26,7 +27,7 @@ func _run() -> void:
 		var suite: RefCounted = script.new()
 		for scenario: Callable in suite.tests():
 			var before: int = suite.failures.size()
-			var completed: Variant = scenario.call()
+			var completed: Variant = await scenario.call()
 			if completed == true and suite.failures.size() == before:
 				passed += 1
 				print("PASS: ", scenario.get_method())
