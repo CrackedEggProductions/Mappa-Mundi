@@ -1,6 +1,53 @@
 # Mappa Mundi — Implementation progress
 
-## Current checkpoint — Monastery, Upgrade drafts and tabletop UI
+## Current checkpoint — overlay contrast and required-choice inspection
+
+2026-10-01 narrow UI bugfix on `alpha-playtest-r1`, starting from
+`dece60a1484ebe8acd5ad5d5040f926abf87947a`. Pre-edit baseline was clean:
+1,316 gameplay tests, 128 presentation tests and 245 scripts passed without
+failures or diagnostics (`run-qmBqthtD`, `presentation-NlZOStYU`).
+
+Root causes: parchment ink was inherited by Godot tooltip/popup types whose
+background styles were still dark defaults; Charter inspection explicitly hid
+the PendingChoice presenter/modal and used notice state to navigate back.
+
+`AlphaTheme` now pairs popup/tooltip/plain-panel surfaces with opaque parchment
+and dark ink, including secondary/disabled/focus states. Named parchment/dark
+information themes pair their child Label/RichTextLabel colors with their surface.
+Charter, rules/details, notices and event cards use the parchment information theme.
+Actual hover-tooltip captures and contrast assertions cover these resolved styles.
+No dark-on-dark text remains in the audited normal-play information surfaces.
+
+Inspection now layers above the existing modal in both draw and input order. The
+PendingChoice presenter stays visible with its same buttons and exact offer;
+inspection suspends its input instead of hiding or resolving it. Closing restores
+focus. Escape closes only Charter and cannot dismiss the required choice. The
+controller rejects submissions behind inspection. Normal-turn Charter controls
+remain available. Fingerprint tests prove no RNG, acquisition, phase or early
+opening-hand changes. Save/load restores the exact pending Starter Draft while
+cosmetic Charter visibility may remain closed.
+
+Verification:
+- Final gameplay suite: **1,316 passed, 0 failed** (`run-l5qCLf53`), including
+  all three full-run outcomes, deterministic replay and save/load replay. Final
+  fingerprints are unchanged from the usability checkpoint below.
+- Full presentation suite: **137 passed, 0 failed**, including nine new regressions
+  and both complete natural-bag controller runs (`presentation-M7Ms7wN1`).
+- **247 GDScript files parsed without diagnostics**.
+- Graphical injected mouse/key smoke: **21 checks, 0 failures** at each of
+  **1280×720** and **1920×1080**. Covers Starter/open/close/reopen/Escape, attempted
+  click through inspection, actual choice/opening draw, normal Charter, details and
+  real automatic tooltip. No human manual-play claim is made.
+- Ten captures retained at `docs/reports/ui_usability/overlay-fix-*`, including
+  before/open/returned Starter Draft, information card and tooltip at both sizes.
+  A local `.gdignore` prevents review screenshots becoming runtime assets.
+
+Only presentation/tests/docs/captures changed. Rules remain
+`alpha-playtest-r1-usability`, schema 3. No gameplay balance/content, Phase 11,
+Phase 12, new art or automatic merge. Next action: continued human playtesting.
+See [UI notes and reproduction commands](docs/ALPHA_UI_USABILITY.md).
+
+## Historical checkpoint — Monastery, Upgrade drafts and tabletop UI
 
 Verified 2026-10-01 on `alpha-playtest-r1`; branch remains unmerged. Starting HEAD
 was `351a6dd39d111c7180f2a0f73a0921a241e438aa`, with 1,296 gameplay tests,

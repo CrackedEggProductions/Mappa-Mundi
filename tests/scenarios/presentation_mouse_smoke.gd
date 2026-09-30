@@ -66,7 +66,7 @@ func _run() -> void:
 		return
 	_check(controller.session.state.pending_choice.kind == &"tile_draft", "New Run opens the starter draft")
 	await _click(controller.choice_presenter.charter_button)
-	_check(controller.notice_active, "Starter draft opens Charter inspection by mouse")
+	_check(controller.charter_popout.visible and controller.choice_presenter.visible, "Starter draft keeps its presenter beneath Charter inspection")
 	await _click(controller.charter_popout.close_button)
 	await _click(controller.choice_presenter.option_buttons[0])
 	_check(controller.session.state.phase == GamePhase.Type.TURN_INPUT, "One mouse draft choice draws the opening hand")

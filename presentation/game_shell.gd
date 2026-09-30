@@ -46,6 +46,7 @@ var board_container: SubViewportContainer
 var board_viewport: SubViewport
 var workspace: Control
 var charter_layer: Control
+var charter_bounds: Control
 var modal_layer: CenterContainer
 var notice_panel: PanelContainer
 var notice_text: RichTextLabel
@@ -93,7 +94,13 @@ func build() -> void:
 	charter_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	charter_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	charter_layer.z_index = 20
-	workspace.add_child(charter_layer)
+	# Draw AND receive input above the modal. Z order alone does not route input.
+	add_child(charter_layer)
+	charter_bounds = Control.new()
+	charter_bounds.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	charter_layer.add_child(charter_bounds)
+	workspace.item_rect_changed.connect(_sync_charter_bounds)
+	_sync_charter_bounds.call_deferred()
 	# Compatibility inspection fields remain read-only and outside normal layout.
 	tracks_label = label("", self)
 	tracks_label.hide()
@@ -178,6 +185,8 @@ func _build_utilities() -> void:
 	results_button = button("Results", right)
 	new_run_button = button("New Run", right)
 	inspection_panel = PanelContainer.new()
+	inspection_panel.theme = AlphaTheme.information()
+	inspection_panel.theme_type_variation = &"ParchmentInfoOverlay"
 	inspection_panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 	inspection_panel.position = Vector2(6, 90)
 	inspection_panel.custom_minimum_size.x = 300
@@ -270,6 +279,8 @@ func _build_tray(parent: Node) -> void:
 
 func _build_toast() -> void:
 	toast_panel = PanelContainer.new()
+	toast_panel.theme = AlphaTheme.information()
+	toast_panel.theme_type_variation = &"ParchmentInfoOverlay"
 	workspace.add_child(toast_panel)
 	toast_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	toast_panel.offset_left = -240
@@ -306,6 +317,8 @@ func _build_modal() -> void:
 	modal_layer.add_child(veil)
 	veil.set_as_top_level(true)
 	notice_panel = PanelContainer.new()
+	notice_panel.theme = AlphaTheme.information()
+	notice_panel.theme_type_variation = &"ParchmentInfoOverlay"
 	notice_panel.custom_minimum_size = Vector2(850, 550)
 	modal_layer.add_child(notice_panel)
 	var column: VBoxContainer = VBoxContainer.new()
@@ -333,6 +346,11 @@ func dismiss_feedback() -> void:
 func show_inspection(text: String) -> void:
 	inspection_label.text = text
 	inspection_panel.show()
+
+
+func _sync_charter_bounds() -> void:
+	charter_bounds.global_position = workspace.global_position
+	charter_bounds.size = workspace.size
 
 
 func _responsive() -> void:

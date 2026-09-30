@@ -26,8 +26,9 @@ The reference is tracked design documentation, never a runtime texture.
 - **Charter popout:** a bounded right-side parchment overlay with close control,
   structured conditions, checks, current/history labels, numeric progress and rewards.
   Grand Charter forecast remains secret until the rules reveal it. Closing restores
-  the unobstructed board without resizing it. Starter Draft may be temporarily
-  hidden to inspect the Charter; closing restores the same pending offer.
+  the unobstructed board without resizing it. PendingChoice presenters remain visible underneath Charter inspection. The
+  top information layer suspends input to the underlying choice; closing or Escape
+  restores focus to that exact presenter without rebuilding its offer.
 - **Event card:** one dismissible parchment toast above the tray. It combines a small
   number of meaningful outcomes, then expires after seven seconds. Detailed cue text
   is a tooltip. It never advances rules or blocks a consequence chain.
@@ -80,3 +81,36 @@ Selected review captures are retained under [reports/ui_usability](reports/ui_us
 
 Automated unit/controller checks are in `tests/presentation/usability_tests.gd`;
 complete gameplay and natural-bag presentation runs remain part of the normal suites.
+
+## Overlay bugfix — 2026-10-01
+
+Information defaults to an opaque parchment background and dark ink. Shared
+`ParchmentInfoOverlay` / `AlphaTheme.information()` styles cover rules/details,
+Charter, notices and event cards. Godot `TooltipPanel`, `TooltipLabel`, `PopupPanel`,
+`PopupMenu` and plain `Panel` receive explicit paired colors; they cannot silently
+combine parchment ink with the engine's dark translucent defaults. The optional
+`DarkInfoOverlay` / `information(true)` pairs dark brown with light body text.
+Focus, disabled and secondary informational states have contrast checks.
+
+Inspection is an overlay above an active required choice, never navigation away
+from it. `PendingChoicePresenter.set_information_overlay_open` suspends input
+without hiding, resolving or recreating the presenter. A top input layer protects
+it while the Charter is open; closing restores focus. No notice/choice-resolution
+signal, RNG operation, acquisition or opening draw occurs. The controller also
+rejects submissions behind inspection. Escape closes only Charter; pressing it
+again cannot dismiss a mandatory choice. Saves retain the authoritative choice;
+cosmetic Charter visibility is not serialized. Normal-turn Charter behavior remains.
+
+Graphical reproduction and regression:
+
+```sh
+godot --path . --script res://tests/scenarios/overlay_mouse_smoke.gd -- 1280 720
+godot --path . --script res://tests/scenarios/overlay_mouse_smoke.gd -- 1920 1080
+```
+
+The script uses actual viewport mouse/key input and captures Starter Draft before,
+during and after inspection, an information card and a real automatic tile tooltip.
+Tracked captures in `reports/ui_usability/overlay-fix-*` document both resolutions.
+Nine new presentation tests check resolved theme contrast, repeated toggles, exact
+state/offer/RNG preservation, early-draw prevention, input locking, Escape and
+save/load. This bugfix changes no gameplay rules, version or save schema.

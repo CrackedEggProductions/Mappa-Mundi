@@ -38,7 +38,7 @@ func starter_charter_inspection_is_pure() -> bool:
 	var choice_id: int = state.pending_choice.choice_id
 	var buttons: Array[Button] = controller.choice_presenter.option_buttons.duplicate()
 	controller.choice_presenter.charter_button.pressed.emit()
-	expect_true(controller.notice_active and not controller.choice_presenter.visible, "Inspect opens a readable Charter panel")
+	expect_true(controller.charter_popout.visible and controller.choice_presenter.visible, "Inspect overlays the still-present draft")
 	expect_true(controller.shell.notice_text.text.contains(controller.session.content.get_charter(state.charters.act_one_id).display_name), "Selected Charter can inform starter choice")
 	controller.shell.notice_button.pressed.emit()
 	expect_true(not controller.notice_active and controller.choice_presenter.visible, "Back returns to the pending draft")

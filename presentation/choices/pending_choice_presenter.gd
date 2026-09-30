@@ -34,6 +34,7 @@ var _body: VBoxContainer
 var _options_box: GridContainer
 var _generation: int = 0
 var _submitted: bool = false
+var information_overlay_open: bool = false
 var _art: TileArtRegistry = TileArtRegistry.new()
 
 
@@ -203,7 +204,7 @@ func _add_option(state: RunState, content: ContentRegistry, option: Dictionary,
 
 
 func _submit(command: PlayerCommand, generation: int) -> void:
-	if generation != _generation or _submitted or not visible or command == null:
+	if generation != _generation or _submitted or information_overlay_open or not visible or command == null:
 		return
 	_submitted = true
 	for button: Button in option_buttons:
@@ -211,6 +212,15 @@ func _submit(command: PlayerCommand, generation: int) -> void:
 	if decline_button != null:
 		decline_button.disabled = true
 	command_requested.emit(command)
+
+
+func set_information_overlay_open(value: bool) -> void:
+	# Inspection suspends input, not the choice presenter or its saved offer.
+	information_overlay_open = value
+	for button: Button in option_buttons:
+		button.disabled = value or _submitted
+	if decline_button != null:
+		decline_button.disabled = value or _submitted
 
 
 func _tile_id(state: RunState, option: Dictionary) -> StringName:

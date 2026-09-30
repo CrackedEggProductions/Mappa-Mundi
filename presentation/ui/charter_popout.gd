@@ -10,6 +10,8 @@ var condition_rows: Array[Dictionary] = []
 
 
 func _init() -> void:
+	theme = AlphaTheme.information()
+	theme_type_variation = &"ParchmentInfoOverlay"
 	custom_minimum_size.x = 340
 	var column: VBoxContainer = VBoxContainer.new()
 	add_child(column)

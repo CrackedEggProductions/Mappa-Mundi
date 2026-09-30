@@ -71,7 +71,7 @@ func charter_popout_toggles_without_domain_changes() -> bool:
 func charter_overlay_does_not_reserve_column() -> bool:
 	var c: GameController = _controller()
 	expect_equal(c.shell.board_container.anchor_right, 1.0, "Board fills central workspace")
-	expect_equal(c.shell.charter_layer.get_parent(), c.shell.workspace, "Popout overlays workspace")
+	expect_equal(c.shell.charter_layer.get_parent(), c.shell, "Information layer sits above modal input without reserving workspace")
 	expect_equal(c.charter_popout.anchor_left, 1.0, "Right anchored popout")
 	c.show_charter()
 	expect_equal(c.shell.board_container.anchor_right, 1.0, "Opening never shrinks layout")

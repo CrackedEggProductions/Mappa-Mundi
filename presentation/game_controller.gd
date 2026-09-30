@@ -46,7 +46,7 @@ func ensure_ui() -> void:
 	add_child(shell)
 	shell.build()
 	charter_popout = CharterPopout.new()
-	shell.charter_layer.add_child(charter_popout)
+	shell.charter_bounds.add_child(charter_popout)
 	charter_popout.set_anchors_and_offsets_preset(Control.PRESET_RIGHT_WIDE)
 	charter_popout.offset_left = -360
 	charter_popout.offset_right = -2
@@ -265,6 +265,8 @@ func cycle_dead_hand() -> ValidationResult:
 func submit(command: PlayerCommand) -> ValidationResult:
 	if session == null or _busy or notice_active or results_active:
 		return ValidationResult.failure(&"presentation_busy", "Finish the current choice or notice first.")
+	if charter_popout.visible and session.state.pending_choice != null:
+		return ValidationResult.failure(&"presentation_busy", "Close the information panel to return to your choice.")
 	_busy = true
 	var report: ResolutionResult = session.execute(command)
 	_busy = false
@@ -351,6 +353,9 @@ func _refresh_selection() -> void:
 	if session == null:
 		return
 	var active: bool = _input_available()
+	var inspecting_choice: bool = charter_popout.visible and session.state.pending_choice != null
+	choice_presenter.set_information_overlay_open(inspecting_choice)
+	shell.charter_layer.mouse_filter = Control.MOUSE_FILTER_STOP if inspecting_choice else Control.MOUSE_FILTER_IGNORE
 	board.interaction_enabled = not notice_active and not results_active and session.state.pending_choice == null
 	board.set_options(options)
 	board.clear_preview()
@@ -464,21 +469,20 @@ func show_charter() -> void:
 	charter_popout.sync(session.state, session.content)
 	charter_popout.show()
 	shell.notice_text.text = PresentationQueries.charter_text(session.state, session.content)
-	if session.state.pending_choice != null:
-		notice_active = true
-		choice_presenter.hide()
-		shell.modal_layer.hide()
 	_refresh_selection()
+	charter_popout.close_button.grab_focus()
 
 
 func close_charter() -> void:
 	charter_popout.hide()
-	if notice_active and session != null and session.state.pending_choice != null:
-		notice_active = false
-		shell.notice_panel.hide()
-		choice_presenter.show()
-		shell.modal_layer.show()
 	_refresh_selection()
+	if session != null and session.state.pending_choice != null:
+		if choice_presenter.charter_button.is_visible_in_tree():
+			choice_presenter.charter_button.grab_focus()
+		elif not choice_presenter.option_buttons.is_empty():
+			choice_presenter.option_buttons[0].grab_focus()
+	else:
+		shell.charter_button.grab_focus()
 
 
 func _show_next_notice() -> void:
