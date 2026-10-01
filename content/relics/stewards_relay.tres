@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.stewards_relay"
 display_name = "Steward's Relay"
-unlock_act = 2
+minimum_act = 1
 behavior_id = &"stewards_relay"
-tier = &"developed"
+rarity = &"rare"
 once_per_act = false

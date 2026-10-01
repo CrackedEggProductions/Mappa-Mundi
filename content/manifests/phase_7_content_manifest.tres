@@ -53,6 +53,6 @@
 script = ExtResource("1_manifest")
 manifest_id = &"manifest.alpha_phase_7"
 implementation_phase = 7
-game_rules_version = "alpha-playtest-r1-usability"
+game_rules_version = "alpha-playtest-r1-relic-rarity"
 tiles = Array[ExtResource("2_type")]([ExtResource("tile_0"), ExtResource("tile_1"), ExtResource("tile_2"), ExtResource("tile_3"), ExtResource("tile_4"), ExtResource("tile_5"), ExtResource("tile_6"), ExtResource("tile_7"), ExtResource("tile_8"), ExtResource("tile_9"), ExtResource("tile_10"), ExtResource("tile_11"), ExtResource("tile_12"), ExtResource("tile_13"), ExtResource("tile_14"), ExtResource("tile_15"), ExtResource("tile_16"), ExtResource("tile_17"), ExtResource("tile_18"), ExtResource("tile_19"), ExtResource("tile_20"), ExtResource("tile_21"), ExtResource("development_0"), ExtResource("development_1"), ExtResource("development_2"), ExtResource("development_3"), ExtResource("development_4"), ExtResource("development_5"), ExtResource("development_6"), ExtResource("development_7"), ExtResource("development_8"), ExtResource("transformation_0"), ExtResource("transformation_1"), ExtResource("transformation_2")])
 specialists = Array[ExtResource("specialist_type")]([ExtResource("specialist_merchant"), ExtResource("specialist_cartographer"), ExtResource("specialist_architect"), ExtResource("specialist_homesteader"), ExtResource("specialist_naturalist"), ExtResource("specialist_forester"), ExtResource("specialist_riverkeeper"), ExtResource("specialist_harbormaster")])

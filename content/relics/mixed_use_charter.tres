@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.mixed_use_charter"
 display_name = "Mixed-Use Charter"
-unlock_act = 2
+minimum_act = 2
 behavior_id = &"mixed_use_charter"
-tier = &"developed"
+rarity = &"uncommon"
 once_per_act = false

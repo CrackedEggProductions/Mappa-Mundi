@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.village_green"
 display_name = "Village Green"
-unlock_act = 1
+minimum_act = 1
 behavior_id = &"village_green"
-tier = &"foundational"
+rarity = &"uncommon"
 once_per_act = false

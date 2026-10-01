@@ -59,12 +59,12 @@ static func _validate_relics(state: RunState, content: ContentRegistry, report: 
 		if instance.acquisition_order < 1 or instance.acquisition_order in orders:
 			report.add(&"invalid_relic_order", "Relic acquisition orders must be positive and unique.", instance.runtime_id)
 		orders.append(instance.acquisition_order)
-		if instance.acquired_act < definition.unlock_act or instance.acquired_act > relics.current_act \
+		if instance.acquired_act < definition.minimum_act or instance.acquired_act > relics.current_act \
 				or instance.use_act < instance.acquired_act or instance.use_act > relics.current_act \
 				or instance.once_per_act != definition.once_per_act \
 				or instance.uses_remaining not in [0, 1] \
 				or (not instance.once_per_act and instance.uses_remaining != 0):
-			report.add(&"invalid_relic_use", "Relic acquisition/tier/use state is inconsistent.", instance.runtime_id)
+			report.add(&"invalid_relic_use", "Relic acquisition/minimum-Act/use state is inconsistent.", instance.runtime_id)
 		if instance.equipped_slot >= 0:
 			if instance.equipped_slot >= relics.capacity or instance.equipped_slot in slots \
 					or instance.removed_act != 0 or instance.use_act != relics.current_act:
@@ -193,7 +193,7 @@ static func _validate_rewards(state: RunState, report: InvariantReport) -> void:
 		elif job.has("track"):
 			var expected_kind: StringName = RewardRules.THRESHOLD_KINDS[RewardRules.THRESHOLDS.find(int(job["threshold"]))]
 			if expected_kind == &"none" or StringName(job["kind"]) != expected_kind:
-				report.add(&"invalid_threshold_job", "The 20-point crossing has no reward job; later thresholds retain their canonical reward kinds.")
+				report.add(&"invalid_threshold_job", "Queued thresholds must retain their configured reward kinds.")
 	_validate_reward_flags(state, report)
 
 

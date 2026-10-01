@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.woodland_river"
 display_name = "Woodland River"
+placement_summary = "Existing River Bend with two eligible Field banks. Each new Forest edge must face an empty square or a matching Forest edge."
+effect_summary = "Preserves the River and turns both Field banks into one connected Forest with same-tile River contact. Uses a normal placement and no Development slot."
 tile_class = 3
 unlock_act = 1
 reward_class = 2

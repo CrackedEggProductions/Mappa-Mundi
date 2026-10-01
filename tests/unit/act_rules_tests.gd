@@ -493,7 +493,7 @@ func act_two_fulfilled_rewards() -> bool:
 	expect_equal(state.pending_choice.kind, &"relic_offer", "Act II fulfillment starts with Relic")
 	expect_equal(state.act_transition.rewards, [&"relic_offer", &"tile_reward"], "Act II fulfillment order")
 	for option: Dictionary in state.pending_choice.options:
-		expect_true(content.get_relic(StringName(option.definition_id)).unlock_act <= 2, "Legacy Relics remain locked")
+		expect_true(content.get_relic(StringName(option.definition_id)).minimum_act <= 2, "Relic eligibility respects the outgoing Act")
 	RewardCommands.execute_command(state, content, ResolveRewardCommand.new(state.pending_choice.choice_id, 0))
 	assert(ActRules.advance(state, content).is_valid)
 	expect_equal(state.pending_choice.kind, &"tile_reward", "Act II Tile Reward follows resolved Relic")

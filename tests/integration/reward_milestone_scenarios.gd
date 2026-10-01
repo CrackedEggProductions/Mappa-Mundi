@@ -108,8 +108,12 @@ func settlement_milestone_before_threshold() -> bool:
 	expect_equal(state.pending_choice.kind, &"relic_offer", "Milestone acquisition precedes crossed threshold")
 	expect_true(state.rewards.threshold_flags.is_empty(), "Threshold queue has not interrupted milestone reward")
 	assert(RulesEngine.execute(state, registry, ResolveRewardCommand.new(state.pending_choice.choice_id, 0)).is_valid)
-	expect_equal(state.pending_choice.kind, &"training_piece", "Only after Relic acquisition does Population-40 training begin")
+	expect_equal(state.pending_choice.kind, &"relic_offer", "Population-20 Relic follows the milestone")
+	expect_equal(state.pending_choice.context.threshold, 20, "Threshold offer is distinct from the milestone reward")
 	expect_equal(RelicRules.equipped(state).size(), 1, "Milestone Relic is active for later rewards")
+	assert(RulesEngine.execute(state, registry, ResolveRewardCommand.new(state.pending_choice.choice_id, 0)).is_valid)
+	expect_equal(state.pending_choice.kind, &"training_piece", "Population-40 training follows the fully resolved Population-20 offer")
+	expect_equal(RelicRules.equipped(state).size(), 2, "Both independently earned Relics acquired")
 	expect_true(state.rewards.threshold_flags.has("0:40"), "Crossed threshold now marked once")
 	_resolve_rewards(state, registry)
 	return true

@@ -29,5 +29,5 @@
 script = ExtResource("1_manifest")
 manifest_id = &"manifest.alpha_homestead_phase_2"
 implementation_phase = 2
-game_rules_version = "alpha-playtest-r1-usability"
+game_rules_version = "alpha-playtest-r1-relic-rarity"
 tiles = Array[ExtResource("2_type")]([ExtResource("tile_0"), ExtResource("tile_1"), ExtResource("tile_2"), ExtResource("tile_3"), ExtResource("tile_4"), ExtResource("tile_5"), ExtResource("tile_6"), ExtResource("tile_7"), ExtResource("tile_8"), ExtResource("tile_9"), ExtResource("tile_10"), ExtResource("tile_11"), ExtResource("tile_12"), ExtResource("tile_13"), ExtResource("tile_14"), ExtResource("tile_15"), ExtResource("tile_16"), ExtResource("tile_17"), ExtResource("tile_18"), ExtResource("tile_19"), ExtResource("tile_20"), ExtResource("tile_21")])

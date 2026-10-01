@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.mill"
 display_name = "Mill"
+placement_summary = "Undeveloped tile containing Field with a free Development slot."
+effect_summary = "Whenever a touching Settlement genuinely completes: +2 Population, plus +1 Trade if the Mill also touches River. On placement, resolves once for each already Established touching Settlement."
 tile_class = 1
 unlock_act = 1
 reward_class = 3

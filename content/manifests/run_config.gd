@@ -2,7 +2,7 @@ class_name RunConfig
 extends Resource
 ## Passive alpha configuration; draft cadence and content pools are authoritative.
 
-const DEFAULT_THRESHOLD_REWARD_KINDS: Array[StringName] = [&"none", &"training_reward", &"relic_offer", &"major_reward"]
+const DEFAULT_THRESHOLD_REWARD_KINDS: Array[StringName] = [&"relic_offer", &"training_reward", &"relic_offer", &"major_reward"]
 
 @export var config_id: StringName = &""
 @export var act_placement_limits: Array[int] = []

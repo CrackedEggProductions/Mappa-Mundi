@@ -160,7 +160,7 @@ func _make_command(kind: StringName, option: Dictionary, index: int) -> PlayerCo
 func _add_option(state: RunState, content: ContentRegistry, option: Dictionary,
 		command: PlayerCommand, index: int) -> void:
 	if choice_kind == &"tile_draft":
-		var card: Button = Button.new()
+		var card: Button = InfoTooltipButton.new()
 		card.text = _option_text(state, content, option)
 		card.icon = _art.thumbnail(StringName(option["definition_id"]), content)
 		card.expand_icon = true
@@ -170,7 +170,7 @@ func _add_option(state: RunState, content: ContentRegistry, option: Dictionary,
 		card.custom_minimum_size = Vector2(285, 290)
 		card.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		card.tooltip_text = card.text
+		card.tooltip_text = ChoiceText.tile_tooltip(content.get_tile(StringName(option["definition_id"])))
 		card.set_meta("option_index", index)
 		card.pressed.connect(_submit.bind(command, _generation))
 		_options_box.add_child(card)
@@ -191,13 +191,13 @@ func _add_option(state: RunState, content: ContentRegistry, option: Dictionary,
 		thumbnail.custom_minimum_size = Vector2(80, 80)
 		thumbnail.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_child(thumbnail)
-	var button: Button = Button.new()
+	var button: Button = InfoTooltipButton.new()
 	button.text = _option_text(state, content, option)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	button.custom_minimum_size.y = 58
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.tooltip_text = button.text
+	button.tooltip_text = ChoiceText.tile_tooltip(content.get_tile(tile_id)) if tile_id != &"" else button.text
 	button.set_meta("option_index", index)
 	button.pressed.connect(_submit.bind(command, _generation))
 	row.add_child(button)
@@ -274,7 +274,7 @@ func _option_text(state: RunState, content: ContentRegistry, option: Dictionary)
 	var id: StringName = StringName(option.get("replace_id", option.get("definition_id", "")))
 	var relic: RelicDefinition = content.get_relic(id)
 	if relic != null:
-		return ("Replace " if option.has("replace_id") else "") + relic.display_name + " · " + String(relic.tier).capitalize() + "\n" + ChoiceText.description(id)
+		return ("Replace " if option.has("replace_id") else "") + relic.display_name + " · " + String(relic.rarity).capitalize() + "\n" + ChoiceText.description(id)
 	return "Choice %d" % (option_buttons.size() + 1)
 
 
@@ -297,7 +297,8 @@ func _context_text(state: RunState, content: ContentRegistry, choice: PendingCho
 			return text
 		&"relic_replacement":
 			var incoming: StringName = StringName(choice.context["definition_id"])
-			return "Incoming: " + content.get_relic(incoming).display_name + "\n" + ChoiceText.description(incoming) + "\nOnly legally removable equipped Relics are listed."
+			var relic: RelicDefinition = content.get_relic(incoming)
+			return "Incoming: " + relic.display_name + " · " + String(relic.rarity).capitalize() + "\n" + ChoiceText.description(incoming) + "\nOnly legally removable equipped Relics are listed."
 		&"compass":
 			return "Choose one inspected physical tile. The others return to the bag, then the bag shuffles."
 		&"grand_survey":

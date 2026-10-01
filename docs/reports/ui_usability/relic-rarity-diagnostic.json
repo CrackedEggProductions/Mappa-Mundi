@@ -1,0 +1,97 @@
+{
+	"acts": {
+		"1": {
+			"individual_appearance_percent": {
+				"relic.boundary_stones": 66.86,
+				"relic.ferry_rights": 14.41,
+				"relic.historic_routes": 0.0,
+				"relic.mixed_use_charter": 0.0,
+				"relic.one_great_city": 14.89,
+				"relic.stewards_relay": 14.94,
+				"relic.surveyors_compass": 67.11,
+				"relic.the_long_road": 14.95,
+				"relic.village_green": 40.37,
+				"relic.wayfarers_satchel": 66.47
+			},
+			"individual_counts": {
+				"relic.boundary_stones": 6686,
+				"relic.ferry_rights": 1441,
+				"relic.historic_routes": 0,
+				"relic.mixed_use_charter": 0,
+				"relic.one_great_city": 1489,
+				"relic.stewards_relay": 1494,
+				"relic.surveyors_compass": 6711,
+				"relic.the_long_road": 1495,
+				"relic.village_green": 4037,
+				"relic.wayfarers_satchel": 6647
+			},
+			"offer_with_at_least_one_percent": {
+				"common": 98.94,
+				"rare": 52.06,
+				"uncommon": 40.37
+			},
+			"rarity_slot_counts": {
+				"common": 20044,
+				"rare": 5919,
+				"uncommon": 4037
+			},
+			"slot_rarity_percent": {
+				"common": 66.8133333333333,
+				"rare": 19.73,
+				"uncommon": 13.4566666666667
+			}
+		},
+		"2": {
+			"individual_appearance_percent": {
+				"relic.boundary_stones": 53.58,
+				"relic.ferry_rights": 10.92,
+				"relic.historic_routes": 31.61,
+				"relic.mixed_use_charter": 30.31,
+				"relic.one_great_city": 11.48,
+				"relic.stewards_relay": 10.74,
+				"relic.surveyors_compass": 54.12,
+				"relic.the_long_road": 11.74,
+				"relic.village_green": 31.05,
+				"relic.wayfarers_satchel": 54.45
+			},
+			"individual_counts": {
+				"relic.boundary_stones": 5358,
+				"relic.ferry_rights": 1092,
+				"relic.historic_routes": 3161,
+				"relic.mixed_use_charter": 3031,
+				"relic.one_great_city": 1148,
+				"relic.stewards_relay": 1074,
+				"relic.surveyors_compass": 5412,
+				"relic.the_long_road": 1174,
+				"relic.village_green": 3105,
+				"relic.wayfarers_satchel": 5445
+			},
+			"offer_with_at_least_one_percent": {
+				"common": 94.98,
+				"rare": 40.57,
+				"uncommon": 73.81
+			},
+			"rarity_slot_counts": {
+				"common": 16215,
+				"rare": 4488,
+				"uncommon": 9297
+			},
+			"slot_rarity_percent": {
+				"common": 54.05,
+				"rare": 14.96,
+				"uncommon": 30.99
+			}
+		}
+	},
+	"policy": "One normal weighted offer per independent seed; no Relics acquired; all eligible candidates retained between samples.",
+	"sample_count_per_act": 10000,
+	"seed_range": [
+		1,
+		10000
+	],
+	"weights_per_relic": {
+		"common": 60,
+		"rare": 10,
+		"uncommon": 30
+	}
+}

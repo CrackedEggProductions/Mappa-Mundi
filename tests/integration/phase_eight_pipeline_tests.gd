@@ -188,11 +188,14 @@ func reward_chain_before_hand_refill() -> bool:
 	F.play(state, registry, &"tile.road_junction", Vector2i(20, 0), 2)
 	F.decline_assignment(state, registry)
 	expect_true(state.pending_choice != null, "Long Road base scoring crosses Trade 40")
-	expect_equal(state.pending_choice.kind, &"tile_reward", "No generic pieces remain, so Trade-40 training falls back to a real Tile Reward")
+	expect_equal(state.pending_choice.kind, &"relic_offer", "Trade twenty offers a Relic before the forty-point training fallback")
 	var slot: int = state.expansion.pending_refill_index
 	expect_true(slot >= 0 and state.expansion.hand[slot] == 0, "Ordinary refill waits behind the reward")
 	var loaded: RunState = F.load_copy(state, registry)
 	for copy: RunState in [state, loaded]:
+		assert(RulesEngine.execute(copy, registry, ResolveRewardCommand.new(copy.pending_choice.choice_id, 0)).is_valid)
+		expect_equal(copy.pending_choice.kind, &"tile_reward", "No generic pieces remain, so Trade forty falls back to a Tile Reward")
+		expect_equal(copy.expansion.hand[slot], 0, "Refill still waits after the earlier Relic selection")
 		assert(RulesEngine.execute(copy, registry, ResolveRewardCommand.new(copy.pending_choice.choice_id, 0)).is_valid)
 		expect_equal(copy.expansion.pending_refill_index, -1, "Reward then final refill completes once")
 		expect_true(not copy.expansion.hand.has(0), "Reward copies available before hand replacement")

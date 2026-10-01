@@ -21,6 +21,7 @@ var selected_source: TileLocationState.Kind = TileLocationState.Kind.ACTIVE_HAND
 var selected_rotation: int = 0
 var notice_active: bool = false
 var results_active: bool = false
+var fresh_seed_source: Callable = RunSeedSource.generate
 var _busy: bool = false
 var _built: bool = false
 var _notices: Array[String] = []
@@ -79,6 +80,8 @@ func ensure_ui() -> void:
 	shell.results_button.pressed.connect(show_results)
 	shell.new_run_button.pressed.connect(func() -> void:
 		shell.hide()
+		_seed.clear()
+		_entry_error.text = ""
 		_entry.show())
 	shell.rotate_left.pressed.connect(rotate_selection.bind(-1))
 	shell.rotate_right.pressed.connect(rotate_selection.bind(1))
@@ -104,21 +107,36 @@ func _build_entry() -> void:
 	var title: Label = GameShell.label("Mappa Mundi", column)
 	title.add_theme_font_size_override("font_size", 48)
 	GameShell.label("Build one realm across three Acts.", column)
-	GameShell.label("Run seed (same seed and choices reproduce a run)", column)
+	GameShell.label("Optional seed — leave blank for a fresh run", column)
+	var seed_row: HBoxContainer = HBoxContainer.new()
+	column.add_child(seed_row)
 	_seed = LineEdit.new()
-	_seed.text = "1"
-	_seed.placeholder_text = "Integer seed"
-	column.add_child(_seed)
+	_seed.placeholder_text = "Blank = fresh seed; integer = replay"
+	_seed.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_seed.tooltip_text = "Same seed and choices reproduce a run. Signed 64-bit integers are accepted."
+	seed_row.add_child(_seed)
+	GameShell.button("Randomize", seed_row).pressed.connect(_randomize_seed)
 	GameShell.button("New Run", column).pressed.connect(_new_run_clicked)
 	GameShell.label("Mouse: select → preview → Confirm\nWheel: zoom · Middle/right drag: pan\nQ/E: rotate · Enter: confirm · F: fit board", column)
 	_entry_error = GameShell.label("", column)
+	_entry_error.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
 func _new_run_clicked() -> void:
-	if not _seed.text.is_valid_int():
-		_entry_error.text = "Enter an integer seed."
+	_entry_error.text = ""
+	if _seed.text.strip_edges().is_empty():
+		start_run(fresh_seed_source.call())
 		return
-	start_run(_seed.text.to_int())
+	var parsed: Dictionary = RunSeedSource.parse(_seed.text)
+	if not parsed.valid:
+		_entry_error.text = "Use an integer from −9223372036854775808 to 9223372036854775807, or leave blank."
+		return
+	start_run(parsed.seed)
+
+
+func _randomize_seed() -> void:
+	_seed.text = str(fresh_seed_source.call())
+	_entry_error.text = ""
 
 
 func start_run(seed_value: int) -> void:
@@ -300,6 +318,8 @@ func _sync() -> void:
 	var hud: Dictionary = PresentationQueries.hud_model(state, content)
 	shell.act_label.text = ("Entering Act " if hud.incoming else "Act ") + ["I", "II", "III"][hud.act - 1]
 	shell.act_placements_label.text = "%d / %d placements" % [hud.used, hud.limit]
+	shell.seed_field.text = str(state.original_seed)
+	shell.seed_field.tooltip_text = "Run seed: %s\nSelect and copy this value to replay with the same choices." % state.original_seed
 	shell.act_progress.max_value = hud.limit
 	shell.act_progress.value = hud.used
 	for index: int in range(4):
@@ -609,7 +629,7 @@ func _tile_help(copy_id: int) -> String:
 	if copy == null:
 		return "Empty slot"
 	var definition: TileDefinition = session.content.get_tile(copy.definition_id)
-	return definition.display_name + "\n" + ChoiceText.tile_help(definition)
+	return ChoiceText.tile_tooltip(definition)
 
 
 func _sync_pieces() -> void:
@@ -632,7 +652,7 @@ func _sync_pieces() -> void:
 			for word: String in words:
 				initials += word.left(1)
 			button.text = initials.left(3)
-			button.tooltip_text = definition.display_name + "\n" + ChoiceText.description(relic.definition_id)
+			button.tooltip_text = definition.display_name + " · " + String(definition.rarity).capitalize() + "\n" + ChoiceText.description(relic.definition_id)
 			if relic.once_per_act:
 				button.tooltip_text += "\n%d use(s) remaining this Act" % relic.uses_remaining
 	var capacity: int = state.relics.capacity if state.relics != null else 0

@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.market"
 display_name = "Market"
+placement_summary = "Settlement tile with a free Development slot; Mixed-Use Charter permits Housing and Market families together."
+effect_summary = "Whenever its Settlement genuinely completes: +1 Trade per distinct OTHER Settlement in its full Trade Network, including active Ferry Rights links. If placed in an already Established Settlement, resolves immediately once. Network growth alone does not retrigger it."
 tile_class = 1
 unlock_act = 2
 reward_class = 3

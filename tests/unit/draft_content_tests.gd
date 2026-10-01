@@ -8,9 +8,9 @@ func tests() -> Array[Callable]:
 		regular_pools_match_unlocked_player_content, entry_pools_are_new_unlocks_only,
 		pool_queries_own_their_arrays, threshold_mapping_is_explicit,
 		rejects_noncore_and_wrong_core_bag, rejects_missing_duplicate_and_future_draft_ids,
-		rejects_wrong_cadence_and_twenty_reward, twenty_crossing_is_reward_noop,
+		rejects_wrong_cadence_and_twenty_reward, twenty_crossing_queues_relic_offers,
 		twenty_repeat_has_no_side_effects, later_threshold_order_unchanged,
-		twenty_roundtrip_never_becomes_reward, rejects_forged_twenty_reward_job]
+		twenty_pending_offer_roundtrip, rejects_forged_twenty_reward_job]
 	for track: int in range(4):
 		for values: Array in [[19, 20], [19, 21], [0, 25], [20, 40]]:
 			result.append(twenty_crossing_cases.bind(track, values[0], values[1]))
@@ -95,7 +95,7 @@ func pool_queries_own_their_arrays() -> bool:
 func threshold_mapping_is_explicit() -> bool:
 	var config: RunConfig = _content().get_config()
 	expect_equal(config.track_thresholds, [20, 40, 70, 100], "Threshold values unchanged")
-	expect_equal(config.track_threshold_reward_kinds, [&"none", &"training_reward", &"relic_offer", &"major_reward"], "Twenty is truly no reward")
+	expect_equal(config.track_threshold_reward_kinds, [&"relic_offer", &"training_reward", &"relic_offer", &"major_reward"], "Twenty and seventy grant Relic offers")
 	expect_equal(RewardRules.THRESHOLD_KINDS, config.track_threshold_reward_kinds, "Runtime and validated metadata agree")
 	return true
 
@@ -132,21 +132,27 @@ func rejects_wrong_cadence_and_twenty_reward() -> bool:
 	return true
 
 
-func twenty_crossing_is_reward_noop() -> bool:
+func twenty_crossing_queues_relic_offers() -> bool:
 	var content: ContentRegistry = Fixture.content()
 	var state: RunState = Fixture.create(content, 1)
 	state.features.tracks.values = [20, 20, 20, 20]
-	var before: Array = [state.current_rng_state, state.rng.operation_count, state.tile_copies.size(),
-		state.expansion.bag.duplicate(), state.expansion.hand.duplicate(), state.expansion.pending_refill_index]
+	var before: Array = [state.tile_copies.size(), state.expansion.bag.duplicate(),
+		state.expansion.hand.duplicate(), state.expansion.pending_refill_index]
+	var rng_before: int = state.rng.operation_count
 	RewardRules.queue_thresholds(state)
+	expect_equal(state.rewards.queue.size(), 4, "Each Track creates one twenty-point Relic offer")
+	for track: int in range(4):
+		expect_equal(state.rewards.queue[track].track, track, "Population, Trade, Culture, Ecology queue order")
+		expect_equal(state.rewards.queue[track].kind, "relic_offer", "Twenty never grants a Tile Reward")
+	expect_equal(state.rng.operation_count, rng_before, "Threshold scanning itself consumes no RNG")
 	RewardRules.advance(state, content)
-	expect_true(state.rewards.queue.is_empty() and state.pending_choice == null, "Twenty creates no reward work or choice")
-	expect_equal(state.rewards.threshold_flags.size(), 4, "Each crossing is still audited once")
-	expect_equal([state.current_rng_state, state.rng.operation_count, state.tile_copies.size(),
-		state.expansion.bag, state.expansion.hand, state.expansion.pending_refill_index], before,
-		"No offer RNG, copies, shuffle, draw or refill mutation")
-	for event: Dictionary in state.rewards.history:
-		expect_equal(event["kind"], "track_threshold_crossed", "No reward offer/resolution event")
+	expect_equal(state.pending_choice.kind, &"relic_offer", "First threshold presents a normal Relic choice")
+	expect_equal(state.pending_choice.context.track, 0, "Population offer resolves first")
+	expect_equal(state.rewards.queue.size(), 3, "Later Tracks wait behind the active offer")
+	expect_equal(state.rewards.threshold_flags.size(), 4, "Each crossing is audited once")
+	expect_equal(state.rng.operation_count - rng_before, 3, "Weighted offer consumes one integer draw per slot")
+	expect_equal([state.tile_copies.size(), state.expansion.bag, state.expansion.hand,
+		state.expansion.pending_refill_index], before, "Relic offer does not acquire tiles or refill")
 	return true
 
 
@@ -156,7 +162,7 @@ func twenty_repeat_has_no_side_effects() -> bool:
 	RewardRules.queue_thresholds(state)
 	var fingerprint: String = StateNormalizer.fingerprint(state)
 	RewardRules.queue_thresholds(state)
-	expect_equal(StateNormalizer.fingerprint(state), fingerprint, "Repeated scan cannot repeat twenty crossing or create a delayed reward")
+	expect_equal(StateNormalizer.fingerprint(state), fingerprint, "Repeated scan cannot duplicate the twenty-point Relic offer")
 	return true
 
 
@@ -165,24 +171,30 @@ func later_threshold_order_unchanged() -> bool:
 	state.features.tracks.values = [100, 100, 100, 100]
 	RewardRules.queue_thresholds(state)
 	expect_equal(state.rewards.threshold_flags.size(), 16, "All crossings are recorded")
-	expect_equal(state.rewards.queue.size(), 12, "Only forty/seventy/hundred create rewards")
+	expect_equal(state.rewards.queue.size(), 16, "All four thresholds create their configured rewards")
 	for track: int in range(4):
-		for rank: int in range(3):
-			var job: Dictionary = state.rewards.queue[track * 3 + rank]
+		for rank: int in range(4):
+			var job: Dictionary = state.rewards.queue[track * 4 + rank]
 			expect_equal(job["track"], track, "Fixed Population/Trade/Culture/Ecology order")
-			expect_equal(job["threshold"], [40, 70, 100][rank], "Ascending rewarding thresholds")
-			expect_equal(StringName(job["kind"]), [&"training_reward", &"relic_offer", &"major_reward"][rank], "Existing reward type unchanged")
+			expect_equal(job["threshold"], [20, 40, 70, 100][rank], "Ascending rewarding thresholds")
+			expect_equal(StringName(job["kind"]), [&"relic_offer", &"training_reward", &"relic_offer", &"major_reward"][rank], "Existing reward type unchanged")
 	return true
 
 
-func twenty_roundtrip_never_becomes_reward() -> bool:
+func twenty_pending_offer_roundtrip() -> bool:
 	var content: ContentRegistry = Fixture.content()
 	var state: RunState = Fixture.create(content, 3)
 	for x: int in range(1, 18):
 		Fixture.Geography.add(state, content, &"tile.forest_belt", Vector2i(-x, 0), 1)
 	Fixture.Geography.add(state, content, &"tile.forest_edge", Vector2i(-18, 0), 1)
 	expect_equal(state.features.tracks.values[3], 21, "Real completed Forest supplies a save-valid twenty crossing")
+	state.resolution = ResolutionState.new()
+	state.resolution.stage = &"reward_queue"
+	state.resolution.context = {"mode": "reward"}
+	state.phase = GamePhase.Type.RESOLVING_PLACEMENT
 	RewardRules.queue_thresholds(state)
+	RewardRules.advance(state, content)
+	expect_equal(state.pending_choice.kind, &"relic_offer", "Save at the real pending Relic offer boundary")
 	var fingerprint: String = StateNormalizer.fingerprint(state)
 	for iteration: int in range(2):
 		var saved: SerializationResult = RunSerializer.serialize(state, content)
@@ -193,7 +205,7 @@ func twenty_roundtrip_never_becomes_reward() -> bool:
 			return true
 		state = restored.state
 		RewardRules.queue_thresholds(state)
-		expect_equal(StateNormalizer.fingerprint(state), fingerprint, "Save/load and rescanning preserve no-op crossing exactly")
+		expect_equal(StateNormalizer.fingerprint(state), fingerprint, "Save/load and rescanning preserve the persisted Relic offer exactly")
 	return true
 
 
@@ -215,9 +227,13 @@ func twenty_crossing_cases(track: int, before_value: int, after_value: int) -> b
 	state.features.tracks.values[track] = after_value
 	RewardRules.queue_thresholds(state)
 	expect_equal(state.current_rng_state, rng_before, "Threshold scanning consumes no RNG")
-	expect_equal(state.rewards.queue.size(), int(after_value >= 40), "Twenty never contributes a reward")
+	expect_equal(state.rewards.queue.size(), 1 + int(after_value >= 40), "Twenty adds one Relic offer before later thresholds")
+	expect_equal(state.rewards.queue[0]["kind"], "relic_offer", "Twenty grants a Relic offer")
+	expect_equal(state.rewards.queue[0]["threshold"], 20, "Offer retains its threshold source")
 	if after_value >= 40:
-		expect_equal(state.rewards.queue[0]["kind"], "training_reward", "Forty still grants training")
-	for job: Dictionary in state.rewards.queue:
-		expect_true(job["threshold"] != 20, "No twenty reward even when crossing several thresholds")
+		expect_equal(state.rewards.queue[1]["kind"], "training_reward", "Forty still grants training")
+	var before_offer: int = state.rng.operation_count
+	RewardRules.advance(state, Fixture.content())
+	expect_equal(state.pending_choice.kind, &"relic_offer", "Every crossing presents a Relic offer")
+	expect_equal(state.rng.operation_count - before_offer, 3, "Only offer generation consumes weighted RNG")
 	return true

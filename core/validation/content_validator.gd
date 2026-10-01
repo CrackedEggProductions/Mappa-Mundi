@@ -63,6 +63,9 @@ static func validate(manifest: ContentManifest, config: RunConfig) -> Validation
 		if tile.definition_id in seen_ids:
 			return _invalid(&"duplicate_definition_id", "Definition IDs must be unique.", tile.definition_id)
 		seen_ids.append(tile.definition_id)
+		if manifest.implementation_phase >= 9 and tile.player_drawable \
+				and (tile.placement_summary.strip_edges().is_empty() or tile.effect_summary.strip_edges().is_empty()):
+			return _invalid(&"missing_player_tile_summary", "Player tiles require placement and effect reminders.", tile.definition_id)
 		if tile.player_drawable != (tile.definition_id not in HomesteadContentValidator.NON_PLAYER_IDS) \
 				or tile.setup_environment != (tile.definition_id in HomesteadContentValidator.SETUP_RIVER_IDS) \
 				or tile.intersection_hub != (tile.definition_id == &"tile.road_junction"):
@@ -162,7 +165,7 @@ static func _validate_config(config: RunConfig) -> ValidationResult:
 		if limit <= 0:
 			return _invalid(&"invalid_act_limits", "Act placement limits must be positive.")
 	if config.track_thresholds != [20, 40, 70, 100] or config.track_threshold_reward_kinds != RunConfig.DEFAULT_THRESHOLD_REWARD_KINDS:
-		return _invalid(&"invalid_thresholds", "Threshold rewards are NONE at 20, training at 40, Relic at 70 and Major Reward at 100.")
+		return _invalid(&"invalid_thresholds", "Threshold rewards are Relic at 20, training at 40, Relic at 70 and Major Reward at 100.")
 	var previous_threshold: int = 0
 	for threshold: int in config.track_thresholds:
 		if threshold <= previous_threshold:

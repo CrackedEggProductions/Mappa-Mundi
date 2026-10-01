@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.town_square"
 display_name = "Town Square"
+placement_summary = "Settlement tile with a free Development slot."
+effect_summary = "Whenever its Settlement genuinely completes: +2 Culture per distinct Development family in that Settlement, including Town Square itself. If placed in an already Established Settlement, resolves immediately once."
 tile_class = 1
 unlock_act = 2
 reward_class = 3

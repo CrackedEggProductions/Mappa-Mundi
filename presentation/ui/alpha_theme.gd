@@ -38,6 +38,8 @@ static func create() -> Theme:
 		result.set_color("font_focus_color", kind, INK)
 		result.set_color("font_disabled_color", kind, INK)
 	result.set_color("default_color", "RichTextLabel", INK)
+	result.set_color("font_uneditable_color", "LineEdit", INK)
+	result.set_color("font_placeholder_color", "LineEdit", SECONDARY_INK)
 	result.set_stylebox("panel", "PanelContainer", box(PARCHMENT))
 	result.set_type_variation("WoodPanel", "PanelContainer")
 	result.set_stylebox("panel", "WoodPanel", box(FRAME, Color("806347"), 2))

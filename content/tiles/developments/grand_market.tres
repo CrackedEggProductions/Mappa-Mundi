@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.grand_market"
 display_name = "Grand Market"
+placement_summary = "Replace an existing Market; keeps its Development slot and Settlement host."
+effect_summary = "Whenever its Settlement genuinely completes: +2 Trade per distinct OTHER Settlement in its full Trade Network, including active Ferry Rights links. If upgraded in an already Established Settlement, resolves immediately once. Network growth alone does not retrigger it; previous Market scoring is unchanged."
 tile_class = 2
 unlock_act = 3
 reward_class = 4

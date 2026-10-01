@@ -82,7 +82,7 @@ static func eligible_ids(state: RunState, registry: ContentRegistry, eligibility
 	var act: int = state.expansion.current_act if eligibility_act == 0 else eligibility_act
 	for id: StringName in registry.get_relic_ids():
 		var definition: RelicDefinition = registry.get_relic(id)
-		if definition.unlock_act <= act and find(state, id) == null:
+		if definition.minimum_act <= act and find(state, id) == null:
 			result.append(id)
 	result.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
 	return result

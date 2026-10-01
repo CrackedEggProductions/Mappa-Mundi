@@ -2,9 +2,9 @@ extends "res://tests/framework/test_suite.gd"
 
 
 func tests() -> Array[Callable]:
-	return [canonical_ten_relics, canonical_tiers, passive_relic_copies,
+	return [canonical_ten_relics, canonical_minimum_acts, passive_relic_copies,
 		missing_relic_rejected, deferred_relic_rejected, duplicate_relic_rejected,
-		wrong_behavior_rejected, wrong_tier_rejected, wrong_use_metadata_rejected,
+		wrong_behavior_rejected, wrong_rarity_rejected, wrong_use_metadata_rejected,
 		phase_seven_preserved, new_run_empty_relics, fresh_round_trip,
 		acquired_round_trip, replaced_round_trip, consumed_use_round_trip,
 		repeated_load_is_inert, full_width_identity_round_trip, relic_registry_normalizes,
@@ -62,12 +62,12 @@ func canonical_ten_relics() -> bool:
 	return true
 
 
-func canonical_tiers() -> bool:
+func canonical_minimum_acts() -> bool:
 	var content: ContentRegistry = _content()
 	var counts: Array[int] = [0, 0, 0]
 	for definition: RelicDefinition in _definitions(content):
-		counts[definition.unlock_act - 1] += 1
-	expect_equal(counts, [5, 3, 2], "Foundational/Developed/Legacy reduced pool")
+		counts[definition.minimum_act - 1] += 1
+	expect_equal(counts, [8, 2, 0], "Eight Act-I Relics and two Act-II Relics")
 	return true
 
 
@@ -107,10 +107,10 @@ func wrong_behavior_rejected() -> bool:
 	return true
 
 
-func wrong_tier_rejected() -> bool:
+func wrong_rarity_rejected() -> bool:
 	var definitions: Array[RelicDefinition] = _definitions(_content())
-	definitions[0].tier = &"legacy"
-	expect_true(not RelicContentValidator.validate(definitions).is_valid, "Wrong tier rejected")
+	definitions[0].rarity = &"invalid"
+	expect_true(not RelicContentValidator.validate(definitions).is_valid, "Invalid rarity rejected")
 	return true
 
 

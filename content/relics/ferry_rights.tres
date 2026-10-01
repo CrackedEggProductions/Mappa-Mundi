@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.ferry_rights"
 display_name = "Ferry Rights"
-unlock_act = 1
+minimum_act = 1
 behavior_id = &"ferry_rights"
-tier = &"foundational"
+rarity = &"rare"
 once_per_act = false

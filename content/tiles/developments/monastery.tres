@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.monastery"
 display_name = "Monastery"
+placement_summary = "Undeveloped tile containing Field with a free Development slot."
+effect_summary = "Completes when all 8 surrounding squares are occupied. On completion: +5 Culture, plus +1 Culture per surrounding tile containing Field, Forest or River. If already surrounded when placed, scores immediately."
 tile_class = 1
 unlock_act = 1
 reward_class = 3

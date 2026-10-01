@@ -1,6 +1,65 @@
 # Mappa Mundi — Implementation progress
 
-## Current checkpoint — generic Steward assignment visibility
+## Current checkpoint — tile information, fresh seeds and Relic access
+
+2026-10-01 human-playtest iteration on unmerged `alpha-playtest-r1`, starting at
+`f508cfc4ccce4ee2dce2da8518dedc5629fa673c`. Clean baseline verified before edits:
+**1,327 gameplay / 142 presentation / 250 clean script parses**, zero failures
+(`run-LiYw61Lj`, `presentation-fXbXU4lS`).
+
+All **28 player-acquirable tiles** now carry static placement/effect summaries.
+`ChoiceText.tile_tooltip` supplies hand, Reserve and Draft cards; a shared
+`InfoTooltipButton` wraps them in a compact parchment note with dark ink. Relic
+details use the same readable visual treatment and explicitly label rarity.
+
+Human New Run previously prefilled seed 1. It now starts blank; `RunSeedSource`
+uses OS cryptographic bytes outside RunRNG. Explicit signed-64 integers are
+validated before conversion, including overflow limits. Randomize prepares a
+candidate only. The Act HUD shows a labelled, selectable/copyable seed; results
+retain the seed. Tests inject deterministic entropy rather than relying on chance.
+
+The authoritative Track ladder is **20 Relic / 40 Train / 70 Relic / 100 Major**.
+Relic definitions now separate rarity from minimum Act. Common: Boundary Stones,
+Surveyor’s Compass, Wayfarer’s Satchel. Uncommon: Village Green, Mixed-Use Charter,
+Historic Routes. Rare: Ferry Rights, Steward’s Relay, One Great City, The Long Road.
+All are Act-I eligible except Mixed-Use Charter and Historic Routes (Act II).
+Every normal Relic Offer uses sorted IDs and integer weighted sampling without
+replacement, **60/30/10 per eligible Relic**, never a separate rarity-category roll.
+Existing effect text/behavior, exhaustion, replacement and capacity **2/4/5** remain.
+
+Rules version: **`alpha-playtest-r1-relic-rarity`**. Save schema remains **3**;
+static rarity/Act fields are not duplicated into serialized runtime state. Exact
+pending offers and RNG continuation survive saves; old incompatible rules saves
+are rejected through existing version checks.
+
+The [playtest report](docs/RELIC_RARITY_PLAYTEST.md) records the 20,000-offer
+non-canonical diagnostic, per-Relic rates, seeds and final verification. Act-I
+fresh offers contain a Rare in **52.06%** and an Uncommon in **40.37%**;
+Act-II rates are **40.57% / 73.81%**.
+These are fresh-pool offer frequencies, not whole-run/human probabilities. No
+weights were retuned; the optional Track-20 timing simulation was not run.
+
+Final verification: **1,375 gameplay passed / 0 failed**, **157 presentation
+passed / 0 failed**, **258 scripts parsed cleanly**, zero parser diagnostics or
+warnings. Logs: `builds/verification/run-psqCJF0R` and
+`builds/verification/presentation-qy0PnTyN`. All three scripted outcomes (seed 123),
+deterministic replay, save/load replay and two natural controller runs (seed 1010)
+passed. Fingerprints are in the linked report. Two remaining old assertions were
+corrected: the literal rules-version header and milestone→20 Relic→40 training
+ordering; their focused 24-test suite passed before the final complete rerun.
+
+Graphical mouse smoke: **42 checks, zero failures at each of 1280×720 and
+1920×1080**, including real blank-seed entropy, explicit seed 2, Monastery/Lodge
+rules, Reserve hover, a genuine Ecology-20 offer, one-click acquisition and equipped
+rarity detail. Final captures: `docs/reports/ui_usability/relic-information-*-reviewed-*.png`.
+The compact seed field keeps the full integer copyable/hoverable; long values can
+scroll. Existing art fallbacks remain. This is automated verification; the next
+human run still determines comfort and balance. No new image assets were generated.
+
+No Phase 11/12, new art, new Relics, Relic-effect changes, Tile Draft changes,
+Charter changes, scoring changes or merge. Next step: another human playtest.
+
+## Previous checkpoint — generic Steward assignment visibility
 
 2026-10-01 narrow bugfix on unmerged `alpha-playtest-r1`, starting at
 `30399c5e9f4411291432f45e189e84624e66a704`. The cancelled task left no tracked or

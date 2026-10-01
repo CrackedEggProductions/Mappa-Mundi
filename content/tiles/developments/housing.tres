@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.housing"
 display_name = "Housing"
+placement_summary = "Settlement tile with a free Development slot; Mixed-Use Charter permits Housing and Market families together."
+effect_summary = "Whenever its Settlement genuinely completes: +2 Population. Placing it in an already Established Settlement gives +2 Population immediately once."
 tile_class = 1
 unlock_act = 1
 reward_class = 3

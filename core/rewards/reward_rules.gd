@@ -92,7 +92,10 @@ static func advance(state: RunState, content: ContentRegistry) -> void:
 				if ids.is_empty():
 					_prepend(state, &"tile_reward", job)
 				else:
-					_offer_ids(state, kind, ids, "definition_id", job)
+					var options: Array[Dictionary] = []
+					for id: StringName in sample_relics(state, ids, content):
+						options.append({"definition_id": String(id)})
+					create_choice(state, kind, options, job)
 			&"major_reward":
 				_offer_ids(state, kind, major_pool(state, content, int(job["eligibility_act"])), "major_id", job)
 			&"training_reward":
@@ -155,6 +158,25 @@ static func sample(state: RunState, ids: Array[StringName], purpose: StringName)
 		var selected: StringName = state.rng.choose_definition_id(pool, purpose)
 		offered.append(selected)
 		pool.erase(selected)
+	return offered
+
+
+static func sample_relics(state: RunState, ids: Array[StringName], content: ContentRegistry) -> Array[StringName]:
+	var pool: Array[StringName] = ids.duplicate()
+	pool.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	var offered: Array[StringName] = []
+	for slot: int in range(mini(3, pool.size())):
+		var total_weight: int = 0
+		for id: StringName in pool:
+			total_weight += content.get_relic(id).offer_weight()
+		assert(total_weight > 0, "Relic candidates require positive validated rarity weights")
+		var roll: int = state.rng.integer_range(1, total_weight, &"relic_offer")
+		for index: int in range(pool.size()):
+			roll -= content.get_relic(pool[index]).offer_weight()
+			if roll <= 0:
+				offered.append(pool[index])
+				pool.remove_at(index)
+				break
 	return offered
 
 

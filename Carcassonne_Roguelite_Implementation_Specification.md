@@ -1,6 +1,6 @@
 # Carcassonne Roguelite — Alpha Implementation Specification
 
-**Status:** Canonical engineering handoff, Alpha Playtest Revision 1 (2026-09-27)
+**Status:** Canonical engineering handoff, Alpha Playtest Revision 1 — Relic Rarity (2026-10-01)
 **Target engine:** Godot 4.x  
 **Language:** GDScript  
 **Primary target platforms:** Windows and Linux desktop  
@@ -10,9 +10,11 @@
 
 # Alpha Playtest Revision 1 engineering change record
 
-The first human Phase-10 playtest requires a gameplay revision before Phase 11. This specification now replaces its old 55-copy bag, player River construction/completion, continuous Junction Road and River-contact scoring ownership assumptions. Core command, snapshot, lineage, reward, determinism and presentation boundaries remain authoritative. The Draft Cadence follow-up replaces the initial Revision-1 45-copy bag with an 18-copy core plus single-copy drafts, removes automatic Act seeding, and makes Track 20 NONE. Unlocking permits choices; it never guarantees physical presence.
+The first human Phase-10 playtest requires a gameplay revision before Phase 11. This specification now replaces its old 55-copy bag, player River construction/completion, continuous Junction Road and River-contact scoring ownership assumptions. Core command, snapshot, lineage, reward, determinism and presentation boundaries remain authoritative. The Draft Cadence follow-up replaces the initial Revision-1 45-copy bag with an 18-copy core plus single-copy drafts and removes automatic Act seeding. Unlocking permits choices; it never guarantees physical presence.
 
-Runtime rules version is **alpha-playtest-r1-usability**, save schema **3**. Reject incompatible pre-revision development saves clearly; do not add a migration framework. Phase 11 Save/Continue UX and Phase 12 exports remain future work.
+The Relic Rarity follow-up replaces the temporary Track-20 NONE reward with a Relic Offer and replaces Foundational/Developed/Legacy Act tiers with independent rarity/minimum Act. All normal Relic Offers use deterministic per-item weighted sampling without replacement. Tile summaries and fresh/explicit New Run seeds improve playtest comprehension and reproducibility without changing tile legality or gameplay RNG ownership.
+
+Runtime rules version is **alpha-playtest-r1-relic-rarity**, save schema **3**. Rarity, minimum Act and tile summaries are static definition data; they do not require a new serialized RunState shape. Reject incompatible pre-revision development saves clearly; do not add a migration framework. Phase 11 Save/Continue UX and Phase 12 exports remain future work.
 
 # 0. Authority, Purpose, and Scope
 
@@ -317,6 +319,8 @@ Suggested fields include:
 ```text
 definition_id: StringName
 display_name: String
+placement_summary: String
+effect_summary: String
 tile_class: TileClass
 unlock_act: int
 reward_class: RewardClass
@@ -387,7 +391,8 @@ Store tunable values in data/configuration:
 - Charter targets;
 - reward copy quantities;
 - Settlement-class thresholds;
-- Relic/Specialist numeric parameters.
+- Relic/Specialist numeric parameters;
+- Relic rarity/minimum Act and integer rarity offer weights.
 
 Keep structural rule algorithms in GDScript:
 
@@ -436,14 +441,16 @@ At minimum validate:
 - required Charter/Relic/Specialist definitions exist;
 - Homestead core-bag counts total exactly 18 across ten canonical designs;
 - Starter Draft has exactly ten directional Act-I designs; regular draft pools contain 20/25/28 unlocked player designs and entry pools contain the five/three new designs respectively;
-- no automatic Act-seed copies or Track-20 reward can be generated;
+- no automatic Act-seed copies can be generated;
+- active Track rewards are 20 Relic, 40 Train, 70 Relic and 100 Major;
+- each player-acquirable tile has non-empty placement/effect summaries;
 - legacy/setup-only definitions cannot enter player bags, reward/Masterwork offers or emergency sets;
 - required River Run/Bend/End setup definitions exist;
 - Riverside Hamlet/Woodland River have overlay behaviors, Act-I unlock and Specialized/Hybrid reward classification;
 - Road Junction has explicit Intersection Hub metadata and no ordinary Road feature group;
 - Riverkeeper targets Forest and Harbormaster Settlement with contextual River contact; no Specialist targets River;
 - the alpha Specialist pool contains exactly the canonical reduced roster;
-- the alpha Relic pool contains exactly the canonical reduced roster;
+- the alpha Relic pool contains exactly the canonical reduced roster, with valid rarity, minimum Act and positive rarity-derived offer weight;
 - deferred content is not accidentally included in the alpha manifest.
 
 Content errors should fail loudly in development builds.
@@ -1447,6 +1454,12 @@ Record the Godot version used for a build in implementation/build metadata.
 
 When upgrading Godot versions, rerun deterministic replay fixtures before accepting the upgrade.
 
+## 23.5 Human New Run seed source
+
+`RunSeedSource` in presentation generates the initial signed 64-bit seed from `Crypto.generate_random_bytes`, outside RunRNG. `GameController.fresh_seed_source` is injectable so tests supply exact outputs rather than assert that two random draws probably differ. Once a run exists, every gameplay random decision still uses its one recorded RunRNG stream.
+
+A blank optional Seed field invokes the fresh source. A valid explicitly entered signed 64-bit integer bypasses it and is used exactly. Validate syntax and overflow before conversion; malformed/out-of-range input displays an error and creates no run. Randomize fills the field with a candidate without starting a run. The HUD exposes the full current seed in a selectable/copyable read-only field; results retain the seed. Explicit seed 1 remains valid for fixtures and human replay.
+
 Do not assume an engine upgrade preserves RNG implementation behavior without verification.
 
 ## 23.5 RNG debug sequence
@@ -1585,6 +1598,19 @@ Normal same-resolution reassignment remains forbidden without Relay.
 
 # 26. Relic Runtime Model
 
+## 26.0 Static rarity and eligibility
+
+`RelicDefinition.rarity` is Common, Uncommon or Rare; `minimum_act` independently gates eligibility. `offer_weight()` derives the integer weight from rarity: **60/30/10** respectively. The former `tier` and Relic `unlock_act` fields are not alternate sources of eligibility. Do not duplicate static rarity/Act data into runtime Relic instances or persisted offers.
+
+| Rarity | Relics | Minimum Act |
+|---|---|---|
+| Common | Boundary Stones; Surveyor's Compass; Wayfarer's Satchel | I |
+| Uncommon | Village Green | I |
+| Uncommon | Mixed-Use Charter; Historic Routes | II |
+| Rare | Ferry Rights; Steward's Relay; One Great City; The Long Road | I |
+
+Eight Relics are eligible from Act I and all ten from Act II, before acquired/exhausted filtering. No current Relic requires Act III. Early Relay/One Great City/Long Road access uses existing behavior without special late-Act assumptions, retroactive scoring or ability changes. Capacity remains 2/4/5.
+
 ## 26.1 Relic state
 
 Persist at minimum:
@@ -1640,6 +1666,10 @@ Every offer service follows the canonical filtering rules first, deterministic s
 
 No contextual helpfulness weighting exists in the alpha.
 
+`RewardRules.sample_relics` is the shared normal Relic Offer sampler. Filter through `RelicRules.eligible_ids` using minimum Act and acquisition exhaustion, then sort stable IDs. For each of up to three slots, sum remaining integer per-Relic weights, roll through RunRNG, walk the ordered weighted intervals, choose one ID and remove it from the temporary pool. No floating-point probability, rarity-category pre-roll or fixed rarity composition is involved. Persist the resulting exact ordered IDs.
+
+Track 20/70, Charters, milestones and Relic Cache all reach this same sampler. An empty eligible pool retains the Normal Tile Reward fallback. Offered/unselected or declined Relics remain eligible; actually acquired Relics stay exhausted even after replacement. Normal Tile Reward, Tile Draft and training selection retain their existing sampling rules.
+
 ## 27.2 Choice objects
 
 Persist the exact physical/static options selected by RNG in the `PendingChoice`.
@@ -1652,7 +1682,7 @@ Doing so would consume RNG again and could change the run.
 
 When one reward creates another reward/choice, resume through the serialized ResolutionState and canonical queue rather than nesting UI dialogs as gameplay control flow.
 
-## 27.4 Tile Drafts and the 20-point NONE threshold
+## 27.4 Tile Drafts and Track thresholds
 
 `TileDraftService` owns Starter, cadence and Act Entry drafts. `ResolveTileDraftCommand` validates the saved option, allocates one physical copy with acquisition Act/source, then shuffles the entire remaining bag using RunRNG. Normal Tile Reward quantities and Masterwork's three copies remain separate contracts.
 
@@ -1666,7 +1696,7 @@ For every draft, apply static unlock/player-pool filtering, then the current boa
 
 `TileDraftService.eligible_pool` applies Abbey→Monastery and Grand Market→Market prerequisites only during offer generation. Scan current bag copy IDs and current board Development objects by actual physical definition and stage; exclude hand, Reserve, historical/replaced copies and upgraded stages. Keep `pool` static for persisted-offer validation: saved options/history must never be re-filtered from later inventory. Act-III entry may persist exactly Bridge/Rewilding when Grand Market was excluded. No new serialized field is needed; rules identifier changes while schema remains 3. Early isolated Expansion-only test profiles use an explicitly named legacy fixture configuration; the playable Phase-9 profile uses the guaranteed Monastery core.
 
-Track 20 remains a one-time crossing with reward type NONE: no reward job, PendingChoice, RNG use, copy or bag shuffle. Track 40 training (including its Normal Tile Reward fallback), 70 Relic and 100 Major Reward remain unchanged.
+`RunConfig.DEFAULT_THRESHOLD_REWARD_KINDS` defines **20 Relic Offer, 40 Train Steward, 70 Relic Offer, 100 Major Reward**. The temporary NONE entry at 20 is superseded. Threshold history still records each crossing once per Track. Queue Population, Trade, Culture and Ecology in that order, lower thresholds first within each Track, and fully resolve each reward chain before the next. The triggering completion package and milestone processing finish before threshold rewards. A newly acquired Relic cannot alter already resolved/snapshotted scoring. Capacity-full Track-20 offers use the existing legal replacement/decline flow; no additional slots are granted.
 
 ## 27.5 Charter reward order
 
@@ -1833,6 +1863,7 @@ Use the responsive tabletop HUD described in [Alpha UI Usability](docs/ALPHA_UI_
 Always-visible core information:
 
 - current Act;
+- current full run seed, readable/copyable with secondary visual emphasis;
 - normal placements used/remaining;
 - Population;
 - Trade;
@@ -1861,6 +1892,14 @@ Do not permanently plaster feature scores/IDs over the normal board.
 Use hover/selection inspection panels for richer details.
 
 Debug overlays are separate development features.
+
+## 30.7 Player-facing tile and Relic information
+
+All 28 current player-acquirable `TileDefinition` resources provide centralized `placement_summary` and `effect_summary` alongside name and class/category. Simple geometry summaries stay brief; Developments, Upgrades and Transformations explain their placement prerequisite and effect, including central exceptions. `ContentRegistry` validates non-empty summaries. These are static explanatory text, never input to legality or scoring.
+
+`ChoiceText.tile_tooltip` formats this content for active-hand and Reserve cards and reusable Draft cards. Use the shared parchment information treatment with dark ink and bounded wrapping. Hovering consumes no RNG, mutates no RunState, changes no selection and cannot resolve or dismiss a PendingChoice.
+
+Relic offers and equipped details show the static rarity label plus unchanged effect text; equipped once-per-Act details retain availability. Rarity labels remain explicit text rather than color-only signals. Tile placement/effect summaries and persistent Relic modifiers remain distinct content concepts even when they share tooltip styling.
 
 ---
 
@@ -1935,7 +1974,7 @@ Top level should include at minimum:
 ```json
 {
   "save_schema_version": 3,
-  "game_rules_version": "alpha-playtest-r1-usability",
+  "game_rules_version": "alpha-playtest-r1-relic-rarity",
   "implementation_spec_version": 1,
   "godot_version": "...",
   "run_state": { }
@@ -1958,7 +1997,7 @@ Encode Godot-specific types explicitly, e.g.:
 
 Do not silently load an incompatible rules-version save and hope for the best.
 
-Early alpha saves are not guaranteed to survive incompatible development revisions. Draft Cadence requires schema 3 and rules `alpha-playtest-r1-usability`; older incompatible runs are rejected clearly rather than regenerated or migrated.
+Early alpha saves are not guaranteed to survive incompatible development revisions. The current Relic Rarity revision requires schema 3 and rules `alpha-playtest-r1-relic-rarity`; older incompatible runs are rejected clearly rather than regenerated or migrated.
 
 ## 32.4 Save RNG state
 
@@ -2326,7 +2365,7 @@ Maintain explicit constants/build metadata for:
 ```text
 IMPLEMENTATION_SPEC_VERSION = 1
 SAVE_SCHEMA_VERSION = 3
-GAME_RULES_VERSION = "alpha-playtest-r1-usability"
+GAME_RULES_VERSION = "alpha-playtest-r1-relic-rarity"
 ```
 
 Expose these in development diagnostics and save headers.

@@ -1,7 +1,7 @@
-# Alpha Playtest Revision 1 — Draft Cadence playtest
+# Alpha Playtest Revision 1 — Relic Rarity playtest
 
 This is a core-loop revision after Phase 10, not Phase 11. Start a **new run**:
-pre-revision saves are intentionally incompatible with rules `alpha-playtest-r1-usability`
+pre-revision saves are intentionally incompatible with rules `alpha-playtest-r1-relic-rarity`
 and schema 3. No Save/Continue or export work is part of this revision.
 
 ## What changed
@@ -11,7 +11,20 @@ and schema 3. No Save/Continue or export work is part of this revision.
   copy and shuffles the bag; Normal Tile Rewards keep their usual quantities.
 - Cadence drafts occur after even normal placements: Act I 2–18, Act II 2–22,
   Act III 2–24. Act entry unlocks content and offers one restricted draft; no
-  automatic seed batches remain. Track 20 gives no reward.
+  automatic seed batches remain. Track rewards are now **20 Relic, 40 Train,
+  70 Relic, 100 Major**; the temporary empty 20 threshold is superseded.
+- Relic rarity is separate from minimum Act. Common/Uncommon/Rare weights are
+  60/30/10 **per eligible Relic**, sampled without replacement for up to three
+  choices. Boundary Stones, Compass and Satchel are Common; Village Green,
+  Mixed-Use Charter and Historic Routes are Uncommon; Ferry Rights, Relay,
+  One Great City and The Long Road are Rare. Only Mixed-Use Charter and Historic
+  Routes wait until Act II; the other eight may appear in Act I. Effects and
+  capacity 2/4/5 are unchanged.
+- Blank New Run seed uses fresh external entropy. Enter an integer to replay a
+  run, or use Randomize to fill a candidate without starting. The full seed is
+  readable/copyable in the Act HUD and remains in results.
+- Hover hand and Reserve tiles for their category, placement requirement and
+  concise effect on parchment. Draft cards share the same rules information.
 - Open Fields, Road End and pure River pieces never appear in hands/rewards.
   Field geography remains important.
 - The world starts with Founding plus five River Runs, two River Bends and one
@@ -36,7 +49,8 @@ and schema 3. No Save/Continue or export work is part of this revision.
 Launch with `godot --path .` from the project root. Record seed, window size,
 Act reached and any confusing tile/choice before reporting a problem.
 
-1. Start a New Run. Confirm Founding and the complete River are visible. Use Fit
+1. Start a New Run with the seed blank and record the displayed seed. Also try
+   entering a previous seed and following the same choices. Confirm Founding and the complete River are visible. Use Fit
    Board, pan and zoom; inspect River tiles as existing environment. Before choosing
    the Starter Draft, verify the hand is empty; afterward it has three tiles.
 2. Read the Act-I Charter. Verify normal body/progress text is dark and readable
@@ -63,8 +77,10 @@ Act reached and any confusing tile/choice before reporting a problem.
 12. At each Act entry, inspect the restricted new-design offer. Confirm the chosen
     tile is one physical copy and may become the pending hand replacement. There
     should be no automatic batch of new tiles or extra transition shuffle.
-13. Cross Track 20: no Tile Reward/modal should appear for that crossing. Training
-    at 40, Relic at 70, Major Reward at 100 and Charter rewards remain unchanged.
+13. Cross Track 20: a Relic Offer should appear once per Track after the scoring
+    package resolves. Check rarity labels and replacement/decline when capacity
+    is full. Training at 40, Relic at 70, Major Reward at 100 and Charter rewards
+    remain unchanged.
 14. Finish later Acts if practical; inspect results and final map. Report River
     size as geography, not a player completion achievement. Act III placement 26
     should resolve its consequences then end without a cadence draft or hand refill.
@@ -91,8 +107,29 @@ one seed before judging variety.
 10. Can you access newly unlocked designs reliably enough without automatic seeding?
 11. When Market Towns is selected, is Market-family access sufficient to pursue it?
 12. Does the Act Entry Draft make entering a new Act feel meaningful?
-13. Does removing the Track-20 reward leave a noticeable gap in early progression?
+13. Do Track-20 Relics add useful early choices without overwhelming draft decisions?
 14. Do multi-copy Normal Tile Rewards still feel special beside single-copy drafts?
+
+## Tile information, seeds and Relic feedback
+
+Record concrete examples rather than treating one offer or run as proof of balance.
+
+1. Are tile hover rules concise enough? Which placement exception or effect is still missing?
+2. Hover Monastery, Forester's Lodge, Abbey and Grand Market when available. Can you
+   tell where each belongs and when it pays without leaving the game?
+3. Do fresh seeds noticeably vary the Charter, River and Starter Draft? Is entering
+   and copying a previous seed easy enough?
+4. How early does each Track reach 20? Record the Act/placement and the offered Relics.
+5. Do Relics now feel important to the run? Are too many offered before capacity expands?
+6. Does replacing or declining at full capacity feel interesting or annoying?
+7. Do Rare Relics feel exciting, and do they appear too often or too rarely?
+8. Does an early One Great City or The Long Road create a useful build pivot?
+9. Are Common Relics still worth choosing over a Rare when they fit the map?
+
+The rarity diagnostic samples 10,000 offers per Act-I/Act-II pool and reports
+individual appearance rates, Rare/Uncommon offer presence and slot representation.
+It is automated evidence about **60/30/10 per-item weights**, not human play or
+permission to retune them. Track-20 timing, when measured, is a separate diagnostic.
 
 ## Completion-density diagnostic
 

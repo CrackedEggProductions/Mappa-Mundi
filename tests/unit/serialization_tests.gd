@@ -31,7 +31,7 @@ func save_envelope_uses_explicit_json_primitives() -> bool:
 	expect_true(saved.json_text.contains("\n\t"), "Human-readable indentation")
 	var envelope: Dictionary = JSON.parse_string(saved.json_text)
 	expect_equal(envelope["save_schema_version"], 3.0, "Schema header")
-	expect_equal(envelope["game_rules_version"], "alpha-playtest-r1-usability", "Rules header")
+	expect_equal(envelope["game_rules_version"], "alpha-playtest-r1-relic-rarity", "Rules header")
 	expect_equal(envelope["implementation_spec_version"], 1.0, "Implementation header")
 	expect_equal(envelope["godot_version"], BuildVersions.godot_version(), "Engine build header")
 	var data: Dictionary = envelope["run_state"]

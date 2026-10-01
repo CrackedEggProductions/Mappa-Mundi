@@ -1,16 +1,46 @@
 # Mappa Mundi
 
 A peaceful tile-placement roguelite built with **Godot 4.x and strongly typed
-GDScript**. Current implementation: **Alpha Playtest Revision 1 — Usability**, after Phase 10.
+GDScript**. Current implementation: **Alpha Playtest Revision 1 — Relic Rarity**, after Phase 10.
 Launch New Run to play all three Acts with the mouse. The authoritative engine also
 runs all 66 placements, rewards, transitions and final results headlessly. Tested engine: **Godot 4.7.2 stable**; no C# code, third-party
 plugins, or external services are required.
+
+## Current human-playtest additions
+
+Hand, Reserve and Draft cards expose compact wrapped parchment rules notes for all
+28 player-acquirable tile designs. Placement/effect summaries live in static tile
+content, not in hand UI code. Hover changes no gameplay state.
+
+New Run leaves Seed blank by default and uses OS cryptographic entropy to initialize
+RunRNG. Enter an exact signed 64-bit integer to replay; malformed/overflow input is
+rejected. Randomize fills a candidate without starting. The Act HUD includes a
+selectable/copyable seed, and final results retain it.
+
+Relics have independent rarity and minimum Act. Common: Boundary Stones, Surveyor’s
+Compass, Wayfarer’s Satchel. Uncommon: Village Green, Mixed-Use Charter, Historic
+Routes. Rare: Ferry Rights, Steward’s Relay, One Great City, The Long Road. All may
+appear in Act I except Mixed-Use Charter and Historic Routes, which require Act II.
+Every normal Relic Offer draws up to three distinct eligible unowned Relics using
+per-Relic weights **60 / 30 / 10**, sorted IDs and integer RunRNG draws without
+replacement. Effects, exhaustion and capacity **2 / 4 / 5** are unchanged. Old
+Foundational/Developed/Legacy eligibility tiers and the temporary empty Track-20
+reward are superseded.
+
+See [the rarity diagnostic and verification report](docs/RELIC_RARITY_PLAYTEST.md)
+for 10,000 offers per Act, replay fingerprints and graphical captures. These are
+automated observations, not human-play results; weights were not retuned.
+
+Verified current build: **1,375 gameplay tests, 157 presentation tests, 258 clean
+script parses**, zero failures/diagnostics. Graphical mouse smoke passes 42 checks
+at each of 1280×720 and 1920×1080. All three outcomes, deterministic replay,
+save/load and natural controller runs pass.
 
 ## Alpha Playtest Revision 1
 
 This is a core-loop revision after the first human Phase-10 playtest, not Phase 11.
 The canonical Complete Rules and Implementation Specification have been rewritten
-for rules version `alpha-playtest-r1-usability`, save schema **3**. Older active-run development
+for rules version `alpha-playtest-r1-relic-rarity`, save schema **3**. Older active-run development
 saves are rejected; no migration or player-facing Save/Continue UX is included.
 
 New Run places Founding plus an eight-tile environmental River, builds an unshuffled
@@ -25,7 +55,7 @@ Each eligible even normal placement grants one Tile Draft after all consequences
 and before hand refill: nine in Act I, eleven in Act II and twelve in Act III (none
 at placement 26). Choose one of up to three distinct unlocked designs; receive one
 physical copy and shuffle the remaining bag. Normal Tile Rewards retain their
-existing quantities. Track 20 now awards nothing; 40/70/100 are unchanged.
+existing quantities. Track rewards are now **20 Relic / 40 Train / 70 Relic / 100 Major**.
 
 Tile Drafts offer Abbey only when an actual non-upgraded Monastery is on the board or in the bag, and Grand Market only with an actual non-upgraded Market there. Hand/Reserve/history do not count. Normal Tile Rewards and Upgrade placement rules are unchanged. Settlement Throughway remains unlocked and draftable, but its fixed starting copy is replaced by Monastery.
 
@@ -52,7 +82,7 @@ and Grand Charter panels use dark ink through the correct RichTextLabel theme pr
 See [the revision playtest checklist](docs/ALPHA_PLAYTEST_R1.md). The diagnostic script
 `tests/scenarios/revision_completion_diagnostic.gd` measures a documented deterministic
 closure heuristic. The [Draft Cadence diagnostic](docs/DRAFT_CADENCE_DIAGNOSTIC.md)
-records the current 100-seed Act-I and Market Towns samples. The [earlier report](docs/PLAYTEST_REVISION_1_DIAGNOSTIC.md)
+records the earlier Draft Cadence 100-seed Act-I and Market Towns samples (before this Relic access revision). The [earlier report](docs/PLAYTEST_REVISION_1_DIAGNOSTIC.md)
 is historical evidence from the 45-copy bag. No automated rate represents human play. Phase-specific
 sections below retain earlier architectural milestones; the revised canonical rules
 supersede their old balance/lifecycle descriptions.
@@ -542,7 +572,7 @@ returns, then optional Relay assignments, frozen Relic effects, Relic milestones
 and finally Realm Track thresholds. Only after every reward chain resolves does
 the pending hand slot draw. Milestones use Settlement/Road/Forest/River order;
 thresholds use Population/Trade/Culture/Ecology order, lower threshold first.
-20/40/70/100 yield NONE/training/Relic/Major Reward respectively. After all
+20/40/70/100 yield Relic/training/Relic/Major Reward respectively. After all
 consequences, any due cadence draft resolves before the ordinary refill or Act transition.
 
 Tile offers use sorted unlocked content, without a board-playability filter.
@@ -558,10 +588,10 @@ Boundary Stones persists a hard Field/Forest seam; Compass persists inspected
 physical copies; Satchel generalizes Reserve to two independent slots. Mixed-Use
 allows only Housing/Market families. Ferry Rights extends the existing Trade
 Network graph and can split it on removal without retroactive scoring. Village
-Green, Historic Routes and both Legacy effects use immutable completion facts.
+Green, Historic Routes and One Great City and The Long Road use immutable completion facts.
 Relay reuses normal eligibility and assignment, with only the returned piece.
 
-Zero Legacy base payout leaves those base elements unpaid, consistent with the
+Zero base payout under those two Relics leaves those base elements unpaid, consistent with the
 canonical paid-history rules. Genuine completion, other effects and size records
 still occur. A later qualifying genuine completion may pay the previously unpaid
 elements; paid elements cannot score again.

@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.abbey"
 display_name = "Abbey"
+placement_summary = "Replace an existing Monastery; keeps its Development slot and enclosure."
+effect_summary = "Uses the same 8-space enclosure. On completion: +8 Culture, plus +1 per surrounding natural-geography tile and +1 per surrounding Settlement tile. Natural geography means Field, Forest or River. If the enclosure is already complete when upgraded, Abbey scores immediately."
 tile_class = 2
 unlock_act = 2
 reward_class = 3

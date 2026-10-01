@@ -237,7 +237,7 @@ func milestone_and_training_precede_cadence() -> bool:
 		if state.pending_choice.kind == &"tile_draft":
 			break
 		assert(RulesEngine.execute(state, content, Fixture.choice_command(state)).is_valid)
-	expect_equal(kinds, [&"relic_offer", &"training_piece", &"specialist_training", &"tile_draft"], "Milestone then 40-point piece/role training finish before cadence")
+	expect_equal(kinds, [&"relic_offer", &"relic_offer", &"training_piece", &"specialist_training", &"tile_draft"], "Milestone, twenty-point Relic and forty-point training finish before cadence")
 	expect_equal(state.expansion.hand.count(0), 1, "All choices precede pending active-hand refill")
 	assert(RulesEngine.execute(state, content, Fixture.choice_command(state)).is_valid)
 	expect_true(not state.expansion.hand.has(0), "Only completed draft permits refill")

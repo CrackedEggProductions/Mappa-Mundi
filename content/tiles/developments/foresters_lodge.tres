@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.foresters_lodge"
 display_name = "Forester's Lodge"
+placement_summary = "Forest tile with a free Development slot."
+effect_summary = "Does not break the Forest's undeveloped status. Whenever its Forest genuinely completes: +1 Ecology. If placed in an already completed Forest, gain +1 Ecology immediately once."
 tile_class = 1
 unlock_act = 1
 reward_class = 3

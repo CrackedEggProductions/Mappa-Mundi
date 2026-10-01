@@ -7,7 +7,7 @@ func tests() -> Array[Callable]:
 		one_click_starter_resolves_once, exact_options_and_mechanical_help,
 		cadence_title, entry_title, entry_draft_hud_starts_at_two, next_draft_hud_uses_rules_query,
 		final_act_has_no_placement_26_draft, pending_draft_locks_gameplay,
-		draft_rendering_does_not_reroll, no_reward_threshold_has_no_reward_cue]
+		draft_rendering_does_not_reroll, relic_threshold_has_reward_cue]
 
 
 func _controller() -> GameController:
@@ -165,14 +165,15 @@ func entry_draft_hud_starts_at_two() -> bool:
 	return true
 
 
-func no_reward_threshold_has_no_reward_cue() -> bool:
+func relic_threshold_has_reward_cue() -> bool:
 	var controller: GameController = _controller()
 	var config: RunConfig = controller.session.content.get_config()
-	var no_reward_index: int = config.track_threshold_reward_kinds.find(&"none")
+	var relic_index: int = config.track_threshold_reward_kinds.find(&"relic_offer")
 	var report: ResolutionResult = ResolutionResult.new()
-	report.cues.append({"kind": "track_threshold_crossed", "details": {"threshold": config.track_thresholds[no_reward_index]}})
+	report.cues.append({"kind": "track_threshold_crossed", "details": {"threshold": config.track_thresholds[relic_index]}})
 	controller._play_cues(report)
-	expect_true(not controller.shell.feedback_label.text.to_lower().contains("threshold"), "No-reward thresholds do not announce reward-like feedback")
+	expect_equal(config.track_thresholds[relic_index], 20, "First reward is the restored 20 Relic offer")
+	expect_true(controller.shell.feedback_label.text.to_lower().contains("threshold"), "20 now announces reward-bearing feedback")
 	var rewarded_index: int = config.track_threshold_reward_kinds.find(&"training_reward")
 	report.cues[0]["details"]["threshold"] = config.track_thresholds[rewarded_index]
 	controller._play_cues(report)

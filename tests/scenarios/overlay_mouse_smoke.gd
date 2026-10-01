@@ -33,6 +33,7 @@ func _run() -> void:
 	controller = GameController.new()
 	root.add_child(controller)
 	await _frames()
+	controller._seed.text = "1"
 	await _click(_find_button(controller, "New Run"))
 	var state: RunState = controller.session.state
 	var before: String = StateNormalizer.fingerprint(state)

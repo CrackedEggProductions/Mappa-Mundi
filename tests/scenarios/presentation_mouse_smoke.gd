@@ -59,6 +59,7 @@ func _run() -> void:
 	controller = GameController.new()
 	root.add_child(controller)
 	await _frames()
+	controller._seed.text = "1"
 	await _click(_find_button(controller, "New Run"))
 	_check(controller.session != null, "Mouse New Run starts a session")
 	if controller.session == null:

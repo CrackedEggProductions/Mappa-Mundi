@@ -5,6 +5,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.road_junction"
 display_name = "Road Junction"
+placement_summary = "Empty square beside the map; all touching edges must match."
+effect_summary = "Roads terminate at this intersection. Attached Roads remain separate physical Roads but share a Trade Network. Its three Road sockets create no Road of their own; the Junction adds no physical Road length."
 tile_class = 0
 unlock_act = 1
 reward_class = 2

@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.surveyors_compass"
 display_name = "Surveyor's Compass"
-unlock_act = 1
+minimum_act = 1
 behavior_id = &"surveyors_compass"
-tier = &"foundational"
+rarity = &"common"
 once_per_act = false

@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.boundary_stones"
 display_name = "Boundary Stones"
-unlock_act = 1
+minimum_act = 1
 behavior_id = &"boundary_stones"
-tier = &"foundational"
+rarity = &"common"
 once_per_act = true

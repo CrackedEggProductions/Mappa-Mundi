@@ -6,6 +6,7 @@ var tracks_label: Label
 var charter_summary: Label
 var act_label: Label
 var act_placements_label: Label
+var seed_field: LineEdit
 var act_progress: ProgressBar
 var track_value_labels: Array[Label] = []
 var track_reward_labels: Array[Label] = []
@@ -119,6 +120,19 @@ func _build_top(parent: Node) -> void:
 	act_label.add_theme_font_size_override("font_size", 23)
 	act_progress = progress(act)
 	act_placements_label = label("0 / 18 placements", act)
+	var seed_row: HBoxContainer = HBoxContainer.new()
+	act.add_child(seed_row)
+	var seed_label: Label = label("Seed", seed_row)
+	seed_label.add_theme_font_size_override("font_size", 12)
+	seed_field = LineEdit.new()
+	seed_field.editable = false
+	seed_field.select_all_on_focus = true
+	seed_field.expand_to_text_length = false
+	seed_field.custom_minimum_size.x = 1
+	seed_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	seed_field.add_theme_font_size_override("font_size", 12)
+	seed_field.placeholder_text = "Run seed"
+	seed_row.add_child(seed_field)
 	var tracks: HBoxContainer = HBoxContainer.new()
 	tracks.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(tracks)
@@ -394,7 +408,7 @@ static func wood_label(value: String, parent: Node) -> Label:
 
 
 static func button(value: String, parent: Node) -> Button:
-	var item: Button = Button.new()
+	var item: Button = InfoTooltipButton.new()
 	item.text = value
 	item.custom_minimum_size.y = 36
 	parent.add_child(item)

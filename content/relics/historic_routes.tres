@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.historic_routes"
 display_name = "Historic Routes"
-unlock_act = 2
+minimum_act = 2
 behavior_id = &"historic_routes"
-tier = &"developed"
+rarity = &"uncommon"
 once_per_act = false

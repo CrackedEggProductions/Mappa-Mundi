@@ -34,22 +34,37 @@ static func description(id: StringName) -> String:
 
 
 static func tile_help(tile: TileDefinition) -> String:
+	# Draft cards keep one short sentence; hover exposes the complete content reminder.
+	if not tile.effect_summary.is_empty():
+		return tile.effect_summary.get_slice(". ", 0).trim_suffix(".") + "."
+	return tile_edges(tile)
+
+
+static func tile_category(tile: TileDefinition) -> String:
 	if tile.intersection_hub:
-		return "Roads terminate at its three sockets; Trade continues through the intersection."
-	match tile.transformation_kind:
-		&"riverside_hamlet":
-			return "Add a Settlement bank to an existing straight River Run. Preserve the River."
-		&"woodland_river":
-			return "Add Forest to both Field banks of an existing River Bend. Preserve the River."
-		&"bridge":
-			return "Add a perpendicular Road across an existing straight River Run."
-		&"rewilding":
-			return "Grow Forest through an eligible Field placement or occupied Field rewrite."
-		&"urban_expansion":
-			return "Grow a Settlement with the authoritative neighboring boundary rewrites."
-	if tile.tile_class in [DomainTypes.TileClass.DEVELOPMENT, DomainTypes.TileClass.UPGRADE]:
-		return "%s · %s host" % [String(tile.development_stage).replace("_", " ").capitalize(),
-			String(tile.development_host_kind).capitalize()]
+		return "Intersection"
+	match tile.tile_class:
+		DomainTypes.TileClass.DEVELOPMENT:
+			return "Development"
+		DomainTypes.TileClass.UPGRADE:
+			return "Upgrade — " + String(tile.upgrade_from_definition_id).get_slice(".", 2).replace("_", " ").capitalize()
+		DomainTypes.TileClass.TRANSFORMATION:
+			return "Transformation"
+	return "Specialized / Hybrid Expansion" if tile.reward_class == DomainTypes.RewardClass.SPECIALIZED_EXPANSION else "Basic Expansion"
+
+
+static func tile_tooltip(tile: TileDefinition) -> String:
+	var text: String = tile.display_name + "\n" + tile_category(tile)
+	if tile.tile_class == DomainTypes.TileClass.EXPANSION:
+		text += "\n" + tile_edges(tile)
+	if not tile.placement_summary.is_empty():
+		text += "\n\nPlacement:\n" + tile.placement_summary
+	if not tile.effect_summary.is_empty():
+		text += "\n\nEffect:\n" + tile.effect_summary
+	return text
+
+
+static func tile_edges(tile: TileDefinition) -> String:
 	const EDGES: Array[String] = ["Field", "Forest", "River", "Road", "Settlement"]
 	var parts: Array[String] = []
 	for edge: int in range(EDGES.size()):

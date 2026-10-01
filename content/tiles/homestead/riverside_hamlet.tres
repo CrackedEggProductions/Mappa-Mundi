@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.riverside_hamlet"
 display_name = "Riverside Hamlet"
+placement_summary = "Existing straight River Run with an eligible Field bank. The chosen bank must face an empty square or a matching Settlement edge."
+effect_summary = "Preserves the River and adds one Settlement bank with same-tile River contact. The other bank stays unchanged. Uses a normal placement and no Development slot."
 tile_class = 3
 unlock_act = 1
 reward_class = 2

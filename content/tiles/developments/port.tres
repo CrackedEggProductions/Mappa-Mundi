@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.development.port"
 display_name = "Port"
+placement_summary = "Settlement tile explicitly touching a River, with a free Development slot. Choose its associated connected River."
+effect_summary = "Whenever its Settlement genuinely completes: +2 Trade, plus +1 Trade per other Port on the same connected River. If placed in an already Established Settlement, resolves immediately once."
 tile_class = 1
 unlock_act = 2
 reward_class = 3

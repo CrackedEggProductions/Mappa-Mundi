@@ -1,6 +1,6 @@
 # Carcassonne Roguelite — Complete Alpha Rules Specification
 
-**Status:** Canonical Alpha Playtest Revision 1 — Usability (2026-10-01); three-Act playable alpha
+**Status:** Canonical Alpha Playtest Revision 1 — Relic Rarity (2026-10-01); three-Act playable alpha
 **Purpose:** Single source of truth for implementation by local Codex  
 **Supersedes for alpha implementation:** unresolved or conflicting prototype text in the Core Design Bible, Tile Design Specification, and Relics/Specialists Prototype Specification  
 **Source basis:**
@@ -19,13 +19,19 @@ The world provides Field countryside and one generated River. The player builds 
 
 ## Draft-cadence revision — Current acquisition rules
 
-The earlier Revision-1 45-copy bag and automatic Act-II/III seeding (including the short-lived Market ×4 adjustment) are superseded. Begin with an 18-copy core bag, choose one Starter Draft before opening draws, and receive one single-copy Tile Draft after each eligible even normal placement. Act transitions unlock content and offer one restricted Act Entry Draft; they inject no automatic copies. Track 20 is a true NONE threshold, not a Tile Reward.
+The earlier Revision-1 45-copy bag and automatic Act-II/III seeding (including the short-lived Market ×4 adjustment) are superseded. Begin with an 18-copy core bag, choose one Starter Draft before opening draws, and receive one single-copy Tile Draft after each eligible even normal placement. Act transitions unlock content and offer one restricted Act Entry Draft; they inject no automatic copies.
 
 **Unlocking means eligibility for player choices, not guaranteed physical presence.** Drafts always add one chosen physical copy and shuffle the full bag. Normal Tile Rewards, Masterwork, Charter rewards and other acquisition effects retain their own quantities and rules.
 
 The 2026-10-01 usability playtest replaces the fixed Settlement Throughway copy with Monastery and adds only the two Tile-Draft Upgrade prerequisites in RULE-DRAFT-006. All other draft cadence and gameplay rules remain unchanged.
 
-Rules identifier: **alpha-playtest-r1-usability**; save schema **3**. Incompatible pre-revision active-run saves may be rejected; no migration is required. Phase 11 Save/Continue presentation and Phase 12 exports remain outside this revision.
+## Relic-rarity revision — Current access rules
+
+Track **20 now awards a Relic Offer**; the temporary NONE threshold is superseded. Tracks 40/70/100 retain Train Steward/Relic Offer/Major Reward. Relics now have independent **Common/Uncommon/Rare rarity** and **minimum Act**, with per-Relic offer weights **60/30/10**. The old Foundational/Developed/Legacy Act tiers are superseded, not alternate eligibility rules. Exact classification and weighted distinct selection appear in Section 15. Relic effects, capacity, Tile Drafts and Charter rewards do not change.
+
+Human New Run uses a fresh seed unless the player enters an explicit seed. Hand/Reserve tile information summarizes current placement/effect rules without becoming a legality authority.
+
+Rules identifier: **alpha-playtest-r1-relic-rarity**; save schema **3**. Incompatible pre-revision active-run saves may be rejected; no migration is required. Phase 11 Save/Continue presentation and Phase 12 exports remain outside this revision.
 
 # 0. Authority, Scope, and Interpretation
 
@@ -672,6 +678,8 @@ If the bag empties before a Grand Survey replacement draw, normal emergency repl
 
 ## RULE-BAG-007 — Deterministic run seed
 Every run uses a single recorded deterministic random seed.
+
+For player-facing New Run, a blank seed field generates a fresh seed from external setup entropy before initializing RunRNG. A valid explicitly entered signed 64-bit integer is used exactly; invalid or out-of-range input does not start a run. Seed generation is separate from gameplay RNG. The full current seed is readable/copyable during play and appears in final results. Tests may continue to use explicit seed 1.
 
 That seed governs all random decisions, including:
 - environmental River path selection before Charter and Starter Draft selection;
@@ -1938,20 +1946,31 @@ A Relic merely offered and not selected remains eligible for later offers.
 
 A Relic declined instead of acquired also remains eligible.
 
-## RULE-RELIC-006 — Relic offer pool by Act
-Relic eligibility is cumulative:
-- Act I can offer Foundational alpha Relics;
-- Act II can offer Foundational + Developed alpha Relics;
-- Act III can offer Foundational + Developed + Legacy alpha Relics.
+## RULE-RELIC-006 — Independent rarity and minimum Act
+Each Relic has exactly one rarity and an independent minimum Act.
 
-Earlier tiers remain eligible later.
+- **Common:** broadly useful, modestly changes decisions; offer weight **60**.
+- **Uncommon:** stronger synergy or build-enabling effect; offer weight **30**.
+- **Rare:** substantially rewrites rules or can define the run; offer weight **10**.
+
+Rarity is an acquisition property, not a late-game gate or a numerical power buff. Minimum Act alone determines when the Relic can mechanically enter an offer, alongside exhaustion and existing explicit legality filters.
+
+Act I can offer eight current Relics: all except Mixed-Use Charter and Historic Routes. Those two unlock in Act II. All ten remain eligible in Acts II/III subject to acquisition exhaustion. No current Relic requires Act III. In particular, Steward's Relay, One Great City and The Long Road are now Act-I eligible with their existing effects unchanged.
 
 ## RULE-RELIC-007 — Relic offer generation
 Whenever a Relic offer is earned:
-- uniformly select up to 3 distinct eligible unowned Relics;
-- player chooses 1;
-- if fewer than 3 eligible Relics remain, show all remaining;
-- if none remain, convert the Relic reward into 1 normal Tile Reward.
+1. Gather eligible unowned, unexhausted Relics and filter by minimum Act and existing explicit legality rules.
+2. Sort candidates by stable definition ID.
+3. Give each candidate its rarity's integer weight: Common 60, Uncommon 30, Rare 10.
+4. Use RunRNG to roll against the sum of remaining weights and select one candidate in deterministic order.
+5. Remove that candidate from this offer's temporary pool and repeat until up to three distinct Relics have been selected.
+6. Persist the exact ordered offer; the player chooses one. Loading never regenerates it.
+
+This is **weighted sampling without replacement, per eligible Relic**. It is not a separate 60%/30%/10% rarity-category roll. There is no prescribed rarity composition, helpfulness weighting or guaranteed Rare. A design not selected remains eligible in later offers.
+
+If fewer than three eligible Relics remain, show all remaining. If none remain, convert the Relic reward into one Normal Tile Reward. Capacity/replacement rules still apply to the chosen Relic.
+
+Every normal Relic Offer uses this generator, including Track 20 and 70, Charter rewards, milestones and Relic Cache. Relic Cache still grants one chosen Relic followed by one Normal Tile Reward. These weights are initial playtest values; diagnostics do not authorize automatic retuning.
 
 ## RULE-RELIC-008 — Once-per-Act refresh
 A once-per-Act Relic receives a fresh use at the beginning of each Act.
@@ -1980,7 +1999,7 @@ If sequential resolution/choices are needed, resolve in **Relic acquisition orde
 
 Any new events created by the batch are deferred to the child-event queue.
 
-## 15.1 Foundational alpha Relics
+## 15.1 Alpha Relic effects
 
 ### RULE-RELIC-BOUNDARY — Boundary Stones
 Once per Act, one Expansion placement may ignore exactly **one Field ↔ Forest edge mismatch**.
@@ -2029,8 +2048,6 @@ Ferry links:
 
 Removing Ferry Rights removes those ferry-created links immediately and can split Trade Networks. Previously earned scoring is never undone.
 
-## 15.2 Developed alpha Relics
-
 ### RULE-RELIC-MIXED — Mixed-Use Charter
 A Settlement tile may contain both:
 - one Housing-family Development; and
@@ -2058,8 +2075,6 @@ If multiple eligible touching features exist, the player chooses.
 Normal eligibility and one-Specialist-per-feature rules still apply. Riverkeeper can Relay only to an eligible touching unfinished River-connected Forest; Harbormaster only to an eligible touching unfinished River-connected Settlement. No River Feature is offered.
 
 Relay is the explicit exception to the normal no-same-turn-reassignment rule.
-
-## 15.3 Legacy alpha Relics
 
 ### RULE-RELIC-GCITY — One Great City
 Only the player's **currently largest Settlement(s)** generate base Population from Settlement completion.
@@ -2096,21 +2111,19 @@ The Longest Road record is tracked from the start of the run and does not reset 
 A Bridge-created merged Road that completes immediately can establish a new record using its total physical Road Feature size even though old Road tiles do not base-score again.
 
 ## RULE-RELIC-012 — Alpha Relic roster summary
-**Foundational (Act I+):**
-1. Boundary Stones
-2. Surveyor's Compass
-3. Wayfarer's Satchel
-4. Village Green
-5. Ferry Rights
 
-**Developed (Act II+):**
-6. Mixed-Use Charter
-7. Historic Routes
-8. Steward's Relay
-
-**Legacy (Act III):**
-9. One Great City
-10. The Long Road
+| Relic | Rarity | Minimum Act | Per-Relic weight |
+|---|---|---|---:|
+| Boundary Stones | Common | I | 60 |
+| Surveyor's Compass | Common | I | 60 |
+| Wayfarer's Satchel | Common | I | 60 |
+| Village Green | Uncommon | I | 30 |
+| Mixed-Use Charter | Uncommon | II | 30 |
+| Historic Routes | Uncommon | II | 30 |
+| Ferry Rights | Rare | I | 10 |
+| Steward's Relay | Rare | I | 10 |
+| One Great City | Rare | I | 10 |
+| The Long Road | Rare | I | 10 |
 
 All other prototype Relics are deferred from the first alpha.
 
@@ -2136,19 +2149,19 @@ They are not spent.
 Tracks have no hard maximum. Values may exceed 100 and their full values count toward final score and relevant Charter conditions.
 
 ## RULE-TRACK-003 — Standard thresholds
-Each Track records one-time thresholds at **20, 40, 70 and 100**. A threshold can be crossed/recorded once per Track per run. Twenty is an explicit no-reward threshold; the other three create their listed reward.
+Each Track records one-time thresholds at **20, 40, 70 and 100**. Each threshold awards its listed reward once per Track per run.
 
 ## RULE-TRACK-004 — Threshold rewards
 For each Track:
-- **20: NONE.** No Tile Reward, PendingChoice, reward job, copy acquisition, bag shuffle or RNG consumption occurs because of this threshold. It may be recorded once for history/inspection.
+- **20:** Relic Offer using the weighted distinct offer rules in Section 15.
 - **40:** Train a Steward; the existing untrainable reward fallback remains one Normal Tile Reward.
 - **70:** Relic offer.
 - **100:** Major Reward offer.
 
-There are no further standard threshold rewards beyond 100. Independently scheduled cadence drafts still occur on their placement boundary; they are not Track-20 rewards.
+There are no further standard threshold rewards beyond 100. Track 20 does not grant a Tile Reward. Independently scheduled cadence drafts still occur on their placement boundary.
 
 ## RULE-TRACK-005 — Every crossed rewarding threshold awards
-If a placement/effect crosses multiple thresholds, all newly crossed 40/70/100 thresholds on every Track award separately. Crossing 20 records NONE only. There is no per-placement cap on genuine rewards.
+If a placement/effect crosses multiple thresholds, all newly crossed 20/40/70/100 thresholds on every Track award separately. There is no per-placement cap. Several Tracks crossing 20 can therefore earn several Relic Offers, each resolving fully in the normal queue order even when Relic capacity is full.
 
 ## RULE-TRACK-006 — Threshold queue order
 Queued Track threshold rewards resolve in fixed Track order:
@@ -2822,7 +2835,7 @@ The old `River Source` starter tile name is superseded by **River End**.
 River End is setup-only environment, used as the generated spine terminus; it is not a player source/endpoint tile.
 
 ## RULE-SUPER-002 — Starting bag changed
-The provisional pre-alpha, prior 55-copy and initial Revision-1 45-copy bags are superseded by the **18-copy core bag plus one chosen Starter Draft** in Section 6. Automatic Act seeding and Track-20 Tile Rewards are also superseded by the draft-cadence rules.
+The provisional pre-alpha, prior 55-copy and initial Revision-1 45-copy bags are superseded by the **18-copy core bag plus one chosen Starter Draft** in Section 6. Automatic Act seeding is superseded by entry drafts. Both the original Track-20 Tile Reward and the temporary Track-20 NONE experiment are superseded by the current Relic Offer.
 
 ## RULE-SUPER-003 — Market and Port cadence
 Although Market and Port appear in the broader Starter 24 source set, the alpha unlocks them at the **start of Act II** for the restricted entry draft and later offers. It grants no automatic copies.
@@ -2863,8 +2876,11 @@ Other prototype Relics are deferred.
 ## RULE-SUPER-009 — Legendary Projects deferred
 Legendary Projects are not implemented in this alpha even though older design documents define their broader direction.
 
-## RULE-SUPER-010 — Uniform alpha offer generation
-Older exploratory language about contextual Specialist/reward weighting is superseded for the alpha by the explicit uniform-random offer rules in this document.
+## RULE-SUPER-010 — Explicit alpha offer generation
+Older exploratory language about contextual Specialist/reward weighting is superseded. Tile Drafts and other explicitly uniform offers retain uniform selection. Normal Relic Offers use only the per-Relic rarity weights in RULE-RELIC-007; they do not use contextual weighting or a fixed rarity template.
+
+## RULE-SUPER-011 — Relic Act tiers replaced
+Foundational = Act I, Developed = Act II and Legacy = Act III are superseded current-alpha rules. Use separate rarity and minimum Act from RULE-RELIC-012. Those historical tier labels must not gate current offers or imply effect changes.
 
 ---
 
@@ -2887,8 +2903,8 @@ Before implementation is considered faithful to this specification, Codex should
 13. Developments can be placed on already-completed features and resolve only their own immediate trigger.
 14. Upgrades replace their base Development and immediately resolve if their condition is already satisfied.
 15. Stewards/Specialists obey locality, commitment, merge legality, completion return, and training rules.
-16. The reduced 10-Relic alpha pool obeys tier eligibility, capacity, replacement, and acquisition history.
-17. Track 20 records NONE without rewards/RNG; 40/70/100 award once in deterministic order.
+16. The reduced 10-Relic alpha pool obeys independent rarity/minimum Act, weighted distinct offers, capacity, replacement and acquisition history; early Rare acquisition never changes prior scoring.
+17. Tracks 20/40/70/100 award Relic/Train/Relic/Major once per Track in deterministic order, after the triggering completion package.
 18. Relic milestones fire only on genuine relevant completions and only once per milestone.
 19. Act I/II Charters and Grand Charter selection/evaluation behave exactly as specified.
 20. Act II midpoint Grand Charter reveal happens after normal placement 11 and its full consequence queue.

@@ -3,7 +3,7 @@ extends RefCounted
 ## Generated environment, overlays, scoring and all 66 placements use actual rules.
 ## This is a reproducible integration fixture, not a claim of naturally optimized play.
 
-const RUN_SEED: int = 22
+const RUN_SEED: int = 123
 const Previous = preload("res://tests/fixtures/phase_eight_factory.gd")
 const Acquisition = preload("res://tests/fixtures/phase_five_factory.gd")
 const Intent = preload("res://tests/fixtures/phase_six_factory.gd")

@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.the_long_road"
 display_name = "The Long Road"
-unlock_act = 3
+minimum_act = 1
 behavior_id = &"the_long_road"
-tier = &"legacy"
+rarity = &"rare"
 once_per_act = false

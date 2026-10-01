@@ -4,6 +4,9 @@ extends Resource
 
 @export var definition_id: StringName = &""
 @export var display_name: String = ""
+## Player-facing reminders only; command/query services remain gameplay authority.
+@export_multiline var placement_summary: String = ""
+@export_multiline var effect_summary: String = ""
 @export var tile_class: DomainTypes.TileClass = DomainTypes.TileClass.EXPANSION
 @export var unlock_act: int = 1
 ## Legacy/setup geography stays available to topology without entering player pools.

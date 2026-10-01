@@ -36,7 +36,7 @@ func four_tracks_and_active_thresholds() -> bool:
 	for index: int in range(4):
 		expect_equal(c.shell.track_value_labels[index].text, str(c.session.state.features.tracks.values[index]), "Uncapped actual value")
 	for index: int in range(3):
-		expect_true(c.shell.track_reward_labels[index].text.begins_with(["40", "70", "100"][index]), "Only next active reward")
+		expect_true(c.shell.track_reward_labels[index].text.begins_with(["20", "70", "100"][index]), "Only next active reward")
 	expect_equal(c.shell.track_reward_labels[3].text, "Rewards complete", "No fictitious post100 reward")
 	c.free()
 	return true

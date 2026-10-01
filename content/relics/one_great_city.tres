@@ -6,7 +6,7 @@
 script = ExtResource("1")
 definition_id = &"relic.one_great_city"
 display_name = "One Great City"
-unlock_act = 3
+minimum_act = 1
 behavior_id = &"one_great_city"
-tier = &"legacy"
+rarity = &"rare"
 once_per_act = false

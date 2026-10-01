@@ -8,14 +8,15 @@ The reference is tracked design documentation, never a runtime texture.
 
 ## Screen structure
 
-- **Top HUD:** Act and normal-placement progress; four Track cards with uncapped
-  values and the next active reward (40 Train, 70 Relic, 100 Major); compact
+- **Top HUD:** Act and normal-placement progress, with a secondary full seed field
+  that supports selection/copy; four Track cards with uncapped
+  values and the next active reward (20 Relic, 40 Train, 70 Relic, 100 Major); compact
   Charter title and fulfilled ordinary-condition count; next Draft timing; Charter toggle.
 - **Board workspace:** full-width dark tabletop beneath the HUD and above the tray.
   Parchment tiles, existing art, effective geometry, legal targets and preview remain
   authoritative state projections. Floating utility panels do not reserve sidebars.
-- **Relics:** upper-left capacity/slot display. Click or hover a slot for its effect
-  and usage details. Empty sockets remain clear.
+- **Relics:** upper-left capacity/slot display. Click or hover a slot for its rarity,
+  unchanged effect and once-per-Act usage details. Empty sockets remain clear.
 - **Stewards:** upper-right available/total count and compact role markers. Hollow
   and filled circles distinguish available/assigned pieces; click/hover gives role,
   assignment and location. Fit Board and zoom buttons sit immediately below.
@@ -34,7 +35,29 @@ The reference is tracked design documentation, never a runtime texture.
   is a tooltip. It never advances rules or blocks a consequence chain.
 - **Choices/results:** existing typed choice and results flows remain. Drafts use
   parchment cards inside dark framing, artwork and short identity text; one click
-  acquires the single copy. Other choices retain exact persisted options.
+  acquires the single copy. Relic offers display Common/Uncommon/Rare as text beside
+  name and effect; rarity never relies only on color. Other choices retain exact
+  persisted options, and results retain the run seed.
+
+## Tile rules and reproducible New Run
+
+Every current player-acquirable tile stores `placement_summary` and `effect_summary`
+in its static `TileDefinition`. `ChoiceText.tile_tooltip` combines these with name
+and category for active-hand, Reserve and Draft cards. Complex tiles put Placement
+before Effect; simple Expansions give concise edge/use information. The tooltip
+uses the corrected parchment background/dark-ink theme with bounded text wrapping.
+Hovering does not change selection, RNG, legality, RunState or a pending choice.
+
+The title screen's optional Seed field starts blank. New Run uses a fresh seed from
+the injectable `RunSeedSource` when blank; a valid entered signed 64-bit integer is
+used exactly. Malformed or out-of-range input shows an error and creates no run.
+Randomize fills a candidate without starting. External seed entropy initializes
+RunRNG; it never consumes the run's gameplay random stream. Explicit seed 1 remains
+supported for test fixtures and human reproduction. Once playing, the full seed is
+available in the compact Act card and on final results.
+
+Tile rules explain physical placement/effects. Relic details explain persistent
+modifiers and rarity. They share readable tooltip styling, not gameplay authority.
 
 ## Presentation boundary
 

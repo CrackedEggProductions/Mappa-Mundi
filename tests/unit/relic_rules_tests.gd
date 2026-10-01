@@ -7,7 +7,7 @@ const EDGE = DomainTypes.EdgeType
 
 func tests() -> Array[Callable]:
 	return [empty_start_capacity, act_capacity_refresh, mid_act_use, spent_use_does_not_stack,
-		invalid_use_atomic, act_tier_pools, frozen_eligibility_pool, acquisition_exhausts,
+		invalid_use_atomic, act_eligibility_pools, frozen_eligibility_pool, acquisition_exhausts,
 		equip_uses_empty_slots, full_capacity_requires_choice, replacement_exhausts_both,
 		unknown_locked_repeat_acquisition_atomic, unnecessary_replacement_atomic,
 		decline_does_not_exhaust, satchel_occupied_blocks_removal, mixed_use_blocks_removal,
@@ -99,16 +99,16 @@ func invalid_use_atomic() -> bool:
 	return true
 
 
-func act_tier_pools() -> bool:
+func act_eligibility_pools() -> bool:
 	for act: int in range(1, 4):
 		var state: RunState = _state(act)
-		expect_equal(RelicRules.eligible_ids(state, _registry()).size(), [5, 8, 10][act - 1], "Cumulative exact alpha tiers")
+		expect_equal(RelicRules.eligible_ids(state, _registry()).size(), [8, 10, 10][act - 1], "Minimum Act is independent from rarity")
 	return true
 
 
 func frozen_eligibility_pool() -> bool:
 	var state: RunState = _state(3)
-	expect_equal(RelicRules.eligible_ids(state, _registry(), 1).size(), 5, "Outgoing Act pool remains frozen")
+	expect_equal(RelicRules.eligible_ids(state, _registry(), 1).size(), 8, "Outgoing Act pool remains frozen")
 	return true
 
 
@@ -154,7 +154,7 @@ func replacement_exhausts_both() -> bool:
 func unknown_locked_repeat_acquisition_atomic() -> bool:
 	var state: RunState = _state()
 	_equip(state, RelicRules.GREEN)
-	for id: StringName in [&"relic.unknown", RelicRules.CITY, RelicRules.GREEN]:
+	for id: StringName in [&"relic.unknown", RelicRules.MIXED, RelicRules.GREEN]:
 		var before: String = _proof(state)
 		expect_true(not RelicRules.acquire(state, _registry(), id).is_valid, "Invalid acquisition rejected")
 		expect_equal(_proof(state), before, "No invalid side effects")

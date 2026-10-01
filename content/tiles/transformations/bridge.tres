@@ -6,6 +6,8 @@
 script = ExtResource("1_tile")
 definition_id = &"tile.transformation.bridge"
 display_name = "Bridge"
+placement_summary = "Existing straight River Run whose two perpendicular effective edges can change from Field to Road. No Forest-to-Road rewrite."
+effect_summary = "Preserves River and adds a perpendicular Road crossing. May connect or legally rewrite facing Field boundaries of Roads or Settlements for Road access. Preserves Developments and uses no Development slot."
 tile_class = 3
 unlock_act = 3
 reward_class = 4
